@@ -64,11 +64,31 @@ ModelResource::ModelResource(const std::string& path) : model_(::LoadModel(path.
   }
 }
 
+ModelResource::ModelResource(Mesh mesh) : model_(::LoadModelFromMesh(mesh)) {
+  CollectOwnedTextures();
+  if (!IsModelValid(model_)) {
+    Release();
+    throw std::runtime_error("No se pudo crear el modelo desde la malla");
+  }
+}
+
 ModelResource::~ModelResource() { Release(); }
 
+void ModelResource::SetShader(std::shared_ptr<ShaderResource> shader) {
+  if (!shader || !shader->IsValid()) {
+    throw std::invalid_argument("ModelResource::SetShader: shader nulo o invalido");
+  }
+
+  for (int m = 0; m < model_.materialCount; ++m) {
+    model_.materials[m].shader = shader->Get();
+  }
+
+  shader_ = std::move(shader);
+}
+
 ModelResource::ModelResource(ModelResource&& other) noexcept
-    : model_(std::exchange(other.model_, Model{})),
-      ownedTextures_(std::move(other.ownedTextures_)) {
+    : model_(std::exchange(other.model_, Model{})), ownedTextures_(std::move(other.ownedTextures_)),
+      shader_(std::move(other.shader_)) {
   other.ownedTextures_.clear();
 }
 
@@ -77,6 +97,7 @@ ModelResource& ModelResource::operator=(ModelResource&& other) noexcept {
     Release();
     model_ = std::exchange(other.model_, Model{});
     ownedTextures_ = std::move(other.ownedTextures_);
+    shader_ = std::move(other.shader_);
     other.ownedTextures_.clear();
   }
 
@@ -114,6 +135,7 @@ void ModelResource::Release() noexcept {
     UnloadModel(model_);
   }
   model_ = Model{};
+  shader_.reset();
 }
 
 // ---------------------------------------------------------------------------

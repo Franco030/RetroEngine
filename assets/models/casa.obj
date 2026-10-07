@@ -1,0 +1,57 @@
+# Casita low-poly para RetroEngine
+o casa
+
+# Vertices: paredes
+v -1.0 0.0 -1.0
+v  1.0 0.0 -1.0
+v  1.0 0.0  1.0
+v -1.0 0.0  1.0
+v -1.0 1.2 -1.0
+v  1.0 1.2 -1.0
+v  1.0 1.2  1.0
+v -1.0 1.2  1.0
+# Vertices: techo (con alero) y punta
+v -1.3 1.2 -1.3
+v  1.3 1.2 -1.3
+v  1.3 1.2  1.3
+v -1.3 1.2  1.3
+v  0.0 2.3  0.0
+
+# UV: paredes usan el cuadrante superior izquierdo de la textura
+vt 0.0 0.5
+vt 0.5 0.5
+vt 0.5 1.0
+vt 0.0 1.0
+# UV: techo usa el cuadrante superior derecho
+vt 0.5 0.5
+vt 1.0 0.5
+vt 0.75 1.0
+
+# Normales
+vn  0.0   0.0  -1.0
+vn  0.0   0.0   1.0
+vn  1.0   0.0   0.0
+vn -1.0   0.0   0.0
+vn  0.0   0.763  0.646
+vn  0.646 0.763  0.0
+vn  0.0   0.763 -0.646
+vn -0.646 0.763  0.0
+
+# Pared trasera
+f 2/1/1 1/2/1 5/3/1
+f 2/1/1 5/3/1 6/4/1
+# Pared frontal
+f 4/1/2 3/2/2 7/3/2
+f 4/1/2 7/3/2 8/4/2
+# Pared derecha
+f 3/1/3 2/2/3 6/3/3
+f 3/1/3 6/3/3 7/4/3
+# Pared izquierda
+f 1/1/4 4/2/4 8/3/4
+f 1/1/4 8/3/4 5/4/4
+
+# Techo
+f 12/5/5 11/6/5 13/7/5
+f 11/5/6 10/6/6 13/7/6
+f 10/5/7 9/6/7 13/7/7
+f 9/5/8 12/6/8 13/7/8

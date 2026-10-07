@@ -60,12 +60,13 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     RETRO_WINDOW_HEIGHT=960
 )
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+add_custom_target(CopyAssets ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_CURRENT_SOURCE_DIR}/assets
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
-    COMMENT "Copiando assets a $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets"
+    COMMENT "Sincronizando assets"
 )
+add_dependencies(${PROJECT_NAME} CopyAssets)
 
 if(UNIX)
     set_target_properties(${PROJECT_NAME} PROPERTIES

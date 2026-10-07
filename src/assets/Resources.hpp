@@ -2,10 +2,13 @@
 
 #include <raylib.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
 namespace retro {
+
+class ShaderResource;
 
 class TextureResource {
 public:
@@ -28,6 +31,7 @@ private:
 class ModelResource {
 public:
   explicit ModelResource(const std::string& path);
+  explicit ModelResource(Mesh mesh);
   ~ModelResource();
 
   ModelResource(const ModelResource&) = delete;
@@ -39,12 +43,15 @@ public:
   const Model& Get() const noexcept { return model_; }
   bool IsValid() const noexcept { return model_.meshCount > 0; }
 
+  void SetShader(std::shared_ptr<ShaderResource> shader);
+
 private:
   void Release() noexcept;
   void CollectOwnedTextures();
 
   Model model_{};
   std::vector<Texture2D> ownedTextures_;
+  std::shared_ptr<ShaderResource> shader_;
 };
 
 class ShaderResource {

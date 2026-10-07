@@ -5,34 +5,59 @@
 
 namespace retro {
 
-RetroShader::RetroShader(std::shared_ptr<ShaderResource> shader, const RetroShaderParams& params)
-    : shader_(std::move(shader)), params_(params) {
-  if (!shader_ || !shader_->IsValid()) {
+namespace {
+
+void SetUniform(const Shader& s, int loc, const void* value, int type) {
+  if (loc >= 0)
+    SetShaderValue(s, loc, value, type);
+}
+
+} // namespace
+
+RetroShader::RetroShader(std::shared_ptr<ShaderResource> lit, std::shared_ptr<ShaderResource> unlit,
+                         const RetroShaderParams& params)
+    : lit_(MakeProgram(std::move(lit))), unlit_(MakeProgram(std::move(unlit))), params_(params) {
+  Upload(lit_);
+  Upload(unlit_);
+}
+
+RetroShader::Program RetroShader::MakeProgram(std::shared_ptr<ShaderResource> shader) {
+  if (!shader || !shader->IsValid()) {
     throw std::invalid_argument("RetroShader: shader nulo o invalido");
   }
 
-  const Shader& s = shader_->Get();
-  locSnapResolution_ = GetShaderLocation(s, "snapResolution");
-  locColorLevels_ = GetShaderLocation(s, "colorLevels");
-  locDither_ = GetShaderLocation(s, "ditherStrength");
-  locLightDir_ = GetShaderLocation(s, "lightDir");
-  locAmbient_ = GetShaderLocation(s, "ambient");
+  const Shader& s = shader->Get();
+  Locations l;
+  l.snapResolution = GetShaderLocation(s, "snapResolution");
+  l.colorLevels = GetShaderLocation(s, "colorLevels");
+  l.dither = GetShaderLocation(s, "ditherStrength");
+  l.lightDir = GetShaderLocation(s, "lightDir");
+  l.ambient = GetShaderLocation(s, "ambient");
+  l.fogColor = GetShaderLocation(s, "fogColor");
+  l.fogStart = GetShaderLocation(s, "fogStart");
+  l.fogEnd = GetShaderLocation(s, "fogEnd");
 
-  Upload();
+  return Program{std::move(shader), l};
 }
 
 void RetroShader::SetParams(const RetroShaderParams& params) {
   params_ = params;
-  Upload();
+  Upload(lit_);
+  Upload(unlit_);
 }
 
-void RetroShader::Upload() const {
-  const Shader& s = shader_->Get();
-  SetShaderValue(s, locSnapResolution_, &params_.snapResolution, SHADER_UNIFORM_VEC2);
-  SetShaderValue(s, locColorLevels_, &params_.colorLevels, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(s, locDither_, &params_.ditherStrength, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(s, locLightDir_, &params_.lightDirection, SHADER_UNIFORM_VEC3);
-  SetShaderValue(s, locAmbient_, &params_.ambient, SHADER_UNIFORM_FLOAT);
+void RetroShader::Upload(const Program& p) const {
+  const Shader& s = p.shader->Get();
+  const Locations& l = p.loc;
+
+  SetUniform(s, l.snapResolution, &params_.snapResolution, SHADER_UNIFORM_VEC2);
+  SetUniform(s, l.colorLevels, &params_.colorLevels, SHADER_UNIFORM_FLOAT);
+  SetUniform(s, l.dither, &params_.ditherStrength, SHADER_UNIFORM_FLOAT);
+  SetUniform(s, l.lightDir, &params_.lightDirection, SHADER_UNIFORM_VEC3);
+  SetUniform(s, l.ambient, &params_.ambient, SHADER_UNIFORM_FLOAT);
+  SetUniform(s, l.fogColor, &params_.fogColor, SHADER_UNIFORM_VEC3);
+  SetUniform(s, l.fogStart, &params_.fogStart, SHADER_UNIFORM_FLOAT);
+  SetUniform(s, l.fogEnd, &params_.fogEnd, SHADER_UNIFORM_FLOAT);
 }
 
 } // namespace retro

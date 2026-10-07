@@ -8,11 +8,12 @@
 #include "core/RetroEngine.hpp"
 #include "graphics/DebugDraw.hpp"
 #include "graphics/RetroCamera.hpp"
+#include "graphics/ShaderScope.hpp"
 #include "world/Entity.hpp"
 #include "world/Scene.hpp"
 
 static void HandleDebugKeys(retro::RetroEngine& engine) {
-  static bool jitter = true, lowColor = true, dither = true;
+  static bool jitter = true, lowColor = true, dither = true, fog = true;
 
   retro::RetroShaderParams p = engine.Retro().Params();
   bool changed = false;
@@ -32,6 +33,12 @@ static void HandleDebugKeys(retro::RetroEngine& engine) {
     p.ditherStrength = dither ? 1.0f : 0.0f;
     changed = true;
   }
+  if (IsKeyPressed(KEY_FOUR)) {
+    fog = !fog;
+    p.fogStart = fog ? 10.0f : 1.0e6f;
+    p.fogEnd = fog ? 26.0f : 2.0e6f;
+    changed = true;
+  }
   if (changed)
     engine.Retro().SetParams(p);
 }
@@ -39,13 +46,15 @@ static void HandleDebugKeys(retro::RetroEngine& engine) {
 int main() {
   try {
     retro::EngineConfig config;
-    config.title = "RetroEngine - Hito 5";
+    config.title = "RetroEngine - Hito 6";
     retro::RetroEngine engine(config);
 
+    // --- Recursos ---
     auto house = engine.Assets().GetModel("models/casa.obj");
     auto texture = engine.Assets().GetTexture("textures/test.png");
-    house->SetShader(engine.Retro().Resource());
+    house->SetShader(engine.Retro().Lit());
 
+    // --- Escena ---
     retro::Scene scene;
 
     auto& center = scene.Add(std::make_unique<retro::Entity>("casa_centro", house, texture));
@@ -62,6 +71,7 @@ int main() {
     right.tint = {255, 200, 200, 255};
     right.SetUpdate([](retro::Entity& e, float dt) { e.transform.rotation.y -= 35.0f * dt; });
 
+    // --- Camara ---
     retro::RetroCamera camera;
     camera.SetPosition({7.0f, 5.0f, 9.0f});
     camera.LookAt({0.0f, 1.0f, 0.0f});
@@ -75,11 +85,14 @@ int main() {
         },
         [&]() {
           camera.Begin();
-          retro::DrawFloorGrid(10, 1.0f, {70, 60, 100, 255}, {140, 90, 200, 255});
+          {
+            retro::ShaderScope lines(engine.Retro().Unlit()->Get());
+            retro::DrawFloorGrid(10, 1.0f, {110, 95, 160, 255}, {190, 130, 255, 255});
+          }
           scene.Draw();
           camera.End();
 
-          DrawText("1:jitter 2:color 3:dither", 4, 4, 10, RAYWHITE);
+          DrawText("1:jitter 2:color 3:dither 4:niebla", 4, 4, 10, RAYWHITE);
           DrawText("Arrastrar/flechas: orbitar  Rueda: zoom", 4, 16, 10, RAYWHITE);
         });
   } catch (const std::exception& e) {

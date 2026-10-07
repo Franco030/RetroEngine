@@ -39,7 +39,7 @@ namespace {
 RetroShaderParams DefaultShaderParams(const EngineConfig& c) {
   RetroShaderParams p;
   p.snapResolution = {static_cast<float>(c.internalWidth), static_cast<float>(c.internalHeight)};
-
+  p.fogColor = {c.clearColor.r / 255.0f, c.clearColor.g / 255.0f, c.clearColor.b / 255.0f};
   return p;
 }
 
@@ -50,6 +50,7 @@ RetroEngine::RetroEngine(EngineConfig config)
       target_(config_.internalWidth, config_.internalHeight),
       assets_(std::string(GetApplicationDirectory()) + "assets/"),
       retroShader_(assets_.GetShader("shaders/retro.vs", "shaders/retro.fs"),
+                   assets_.GetShader("shaders/retro.vs", "shaders/retro_unlit.fs"),
                    DefaultShaderParams(config_)) {}
 
 void RetroEngine::Run(const UpdateFn& update, const DrawFn& draw) {

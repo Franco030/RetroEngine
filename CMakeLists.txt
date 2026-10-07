@@ -52,7 +52,7 @@ if(MSVC)
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
 endif()
- 
+  
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     RETRO_INTERNAL_WIDTH=320
     RETRO_INTERNAL_HEIGHT=240

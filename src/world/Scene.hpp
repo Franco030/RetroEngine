@@ -3,6 +3,7 @@
 #include "game/GameState.hpp"
 #include "physics/Collision.hpp"
 #include "world/Entity.hpp"
+#include "world/Logic.hpp"
 #include "world/Trigger.hpp"
 
 #include <raylib.h>
@@ -20,6 +21,11 @@ public:
     Vector3 position{0.0f, 0.0f, 9.0f};
     float yaw = 0.0f;
   };
+  struct InteractHit {
+    Entity* entity = nullptr;
+    float distance = 0.0f;
+  };
+
   SpawnPoint spawn;
   std::string path;
   std::vector<Trigger> triggers;
@@ -43,11 +49,17 @@ public:
   void CollectColliders(std::vector<WorldBox>& out) const;
 
   // Evalúa los triggers contra el cilindro del jugador y añade a 'fired' las
-  // acciones que se disparan este frame. Se ejecutan fuera (ActionRunner).
-  // La primera llamada solo registra dónde está el jugador: aparecer dentro
-  // de una zona no la dispara.
+  // acciones que se disparan este frame. La primera llamada tras cargar solo
+  // registra dónde está el jugador y reaplica el estado persistente.
   void UpdateTriggers(Vector3 feet, float radius, float height, GameState& state,
                       std::vector<Action>& fired);
+
+  // Entidad interactuable más cercana a lo largo del rayo (dirección unitaria),
+  // dentro de su rango, con condiciones cumplidas y sin nada sólido delante.
+  InteractHit FindInteractable(Vector3 origin, Vector3 direction, const GameState& state);
+
+  // Marca el "once" y añade las acciones de la interacción a 'fired'.
+  void Interact(Entity& entity, GameState& state, std::vector<Action>& fired);
 
 private:
   std::vector<std::unique_ptr<Entity>> entities_;

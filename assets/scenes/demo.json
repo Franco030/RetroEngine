@@ -65,7 +65,15 @@
                 0.7,
                 0.7,
                 0.7
-            ]
+            ],
+            "interact": {
+                "prompt": "Examinar",
+                "do": [
+                    {
+                        "message": "Una casita vacia.\nParece de juguete."
+                    }
+                ]
+            }
         },
         {
             "name": "casa_der",
@@ -95,22 +103,22 @@
         },
         {
             "name": "llave",
-            "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "model": "models/llave.obj",
+            "texture": "textures/blanco.png",
             "position": [
                 -6,
-                0,
+                0.9,
                 6
             ],
             "scale": [
-                0.25,
-                0.25,
-                0.25
+                0.6,
+                0.6,
+                0.6
             ],
             "tint": [
                 255,
-                230,
-                80,
+                220,
+                70,
                 255
             ],
             "collider": false,
@@ -119,6 +127,174 @@
                 90,
                 0
             ]
+        },
+        {
+            "name": "moneda_1",
+            "model": "models/moneda.obj",
+            "texture": "textures/blanco.png",
+            "position": [
+                -8,
+                1.0,
+                2
+            ],
+            "scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "tint": [
+                255,
+                200,
+                60,
+                255
+            ],
+            "collider": false,
+            "spin": [
+                0,
+                120,
+                0
+            ],
+            "interact": {
+                "prompt": "Tomar moneda",
+                "once": true,
+                "box": {
+                    "min": [
+                        -1.5,
+                        -1.5,
+                        -1.5
+                    ],
+                    "max": [
+                        1.5,
+                        1.5,
+                        1.5
+                    ]
+                },
+                "do": [
+                    {
+                        "set_visible": "moneda_1",
+                        "visible": false
+                    },
+                    {
+                        "add_flag": "monedas"
+                    },
+                    {
+                        "message": "Monedas: {monedas}/3",
+                        "seconds": 2
+                    }
+                ]
+            }
+        },
+        {
+            "name": "moneda_2",
+            "model": "models/moneda.obj",
+            "texture": "textures/blanco.png",
+            "position": [
+                7,
+                1.0,
+                5
+            ],
+            "scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "tint": [
+                255,
+                200,
+                60,
+                255
+            ],
+            "collider": false,
+            "spin": [
+                0,
+                120,
+                0
+            ],
+            "interact": {
+                "prompt": "Tomar moneda",
+                "once": true,
+                "box": {
+                    "min": [
+                        -1.5,
+                        -1.5,
+                        -1.5
+                    ],
+                    "max": [
+                        1.5,
+                        1.5,
+                        1.5
+                    ]
+                },
+                "do": [
+                    {
+                        "set_visible": "moneda_1",
+                        "visible": false
+                    },
+                    {
+                        "add_flag": "monedas"
+                    },
+                    {
+                        "message": "Monedas: {monedas}/3",
+                        "seconds": 2
+                    }
+                ]
+            }
+        },
+        {
+            "name": "moneda_3",
+            "model": "models/moneda.obj",
+            "texture": "textures/blanco.png",
+            "position": [
+                -2,
+                1.0,
+                -6
+            ],
+            "scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "tint": [
+                255,
+                200,
+                60,
+                255
+            ],
+            "collider": false,
+            "spin": [
+                0,
+                120,
+                0
+            ],
+            "interact": {
+                "prompt": "Tomar moneda",
+                "once": true,
+                "box": {
+                    "min": [
+                        -1.5,
+                        -1.5,
+                        -1.5
+                    ],
+                    "max": [
+                        1.5,
+                        1.5,
+                        1.5
+                    ]
+                },
+                "do": [
+                    {
+                        "set_visible": "moneda_1",
+                        "visible": false
+                    },
+                    {
+                        "add_flag": "monedas"
+                    },
+                    {
+                        "message": "Monedas: {monedas}/3",
+                        "seconds": 2
+                    }
+                ]
+            }
         }
     ],
     "triggers": [
@@ -137,7 +313,7 @@
             "once": true,
             "do": [
                 {
-                    "message": "Algo brilla hacia el oeste...",
+                    "message": "Hay monedas y una llave por ahi.\nMira una y pulsa E.",
                     "seconds": 4
                 }
             ]
@@ -181,12 +357,22 @@
                 0.8
             ],
             "if": {
-                "flag": "tiene_llave",
-                "not": true
+                "not": {
+                    "all": [
+                        {
+                            "flag": "tiene_llave"
+                        },
+                        {
+                            "flag": "monedas",
+                            "op": ">=",
+                            "value": 3
+                        }
+                    ]
+                }
             },
             "do": [
                 {
-                    "message": "La puerta esta cerrada.\nNecesitas una llave."
+                    "message": "La puerta esta cerrada.\nNecesitas la llave y 3 monedas.\nMonedas: {monedas}/3"
                 }
             ]
         },
@@ -210,7 +396,16 @@
                 255
             ],
             "if": {
-                "flag": "tiene_llave"
+                "all": [
+                    {
+                        "flag": "tiene_llave"
+                    },
+                    {
+                        "flag": "monedas",
+                        "op": ">=",
+                        "value": 3
+                    }
+                ]
             },
             "do": [
                 {

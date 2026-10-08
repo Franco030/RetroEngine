@@ -1,6 +1,7 @@
 #include "world/Scene.hpp"
 
 #include <algorithm>
+#include <cfloat>
 #include <stdexcept>
 #include <utility>
 
@@ -8,15 +9,13 @@ namespace retro {
 
 namespace {
 
-bool ConditionsHold(const std::vector<Condition>& conditions, const GameState& state) {
-  return std::all_of(conditions.begin(), conditions.end(), [&](const Condition& c) {
-    return (state.Get(c.flag) == c.equals) != c.negate;
-  });
-}
-
 // Los "once" se recuerdan en el GameState, así sobreviven a cambios de escena.
 std::string OnceKey(const std::string& scenePath, const std::string& triggerName) {
   return "once:" + scenePath + "#" + triggerName;
+}
+
+std::string InteractKey(const std::string& scenePath, const std::string& entityName) {
+  return "interact:" + scenePath + "#" + entityName;
 }
 
 } // namespace
@@ -60,16 +59,24 @@ void Scene::UpdateTriggers(Vector3 feet, float radius, float height, GameState& 
                            std::vector<Action>& fired) {
   // Primera llamada tras cargar: reaplica el estado persistente y no dispara nada.
   if (!triggersPrimed_) {
-    for (Trigger& t : triggers) {
-      if (t.once && state.Get(OnceKey(path, t.name)) != 0) {
-        // Un "once" ya disparado en esta partida: sus set_visible se
-        // reaplican, así la llave recogida no reaparece al volver.
-        for (const Action& a : t.actions) {
-          if (const auto* v = std::get_if<action::SetVisible>(&a)) {
-            if (Entity* e = Find(v->entity))
-              e->visible = v->visible;
-          }
+    // Un "once" ya disparado reaplica sus set_visible: lo recogido no reaparece
+    // al volver a la escena, porque las entidades se recrean desde el JSON.
+    auto reapply = [&](const std::vector<Action>& actions) {
+      for (const Action& a : actions) {
+        if (const auto* v = std::get_if<action::SetVisible>(&a)) {
+          if (Entity* e = Find(v->entity))
+            e->visible = v->visible;
         }
+      }
+    };
+
+    for (const Trigger& t : triggers) {
+      if (t.once && state.Get(OnceKey(path, t.name)) != 0)
+        reapply(t.actions);
+    }
+    for (const auto& e : entities_) {
+      if (e->interact && e->interact->once && state.Get(InteractKey(path, e->Name())) != 0) {
+        reapply(e->interact->actions);
       }
     }
   }
@@ -100,7 +107,7 @@ void Scene::UpdateTriggers(Vector3 feet, float radius, float height, GameState& 
 
     if (t.once && state.Get(OnceKey(path, t.name)) != 0)
       continue;
-    if (!ConditionsHold(t.conditions, state))
+    if (!AllHold(t.conditions, state))
       continue; // no consume el "once"
 
     if (t.once)
@@ -109,6 +116,57 @@ void Scene::UpdateTriggers(Vector3 feet, float radius, float height, GameState& 
   }
 
   triggersPrimed_ = true;
+}
+
+Scene::InteractHit Scene::FindInteractable(Vector3 origin, Vector3 dir, const GameState& state) {
+  InteractHit best;
+  float bestT = FLT_MAX;
+
+  for (const auto& e : entities_) {
+    if (!e->interact || !e->visible)
+      continue;
+    const Interaction& it = *e->interact;
+
+    if (it.once && state.Get(InteractKey(path, e->Name())) != 0)
+      continue;
+    if (!AllHold(it.conditions, state))
+      continue;
+
+    float t = 0.0f;
+    if (!RayIntersectsBox(MakeWorldBox(it.box, e->transform), origin, dir, t))
+      continue;
+    if (t > it.range || t >= bestT)
+      continue;
+
+    // Oclusión: cualquier OTRA entidad sólida más cerca bloquea el rayo.
+    // La propia se excluye para que su collider no se tape a sí mismo.
+    bool blocked = false;
+    for (const auto& o : entities_) {
+      if (o.get() == e.get() || !o->collider || !o->visible)
+        continue;
+      float to = 0.0f;
+      if (RayIntersectsBox(MakeWorldBox(*o->collider, o->transform), origin, dir, to) &&
+          to < t - 1e-3f) {
+        blocked = true;
+        break;
+      }
+    }
+    if (blocked)
+      continue;
+
+    best.entity = e.get();
+    best.distance = t;
+    bestT = t;
+  }
+  return best;
+}
+
+void Scene::Interact(Entity& entity, GameState& state, std::vector<Action>& fired) {
+  if (!entity.interact)
+    return;
+  if (entity.interact->once)
+    state.Set(InteractKey(path, entity.Name()), 1);
+  fired.insert(fired.end(), entity.interact->actions.begin(), entity.interact->actions.end());
 }
 
 } // namespace retro

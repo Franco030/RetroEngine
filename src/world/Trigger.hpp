@@ -1,50 +1,14 @@
 #pragma once
 
 #include "physics/Collision.hpp"
+#include "world/Logic.hpp"
 
 #include <raylib.h>
 
-#include <optional>
 #include <string>
-#include <variant>
 #include <vector>
 
 namespace retro {
-
-namespace action {
-
-struct GotoScene {
-  std::string scene;
-  std::optional<Vector3> position;
-  std::optional<float> yaw;
-};
-struct Teleport {
-  Vector3 position{};
-  std::optional<float> yaw;
-};
-struct SetFlag {
-  std::string name;
-  int value = 1;
-};
-struct Message {
-  std::string text;
-  float seconds = 3.0f;
-};
-struct SetVisible {
-  std::string entity;
-  bool visible = true;
-};
-
-} // namespace action
-
-using Action = std::variant<action::GotoScene, action::Teleport, action::SetFlag, action::Message,
-                            action::SetVisible>;
-
-struct Condition {
-  std::string flag;
-  int equals = 1;
-  bool negate = false;
-};
 
 enum class TriggerEvent { Enter, Exit, Stay };
 
@@ -58,7 +22,7 @@ struct Trigger {
   std::vector<Condition> conditions;
   std::vector<Action> actions;
 
-  bool inside = false;
+  bool inside = false; // estado del frame anterior
 };
 
 } // namespace retro

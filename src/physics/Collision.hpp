@@ -34,4 +34,9 @@ bool OverlapsCircle(const WorldBox& box, Vector2 pos, float radius);
 // Si hay solape, mueve 'pos' fuera de la caja y devuelve true
 bool PushOutCircle(const WorldBox& box, Vector2& pos, float radius);
 
+// Rayo (direccion unitaria) contra la caja orientada
+// Si hay impacto devuelve true y la distancia 't' hasta el primer punto
+// (0 si el origen esta dentro)
+bool RayIntersectsBox(const WorldBox& box, Vector3 origin, Vector3 direction, float& t);
+
 } // namespace retro

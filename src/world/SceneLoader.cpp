@@ -154,14 +154,74 @@ void EnsureUniqueTrigger(const Scene& scene, const std::string& name) {
   }
 }
 
-Condition ParseCondition(const json& jc) {
+CompareOp ParseOp(const std::string& s) {
+  if (s == "==")
+    return CompareOp::Eq;
+  if (s == "!=")
+    return CompareOp::Ne;
+  if (s == "<")
+    return CompareOp::Lt;
+  if (s == "<=")
+    return CompareOp::Le;
+  if (s == ">")
+    return CompareOp::Gt;
+  if (s == ">=")
+    return CompareOp::Ge;
+  throw std::runtime_error("operador desconocido: '" + s + "' (==, !=, <, <=, >, >=)");
+}
+
+// Una condicion es UNA de:
+//   { "flag": "monedas", "op": ">=", "value": 3 }      (op por defecto "==", value por defecto 1)
+//   { "flag": "x", "not": true }                       (atajo de compatibilidad)
+//   { "all": [ ... ] }   { "any": [ ... ] }   { "not": { ... } }
+Condition ParseCondition(const json& jc, int depth = 0) {
+  if (!jc.is_object())
+    throw std::runtime_error("cada condicion debe ser un objeto");
+  if (depth > 8)
+    throw std::runtime_error("condiciones anidadas demasiado profundas");
+
+  const bool notIsGroup = jc.contains("not") && jc.at("not").is_object();
+  const int found = static_cast<int>(jc.contains("flag")) + static_cast<int>(jc.contains("all")) +
+                    static_cast<int>(jc.contains("any")) + static_cast<int>(notIsGroup);
+  if (found != 1) {
+    throw std::runtime_error(
+        "cada condicion necesita exactamente una de: flag, all, any, not {...}");
+  }
+
   Condition c;
-  c.flag = jc.at("flag").get<std::string>();
-  c.equals = jc.value("equals", 1);
-  c.negate = jc.value("not", false);
+  auto readChildren = [&](const char* key) {
+    const json& arr = jc.at(key);
+    if (!arr.is_array() || arr.empty()) {
+      throw std::runtime_error(std::string("'") + key + "' debe ser un arreglo no vacio");
+    }
+    for (const json& item : arr)
+      c.children.push_back(ParseCondition(item, depth + 1));
+  };
+
+  if (jc.contains("all")) {
+    c.kind = Condition::Kind::All;
+    readChildren("all");
+  } else if (jc.contains("any")) {
+    c.kind = Condition::Kind::Any;
+    readChildren("any");
+  } else if (notIsGroup) {
+    c.kind = Condition::Kind::Not;
+    c.children.push_back(ParseCondition(jc.at("not"), depth + 1));
+  } else {
+    c.flag = jc.at("flag").get<std::string>();
+    c.op = ParseOp(jc.value("op", std::string("==")));
+    c.value = jc.value("value", jc.value("equals", 1));
+    if (jc.value("not", false)) {
+      Condition n;
+      n.kind = Condition::Kind::Not;
+      n.children.push_back(std::move(c));
+      return n;
+    }
+  }
   return c;
 }
 
+// "if": { ... }  o  "if": [ { ... }, { ... } ]   (todas deben cumplirse)
 std::vector<Condition> ParseConditions(const json& jt) {
   std::vector<Condition> out;
   if (!jt.contains("if"))
@@ -176,7 +236,6 @@ std::vector<Condition> ParseConditions(const json& jt) {
   } else {
     throw std::runtime_error("'if' debe ser un objeto o un arreglo de objetos");
   }
-
   return out;
 }
 
@@ -218,6 +277,13 @@ Action ParseAction(const json& ja) {
     result = a;
     ++found;
   }
+  if (ja.contains("add_flag")) {
+    action::AddFlag a;
+    a.name = ja.at("add_flag").get<std::string>();
+    a.amount = ja.value("amount", 1);
+    result = a;
+    ++found;
+  }
   if (ja.contains("message")) {
     action::Message a;
     a.text = ja.at("message").get<std::string>();
@@ -234,9 +300,8 @@ Action ParseAction(const json& ja) {
   }
 
   if (found != 1) {
-    throw std::runtime_error(
-        "cada accion debe tener exactamente una de: goto_scene, teleport, set_flag, "
-        "message, set_visible");
+    throw std::runtime_error("cada accion debe tener exactamente una de: goto_scene, teleport, "
+                             "set_flag, add_flag, message, set_visible");
   }
   return result;
 }
@@ -250,6 +315,40 @@ TriggerEvent ParseEvent(const std::string& s) {
     return TriggerEvent::Stay;
 
   throw std::runtime_error("evento desconocido: '" + s + "' (enter, exit o stay)");
+}
+
+// "interact": { "prompt": "Abrir", "range": 2.5, "once": true,
+//               "box": { "min": [...], "max": [...] },     (opcional)
+//               "if": ..., "do": [ ... ] }
+// Sin "box": usa el collider de la entidad, o la caja del modelo si no tiene.
+Interaction ReadInteraction(const json& ji, ModelResource& model,
+                            const std::optional<BoxCollider>& collider) {
+  Interaction it;
+  it.prompt = ji.value("prompt", std::string("Interactuar"));
+  it.range = ji.value("range", 2.5f);
+  it.once = ji.value("once", false);
+  it.conditions = ParseConditions(ji);
+
+  for (const json& ja : ji.at("do"))
+    it.actions.push_back(ParseAction(ja));
+  if (it.actions.empty())
+    throw std::runtime_error("'interact' necesita al menos una accion en 'do'");
+
+  if (ji.contains("box")) {
+    const json& jb = ji.at("box");
+    it.box.min = ReadVec3(jb, "min", {0.0f, 0.0f, 0.0f});
+    it.box.max = ReadVec3(jb, "max", {0.0f, 0.0f, 0.0f});
+    if (it.box.min.x >= it.box.max.x || it.box.min.y >= it.box.max.y ||
+        it.box.min.z >= it.box.max.z) {
+      throw std::runtime_error(
+          "'interact.box': cada componente de 'min' debe ser menor que el de 'max'");
+    }
+  } else if (collider) {
+    it.box = *collider;
+  } else {
+    it.box = ComputeAutoBox(model);
+  }
+  return it;
 }
 
 void AddTrigger(const json& jt, Scene& scene) {
@@ -317,6 +416,8 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
   e.transform.scale = ReadVec3(je, "scale", {1.0f, 1.0f, 1.0f});
   e.tint = ReadColor(je, "tint", WHITE);
   e.visible = je.value("visible", true);
+  if (je.contains("interact"))
+    e.interact = ReadInteraction(je.at("interact"), *model, collider);
 
   const Vector3 spin = ReadVec3(je, "spin", {0.0f, 0.0f, 0.0f});
   if (spin.x != 0.0f || spin.y != 0.0f || spin.z != 0.0f) {

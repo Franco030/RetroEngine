@@ -3,6 +3,7 @@
 #include <raymath.h>
 
 #include <algorithm>
+#include <cfloat>
 #include <cmath>
 
 namespace retro {
@@ -89,6 +90,41 @@ bool PushOutCircle(const WorldBox& box, Vector2& pos, float radius) {
   // De coordenadas locales a mundo.
   pos.x += (nx * box.axisX.x + nz * box.axisZ.x) * push;
   pos.y += (nx * box.axisX.y + nz * box.axisZ.y) * push;
+  return true;
+}
+
+bool RayIntersectsBox(const WorldBox& b, Vector3 origin, Vector3 dir, float& tOut) {
+  // Al espacio local de la caja: X y Z a lo largo de sus ejes, Y es el del mundo.
+  const float rx = origin.x - b.center.x;
+  const float rz = origin.z - b.center.z;
+  const float ox = rx * b.axisX.x + rz * b.axisX.y;
+  const float oz = rx * b.axisZ.x + rz * b.axisZ.y;
+  const float dx = dir.x * b.axisX.x + dir.z * b.axisX.y;
+  const float dz = dir.x * b.axisZ.x + dir.z * b.axisZ.y;
+
+  float tmin = 0.0f;
+  float tmax = FLT_MAX;
+
+  auto slab = [&](float o, float d, float lo, float hi) {
+    if (std::fabs(d) < 1e-8f)
+      return o >= lo && o <= hi; // paralelo al plano
+    float t1 = (lo - o) / d;
+    float t2 = (hi - o) / d;
+    if (t1 > t2)
+      std::swap(t1, t2);
+    tmin = std::max(tmin, t1);
+    tmax = std::min(tmax, t2);
+    return tmin <= tmax;
+  };
+
+  if (!slab(ox, dx, -b.halfX, b.halfX))
+    return false;
+  if (!slab(origin.y, dir.y, b.bottom, b.top))
+    return false;
+  if (!slab(oz, dz, -b.halfZ, b.halfZ))
+    return false;
+
+  tOut = tmin;
   return true;
 }
 

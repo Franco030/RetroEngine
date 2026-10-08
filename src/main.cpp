@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include <raymath.h>
 
 #include <algorithm>
 #include <cstdint>
@@ -92,6 +93,7 @@ int main() {
     std::uint64_t seenGeneration = scenes.Generation();
     bool firstPerson = true;
     bool showColliders = false;
+    std::string interactPrompt;
 
     auto spawnPlayer = [&]() {
       if (const retro::Scene* s = scenes.Current()) {
@@ -166,6 +168,24 @@ int main() {
             }
           }
 
+          // --- Interaccion (E) ---
+          interactPrompt.clear();
+          if (firstPerson && !scenes.Transitioning()) {
+            if (retro::Scene* s = scenes.CurrentMut()) {
+              const Vector3 origin = camera.Position();
+              const Vector3 dir = Vector3Normalize(Vector3Subtract(camera.Target(), origin));
+              const auto hit = s->FindInteractable(origin, dir, state);
+              if (hit.entity) {
+                interactPrompt = "E: " + hit.entity->interact->prompt;
+                if (IsKeyPressed(KEY_E)) {
+                  firedActions.clear();
+                  s->Interact(*hit.entity, state, firedActions);
+                  runner.Run(firedActions);
+                }
+              }
+            }
+          }
+
           HandleDebugKeys(engine);
         },
         [&]() {
@@ -193,8 +213,14 @@ int main() {
 
           const int w = engine.Config().internalWidth;
           const int h = engine.Config().internalHeight;
+          const Color crossColor = interactPrompt.empty() ? RAYWHITE : YELLOW;
           if (firstPerson)
-            DrawRectangle(w / 2 - 1, h / 2 - 1, 2, 2, RAYWHITE);
+            DrawRectangle(w / 2 - 1, h / 2 - 1, 2, 2, crossColor);
+
+          if (!interactPrompt.empty()) {
+            const int tw = MeasureText(interactPrompt.c_str(), 10);
+            DrawText(interactPrompt.c_str(), w / 2 - tw / 2, h / 2 + 10, 10, YELLOW);
+          }
 
           DrawText("1:jitter 2:color 3:dither 4:niebla  F5:recargar F6:reset", 4, 4, 10, RAYWHITE);
           DrawText(firstPerson ? "WASD mover  Shift correr  Espacio saltar"

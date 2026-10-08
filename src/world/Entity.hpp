@@ -3,6 +3,7 @@
 #include "assets/Resources.hpp"
 #include "graphics/Transform.hpp"
 #include "physics/Collision.hpp"
+#include <world/Logic.hpp>
 
 #include <raylib.h>
 
@@ -37,6 +38,7 @@ public:
   Color tint = WHITE;
   bool visible = true;
   std::optional<BoxCollider> collider;
+  std::optional<Interaction> interact;
 
 private:
   std::string name_;

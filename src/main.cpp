@@ -7,6 +7,7 @@
 #include "assets/Resources.hpp"
 #include "core/RetroEngine.hpp"
 #include "graphics/DebugDraw.hpp"
+#include "graphics/MeshFactory.hpp"
 #include "graphics/RetroCamera.hpp"
 #include "graphics/ShaderScope.hpp"
 #include "world/Entity.hpp"
@@ -57,6 +58,19 @@ int main() {
     // --- Escena ---
     retro::Scene scene;
 
+    constexpr float kFloorSize = 40.0f;
+    constexpr int kFloorSubdiv = 20;
+    constexpr float kFloorTiles = 20.0f;
+
+    auto floorTexture = engine.Assets().GetTexture("textures/suelo.png");
+    floorTexture->SetWrap(TEXTURE_WRAP_MIRROR_REPEAT);
+
+    auto floorModel = std::make_shared<retro::ModelResource>(
+        retro::MakeTiledPlane(kFloorSize, kFloorSize, kFloorSubdiv, kFloorTiles, kFloorTiles));
+    floorModel->SetShader(engine.Retro().Lit());
+
+    scene.Add(std::make_unique<retro::Entity>("suelo", floorModel, floorTexture));
+
     auto& center = scene.Add(std::make_unique<retro::Entity>("casa_centro", house, texture));
     center.SetUpdate([](retro::Entity& e, float dt) { e.transform.rotation.y += 20.0f * dt; });
 
@@ -87,7 +101,6 @@ int main() {
           camera.Begin();
           {
             retro::ShaderScope lines(engine.Retro().Unlit()->Get());
-            retro::DrawFloorGrid(10, 1.0f, {110, 95, 160, 255}, {190, 130, 255, 255});
           }
           scene.Draw();
           camera.End();

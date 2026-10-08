@@ -22,6 +22,7 @@ public:
 
   const Texture2D& Get() const noexcept { return texture_; }
   bool IsValid() const noexcept { return texture_.id != 0; }
+  void SetWrap(int wrap) noexcept;
 
 private:
   void Release() noexcept;

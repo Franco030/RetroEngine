@@ -29,6 +29,8 @@ TextureResource::TextureResource(const std::string& path) : texture_(::LoadTextu
 
 TextureResource::~TextureResource() { Release(); }
 
+void TextureResource::SetWrap(int wrap) noexcept { ::SetTextureWrap(texture_, wrap); }
+
 TextureResource::TextureResource(TextureResource&& other) noexcept
     : texture_(std::exchange(other.texture_, Texture2D{})) {}
 

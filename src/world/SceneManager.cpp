@@ -61,6 +61,11 @@ void SceneManager::LoadNow(std::size_t index) {
     scene_ = std::move(next); // la escena anterior se destruye aqui
     index_ = index;
     ++generation_;
+
+    if (pendingSpawnPos_)
+      scene_->spawn.position = *pendingSpawnPos_;
+    if (pendingSpawnYaw_)
+      scene_->spawn.yaw = *pendingSpawnYaw_;
   } catch (...) {
     camera_ = savedCamera;
     engine_.SetClearColor(savedBackground);
@@ -78,8 +83,29 @@ void SceneManager::GoTo(std::size_t index) {
   if (phase_ != Phase::Idle)
     return;
 
+  pendingSpawnPos_.reset();
+  pendingSpawnYaw_.reset();
   pending_ = index;
   phase_ = Phase::FadingOut;
+}
+
+void SceneManager::GoToPath(const std::string& relativePath, std::optional<Vector3> spawnPosition,
+                            std::optional<float> spawnYaw) {
+  if (phase_ != Phase::Idle)
+    return;
+
+  auto it = std::find(paths_.begin(), paths_.end(), relativePath);
+  if (it == paths_.end()) {
+    if (!FileExists((engine_.Assets().Root() + relativePath).c_str())) {
+      throw std::invalid_argument("escena de destino inexistente: " + relativePath);
+    }
+    paths_.push_back(relativePath);
+    it = paths_.end() - 1;
+  }
+
+  GoTo(static_cast<std::size_t>(it - paths_.begin()));
+  pendingSpawnPos_ = spawnPosition;
+  pendingSpawnYaw_ = spawnYaw;
 }
 
 void SceneManager::Next() {
@@ -93,6 +119,8 @@ void SceneManager::Previous() {
 }
 
 void SceneManager::Reload() {
+  pendingSpawnPos_.reset();
+  pendingSpawnYaw_.reset();
   phase_ = Phase::Idle;
   fade_ = 0.0f;
 
@@ -117,6 +145,9 @@ void SceneManager::Update(float dt) {
       } catch (const std::exception& e) {
         std::cerr << "No se pudo cambiar de escena: " << e.what() << '\n';
       }
+      pendingSpawnPos_.reset();
+      pendingSpawnYaw_.reset();
+
       phase_ = Phase::FadingIn;
     }
     break;

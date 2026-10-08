@@ -6,6 +6,7 @@
 #include "physics/Collision.hpp"
 #include "world/Entity.hpp"
 #include "world/Scene.hpp"
+#include "world/Trigger.hpp"
 
 #include <raylib.h>
 #include <raymath.h>
@@ -129,6 +130,167 @@ std::optional<BoxCollider> ReadCollider(const json& je, ModelResource& model, bo
   return std::nullopt;
 }
 
+// Zona en el mundo a partir de "position" (centro bajo los pies), "size" y "rotation"
+WorldBox ReadZone(const json& j) {
+  const Vector3 size = ReadVec3(j, "size", {2.0f, 2.4f, 0.8f});
+  if (size.x <= 0.0f || size.y <= 0.0f || size.z <= 0.0f) {
+    throw std::runtime_error("'size' debe tener valores positivos");
+  }
+
+  BoxCollider local;
+  local.min = {-size.x * 0.5f, 0.0f, -size.z * 0.5f};
+  local.max = {size.x * 0.5f, size.y, size.z * 0.5f};
+
+  retro::Transform t;
+  t.position = ReadVec3(j, "position", {0.0f, 0.0f, 0.0f});
+  t.rotation = {0.0f, j.value("rotation", 0.0f), 0.0f};
+  return MakeWorldBox(local, t);
+}
+
+void EnsureUniqueTrigger(const Scene& scene, const std::string& name) {
+  for (const Trigger& t : scene.triggers) {
+    if (t.name == name)
+      throw std::runtime_error("nombre de trigger duplicado: '" + name + "'");
+  }
+}
+
+Condition ParseCondition(const json& jc) {
+  Condition c;
+  c.flag = jc.at("flag").get<std::string>();
+  c.equals = jc.value("equals", 1);
+  c.negate = jc.value("not", false);
+  return c;
+}
+
+std::vector<Condition> ParseConditions(const json& jt) {
+  std::vector<Condition> out;
+  if (!jt.contains("if"))
+    return out;
+
+  const json& jc = jt.at("if");
+  if (jc.is_object()) {
+    out.push_back(ParseCondition(jc));
+  } else if (jc.is_array()) {
+    for (const json& item : jc)
+      out.push_back(ParseCondition(item));
+  } else {
+    throw std::runtime_error("'if' debe ser un objeto o un arreglo de objetos");
+  }
+
+  return out;
+}
+
+// Cada accion es un objeto con UNA clave de accion y, si hace falta, modificadores:
+//   { "goto_scene": "scenes/x.json", "position": [x,y,z], "yaw": 0 }
+//   { "teleport": [x,y,z], "yaw": 90 }
+//   { "set_flag": "nombre", "value": 1 }
+//   { "message": "texto\notra linea", "seconds": 3 }
+//   { "set_visible": "entidad", "visible": false }
+Action ParseAction(const json& ja) {
+  if (!ja.is_object())
+    throw std::runtime_error("cada accion debe ser un objeto");
+
+  Action result;
+  int found = 0;
+
+  if (ja.contains("goto_scene")) {
+    action::GotoScene a;
+    a.scene = ja.at("goto_scene").get<std::string>();
+    if (ja.contains("position"))
+      a.position = ReadVec3(ja, "position", {0.0f, 0.0f, 0.0f});
+    if (ja.contains("yaw"))
+      a.yaw = ja.at("yaw").get<float>();
+    result = a;
+    ++found;
+  }
+  if (ja.contains("teleport")) {
+    action::Teleport a;
+    a.position = ReadVec3(ja, "teleport", {0.0f, 0.0f, 0.0f});
+    if (ja.contains("yaw"))
+      a.yaw = ja.at("yaw").get<float>();
+    result = a;
+    ++found;
+  }
+  if (ja.contains("set_flag")) {
+    action::SetFlag a;
+    a.name = ja.at("set_flag").get<std::string>();
+    a.value = ja.value("value", 1);
+    result = a;
+    ++found;
+  }
+  if (ja.contains("message")) {
+    action::Message a;
+    a.text = ja.at("message").get<std::string>();
+    a.seconds = ja.value("seconds", 3.0f);
+    result = a;
+    ++found;
+  }
+  if (ja.contains("set_visible")) {
+    action::SetVisible a;
+    a.entity = ja.at("set_visible").get<std::string>();
+    a.visible = ja.value("visible", true);
+    result = a;
+    ++found;
+  }
+
+  if (found != 1) {
+    throw std::runtime_error(
+        "cada accion debe tener exactamente una de: goto_scene, teleport, set_flag, "
+        "message, set_visible");
+  }
+  return result;
+}
+
+TriggerEvent ParseEvent(const std::string& s) {
+  if (s == "enter")
+    return TriggerEvent::Enter;
+  if (s == "exit")
+    return TriggerEvent::Exit;
+  if (s == "stay")
+    return TriggerEvent::Stay;
+
+  throw std::runtime_error("evento desconocido: '" + s + "' (enter, exit o stay)");
+}
+
+void AddTrigger(const json& jt, Scene& scene) {
+  Trigger t;
+  t.name = jt.value("name", "trigger_" + std::to_string(scene.triggers.size()));
+  EnsureUniqueTrigger(scene, t.name);
+
+  t.box = ReadZone(jt);
+  t.on = ParseEvent(jt.value("on", std::string("enter")));
+  t.once = jt.value("once", false);
+  t.marker = jt.value("marker", false);
+  t.color = ReadColor(jt, "color", {255, 200, 80, 255});
+  t.conditions = ParseConditions(jt);
+
+  for (const json& ja : jt.at("do"))
+    t.actions.push_back(ParseAction(ja));
+
+  scene.triggers.push_back(std::move(t));
+}
+
+void AddPortal(const json& jp, Scene& scene) {
+  Trigger t;
+  t.name = jp.value("name", "portal_" + std::to_string(scene.triggers.size()));
+  EnsureUniqueTrigger(scene, t.name);
+
+  const json& to = jp.at("to");
+  action::GotoScene g;
+  g.scene = to.at("scene").get<std::string>();
+  if (to.contains("position"))
+    g.position = ReadVec3(to, "position", {0.0f, 0.0f, 0.0f});
+  if (to.contains("yaw"))
+    g.yaw = to.at("yaw").get<float>();
+
+  t.box = ReadZone(jp);
+  t.marker = true;
+  t.color = ReadColor(jp, "color", {255, 200, 80, 255});
+  t.actions.push_back(std::move(g));
+
+  scene.triggers.push_back(std::move(t));
+}
+
 void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoCollide) {
   const std::string name = je.at("name").get<std::string>();
   if (scene.Find(name) != nullptr) {
@@ -174,6 +336,7 @@ void LoadScene(const std::string& relativePath, RetroEngine& engine, Scene& scen
   if (!file)
     throw std::runtime_error("No se pudo abrir la escena: " + fullPath);
 
+  scene.path = relativePath;
   std::string context = "parseando JSON";
   try {
     const json root = json::parse(file);
@@ -225,6 +388,26 @@ void LoadScene(const std::string& relativePath, RetroEngine& engine, Scene& scen
       }
       AddEntity(je, engine, scene, autoCollide);
     }
+
+    if (root.contains("portals")) {
+      int portalIndex = 0;
+      for (const json& jp : root.at("portals")) {
+        context = "portal #" + std::to_string(portalIndex++);
+        AddPortal(jp, scene);
+      }
+    }
+
+    if (root.contains("triggers")) {
+      int triggerIndex = 0;
+      for (const json& jt : root.at("triggers")) {
+        context = "trigger #" + std::to_string(triggerIndex++);
+        if (jt.contains("name") && jt["name"].is_string()) {
+          context += " '" + jt["name"].get<std::string>() + "'";
+        }
+        AddTrigger(jt, scene);
+      }
+    }
+
   } catch (const std::exception& e) {
     throw std::runtime_error(relativePath + " (" + context + "): " + e.what());
   }

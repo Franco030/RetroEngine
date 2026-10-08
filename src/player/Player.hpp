@@ -32,6 +32,8 @@ public:
   Player(const Player&) = delete;
   Player& operator=(const Player&) = delete;
 
+  const PlayerSettings& Settings() const noexcept { return cfg_; }
+
   void Spawn(Vector3 feet, float yawDegrees);
 
   void SetActive(bool active);
@@ -42,7 +44,9 @@ public:
 
   Vector3 Feet() const noexcept { return feet_; }
   Vector3 Eye() const noexcept { return {feet_.x, feet_.y + cfg_.eyeHeight, feet_.z}; }
+
   bool Grounded() const noexcept { return grounded_; }
+  float Yaw() const noexcept { return yaw_; }
 
 private:
   void Look();

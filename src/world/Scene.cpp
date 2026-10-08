@@ -6,10 +6,24 @@
 
 namespace retro {
 
+namespace {
+
+bool ConditionsHold(const std::vector<Condition>& conditions, const GameState& state) {
+  return std::all_of(conditions.begin(), conditions.end(), [&](const Condition& c) {
+    return (state.Get(c.flag) == c.equals) != c.negate;
+  });
+}
+
+// Los "once" se recuerdan en el GameState, así sobreviven a cambios de escena.
+std::string OnceKey(const std::string& scenePath, const std::string& triggerName) {
+  return "once:" + scenePath + "#" + triggerName;
+}
+
+} // namespace
+
 Entity& Scene::Add(std::unique_ptr<Entity> entity) {
   if (!entity)
     throw std::invalid_argument("Scene::Add: entidad nula");
-
   entities_.push_back(std::move(entity));
   return *entities_.back();
 }
@@ -21,7 +35,7 @@ Entity* Scene::Find(const std::string& name) {
 }
 
 bool Scene::Remove(const std::string& name) {
-  return std::erase_if(entities_, [&](const auto& e) { return e->Name() == name; });
+  return std::erase_if(entities_, [&](const auto& e) { return e->Name() == name; }) > 0;
 }
 
 void Scene::Update(float dt) {
@@ -40,6 +54,61 @@ void Scene::CollectColliders(std::vector<WorldBox>& out) const {
       out.push_back(MakeWorldBox(*e->collider, e->transform));
     }
   }
+}
+
+void Scene::UpdateTriggers(Vector3 feet, float radius, float height, GameState& state,
+                           std::vector<Action>& fired) {
+  // Primera llamada tras cargar: reaplica el estado persistente y no dispara nada.
+  if (!triggersPrimed_) {
+    for (Trigger& t : triggers) {
+      if (t.once && state.Get(OnceKey(path, t.name)) != 0) {
+        // Un "once" ya disparado en esta partida: sus set_visible se
+        // reaplican, así la llave recogida no reaparece al volver.
+        for (const Action& a : t.actions) {
+          if (const auto* v = std::get_if<action::SetVisible>(&a)) {
+            if (Entity* e = Find(v->entity))
+              e->visible = v->visible;
+          }
+        }
+      }
+    }
+  }
+
+  for (Trigger& t : triggers) {
+    const bool verticalOk = feet.y + height > t.box.bottom && feet.y < t.box.top;
+    const bool now = verticalOk && OverlapsCircle(t.box, {feet.x, feet.z}, radius);
+    const bool was = t.inside;
+    t.inside = now;
+
+    if (!triggersPrimed_)
+      continue;
+
+    bool event = false;
+    switch (t.on) {
+    case TriggerEvent::Enter:
+      event = now && !was;
+      break;
+    case TriggerEvent::Exit:
+      event = !now && was;
+      break;
+    case TriggerEvent::Stay:
+      event = now;
+      break;
+    }
+    if (!event)
+      continue;
+
+    if (t.once && state.Get(OnceKey(path, t.name)) != 0)
+      continue;
+    if (!ConditionsHold(t.conditions, state))
+      continue; // no consume el "once"
+
+    if (t.once)
+      state.Set(OnceKey(path, t.name), 1);
+    fired.insert(fired.end(), t.actions.begin(), t.actions.end());
+  }
+
+  triggersPrimed_ = true;
 }
 
 } // namespace retro

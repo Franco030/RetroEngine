@@ -7,6 +7,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -25,6 +26,13 @@ public:
 
   void LoadNow(std::size_t index);
 
+  // Cambia a la escena 'relativePath' con fundido. Si no está en la lista y el
+  // archivo existe, se añade. spawnPosition/spawnYaw reemplazan el spawn del
+  // JSON de destino. Lanza std::invalid_argument si el archivo no existe.
+  void GoToPath(const std::string& relativePath,
+                std::optional<Vector3> spawnPosition = std::nullopt,
+                std::optional<float> spawnYaw = std::nullopt);
+
   void GoTo(std::size_t index);
   void Next();
   void Previous();
@@ -41,6 +49,7 @@ public:
   bool Transitioning() const noexcept { return phase_ != Phase::Idle; }
 
   const Scene* Current() const noexcept { return scene_.get(); }
+  Scene* CurrentMut() noexcept { return scene_.get(); }
   std::uint64_t Generation() const noexcept { return generation_; }
 
 private:
@@ -60,6 +69,9 @@ private:
   RetroCamera& camera_;
   std::vector<std::string> paths_;
   float fadeSeconds_;
+
+  std::optional<Vector3> pendingSpawnPos_;
+  std::optional<float> pendingSpawnYaw_;
 
   Environment defaults_{};
   std::unique_ptr<Scene> scene_;

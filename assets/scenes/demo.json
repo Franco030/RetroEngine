@@ -92,6 +92,137 @@
                 -35,
                 0
             ]
+        },
+        {
+            "name": "llave",
+            "model": "models/casa.obj",
+            "texture": "textures/test.png",
+            "position": [
+                -6,
+                0,
+                6
+            ],
+            "scale": [
+                0.25,
+                0.25,
+                0.25
+            ],
+            "tint": [
+                255,
+                230,
+                80,
+                255
+            ],
+            "collider": false,
+            "spin": [
+                0,
+                90,
+                0
+            ]
+        }
+    ],
+    "triggers": [
+        {
+            "name": "cartel",
+            "position": [
+                0,
+                0,
+                5
+            ],
+            "size": [
+                5,
+                2,
+                2
+            ],
+            "once": true,
+            "do": [
+                {
+                    "message": "Algo brilla hacia el oeste...",
+                    "seconds": 4
+                }
+            ]
+        },
+        {
+            "name": "recoger_llave",
+            "position": [
+                -6,
+                0,
+                6
+            ],
+            "size": [
+                1.6,
+                2,
+                1.6
+            ],
+            "once": true,
+            "do": [
+                {
+                    "set_visible": "llave",
+                    "visible": false
+                },
+                {
+                    "set_flag": "tiene_llave"
+                },
+                {
+                    "message": "Recogiste la llave"
+                }
+            ]
+        },
+        {
+            "name": "puerta_cerrada",
+            "position": [
+                9,
+                0,
+                -6
+            ],
+            "size": [
+                2,
+                2.4,
+                0.8
+            ],
+            "if": {
+                "flag": "tiene_llave",
+                "not": true
+            },
+            "do": [
+                {
+                    "message": "La puerta esta cerrada.\nNecesitas una llave."
+                }
+            ]
+        },
+        {
+            "name": "puerta_noche",
+            "position": [
+                9,
+                0,
+                -6
+            ],
+            "size": [
+                2,
+                2.4,
+                0.8
+            ],
+            "marker": true,
+            "color": [
+                140,
+                120,
+                255,
+                255
+            ],
+            "if": {
+                "flag": "tiene_llave"
+            },
+            "do": [
+                {
+                    "goto_scene": "scenes/noche.json",
+                    "position": [
+                        0,
+                        0,
+                        13
+                    ],
+                    "yaw": 0
+                }
+            ]
         }
     ]
 }

@@ -4,6 +4,8 @@
 
 #include <raylib.h>
 
+#include <cmath>
+
 namespace retro {
 
 inline void DrawFloorGrid(int halfCells, float spacing, Color line, Color axis) {
@@ -34,6 +36,26 @@ inline void DrawWorldBoxWires(const WorldBox& b, Color color) {
       if (i < j)
         DrawLine3D(c[i], c[j], color);
     }
+  }
+}
+
+inline void DrawPortalFrame(const WorldBox& b, Color color) {
+  DrawWorldBoxWires(b, color);
+
+  const float t = static_cast<float>(GetTime()) * 0.6f;
+  for (int k = 0; k < 2; ++k) {
+    const float f = std::fmod(t + 0.5f * static_cast<float>(k), 1.0f);
+    const float y = b.bottom + (b.top - b.bottom) * f;
+
+    Vector3 c[4];
+    for (int i = 0; i < 4; ++i) {
+      const float lx = (i == 1 || i == 2) ? b.halfX : -b.halfX;
+      const float lz = (i >= 2) ? b.halfZ : -b.halfZ;
+      c[i] = {b.center.x + lx * b.axisX.x + lz * b.axisZ.x, y,
+              b.center.z + lx * b.axisX.y + lz * b.axisZ.y};
+    }
+    for (int i = 0; i < 4; ++i)
+      DrawLine3D(c[i], c[(i + 1) % 4], color);
   }
 }
 

@@ -50,14 +50,17 @@ void RetroShader::Upload(const Program& p) const {
   const Shader& s = p.shader->Get();
   const Locations& l = p.loc;
 
+  const float fogStart = params_.fogEnabled ? params_.fogStart : 1.0e6f;
+  const float fogEnd = params_.fogEnabled ? params_.fogEnd : 2.0e6f;
+
   SetUniform(s, l.snapResolution, &params_.snapResolution, SHADER_UNIFORM_VEC2);
   SetUniform(s, l.colorLevels, &params_.colorLevels, SHADER_UNIFORM_FLOAT);
   SetUniform(s, l.dither, &params_.ditherStrength, SHADER_UNIFORM_FLOAT);
   SetUniform(s, l.lightDir, &params_.lightDirection, SHADER_UNIFORM_VEC3);
   SetUniform(s, l.ambient, &params_.ambient, SHADER_UNIFORM_FLOAT);
   SetUniform(s, l.fogColor, &params_.fogColor, SHADER_UNIFORM_VEC3);
-  SetUniform(s, l.fogStart, &params_.fogStart, SHADER_UNIFORM_FLOAT);
-  SetUniform(s, l.fogEnd, &params_.fogEnd, SHADER_UNIFORM_FLOAT);
+  SetUniform(s, l.fogStart, &fogStart, SHADER_UNIFORM_FLOAT);
+  SetUniform(s, l.fogEnd, &fogEnd, SHADER_UNIFORM_FLOAT);
 }
 
 } // namespace retro

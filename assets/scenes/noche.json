@@ -1,0 +1,207 @@
+{
+    "camera": {
+        "position": [
+            9,
+            6,
+            11
+        ],
+        "target": [
+            0,
+            1,
+            0
+        ],
+        "fov": 60
+    },
+    "player": {
+        "position": [
+            0,
+            0,
+            9
+        ],
+        "yaw": 0
+    },
+    "autoCollide": true,
+    "background": [
+        10,
+        12,
+        30
+    ],
+    "fog": {
+        "start": 4,
+        "end": 20
+    },
+    "light": {
+        "direction": [
+            0.4,
+            -0.5,
+            -0.6
+        ],
+        "ambient": 0.15
+    },
+    "entities": [
+        {
+            "name": "suelo",
+            "model": {
+                "type": "plane",
+                "size": 40,
+                "subdivisions": 20,
+                "tiles": 20
+            },
+            "texture": "textures/suelo.png",
+            "wrap": "repeat",
+            "tint": [
+                110,
+                110,
+                170,
+                255
+            ]
+        },
+        {
+            "name": "torre",
+            "model": "models/casa.obj",
+            "texture": "textures/test.png",
+            "scale": [
+                0.6,
+                2.2,
+                0.6
+            ],
+            "tint": [
+                180,
+                180,
+                255,
+                255
+            ],
+            "spin": [
+                0,
+                15,
+                0
+            ]
+        },
+        {
+            "name": "casa_1",
+            "model": "models/casa.obj",
+            "texture": "textures/test.png",
+            "position": [
+                6,
+                0,
+                0
+            ],
+            "rotation": [
+                0,
+                -90,
+                0
+            ],
+            "tint": [
+                150,
+                150,
+                220,
+                255
+            ]
+        },
+        {
+            "name": "casa_2",
+            "model": "models/casa.obj",
+            "texture": "textures/test.png",
+            "position": [
+                3,
+                0,
+                5.2
+            ],
+            "rotation": [
+                0,
+                -150,
+                0
+            ],
+            "tint": [
+                150,
+                150,
+                220,
+                255
+            ]
+        },
+        {
+            "name": "casa_3",
+            "model": "models/casa.obj",
+            "texture": "textures/test.png",
+            "position": [
+                -3,
+                0,
+                5.2
+            ],
+            "rotation": [
+                0,
+                150,
+                0
+            ],
+            "tint": [
+                150,
+                150,
+                220,
+                255
+            ]
+        },
+        {
+            "name": "casa_4",
+            "model": "models/casa.obj",
+            "texture": "textures/test.png",
+            "position": [
+                -6,
+                0,
+                0
+            ],
+            "rotation": [
+                0,
+                90,
+                0
+            ],
+            "tint": [
+                150,
+                150,
+                220,
+                255
+            ]
+        },
+        {
+            "name": "casa_5",
+            "model": "models/casa.obj",
+            "texture": "textures/test.png",
+            "position": [
+                -3,
+                0,
+                -5.2
+            ],
+            "rotation": [
+                0,
+                30,
+                0
+            ],
+            "tint": [
+                150,
+                150,
+                220,
+                255
+            ]
+        },
+        {
+            "name": "casa_6",
+            "model": "models/casa.obj",
+            "texture": "textures/test.png",
+            "position": [
+                3,
+                0,
+                -5.2
+            ],
+            "rotation": [
+                0,
+                -30,
+                0
+            ],
+            "tint": [
+                150,
+                150,
+                220,
+                255
+            ]
+        }
+    ]
+}

@@ -34,4 +34,12 @@ void Scene::Draw() {
     e->Draw();
 }
 
+void Scene::CollectColliders(std::vector<WorldBox>& out) const {
+  for (const auto& e : entities_) {
+    if (e->collider && e->visible) {
+      out.push_back(MakeWorldBox(*e->collider, e->transform));
+    }
+  }
+}
+
 } // namespace retro

@@ -31,6 +31,8 @@ public:
   std::size_t ModelCount() const noexcept { return models_.size(); }
   std::size_t ShaderCount() const noexcept { return shaders_.size(); }
 
+  const std::string& Root() const noexcept { return root_; }
+
 private:
   std::string Resolve(const std::string& relativePath) const;
 

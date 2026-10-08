@@ -94,6 +94,13 @@ Rectangle RetroEngine::PresentationRect() const {
   return {std::floor((winW - w) * 0.5f), std::floor((winH - h) * 0.5f), w, h};
 }
 
+void RetroEngine::SetClearColor(Color color) {
+  config_.clearColor = color;
+  RetroShaderParams p = retroShader_.Params();
+  p.fogColor = {color.r / 255.0f, color.g / 255.0f, color.b / 255.0f};
+  retroShader_.SetParams(p);
+}
+
 Vector2 RetroEngine::WindowToInternal(Vector2 windowPos) const {
   const Rectangle dst = PresentationRect();
   return {(windowPos.x - dst.x) * static_cast<float>(config_.internalWidth) / dst.width,

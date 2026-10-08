@@ -17,6 +17,9 @@ public:
   void Begin() const;
   void End() const;
 
+  void SetView(Vector3 eye, float yawDegrees, float pitchDegrees);
+  void OrbitAround(Vector3 target, float distance);
+
   const Camera3D& Raw() const noexcept { return camera_; }
   Vector3 Position() const noexcept { return camera_.position; }
   Vector3 Target() const noexcept { return camera_.target; }

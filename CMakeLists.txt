@@ -27,13 +27,20 @@ set(BUILD_EXAMPLES    OFF CACHE BOOL "" FORCE)
 set(BUILD_GAMES       OFF CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
+    nlohmann_json
+    URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+
+FetchContent_Declare(
     raylib
     GIT_REPOSITORY https://github.com/raysan5/raylib.git
     GIT_TAG        5.5
     GIT_SHALLOW    TRUE
 )
 
-FetchContent_MakeAvailable(raylib)
+FetchContent_MakeAvailable(raylib nlohmann_json)
 
 file(GLOB_RECURSE RETRO_SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
@@ -45,7 +52,7 @@ file(GLOB_RECURSE RETRO_HEADERS CONFIGURE_DEPENDS
 add_executable(${PROJECT_NAME} ${RETRO_SOURCES} ${RETRO_HEADERS})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
+target_link_libraries(${PROJECT_NAME} PRIVATE raylib nlohmann_json::nlohmann_json)
 
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /permissive-)

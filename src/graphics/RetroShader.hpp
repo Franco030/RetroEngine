@@ -18,6 +18,7 @@ struct RetroShaderParams {
   Vector3 fogColor{0.094f, 0.078f, 0.125f};
   float fogStart = 10.0f;
   float fogEnd = 26.0f;
+  bool fogEnabled = true;
 };
 
 class RetroShader {

@@ -34,6 +34,24 @@ void RetroCamera::LookAt(Vector3 target) {
 
 void RetroCamera::SetFov(float degrees) { camera_.fovy = degrees; }
 
+void RetroCamera::SetView(Vector3 eye, float yawDegrees, float pitchDegrees) {
+  const float yaw = yawDegrees * DEG2RAD;
+  const float pitch = pitchDegrees * DEG2RAD;
+
+  const Vector3 forward = {-std::sin(yaw) * std::cos(pitch), std::sin(pitch),
+                           -std::cos(yaw) * std::cos(pitch)};
+
+  camera_.position = eye;
+  camera_.target = Vector3Add(eye, forward);
+  SyncOrbitFromCamera();
+}
+
+void RetroCamera::OrbitAround(Vector3 target, float distance) {
+  camera_.target = target;
+  distance_ = std::clamp(distance, kMinDistance, kMaxDistance);
+  ApplyOrbit();
+}
+
 void RetroCamera::Begin() const { BeginMode3D(camera_); }
 void RetroCamera::End() const { EndMode3D(); }
 

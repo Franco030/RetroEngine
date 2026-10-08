@@ -1,0 +1,97 @@
+{
+    "camera": {
+        "position": [
+            7,
+            5,
+            9
+        ],
+        "target": [
+            0,
+            1,
+            0
+        ],
+        "fov": 60
+    },
+    "player": {
+        "position": [
+            0,
+            0,
+            9
+        ],
+        "yaw": 0
+    },
+    "autoCollide": true,
+    "fog": {
+        "start": 10,
+        "end": 26
+    },
+    "entities": [
+        {
+            "name": "suelo",
+            "model": {
+                "type": "plane",
+                "size": 40,
+                "subdivisions": 20,
+                "tiles": 20
+            },
+            "texture": "textures/suelo.png",
+            "wrap": "repeat"
+        },
+        {
+            "name": "casa_centro",
+            "model": "models/casa.obj",
+            "texture": "textures/test.png",
+            "spin": [
+                0,
+                20,
+                0
+            ]
+        },
+        {
+            "name": "casa_izq",
+            "model": "models/casa.obj",
+            "texture": "textures/test.png",
+            "position": [
+                -4,
+                0,
+                -1
+            ],
+            "rotation": [
+                0,
+                30,
+                0
+            ],
+            "scale": [
+                0.7,
+                0.7,
+                0.7
+            ]
+        },
+        {
+            "name": "casa_der",
+            "model": "models/casa.obj",
+            "texture": "textures/test.png",
+            "position": [
+                4,
+                0,
+                1
+            ],
+            "scale": [
+                1,
+                1.6,
+                1
+            ],
+            "tint": [
+                255,
+                200,
+                200,
+                255
+            ],
+            "spin": [
+                0,
+                -35,
+                0
+            ]
+        }
+    ]
+}

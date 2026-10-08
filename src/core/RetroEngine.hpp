@@ -59,6 +59,8 @@ public:
 
   Rectangle PresentationRect() const;
 
+  void SetClearColor(Color color);
+
   Vector2 WindowToInternal(Vector2 windowPos) const;
 
 private:

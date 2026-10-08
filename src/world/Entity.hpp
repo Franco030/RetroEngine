@@ -2,11 +2,13 @@
 
 #include "assets/Resources.hpp"
 #include "graphics/Transform.hpp"
+#include "physics/Collision.hpp"
 
 #include <raylib.h>
 
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 
 namespace retro {
@@ -34,6 +36,7 @@ public:
   Transform transform;
   Color tint = WHITE;
   bool visible = true;
+  std::optional<BoxCollider> collider;
 
 private:
   std::string name_;

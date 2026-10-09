@@ -101,10 +101,15 @@ BoxCollider ComputeAutoBox(ModelResource& resource) {
   return {total.min, total.max};
 }
 
+BoxCollider SpriteBox(Vector2 size) {
+  const float half = size.x * 0.2f;
+  return {{-half, 0.0f, -half}, {half, size.y, half}};
+}
+
 // "collider": true | false | "auto" | { "min": [x,y,z], "max": [x,y,z] }
 // Sin el campo: caja automática solo si la escena tiene autoCollide y el
 // modelo es un archivo .obj (los planos procedurales usan el suelo Y=0).
-std::optional<BoxCollider> ReadCollider(const json& je, ModelResource& model, bool isMeshFile,
+std::optional<BoxCollider> ReadCollider(const json& je, const BoxCollider& autoBox, bool isMeshFile,
                                         bool autoCollide) {
   if (je.contains("collider")) {
     const json& jc = je.at("collider");
@@ -112,10 +117,10 @@ std::optional<BoxCollider> ReadCollider(const json& je, ModelResource& model, bo
     if (jc.is_boolean()) {
       if (!jc.get<bool>())
         return std::nullopt;
-      return ComputeAutoBox(model);
+      return autoBox;
     }
     if (jc.is_string() && jc.get<std::string>() == "auto")
-      return ComputeAutoBox(model);
+      return autoBox;
 
     if (jc.is_object()) {
       if (!jc.contains("min") || !jc.contains("max")) {
@@ -134,7 +139,7 @@ std::optional<BoxCollider> ReadCollider(const json& je, ModelResource& model, bo
   }
 
   if (autoCollide && isMeshFile)
-    return ComputeAutoBox(model);
+    return autoBox;
   return std::nullopt;
 }
 
@@ -316,7 +321,7 @@ TriggerEvent ParseEvent(const std::string& s) {
 //               "box": { "min": [...], "max": [...] },     (opcional)
 //               "if": ..., "do": [ ... ] }
 // Sin "box": usa el collider de la entidad, o la caja del modelo si no tiene.
-Interaction ReadInteraction(const json& ji, ModelResource& model,
+Interaction ReadInteraction(const json& ji, const BoxCollider& autoBox,
                             const std::optional<BoxCollider>& collider) {
   Interaction it;
   it.prompt = ji.value("prompt", std::string("Interactuar"));
@@ -341,7 +346,7 @@ Interaction ReadInteraction(const json& ji, ModelResource& model,
   } else if (collider) {
     it.box = *collider;
   } else {
-    it.box = ComputeAutoBox(model);
+    it.box = autoBox;
   }
   return it;
 }
@@ -370,29 +375,55 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
     throw std::runtime_error("nombre de entidad duplicado: '" + name + "'");
   }
 
-  auto model = LoadModelSpec(je.at("model"), engine);
-
-  std::shared_ptr<TextureResource> texture;
-  if (je.contains("texture")) {
-    texture = engine.Assets().GetTexture(je.at("texture").get<std::string>());
-    if (je.contains("wrap"))
-      texture->SetWrap(ParseWrap(je.at("wrap").get<std::string>()));
+  const bool isSprite = je.contains("sprite");
+  if (isSprite == je.contains("model")) {
+    throw std::runtime_error("cada entidad necesita exactamente uno de: model, sprite");
   }
 
-  // Antes de añadir la entidad: si el collider es inválido, no queda a medias.
-  const std::optional<BoxCollider> collider =
-      ReadCollider(je, *model, je.at("model").is_string(), autoCollide);
+  std::unique_ptr<Entity> entity;
+  BoxCollider autoBox;
+  bool isMeshFile = false;
 
-  Entity& e = scene.Add(std::make_unique<Entity>(name, model, std::move(texture)));
+  if (isSprite) {
+    auto texture = engine.Assets().GetTexture(je.at("sprite").get<std::string>());
+    texture->SetWrap(TEXTURE_WRAP_CLAMP);
+
+    const Vector2 size = ReadVec2(je, "size");
+    if (size.x <= 0.0f || size.y <= 0.0f)
+      throw std::runtime_error("'size' debe ser positivo");
+
+    autoBox = SpriteBox(size);
+    entity = std::make_unique<Entity>(name, std::move(texture), size);
+    entity->emissive = je.value("emissive", false);
+  } else {
+    auto model = LoadModelSpec(je.at("model"), engine);
+
+    std::shared_ptr<TextureResource> texture;
+    if (je.contains("texture")) {
+      texture = engine.Assets().GetTexture(je.at("texture").get<std::string>());
+      if (je.contains("wrap"))
+        texture->SetWrap(ParseWrap(je.at("wrap").get<std::string>()));
+    }
+
+    autoBox = ComputeAutoBox(*model);
+    isMeshFile = je.at("model").is_string();
+    entity = std::make_unique<Entity>(name, std::move(model), std::move(texture));
+  }
+
+  const std::optional<BoxCollider> collider = ReadCollider(je, autoBox, isMeshFile, autoCollide);
+  std::optional<Interaction> interact;
+  if (je.contains("interact"))
+    interact = ReadInteraction(je.at("interact"), autoBox, collider);
+
+  Entity& e = scene.Add(std::move(entity));
   e.collider = collider;
+  e.interact = std::move(interact);
   e.transform.position = ReadVec3(je, "position", {0.0f, 0.0f, 0.0f});
   e.transform.rotation = ReadVec3(je, "rotation", {0.0f, 0.0f, 0.0f});
   e.transform.scale = ReadVec3(je, "scale", {1.0f, 1.0f, 1.0f});
   e.tint = ReadColor(je, "tint", WHITE);
   e.visible = je.value("visible", true);
   e.showIf = ParseConditions(je, "showIf");
-  if (je.contains("interact"))
-    e.interact = ReadInteraction(je.at("interact"), *model, collider);
 
   const Vector3 spin = ReadVec3(je, "spin", {0.0f, 0.0f, 0.0f});
   if (spin.x != 0.0f || spin.y != 0.0f || spin.z != 0.0f) {

@@ -49,7 +49,7 @@ public:
   }
 
   void Update(float dt);
-  void Draw();
+  void Draw(const Camera3D& camera, const Shader& spriteShader, float spriteShade);
 
   std::size_t Count() const noexcept { return entities_.size(); }
 

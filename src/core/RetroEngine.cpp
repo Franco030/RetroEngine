@@ -51,6 +51,7 @@ RetroEngine::RetroEngine(EngineConfig config)
       assets_(std::string(GetApplicationDirectory()) + "assets/"),
       retroShader_(assets_.GetShader("shaders/retro.vs", "shaders/retro.fs"),
                    assets_.GetShader("shaders/retro.vs", "shaders/retro_unlit.fs"),
+                   assets_.GetShader("shaders/retro.vs", "shaders/retro_sprite.fs"),
                    DefaultShaderParams(config_)) {}
 
 void RetroEngine::Run(const UpdateFn& update, const DrawFn& draw) {

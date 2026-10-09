@@ -164,8 +164,12 @@ void SceneManager::Update(float dt) {
 }
 
 void SceneManager::Draw() {
-  if (scene_)
-    scene_->Draw();
+  if (!scene_)
+    return;
+
+  const float ambient = engine_.Retro().Params().ambient;
+  const float shade = ambient + (1.0f - ambient) * 0.5f;
+  scene_->Draw(camera_.Raw(), engine_.Retro().Sprite()->Get(), shade);
 }
 
 void SceneManager::DrawFade() const {

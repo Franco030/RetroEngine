@@ -24,13 +24,14 @@ struct RetroShaderParams {
 class RetroShader {
 public:
   RetroShader(std::shared_ptr<ShaderResource> lit, std::shared_ptr<ShaderResource> unlit,
-              const RetroShaderParams& params = {});
+              std::shared_ptr<ShaderResource> sprite, const RetroShaderParams& params = {});
 
   void SetParams(const RetroShaderParams& params);
   const RetroShaderParams& Params() const noexcept { return params_; }
 
   const std::shared_ptr<ShaderResource>& Lit() const noexcept { return lit_.shader; }
   const std::shared_ptr<ShaderResource>& Unlit() const noexcept { return unlit_.shader; }
+  const std::shared_ptr<ShaderResource>& Sprite() const noexcept { return sprite_.shader; }
 
 private:
   struct Locations {
@@ -53,6 +54,7 @@ private:
 
   Program lit_;
   Program unlit_;
+  Program sprite_;
   RetroShaderParams params_;
 };
 

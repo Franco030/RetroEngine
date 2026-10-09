@@ -1,4 +1,5 @@
 #include "world/Scene.hpp"
+#include "graphics/ShaderScope.hpp"
 
 #include <algorithm>
 #include <cfloat>
@@ -72,9 +73,23 @@ void Scene::Update(float dt) {
     e->Update(dt);
 }
 
-void Scene::Draw() {
-  for (auto& e : entities_)
-    e->Draw();
+void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float spriteShade) {
+  bool anySprite = false;
+  for (auto& e : entities_) {
+    if (e->IsSprite()) {
+      anySprite = anySprite || e->visible;
+    } else {
+      e->Draw();
+    }
+  }
+  if (!anySprite)
+    return;
+
+  ShaderScope scope(spriteShader);
+  for (auto& e : entities_) {
+    if (e->IsSprite())
+      e->DrawSprite(camera, spriteShade);
+  }
 }
 
 void Scene::CollectColliders(std::vector<WorldBox>& out) const {

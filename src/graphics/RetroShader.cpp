@@ -15,10 +15,12 @@ void SetUniform(const Shader& s, int loc, const void* value, int type) {
 } // namespace
 
 RetroShader::RetroShader(std::shared_ptr<ShaderResource> lit, std::shared_ptr<ShaderResource> unlit,
-                         const RetroShaderParams& params)
-    : lit_(MakeProgram(std::move(lit))), unlit_(MakeProgram(std::move(unlit))), params_(params) {
+                         std::shared_ptr<ShaderResource> sprite, const RetroShaderParams& params)
+    : lit_(MakeProgram(std::move(lit))), unlit_(MakeProgram(std::move(unlit))),
+      sprite_(MakeProgram(std::move(sprite))), params_(params) {
   Upload(lit_);
   Upload(unlit_);
+  Upload(sprite_);
 }
 
 RetroShader::Program RetroShader::MakeProgram(std::shared_ptr<ShaderResource> shader) {
@@ -44,6 +46,7 @@ void RetroShader::SetParams(const RetroShaderParams& params) {
   params_ = params;
   Upload(lit_);
   Upload(unlit_);
+  Upload(sprite_);
 }
 
 void RetroShader::Upload(const Program& p) const {

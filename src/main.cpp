@@ -227,14 +227,15 @@ int main() {
             DrawText(interactPrompt.c_str(), w / 2 - tw / 2, h / 2 + 10, 10, YELLOW);
           }
 
-          DrawText("1:jitter 2:color 3:dither 4:niebla  F5:recargar F6:reset", 4, 4, 10, RAYWHITE);
-          DrawText(firstPerson ? "WASD mover  Shift correr  Espacio saltar"
-                               : "Arrastrar/flechas: orbitar  Rueda: zoom",
-                   4, 16, 10, RAYWHITE);
-          DrawText("Tab: escena  F2: camara libre  F3: colisiones/triggers", 4, 28, 10, RAYWHITE);
-          DrawText(TextFormat("Escena %d/%d: %s", static_cast<int>(scenes.Index()) + 1,
-                              static_cast<int>(scenes.Count()), scenes.CurrentPath().c_str()),
-                   4, h - 12, 10, RAYWHITE);
+          // DrawText("1:jitter 2:color 3:dither 4:niebla  F5:recargar F6:reset", 4, 4, 10,
+          // RAYWHITE); DrawText(firstPerson ? "WASD mover  Shift correr  Espacio saltar"
+          //                      : "Arrastrar/flechas: orbitar  Rueda: zoom",
+          //          4, 16, 10, RAYWHITE);
+          // DrawText("Tab: escena  F2: camara libre  F3: colisiones/triggers", 4, 28, 10,
+          // RAYWHITE); DrawText(TextFormat("Escena %d/%d: %s", static_cast<int>(scenes.Index()) +
+          // 1,
+          //                     static_cast<int>(scenes.Count()), scenes.CurrentPath().c_str()),
+          //          4, h - 12, 10, RAYWHITE);
 
           if (state.HasMessage())
             DrawMessageBox(state.MessageText(), w, h);

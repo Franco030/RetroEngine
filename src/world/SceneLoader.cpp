@@ -25,6 +25,14 @@ namespace {
 
 using json = nlohmann::json;
 
+Vector2 ReadVec2(const json& j, const char* key) {
+  const json& a = j.at(key);
+  if (!a.is_array() || a.size() != 2) {
+    throw std::runtime_error(std::string("'") + key + "' debe ser un arreglo de 2 numeros [x, z]");
+  }
+  return {a[0].get<float>(), a[1].get<float>()};
+}
+
 Vector3 ReadVec3(const json& j, const char* key, Vector3 fallback) {
   if (!j.contains(key))
     return fallback;
@@ -180,12 +188,11 @@ Condition ParseCondition(const json& jc, int depth = 0) {
   if (depth > 8)
     throw std::runtime_error("condiciones anidadas demasiado profundas");
 
-  const bool notIsGroup = jc.contains("not") && jc.at("not").is_object();
+  const bool isNot = jc.contains("not");
   const int found = static_cast<int>(jc.contains("flag")) + static_cast<int>(jc.contains("all")) +
-                    static_cast<int>(jc.contains("any")) + static_cast<int>(notIsGroup);
+                    static_cast<int>(jc.contains("any")) + static_cast<int>(isNot);
   if (found != 1) {
-    throw std::runtime_error(
-        "cada condicion necesita exactamente una de: flag, all, any, not {...}");
+    throw std::runtime_error("cada condicion necesita exactamente una de: flag, all, any, not");
   }
 
   Condition c;
@@ -204,19 +211,13 @@ Condition ParseCondition(const json& jc, int depth = 0) {
   } else if (jc.contains("any")) {
     c.kind = Condition::Kind::Any;
     readChildren("any");
-  } else if (notIsGroup) {
+  } else if (isNot) {
     c.kind = Condition::Kind::Not;
     c.children.push_back(ParseCondition(jc.at("not"), depth + 1));
   } else {
     c.flag = jc.at("flag").get<std::string>();
     c.op = ParseOp(jc.value("op", std::string("==")));
-    c.value = jc.value("value", jc.value("equals", 1));
-    if (jc.value("not", false)) {
-      Condition n;
-      n.kind = Condition::Kind::Not;
-      n.children.push_back(std::move(c));
-      return n;
-    }
+    c.value = jc.value("value", 1);
   }
   return c;
 }
@@ -369,27 +370,6 @@ void AddTrigger(const json& jt, Scene& scene) {
   scene.triggers.push_back(std::move(t));
 }
 
-void AddPortal(const json& jp, Scene& scene) {
-  Trigger t;
-  t.name = jp.value("name", "portal_" + std::to_string(scene.triggers.size()));
-  EnsureUniqueTrigger(scene, t.name);
-
-  const json& to = jp.at("to");
-  action::GotoScene g;
-  g.scene = to.at("scene").get<std::string>();
-  if (to.contains("position"))
-    g.position = ReadVec3(to, "position", {0.0f, 0.0f, 0.0f});
-  if (to.contains("yaw"))
-    g.yaw = to.at("yaw").get<float>();
-
-  t.box = ReadZone(jp);
-  t.marker = true;
-  t.color = ReadColor(jp, "color", {255, 200, 80, 255});
-  t.actions.push_back(std::move(g));
-
-  scene.triggers.push_back(std::move(t));
-}
-
 void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoCollide) {
   const std::string name = je.at("name").get<std::string>();
   if (scene.Find(name) != nullptr) {
@@ -479,6 +459,25 @@ void LoadScene(const std::string& relativePath, RetroEngine& engine, Scene& scen
       scene.spawn.position = ReadVec3(p, "position", scene.spawn.position);
       scene.spawn.yaw = p.value("yaw", scene.spawn.yaw);
     }
+
+    if (root.contains("bounds")) {
+      context = "bounds";
+      const json& jb = root.at("bounds");
+      Scene::Bounds b;
+      b.min = ReadVec2(jb, "min");
+      b.max = ReadVec2(jb, "max");
+      if (b.min.x >= b.max.x || b.min.y >= b.max.y) {
+        throw std::runtime_error("cada componente de 'min' debe ser menor que el de 'max'");
+      }
+
+      const Vector3& s = scene.spawn.position;
+      if (s.x < b.min.x || s.x > b.max.x || s.z < b.min.y || s.z > b.max.y) {
+        throw std::runtime_error("'player.position' esta fuera de 'bounds'");
+      }
+
+      scene.bounds = b;
+    }
+
     const bool autoCollide = root.value("autoCollide", false);
 
     int index = 0;
@@ -488,14 +487,6 @@ void LoadScene(const std::string& relativePath, RetroEngine& engine, Scene& scen
         context += " '" + je["name"].get<std::string>() + "'";
       }
       AddEntity(je, engine, scene, autoCollide);
-    }
-
-    if (root.contains("portals")) {
-      int portalIndex = 0;
-      for (const json& jp : root.at("portals")) {
-        context = "portal #" + std::to_string(portalIndex++);
-        AddPortal(jp, scene);
-      }
     }
 
     if (root.contains("triggers")) {

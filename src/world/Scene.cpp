@@ -18,6 +18,36 @@ std::string InteractKey(const std::string& scenePath, const std::string& entityN
   return "interact:" + scenePath + "#" + entityName;
 }
 
+// Cuatro muros por FUERA del rectángulo. Los de norte y sur se alargan para
+// cubrir las esquinas, y su grosor (2) es mucho mayor que el avance por subpaso,
+// así que no se pueden atravesar.
+void AppendBoundsWalls(const Scene::Bounds& b, std::vector<WorldBox>& out) {
+  constexpr float kThick = 2.0f;
+  constexpr float kBottom = -1.0f;
+  constexpr float kTop = 10.0f; // mucho más alto que un salto
+
+  const float cx = (b.min.x + b.max.x) * 0.5f;
+  const float cz = (b.min.y + b.max.y) * 0.5f;
+  const float hx = (b.max.x - b.min.x) * 0.5f;
+  const float hz = (b.max.y - b.min.y) * 0.5f;
+  const float t = kThick * 0.5f;
+
+  auto wall = [&](float x, float z, float halfX, float halfZ) {
+    WorldBox w; // ejes por defecto: alineada con X y Z
+    w.center = {x, 0.0f, z};
+    w.halfX = halfX;
+    w.halfZ = halfZ;
+    w.bottom = kBottom;
+    w.top = kTop;
+    out.push_back(w);
+  };
+
+  wall(b.min.x - t, cz, t, hz + kThick); // oeste
+  wall(b.max.x + t, cz, t, hz + kThick); // este
+  wall(cx, b.min.y - t, hx + kThick, t); // norte (-Z)
+  wall(cx, b.max.y + t, hx + kThick, t); // sur (+Z)
+}
+
 } // namespace
 
 Entity& Scene::Add(std::unique_ptr<Entity> entity) {
@@ -53,6 +83,9 @@ void Scene::CollectColliders(std::vector<WorldBox>& out) const {
       out.push_back(MakeWorldBox(*e->collider, e->transform));
     }
   }
+
+  if (bounds)
+    AppendBoundsWalls(*bounds, out);
 }
 
 void Scene::UpdateTriggers(Vector3 feet, float radius, float height, GameState& state,

@@ -21,6 +21,16 @@
         "yaw": 0
     },
     "autoCollide": true,
+    "bounds": {
+        "min": [
+            -29,
+            -29
+        ],
+        "max": [
+            29,
+            29
+        ]
+    },
     "background": [
         120,
         160,
@@ -38,36 +48,6 @@
         ],
         "ambient": 0.5
     },
-    "portals": [
-        {
-            "name": "puerta_noche",
-            "position": [
-                0,
-                0,
-                16
-            ],
-            "size": [
-                2.4,
-                2.4,
-                0.8
-            ],
-            "color": [
-                140,
-                120,
-                255,
-                255
-            ],
-            "to": {
-                "scene": "scenes/noche.json",
-                "position": [
-                    0,
-                    0,
-                    -12
-                ],
-                "yaw": 180
-            }
-        }
-    ],
     "entities": [
         {
             "name": "suelo",
@@ -220,6 +200,39 @@
                 0,
                 10,
                 0
+            ]
+        }
+    ],
+    "triggers": [
+        {
+            "name": "puerta_noche",
+            "position": [
+                0,
+                0,
+                16
+            ],
+            "size": [
+                2.4,
+                2.4,
+                0.8
+            ],
+            "marker": true,
+            "color": [
+                140,
+                120,
+                255,
+                255
+            ],
+            "do": [
+                {
+                    "goto_scene": "scenes/noche.json",
+                    "position": [
+                        0,
+                        0,
+                        -12
+                    ],
+                    "yaw": 180
+                }
             ]
         }
     ]

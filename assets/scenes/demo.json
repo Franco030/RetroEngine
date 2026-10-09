@@ -21,6 +21,16 @@
         "yaw": 0
     },
     "autoCollide": true,
+    "bounds": {
+        "min": [
+            -19,
+            -19
+        ],
+        "max": [
+            19,
+            19
+        ]
+    },
     "fog": {
         "start": 10,
         "end": 26
@@ -227,7 +237,7 @@
                 },
                 "do": [
                     {
-                        "set_visible": "moneda_1",
+                        "set_visible": "moneda_2",
                         "visible": false
                     },
                     {
@@ -283,7 +293,7 @@
                 },
                 "do": [
                     {
-                        "set_visible": "moneda_1",
+                        "set_visible": "moneda_3",
                         "visible": false
                     },
                     {

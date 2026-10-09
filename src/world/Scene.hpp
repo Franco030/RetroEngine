@@ -10,6 +10,7 @@
 
 #include <cstddef>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -21,6 +22,10 @@ public:
     Vector3 position{0.0f, 0.0f, 9.0f};
     float yaw = 0.0f;
   };
+  struct Bounds {
+    Vector2 min{};
+    Vector2 max{};
+  };
   struct InteractHit {
     Entity* entity = nullptr;
     float distance = 0.0f;
@@ -30,6 +35,8 @@ public:
   std::string path;
   std::vector<Trigger> triggers;
 
+  std::optional<Bounds> bounds;
+
   Entity& Add(std::unique_ptr<Entity> entity);
   Entity* Find(const std::string& name);
   bool Remove(const std::string& name);
@@ -37,6 +44,7 @@ public:
   void Clear() noexcept {
     entities_.clear();
     triggers.clear();
+    bounds.reset();
     triggersPrimed_ = false;
   }
 

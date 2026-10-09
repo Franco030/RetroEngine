@@ -21,6 +21,16 @@
         "yaw": 0
     },
     "autoCollide": true,
+    "bounds": {
+        "min": [
+            -19,
+            -19
+        ],
+        "max": [
+            19,
+            19
+        ]
+    },
     "background": [
         10,
         12,
@@ -38,64 +48,6 @@
         ],
         "ambient": 0.15
     },
-    "portals": [
-        {
-            "name": "puerta_demo",
-            "position": [
-                0,
-                0,
-                15
-            ],
-            "size": [
-                2.4,
-                2.4,
-                0.8
-            ],
-            "color": [
-                255,
-                200,
-                80,
-                255
-            ],
-            "to": {
-                "scene": "scenes/demo.json",
-                "position": [
-                    9,
-                    0,
-                    -3
-                ],
-                "yaw": 180
-            }
-        },
-        {
-            "name": "puerta_aldea",
-            "position": [
-                0,
-                0,
-                -14
-            ],
-            "size": [
-                2.4,
-                2.4,
-                0.8
-            ],
-            "color": [
-                120,
-                255,
-                140,
-                255
-            ],
-            "to": {
-                "scene": "scenes/aldea.json",
-                "position": [
-                    0,
-                    0,
-                    12
-                ],
-                "yaw": 0
-            }
-        }
-    ],
     "entities": [
         {
             "name": "suelo",
@@ -259,6 +211,70 @@
                 150,
                 220,
                 255
+            ]
+        }
+    ],
+    "triggers": [
+        {
+            "name": "puerta_demo",
+            "position": [
+                0,
+                0,
+                15
+            ],
+            "size": [
+                2.4,
+                2.4,
+                0.8
+            ],
+            "marker": true,
+            "color": [
+                255,
+                200,
+                80,
+                255
+            ],
+            "do": [
+                {
+                    "goto_scene": "scenes/demo.json",
+                    "position": [
+                        9,
+                        0,
+                        -3
+                    ],
+                    "yaw": 180
+                }
+            ]
+        },
+        {
+            "name": "puerta_aldea",
+            "position": [
+                0,
+                0,
+                -14
+            ],
+            "size": [
+                2.4,
+                2.4,
+                0.8
+            ],
+            "marker": true,
+            "color": [
+                120,
+                255,
+                140,
+                255
+            ],
+            "do": [
+                {
+                    "goto_scene": "scenes/aldea.json",
+                    "position": [
+                        0,
+                        0,
+                        12
+                    ],
+                    "yaw": 0
+                }
             ]
         }
     ]

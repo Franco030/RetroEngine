@@ -136,7 +136,12 @@
                 0,
                 90,
                 0
-            ]
+            ],
+            "showIf": {
+                "not": {
+                    "flag": "tiene_llave"
+                }
+            }
         },
         {
             "name": "moneda_1",
@@ -164,9 +169,13 @@
                 120,
                 0
             ],
+            "showIf": {
+                "not": {
+                    "flag": "moneda_1_tomada"
+                }
+            },
             "interact": {
                 "prompt": "Tomar moneda",
-                "once": true,
                 "box": {
                     "min": [
                         -1.5,
@@ -181,8 +190,7 @@
                 },
                 "do": [
                     {
-                        "set_visible": "moneda_1",
-                        "visible": false
+                        "set_flag": "moneda_1_tomada"
                     },
                     {
                         "add_flag": "monedas"
@@ -220,9 +228,13 @@
                 120,
                 0
             ],
+            "showIf": {
+                "not": {
+                    "flag": "moneda_2_tomada"
+                }
+            },
             "interact": {
                 "prompt": "Tomar moneda",
-                "once": true,
                 "box": {
                     "min": [
                         -1.5,
@@ -237,8 +249,7 @@
                 },
                 "do": [
                     {
-                        "set_visible": "moneda_2",
-                        "visible": false
+                        "set_flag": "moneda_2_tomada"
                     },
                     {
                         "add_flag": "monedas"
@@ -276,9 +287,13 @@
                 120,
                 0
             ],
+            "showIf": {
+                "not": {
+                    "flag": "moneda_3_tomada"
+                }
+            },
             "interact": {
                 "prompt": "Tomar moneda",
-                "once": true,
                 "box": {
                     "min": [
                         -1.5,
@@ -293,8 +308,7 @@
                 },
                 "do": [
                     {
-                        "set_visible": "moneda_3",
-                        "visible": false
+                        "set_flag": "moneda_3_tomada"
                     },
                     {
                         "add_flag": "monedas"
@@ -340,12 +354,12 @@
                 2,
                 1.6
             ],
-            "once": true,
+            "if": {
+                "not": {
+                    "flag": "tiene_llave"
+                }
+            },
             "do": [
-                {
-                    "set_visible": "llave",
-                    "visible": false
-                },
                 {
                     "set_flag": "tiene_llave"
                 },

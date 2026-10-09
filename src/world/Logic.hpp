@@ -40,15 +40,10 @@ struct Message {
   float seconds = 3.0f;
 };
 
-struct SetVisible {
-  std::string entity;
-  bool visible = true;
-};
-
 } // namespace action
 
 using Action = std::variant<action::GotoScene, action::Teleport, action::SetFlag, action::AddFlag,
-                            action::Message, action::SetVisible>;
+                            action::Message>;
 
 enum class CompareOp { Eq, Ne, Lt, Le, Gt, Ge };
 

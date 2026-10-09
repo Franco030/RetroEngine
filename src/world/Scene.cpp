@@ -88,32 +88,16 @@ void Scene::CollectColliders(std::vector<WorldBox>& out) const {
     AppendBoundsWalls(*bounds, out);
 }
 
+void Scene::RefreshVisibility(const GameState& state) {
+  for (auto& e : entities_) {
+    if (!e->showIf.empty())
+      e->visible = AllHold(e->showIf, state);
+  }
+}
+
 void Scene::UpdateTriggers(Vector3 feet, float radius, float height, GameState& state,
                            std::vector<Action>& fired) {
-  // Primera llamada tras cargar: reaplica el estado persistente y no dispara nada.
-  if (!triggersPrimed_) {
-    // Un "once" ya disparado reaplica sus set_visible: lo recogido no reaparece
-    // al volver a la escena, porque las entidades se recrean desde el JSON.
-    auto reapply = [&](const std::vector<Action>& actions) {
-      for (const Action& a : actions) {
-        if (const auto* v = std::get_if<action::SetVisible>(&a)) {
-          if (Entity* e = Find(v->entity))
-            e->visible = v->visible;
-        }
-      }
-    };
-
-    for (const Trigger& t : triggers) {
-      if (t.once && state.Get(OnceKey(path, t.name)) != 0)
-        reapply(t.actions);
-    }
-    for (const auto& e : entities_) {
-      if (e->interact && e->interact->once && state.Get(InteractKey(path, e->Name())) != 0) {
-        reapply(e->interact->actions);
-      }
-    }
-  }
-
+  // La primera llamada tras cargar solo registra donde esta el jugador
   for (Trigger& t : triggers) {
     const bool verticalOk = feet.y + height > t.box.bottom && feet.y < t.box.top;
     const bool now = verticalOk && OverlapsCircle(t.box, {feet.x, feet.z}, radius);

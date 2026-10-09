@@ -11,6 +11,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <vector>
 
 namespace retro {
 
@@ -37,6 +38,7 @@ public:
   Transform transform;
   Color tint = WHITE;
   bool visible = true;
+  std::vector<Condition> showIf;
   std::optional<BoxCollider> collider;
   std::optional<Interaction> interact;
 

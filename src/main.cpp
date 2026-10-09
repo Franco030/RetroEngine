@@ -146,6 +146,9 @@ int main() {
             spawnPlayer();
           }
 
+          if (retro::Scene* s = scenes.CurrentMut())
+            s->RefreshVisibility(state);
+
           colliders.clear();
           if (const retro::Scene* s = scenes.Current())
             s->CollectColliders(colliders);
@@ -186,6 +189,8 @@ int main() {
             }
           }
 
+          if (retro::Scene* s = scenes.CurrentMut())
+            s->RefreshVisibility(state);
           HandleDebugKeys(engine);
         },
         [&]() {

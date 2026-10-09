@@ -222,20 +222,21 @@ Condition ParseCondition(const json& jc, int depth = 0) {
   return c;
 }
 
-// "if": { ... }  o  "if": [ { ... }, { ... } ]   (todas deben cumplirse)
-std::vector<Condition> ParseConditions(const json& jt) {
+// <key>: { ... }  o  <key>: [ { ... }, { ... } ]   (todas deben cumplirse)
+std::vector<Condition> ParseConditions(const json& j, const char* key = "if") {
   std::vector<Condition> out;
-  if (!jt.contains("if"))
+  if (!j.contains(key))
     return out;
 
-  const json& jc = jt.at("if");
+  const json& jc = j.at(key);
   if (jc.is_object()) {
     out.push_back(ParseCondition(jc));
   } else if (jc.is_array()) {
     for (const json& item : jc)
       out.push_back(ParseCondition(item));
   } else {
-    throw std::runtime_error("'if' debe ser un objeto o un arreglo de objetos");
+    throw std::runtime_error(std::string("'") + key +
+                             "' debe ser un objeto o un arreglo de objetos");
   }
   return out;
 }
@@ -292,17 +293,10 @@ Action ParseAction(const json& ja) {
     result = a;
     ++found;
   }
-  if (ja.contains("set_visible")) {
-    action::SetVisible a;
-    a.entity = ja.at("set_visible").get<std::string>();
-    a.visible = ja.value("visible", true);
-    result = a;
-    ++found;
-  }
 
   if (found != 1) {
     throw std::runtime_error("cada accion debe tener exactamente una de: goto_scene, teleport, "
-                             "set_flag, add_flag, message, set_visible");
+                             "set_flag, add_flag, message");
   }
   return result;
 }
@@ -396,6 +390,7 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
   e.transform.scale = ReadVec3(je, "scale", {1.0f, 1.0f, 1.0f});
   e.tint = ReadColor(je, "tint", WHITE);
   e.visible = je.value("visible", true);
+  e.showIf = ParseConditions(je, "showIf");
   if (je.contains("interact"))
     e.interact = ReadInteraction(je.at("interact"), *model, collider);
 

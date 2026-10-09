@@ -56,6 +56,10 @@ public:
   // Cajas de colisión en el mundo, con las transformaciones actuales.
   void CollectColliders(std::vector<WorldBox>& out) const;
 
+  // Recalcula la visibilidad de las entidades con "showIf".
+  // Una entidad oculta tampoco tiene colision ni se puede interactuar con ella
+  void RefreshVisibility(const GameState& state);
+
   // Evalúa los triggers contra el cilindro del jugador y añade a 'fired' las
   // acciones que se disparan este frame. La primera llamada tras cargar solo
   // registra dónde está el jugador y reaplica el estado persistente.

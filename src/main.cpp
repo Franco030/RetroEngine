@@ -14,18 +14,22 @@
 #include "graphics/RetroCamera.hpp"
 #include "graphics/ShaderScope.hpp"
 #include "player/Player.hpp"
+#include "ui/Ui.hpp"
 #include "world/ActionRunner.hpp"
 #include "world/SceneManager.hpp"
 
 static void HandleDebugKeys(retro::RetroEngine& engine) {
   static bool jitter = true, lowColor = true, dither = true;
+  static int affineStep = 0;
 
   retro::RetroShaderParams p = engine.Retro().Params();
   bool changed = false;
 
   if (IsKeyPressed(KEY_ONE)) {
     jitter = !jitter;
-    p.snapResolution = jitter ? Vector2{320.0f, 240.0f} : Vector2{4096.0f, 4096.0f};
+    p.snapResolution = jitter ? Vector2{static_cast<float>(engine.Config().internalWidth),
+                                        static_cast<float>(engine.Config().internalHeight)}
+                              : Vector2{4096.0f, 4096.0f};
     changed = true;
   }
   if (IsKeyPressed(KEY_TWO)) {
@@ -42,11 +46,31 @@ static void HandleDebugKeys(retro::RetroEngine& engine) {
     p.fogEnabled = !p.fogEnabled;
     changed = true;
   }
+  if (IsKeyPressed(KEY_FIVE)) {
+    static constexpr float kLevels[3] = {0.35f, 1.0f, 0.0f};
+    affineStep = (affineStep + 1) % 3;
+    p.affineAmount = kLevels[affineStep];
+    changed = true;
+  }
   if (changed)
     engine.Retro().SetParams(p);
+
+  retro::PostParams q = engine.Post().Params();
+  bool postChanged = false;
+
+  if (IsKeyPressed(KEY_F7)) {
+    q.filter = static_cast<retro::FilterMode>((static_cast<int>(q.filter) + 1) % 3);
+    postChanged = true;
+  }
+  if (IsKeyPressed(KEY_F8)) {
+    q.effects = !q.effects;
+    postChanged = true;
+  }
+  if (postChanged)
+    engine.Post().SetParams(q);
 }
 
-static void DrawMessageBox(const std::string& text, int screenW, int screenH) {
+static void DrawMessageBox(const retro::Ui& ui, const std::string& text) {
   std::vector<std::string> lines;
   std::size_t start = 0;
   while (true) {
@@ -57,27 +81,28 @@ static void DrawMessageBox(const std::string& text, int screenW, int screenH) {
     start = nl + 1;
   }
 
-  constexpr int kFont = 10, kLineH = 12;
-  int maxW = 0;
+  constexpr float kSize = 10.0f, kLineH = 13.0f, kPadX = 7.0f, kPadY = 5.0f;
+  float maxW = 0.0f;
   for (const std::string& l : lines)
-    maxW = std::max(maxW, MeasureText(l.c_str(), kFont));
+    maxW = std::max(maxW, ui.TextWidth(l, kSize));
 
-  const int boxW = maxW + 12;
-  const int boxH = static_cast<int>(lines.size()) * kLineH + 8;
-  const int x = (screenW - boxW) / 2;
-  const int y = screenH - boxH - 20;
+  const float boxW = maxW + kPadX * 2.0f;
+  const float boxH = static_cast<float>(lines.size()) * kLineH + kPadY * 2.0f - 2.0f;
+  const float x = (ui.Width() - boxW) * 0.5f;
+  const float y = ui.Height() - boxH - 22.0f;
 
-  DrawRectangle(x, y, boxW, boxH, {0, 0, 0, 200});
-  DrawRectangleLines(x, y, boxW, boxH, RAYWHITE);
+  ui.Rect(x, y, boxW, boxH, {0, 0, 0, 190});
+  ui.RectLines(x, y, boxW, boxH, RAYWHITE);
   for (std::size_t i = 0; i < lines.size(); ++i) {
-    DrawText(lines[i].c_str(), x + 6, y + 4 + static_cast<int>(i) * kLineH, kFont, RAYWHITE);
+    ui.Text(lines[i], x + kPadX, y + kPadY + static_cast<float>(i) * kLineH - 1.0f, kSize, RAYWHITE,
+            false);
   }
 }
 
 int main() {
   try {
     retro::EngineConfig config;
-    config.title = "RetroEngine - Hito 12";
+    config.title = "RetroEngine - Hito 16";
     retro::RetroEngine engine(config);
     retro::RetroCamera camera;
 
@@ -93,6 +118,7 @@ int main() {
     std::uint64_t seenGeneration = scenes.Generation();
     bool firstPerson = true;
     bool showColliders = false;
+    bool showHelp = true;
     std::string interactPrompt;
 
     auto spawnPlayer = [&]() {
@@ -126,6 +152,9 @@ int main() {
             state.Clear();
             std::cout << "Estado de la partida reiniciado (F5 para recargar la escena)\n";
           }
+
+          if (IsKeyPressed(KEY_F1))
+            showHelp = !showHelp;
 
           if (IsKeyPressed(KEY_F2)) {
             firstPerson = !firstPerson;
@@ -191,8 +220,10 @@ int main() {
 
           if (retro::Scene* s = scenes.CurrentMut())
             s->RefreshVisibility(state);
+
           HandleDebugKeys(engine);
         },
+
         [&]() {
           camera.Begin();
           scenes.Draw();
@@ -215,30 +246,36 @@ int main() {
           camera.End();
 
           scenes.DrawFade();
+        },
 
-          const int w = engine.Config().internalWidth;
-          const int h = engine.Config().internalHeight;
-          const Color crossColor = interactPrompt.empty() ? RAYWHITE : YELLOW;
-          if (firstPerson)
-            DrawRectangle(w / 2 - 1, h / 2 - 1, 2, 2, crossColor);
+        [&](retro::Ui& ui) {
+          const float w = ui.Width();
+          const float h = ui.Height();
 
+          if (firstPerson) {
+            const Color c = interactPrompt.empty() ? RAYWHITE : YELLOW;
+            ui.Rect(w * 0.5f - 1.0f, h * 0.5f - 1.0f, 2.0f, 2.0f, c); // mira
+          }
           if (!interactPrompt.empty()) {
-            const int tw = MeasureText(interactPrompt.c_str(), 10);
-            DrawText(interactPrompt.c_str(), w / 2 - tw / 2, h / 2 + 10, 10, YELLOW);
+            const float tw = ui.TextWidth(interactPrompt, 10.0f);
+            ui.Text(interactPrompt, (w - tw) * 0.5f, h * 0.5f + 8.0f, 10.0f, YELLOW);
           }
 
-          // DrawText("1:jitter 2:color 3:dither 4:niebla  F5:recargar F6:reset", 4, 4, 10,
-          // RAYWHITE); DrawText(firstPerson ? "WASD mover  Shift correr  Espacio saltar"
-          //                      : "Arrastrar/flechas: orbitar  Rueda: zoom",
-          //          4, 16, 10, RAYWHITE);
-          // DrawText("Tab: escena  F2: camara libre  F3: colisiones/triggers", 4, 28, 10,
-          // RAYWHITE); DrawText(TextFormat("Escena %d/%d: %s", static_cast<int>(scenes.Index()) +
-          // 1,
-          //                     static_cast<int>(scenes.Count()), scenes.CurrentPath().c_str()),
-          //          4, h - 12, 10, RAYWHITE);
+          if (showHelp) {
+            ui.Text("1 jitter  2 color  3 dither  4 niebla  5 afin", 4, 3, 8, RAYWHITE);
+            ui.Text("F5 recargar  F6 reset  F7 filtro  F8 acabado", 4, 13, 8, RAYWHITE);
+            ui.Text(firstPerson ? "WASD mover  Shift correr  Espacio saltar  E usar"
+                                : "Arrastrar/flechas: orbitar  Rueda: zoom",
+                    4, 23, 8, RAYWHITE);
+            ui.Text("Tab escena  F1 ayuda  F2 camara  F3 colisiones", 4, 33, 8, RAYWHITE);
+          }
+
+          ui.Text(TextFormat("Escena %d/%d: %s", static_cast<int>(scenes.Index()) + 1,
+                             static_cast<int>(scenes.Count()), scenes.CurrentPath().c_str()),
+                  4, h - 12.0f, 8.0f, RAYWHITE);
 
           if (state.HasMessage())
-            DrawMessageBox(state.MessageText(), w, h);
+            DrawMessageBox(ui, state.MessageText());
         });
   } catch (const std::exception& e) {
     std::cerr << "Error fatal: " << e.what() << '\n';

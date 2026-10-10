@@ -12,7 +12,8 @@ RenderTarget::RenderTarget(int width, int height) : target_(::LoadRenderTexture(
                              "x" + std::to_string(height));
   }
 
-  SetTextureFilter(target_.texture, TEXTURE_FILTER_POINT);
+  SetTextureFilter(target_.texture, TEXTURE_FILTER_BILINEAR);
+  SetTextureWrap(target_.texture, TEXTURE_WRAP_CLAMP);
 }
 
 RenderTarget::~RenderTarget() { Release(); }

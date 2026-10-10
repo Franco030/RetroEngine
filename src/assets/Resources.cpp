@@ -174,4 +174,45 @@ void ShaderResource::Release() noexcept {
   shader_ = Shader{};
 }
 
+// ---------------------------------------------------------------------------
+// FontResource
+// ---------------------------------------------------------------------------
+FontResource::FontResource(const std::string& path, int baseSize) {
+  if (!FileExists(path.c_str())) {
+    throw std::runtime_error("Fuente inexistente: " + path);
+  }
+
+  int codepoints[224];
+  for (int i = 0; i < 224; ++i)
+    codepoints[i] = 32 + i;
+
+  font_ = ::LoadFontEx(path.c_str(), baseSize, codepoints, 224);
+  if (!IsFontValid(font_) || font_.texture.id == GetFontDefault().texture.id) {
+    font_ = Font{};
+    throw std::runtime_error("No se pudo cargar la fuente: " + path);
+  }
+
+  SetTextureFilter(font_.texture, TEXTURE_FILTER_BILINEAR);
+}
+
+FontResource::~FontResource() { Release(); }
+
+FontResource::FontResource(FontResource&& other) noexcept
+    : font_(std::exchange(other.font_, Font{})) {}
+
+FontResource& FontResource::operator=(FontResource&& other) noexcept {
+  if (this != &other) {
+    Release();
+    font_ = std::exchange(other.font_, Font{});
+  }
+
+  return *this;
+}
+
+void FontResource::Release() noexcept {
+  if (font_.texture.id != 0)
+    UnloadFont(font_);
+  font_ = Font{};
+}
+
 } // namespace retro

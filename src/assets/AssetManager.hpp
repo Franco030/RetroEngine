@@ -22,6 +22,7 @@ public:
   std::shared_ptr<ModelResource> GetModel(const std::string& relativePath);
   std::shared_ptr<ShaderResource> GetShader(const std::string& vertexPath,
                                             const std::string& fragmentPath);
+  std::shared_ptr<FontResource> GetFont(const std::string& relativePath, int baseSize);
 
   void PurgeUnused();
 
@@ -30,6 +31,7 @@ public:
   std::size_t TextureCount() const noexcept { return textures_.size(); }
   std::size_t ModelCount() const noexcept { return models_.size(); }
   std::size_t ShaderCount() const noexcept { return shaders_.size(); }
+  std::size_t FontCount() const noexcept { return fonts_.size(); }
 
   const std::string& Root() const noexcept { return root_; }
 
@@ -40,6 +42,7 @@ private:
   std::unordered_map<std::string, std::shared_ptr<TextureResource>> textures_;
   std::unordered_map<std::string, std::shared_ptr<ModelResource>> models_;
   std::unordered_map<std::string, std::shared_ptr<ShaderResource>> shaders_;
+  std::unordered_map<std::string, std::shared_ptr<FontResource>> fonts_;
 };
 
 } // namespace retro

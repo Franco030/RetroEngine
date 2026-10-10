@@ -43,17 +43,24 @@ std::shared_ptr<ShaderResource> AssetManager::GetShader(const std::string& verte
   return GetOrLoad(shaders_, key, Resolve(vertexPath), Resolve(fragmentPath));
 }
 
+std::shared_ptr<FontResource> AssetManager::GetFont(const std::string& relativePath, int baseSize) {
+  const std::string key = relativePath + "@" + std::to_string(baseSize);
+  return GetOrLoad(fonts_, key, Resolve(relativePath), baseSize);
+}
+
 void AssetManager::PurgeUnused() {
   auto unused = [](const auto& entry) { return entry.second.use_count() == 1; };
   std::erase_if(textures_, unused);
   std::erase_if(models_, unused);
   std::erase_if(shaders_, unused);
+  std::erase_if(fonts_, unused);
 }
 
 void AssetManager::Clear() {
   textures_.clear();
   models_.clear();
   shaders_.clear();
+  fonts_.clear();
 }
 
 } // namespace retro

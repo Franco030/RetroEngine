@@ -1,17 +1,17 @@
 #version 330
 
-noperspective in vec2 fragTexCoord;
+noperspective in vec2 fragTexCoordAffine;
+in vec2 fragTexCoordPersp;
 noperspective in vec4 fragColor;
-in vec3 fragWorldPos;
+noperspective in vec3 fragLight;
 in float fragDepth;
 
 uniform sampler2D texture0;
 uniform vec4 colDiffuse;
 
-uniform vec3  lightDir;
-uniform float ambient;
 uniform float colorLevels;
 uniform float ditherStrength;
+uniform float affineAmount;   // 1 = deformacion PS1, 0 = texturas correctas
 
 uniform vec3  fogColor;
 uniform float fogStart;
@@ -26,16 +26,12 @@ const float BAYER4[16] = float[16](
     15.0,  7.0, 13.0,  5.0);
 
 void main() {
-    vec4 texel = texture(texture0, fragTexCoord) * colDiffuse;
+    vec2 uv    = mix(fragTexCoordPersp, fragTexCoordAffine, affineAmount);
+    vec4 texel = texture(texture0, uv) * colDiffuse;
     if (texel.a < 0.5) discard;
 
-    vec3 c = cross(dFdx(fragWorldPos), dFdy(fragWorldPos));
-    vec3 n = (dot(c, c) > 1e-20) ? normalize(c) : vec3(0.0, 1.0, 0.0);
-
-    float diff  = max(dot(n, -normalize(lightDir)), 0.0);
-    float light = ambient + (1.0 - ambient) * diff;
-
-    vec3 rgb = texel.rgb * fragColor.rgb * light;
+    // La luz ya viene calculada por vertice (vertex shader).
+    vec3 rgb = texel.rgb * fragColor.rgb * fragLight;
 
     float fog = clamp((fragDepth - fogStart) / max(fogEnd - fogStart, 0.0001), 0.0, 1.0);
     rgb = mix(rgb, fogColor, fog);

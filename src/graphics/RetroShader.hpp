@@ -12,6 +12,7 @@ struct RetroShaderParams {
   Vector2 snapResolution{320.0f, 240.0f};
   float colorLevels = 32.0f;
   float ditherStrength = 1.0f;
+  float affineAmount = 0.35f;
   Vector3 lightDirection{-0.5f, -1.0f, -0.3f};
   float ambient = 0.35f;
 
@@ -38,6 +39,7 @@ private:
     int snapResolution = -1;
     int colorLevels = -1;
     int dither = -1;
+    int affine = -1;
     int lightDir = -1;
     int ambient = -1;
     int fogColor = -1;

@@ -73,4 +73,23 @@ private:
   Shader shader_{};
 };
 
+class FontResource {
+public:
+  FontResource(const std::string& path, int baseSize);
+  ~FontResource();
+
+  FontResource(const FontResource&) = delete;
+  FontResource& operator=(const FontResource&) = delete;
+  FontResource(FontResource&& other) noexcept;
+  FontResource& operator=(FontResource&& other) noexcept;
+
+  const Font& Get() const noexcept { return font_; }
+  bool IsValid() const noexcept { return font_.texture.id != 0; }
+
+private:
+  void Release() noexcept;
+
+  Font font_{};
+};
+
 } // namespace retro

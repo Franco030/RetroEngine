@@ -2,10 +2,34 @@
 
 #include <algorithm>
 #include <cmath>
+#include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <utility>
 
 namespace retro {
+
+namespace {
+
+RetroShaderParams DefaultShaderParams(const EngineConfig& c) {
+  RetroShaderParams p;
+  p.snapResolution = {static_cast<float>(c.internalWidth), static_cast<float>(c.internalHeight)};
+  p.fogColor = {c.clearColor.r / 255.0f, c.clearColor.g / 255.0f, c.clearColor.b / 255.0f};
+  return p;
+}
+
+std::shared_ptr<FontResource> LoadUiFont(const EngineConfig& c, AssetManager& assets) {
+  if (c.uiFont.empty())
+    return nullptr;
+  if (!FileExists((assets.Root() + c.uiFont).c_str())) {
+    std::cerr << "Aviso: no existe la fuente 'assets/" << c.uiFont
+              << "'; se usa la fuente por defecto de Raylib\n";
+    return nullptr;
+  }
+  return assets.GetFont(c.uiFont, 48);
+}
+
+} // namespace
 
 // ---------------------------------------------------------------------------
 // WindowGuard
@@ -21,7 +45,7 @@ RetroEngine::WindowGuard::WindowGuard(const EngineConfig& config) {
   InitWindow(config.windowWidth, config.windowHeight, config.title.c_str());
   if (!IsWindowReady()) {
     CloseWindow();
-    throw std::runtime_error("No se pudo inicializar la ventana / contexto OpenGl");
+    throw std::runtime_error("No se pudo inicializar la ventana / contexto OpenGL");
   }
 
   SetTargetFPS(config.targetFps);
@@ -33,18 +57,6 @@ RetroEngine::WindowGuard::~WindowGuard() { CloseWindow(); }
 // ---------------------------------------------------------------------------
 // RetroEngine
 // ---------------------------------------------------------------------------
-
-namespace {
-
-RetroShaderParams DefaultShaderParams(const EngineConfig& c) {
-  RetroShaderParams p;
-  p.snapResolution = {static_cast<float>(c.internalWidth), static_cast<float>(c.internalHeight)};
-  p.fogColor = {c.clearColor.r / 255.0f, c.clearColor.g / 255.0f, c.clearColor.b / 255.0f};
-  return p;
-}
-
-} // namespace
-
 RetroEngine::RetroEngine(EngineConfig config)
     : config_(std::move(config)), window_(config_),
       target_(config_.internalWidth, config_.internalHeight),
@@ -52,9 +64,10 @@ RetroEngine::RetroEngine(EngineConfig config)
       retroShader_(assets_.GetShader("shaders/retro.vs", "shaders/retro.fs"),
                    assets_.GetShader("shaders/retro.vs", "shaders/retro_unlit.fs"),
                    assets_.GetShader("shaders/retro.vs", "shaders/retro_sprite.fs"),
-                   DefaultShaderParams(config_)) {}
+                   DefaultShaderParams(config_)),
+      ui_(LoadUiFont(config_, assets_)), post_(assets_.GetShader("", "shaders/post.fs")) {}
 
-void RetroEngine::Run(const UpdateFn& update, const DrawFn& draw) {
+void RetroEngine::Run(const UpdateFn& update, const DrawFn& draw, const OverlayFn& overlay) {
   bool running = true;
 
   while (running && !WindowShouldClose()) {
@@ -73,10 +86,21 @@ void RetroEngine::Run(const UpdateFn& update, const DrawFn& draw) {
     EndTextureMode();
 
     BeginDrawing();
-    ClearBackground(BLACK);
+    ClearBackground(BLACK); // barras del letterbox
     Present();
+    if (overlay) {
+      ui_.Begin(PresentationRect());
+      overlay(ui_);
+    }
     EndDrawing();
   }
+}
+
+void RetroEngine::SetClearColor(Color color) {
+  config_.clearColor = color;
+  RetroShaderParams p = retroShader_.Params();
+  p.fogColor = {color.r / 255.0f, color.g / 255.0f, color.b / 255.0f};
+  retroShader_.SetParams(p);
 }
 
 Rectangle RetroEngine::PresentationRect() const {
@@ -91,15 +115,7 @@ Rectangle RetroEngine::PresentationRect() const {
 
   const float w = intW * scale;
   const float h = intH * scale;
-
   return {std::floor((winW - w) * 0.5f), std::floor((winH - h) * 0.5f), w, h};
-}
-
-void RetroEngine::SetClearColor(Color color) {
-  config_.clearColor = color;
-  RetroShaderParams p = retroShader_.Params();
-  p.fogColor = {color.r / 255.0f, color.g / 255.0f, color.b / 255.0f};
-  retroShader_.SetParams(p);
 }
 
 Vector2 RetroEngine::WindowToInternal(Vector2 windowPos) const {
@@ -108,13 +124,6 @@ Vector2 RetroEngine::WindowToInternal(Vector2 windowPos) const {
           (windowPos.y - dst.y) * static_cast<float>(config_.internalHeight) / dst.height};
 }
 
-void RetroEngine::Present() const {
-  const Texture2D& tex = target_.Get().texture;
-
-  const Rectangle src = {0.0f, 0.0f, static_cast<float>(tex.width),
-                         -static_cast<float>(tex.height)};
-
-  DrawTexturePro(tex, src, PresentationRect(), {0.0f, 0.0f}, 0.0f, WHITE);
-}
+void RetroEngine::Present() const { post_.Draw(target_.Get().texture, PresentationRect()); }
 
 } // namespace retro

@@ -2,9 +2,11 @@
 
 #include "graphics/Billboard.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <stdexcept>
 #include <utility>
+
 
 namespace retro {
 
@@ -48,16 +50,18 @@ void Entity::Draw() {
   DrawModel(model, {0.0f, 0.0f, 0.0f}, 1.0f, tint);
 }
 
-void Entity::DrawSprite(const Camera3D& camera, float shade) {
+void Entity::DrawSprite(const Camera3D& camera, Vector3 shade) {
   if (!visible || !IsSprite())
     return;
 
   const Vector2 size{spriteSize_.x * std::fabs(transform.scale.x),
                      spriteSize_.y * std::fabs(transform.scale.y)};
 
-  const float k = emissive ? 1.0f : shade;
-  const Color c{static_cast<unsigned char>(tint.r * k), static_cast<unsigned char>(tint.g * k),
-                static_cast<unsigned char>(tint.b * k), tint.a};
+  const Vector3 k = emissive ? Vector3{1.0f, 1.0f, 1.0f} : shade;
+  auto channel = [](unsigned char t, float f) {
+    return static_cast<unsigned char>(std::min(255.0f, static_cast<float>(t) * f));
+  };
+  const Color c{channel(tint.r, k.x), channel(tint.g, k.y), channel(tint.b, k.z), tint.a};
 
   DrawUprightBillboard(camera, texture_->Get(), transform.position, size, c);
 }

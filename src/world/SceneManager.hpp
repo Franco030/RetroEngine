@@ -1,5 +1,6 @@
 #pragma once
 
+#include "graphics/Light.hpp"
 #include "world/Scene.hpp"
 
 #include <raylib.h>
@@ -72,6 +73,8 @@ private:
 
   std::optional<Vector3> pendingSpawnPos_;
   std::optional<float> pendingSpawnYaw_;
+
+  std::vector<PointLight> lights_;
 
   Environment defaults_{};
   std::unique_ptr<Scene> scene_;

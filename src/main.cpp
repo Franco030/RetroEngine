@@ -52,6 +52,10 @@ static void HandleDebugKeys(retro::RetroEngine& engine) {
     p.affineAmount = kLevels[affineStep];
     changed = true;
   }
+  if (IsKeyPressed(KEY_SIX)) {
+    p.pointLights = !p.pointLights;
+    changed = true;
+  }
   if (changed)
     engine.Retro().SetParams(p);
 
@@ -262,7 +266,7 @@ int main() {
           }
 
           if (showHelp) {
-            ui.Text("1 jitter  2 color  3 dither  4 niebla  5 afin", 4, 3, 8, RAYWHITE);
+            ui.Text("1 jitter 2 color 3 dither 4 niebla 5 afin 6 luces", 4, 3, 8, RAYWHITE);
             ui.Text("F5 recargar  F6 reset  F7 filtro  F8 acabado", 4, 13, 8, RAYWHITE);
             ui.Text(firstPerson ? "WASD mover  Shift correr  Espacio saltar  E usar"
                                 : "Arrastrar/flechas: orbitar  Rueda: zoom",

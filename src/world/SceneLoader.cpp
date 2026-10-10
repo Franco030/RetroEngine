@@ -13,7 +13,9 @@
 
 #include <nlohmann/json.hpp>
 
+#include <algorithm>
 #include <fstream>
+#include <functional>
 #include <memory>
 #include <optional>
 #include <stdexcept>
@@ -54,6 +56,27 @@ Color ReadColor(const json& j, const char* key, Color fallback) {
   }
   return {a[0].get<unsigned char>(), a[1].get<unsigned char>(), a[2].get<unsigned char>(),
           a.size() == 4 ? a[3].get<unsigned char>() : static_cast<unsigned char>(255)};
+}
+
+// { "color": [r,g,b], "intensity": 1.0, "radius": 8 }; la posición la pone quien llama.
+PointLight ReadPointLight(const json& j, Vector3 position) {
+  PointLight l;
+  l.position = position;
+
+  const Color c = ReadColor(j, "color", WHITE);
+  const float k = j.value("intensity", 1.0f);
+  l.color = {static_cast<float>(c.r) / 255.0f * k, static_cast<float>(c.g) / 255.0f * k,
+             static_cast<float>(c.b) / 255.0f * k};
+  l.radius = j.value("radius", 8.0f);
+  if (l.radius <= 0.0f)
+    throw std::runtime_error("'radius' debe ser positivo");
+
+  l.flicker = std::clamp(j.value("flicker", 0.0f), 0.0f, 1.0f);
+  l.flickerRate = j.value("flickerRate", 10.0f);
+  if (l.flickerRate <= 0.0f)
+    throw std::runtime_error("'flickerRate' debe ser positivo");
+
+  return l;
 }
 
 std::shared_ptr<ModelResource> LoadModelSpec(const json& spec, RetroEngine& engine) {
@@ -425,6 +448,15 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
   e.visible = je.value("visible", true);
   e.showIf = ParseConditions(je, "showIf");
 
+  if (je.contains("light")) {
+    const json& jl = je.at("light");
+    EntityLight el;
+    el.offset = ReadVec3(jl, "offset", {0.00f, 0.0f, 0.0f});
+    el.light = ReadPointLight(jl, {0.0f, 0.0f, 0.0f});
+    el.light.phase = static_cast<float>(std::hash<std::string>{}(name) % 997u);
+    e.light = el;
+  }
+
   const Vector3 spin = ReadVec3(je, "spin", {0.0f, 0.0f, 0.0f});
   if (spin.x != 0.0f || spin.y != 0.0f || spin.z != 0.0f) {
     e.SetUpdate([spin](Entity& self, float dt) {
@@ -505,6 +537,16 @@ void LoadScene(const std::string& relativePath, RetroEngine& engine, Scene& scen
     }
 
     const bool autoCollide = root.value("autoCollide", false);
+
+    if (root.contains("lights")) {
+      int lightIndex = 0;
+      for (const json& jl : root.at("lights")) {
+        context = "luz #" + std::to_string(lightIndex);
+        PointLight l = ReadPointLight(jl, ReadVec3(jl, "position", {0.0f, 0.0f, 0.0f}));
+        l.phase = static_cast<float>(lightIndex++);
+        scene.lights.push_back(l);
+      }
+    }
 
     int index = 0;
     for (const json& je : root.at("entities")) {

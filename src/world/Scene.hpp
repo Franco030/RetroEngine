@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game/GameState.hpp"
+#include "graphics/Light.hpp"
 #include "physics/Collision.hpp"
 #include "world/Entity.hpp"
 #include "world/Logic.hpp"
@@ -11,6 +12,7 @@
 #include <cstddef>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
@@ -34,7 +36,7 @@ public:
   SpawnPoint spawn;
   std::string path;
   std::vector<Trigger> triggers;
-
+  std::vector<PointLight> lights;
   std::optional<Bounds> bounds;
 
   Entity& Add(std::unique_ptr<Entity> entity);
@@ -44,17 +46,21 @@ public:
   void Clear() noexcept {
     entities_.clear();
     triggers.clear();
+    lights.clear();
     bounds.reset();
     triggersPrimed_ = false;
   }
 
   void Update(float dt);
-  void Draw(const Camera3D& camera, const Shader& spriteShader, float spriteShade);
+  void Draw(const Camera3D& camera, const Shader& spriteShader, float ambient,
+            std::span<const PointLight> lights);
 
   std::size_t Count() const noexcept { return entities_.size(); }
 
   // Cajas de colisión en el mundo, con las transformaciones actuales.
   void CollectColliders(std::vector<WorldBox>& out) const;
+
+  void CollectLights(std::vector<PointLight>& out) const;
 
   // Recalcula la visibilidad de las entidades con "showIf".
   // Una entidad oculta tampoco tiene colision ni se puede interactuar con ella

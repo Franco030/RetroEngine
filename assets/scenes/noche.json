@@ -48,16 +48,34 @@
         ],
         "ambient": 0.15
     },
+    "lights": [
+        {
+            "position": [
+                0,
+                3.5,
+                0
+            ],
+            "color": [
+                120,
+                140,
+                255
+            ],
+            "radius": 9,
+            "intensity": 1.2,
+            "flicker": 0.12,
+            "flickerRate": 5
+        }
+    ],
     "entities": [
         {
             "name": "suelo",
             "model": {
                 "type": "plane",
                 "size": 40,
-                "subdivisions": 20,
+                "subdivisions": 40,
                 "tiles": 20
             },
-            "texture": "textures/suelo.png",
+            "texture": "textures/suelo_piedra.png",
             "wrap": "repeat",
             "tint": [
                 110,
@@ -69,7 +87,7 @@
         {
             "name": "torre",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "scale": [
                 0.6,
                 2.2,
@@ -90,7 +108,7 @@
         {
             "name": "casa_1",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 6,
                 0,
@@ -111,7 +129,7 @@
         {
             "name": "casa_2",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 3,
                 0,
@@ -132,7 +150,7 @@
         {
             "name": "casa_3",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 -3,
                 0,
@@ -153,7 +171,7 @@
         {
             "name": "casa_4",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 -6,
                 0,
@@ -174,7 +192,7 @@
         {
             "name": "casa_5",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 -3,
                 0,
@@ -195,7 +213,7 @@
         {
             "name": "casa_6",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 3,
                 0,
@@ -350,6 +368,22 @@
                 8
             ],
             "emissive": true,
+            "light": {
+                "offset": [
+                    0,
+                    2.1,
+                    0
+                ],
+                "color": [
+                    255,
+                    190,
+                    110
+                ],
+                "radius": 10,
+                "intensity": 1.6,
+                "flicker": 0.25,
+                "flickerRate": 9
+            },
             "collider": {
                 "min": [
                     -0.15,
@@ -376,6 +410,22 @@
                 8
             ],
             "emissive": true,
+            "light": {
+                "offset": [
+                    0,
+                    2.1,
+                    0
+                ],
+                "color": [
+                    255,
+                    190,
+                    110
+                ],
+                "radius": 10,
+                "intensity": 1.6,
+                "flicker": 0.25,
+                "flickerRate": 9
+            },
             "collider": {
                 "min": [
                     -0.15,

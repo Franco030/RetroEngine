@@ -1,8 +1,9 @@
 #include "world/SceneManager.hpp"
-
 #include "core/RetroEngine.hpp"
 #include "graphics/RetroCamera.hpp"
 #include "world/SceneLoader.hpp"
+
+#include <raymath.h>
 
 #include <algorithm>
 #include <cmath>
@@ -16,6 +17,15 @@ namespace {
 
 constexpr float kFadeSteps = 8.0f;
 constexpr float kMaxDt = 0.05f;
+
+void KeepNearest(std::vector<PointLight>& lights, Vector3 from, std::size_t n) {
+  if (lights.size() <= n)
+    return;
+  auto score = [&](const PointLight& l) { return Vector3Distance(l.position, from) - l.radius; };
+  std::partial_sort(lights.begin(), lights.begin() + static_cast<std::ptrdiff_t>(n), lights.end(),
+                    [&](const PointLight& a, const PointLight& b) { return score(a) < score(b); });
+  lights.resize(n);
+}
 
 } // namespace
 
@@ -167,9 +177,16 @@ void SceneManager::Draw() {
   if (!scene_)
     return;
 
-  const float ambient = engine_.Retro().Params().ambient;
-  const float shade = ambient + (1.0f - ambient) * 0.5f;
-  scene_->Draw(camera_.Raw(), engine_.Retro().Sprite()->Get(), shade);
+  const RetroShaderParams& p = engine_.Retro().Params();
+
+  lights_.clear();
+  if (p.pointLights) {
+    scene_->CollectLights(lights_);
+    KeepNearest(lights_, camera_.Position(), kMaxPointLights);
+  }
+  engine_.Retro().SetPointLights(lights_);
+
+  scene_->Draw(camera_.Raw(), engine_.Retro().Sprite()->Get(), p.ambient, lights_);
 }
 
 void SceneManager::DrawFade() const {

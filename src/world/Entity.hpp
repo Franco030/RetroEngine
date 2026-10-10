@@ -1,19 +1,27 @@
 #pragma once
 
 #include "assets/Resources.hpp"
+#include "graphics/Light.hpp"
 #include "graphics/Transform.hpp"
 #include "physics/Collision.hpp"
 #include "world/Logic.hpp"
 
 #include <raylib.h>
 
+#include <cmath>
 #include <functional>
 #include <memory>
 #include <optional>
 #include <string>
 #include <vector>
 
+
 namespace retro {
+
+struct EntityLight {
+  Vector3 offset{0.0f, 0.0f, 0.0f};
+  PointLight light;
+};
 
 // Objeto del mundo: un Transform propio y, según el tipo, un modelo 3D
 // compartido o un sprite billboard (textura + tamaño en el mundo).
@@ -35,12 +43,13 @@ public:
 
   const std::string& Name() const noexcept { return name_; }
   bool IsSprite() const noexcept { return model_ == nullptr; }
+  float SpriteHeight() const noexcept { return spriteSize_.y * std::fabs(transform.scale.y); }
 
   void SetUpdate(UpdateFn fn) { updateFn_ = std::move(fn); }
   void Update(float dt);
 
   void Draw();
-  void DrawSprite(const Camera3D& camera, float shade);
+  void DrawSprite(const Camera3D& camera, Vector3 shade);
 
   Transform transform;
   Color tint = WHITE;
@@ -49,6 +58,7 @@ public:
   std::vector<Condition> showIf;
   std::optional<BoxCollider> collider;
   std::optional<Interaction> interact;
+  std::optional<EntityLight> light;
 
 private:
   std::string name_;

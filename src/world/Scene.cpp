@@ -1,6 +1,8 @@
 #include "world/Scene.hpp"
 #include "graphics/ShaderScope.hpp"
 
+#include <raymath.h>
+
 #include <algorithm>
 #include <cfloat>
 #include <stdexcept>
@@ -73,7 +75,34 @@ void Scene::Update(float dt) {
     e->Update(dt);
 }
 
-void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float spriteShade) {
+void Scene::CollectLights(std::vector<PointLight>& out) const {
+  const double time = GetTime();
+
+  auto push = [&](PointLight l) {
+    const float f = FlickerFactor(l, time);
+    l.color = {l.color.x * f, l.color.y * f, l.color.z * f};
+    l.radius *= 0.85f + 0.15f * f;
+    out.push_back(l);
+  };
+
+  for (const PointLight& l : lights)
+    push(l);
+
+  for (const auto& e : entities_) {
+    if (!e->light || !e->visible)
+      continue;
+
+    PointLight l = e->light->light;
+    const Vector3& o = e->light->offset;
+    const Vector3& s = e->transform.scale;
+    const Vector3& p = e->transform.position;
+    l.position = {p.x + o.x * s.x, p.y + o.y * s.y, p.z + o.z * s.z};
+    push(l);
+  }
+}
+
+void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float ambient,
+                 std::span<const PointLight> lights) {
   bool anySprite = false;
   for (auto& e : entities_) {
     if (e->IsSprite()) {
@@ -85,10 +114,23 @@ void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float sprit
   if (!anySprite)
     return;
 
+  const float base = ambient + (1.0f - ambient) * 0.5f;
+
   ShaderScope scope(spriteShader);
   for (auto& e : entities_) {
-    if (e->IsSprite())
-      e->DrawSprite(camera, spriteShade);
+    if (!e->IsSprite() || !e->visible)
+      continue;
+
+    const Vector3 center{e->transform.position.x,
+                         e->transform.position.y + e->SpriteHeight() * 0.5f,
+                         e->transform.position.z};
+    Vector3 shade{base, base, base};
+    for (const PointLight& l : lights) {
+      const float t = std::clamp(1.0f - Vector3Distance(l.position, center) / l.radius, 0.0f, 1.0f);
+      const float k = t * t * 0.6f;
+      shade = {shade.x + l.color.x * k, shade.y + l.color.y * k, shade.z + l.color.z * k};
+    }
+    e->DrawSprite(camera, shade);
   }
 }
 

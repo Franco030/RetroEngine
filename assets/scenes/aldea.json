@@ -54,22 +54,16 @@
             "model": {
                 "type": "plane",
                 "size": 60,
-                "subdivisions": 30,
+                "subdivisions": 60,
                 "tiles": 30
             },
-            "texture": "textures/suelo.png",
-            "wrap": "repeat",
-            "tint": [
-                190,
-                230,
-                170,
-                255
-            ]
+            "texture": "textures/suelo_pasto.png",
+            "wrap": "repeat"
         },
         {
             "name": "casa_1",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 -8,
                 0,
@@ -84,7 +78,7 @@
         {
             "name": "casa_2",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 -3,
                 0,
@@ -104,7 +98,7 @@
         {
             "name": "casa_3",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 5,
                 0,
@@ -124,7 +118,7 @@
         {
             "name": "casa_4",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 9,
                 0,
@@ -144,7 +138,7 @@
         {
             "name": "casa_5",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 7,
                 0,
@@ -164,7 +158,7 @@
         {
             "name": "casa_6",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 -6,
                 0,
@@ -179,7 +173,7 @@
         {
             "name": "molino",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 0,
                 0,
@@ -367,6 +361,20 @@
                 9
             ],
             "emissive": true,
+            "light": {
+                "offset": [
+                    0,
+                    2.1,
+                    0
+                ],
+                "color": [
+                    255,
+                    200,
+                    130
+                ],
+                "radius": 8,
+                "intensity": 0.8
+            },
             "collider": {
                 "min": [
                     -0.15,

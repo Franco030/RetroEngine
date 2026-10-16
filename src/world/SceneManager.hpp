@@ -53,6 +53,8 @@ public:
   Scene* CurrentMut() noexcept { return scene_.get(); }
   std::uint64_t Generation() const noexcept { return generation_; }
 
+  void SetFocus(Vector3 focus) noexcept { focus_ = focus; }
+
 private:
   enum class Phase { Idle, FadingOut, FadingIn };
 
@@ -63,6 +65,8 @@ private:
     Vector3 lightDirection;
     float ambient;
   };
+
+  Vector3 focus_{0.0f, 0.0f, 0.0f};
 
   void ApplyEnvironment(const Environment& env);
 

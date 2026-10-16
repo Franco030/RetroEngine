@@ -51,7 +51,7 @@ public:
     triggersPrimed_ = false;
   }
 
-  void Update(float dt);
+  void Update(float dt, Vector3 focus);
   void Draw(const Camera3D& camera, const Shader& spriteShader, float ambient,
             std::span<const PointLight> lights);
 

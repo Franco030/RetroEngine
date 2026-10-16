@@ -15,7 +15,6 @@
 #include <string>
 #include <vector>
 
-
 namespace retro {
 
 struct EntityLight {
@@ -46,7 +45,7 @@ public:
   float SpriteHeight() const noexcept { return spriteSize_.y * std::fabs(transform.scale.y); }
 
   void SetUpdate(UpdateFn fn) { updateFn_ = std::move(fn); }
-  void Update(float dt);
+  void Update(float dt, Vector3 focus);
 
   void Draw();
   void DrawSprite(const Camera3D& camera, Vector3 shade);
@@ -55,13 +54,27 @@ public:
   Color tint = WHITE;
   bool visible = true;
   bool emissive = false;
+  bool facePlayer = false;
+  float lookRange = 10.0f;
+  float turnSpeed = 240.0f;
   std::vector<Condition> showIf;
   std::optional<BoxCollider> collider;
   std::optional<Interaction> interact;
   std::optional<EntityLight> light;
 
+  struct Idle {
+    float bob = 0.015f;
+    float sway = 1.2f;
+    float speed = 2.0f;
+    float phase = 0.0f;
+  };
+  std::optional<Idle> idle;
+
 private:
   std::string name_;
+  float idleTime_ = 0.0f;
+  Vector3 drawOffset_{0.0f, 0.0f, 0.0f};
+  float drawRoll_ = 0.0f;
   std::shared_ptr<ModelResource> model_;
   std::shared_ptr<TextureResource> texture_;
   Vector2 spriteSize_{1.0f, 1.0f};

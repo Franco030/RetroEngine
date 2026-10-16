@@ -7,7 +7,6 @@
 #include <stdexcept>
 #include <utility>
 
-
 namespace retro {
 
 Entity::Entity(std::string name, std::shared_ptr<ModelResource> model,
@@ -28,9 +27,29 @@ Entity::Entity(std::string name, std::shared_ptr<TextureResource> sprite, Vector
   }
 }
 
-void Entity::Update(float dt) {
+void Entity::Update(float dt, Vector3 focus) {
   if (updateFn_)
     updateFn_(*this, dt);
+
+  if (facePlayer) {
+    const float dx = focus.x - transform.position.x;
+    const float dz = focus.z - transform.position.z;
+    const float dist2 = dx * dx + dz * dz;
+    if (dist2 > 1e-4f && dist2 <= lookRange * lookRange) {
+      const float target = std::atan2(dx, dz) * RAD2DEG;
+      const float diff = std::remainder(target - transform.rotation.y, 360.0f);
+      const float step = turnSpeed * dt;
+      transform.rotation.y =
+          std::remainder(transform.rotation.y + std::clamp(diff, -step, step), 360.0f);
+    }
+  }
+
+  if (idle) {
+    idleTime_ += dt;
+    const float t = idleTime_ * idle->speed * 3.0f + idle->phase;
+    drawOffset_ = {0.0f, std::fabs(std::sin(t)) * idle->bob, 0.0f};
+    drawRoll_ = std::sin(t * 0.5f) * idle->sway;
+  }
 }
 
 void Entity::Draw() {
@@ -46,7 +65,10 @@ void Entity::Draw() {
     }
   }
 
-  model.transform = transform.ToMatrix();
+  Transform visual = transform;
+  visual.position = Vector3Add(visual.position, drawOffset_);
+  visual.rotation.z += drawRoll_;
+  model.transform = visual.ToMatrix();
   DrawModel(model, {0.0f, 0.0f, 0.0f}, 1.0f, tint);
 }
 

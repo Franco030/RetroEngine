@@ -271,17 +271,22 @@
         },
         {
             "name": "aldeano",
-            "sprite": "textures/aldeano.png",
-            "size": [
-                1.0,
-                2.0
-            ],
+            "model": "models/persona_m.obj",
+            "texture": "textures/yo_tex.png",
             "position": [
                 -7,
                 0,
                 -4
             ],
-            "collider": true,
+            "facePlayer": {
+                "range": 9,
+                "turnSpeed": 220
+            },
+            "idle": {
+                "bob": 0.012,
+                "sway": 1.0,
+                "speed": 2.0
+            },
             "interact": {
                 "prompt": "Hablar",
                 "box": {

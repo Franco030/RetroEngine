@@ -122,7 +122,7 @@ int main() {
     std::uint64_t seenGeneration = scenes.Generation();
     bool firstPerson = true;
     bool showColliders = false;
-    bool showHelp = true;
+    bool showHelp = false;
     std::string interactPrompt;
 
     auto spawnPlayer = [&]() {
@@ -171,6 +171,7 @@ int main() {
           if (IsKeyPressed(KEY_F3))
             showColliders = !showColliders;
 
+          scenes.SetFocus(player.Feet());
           scenes.Update(dt);
           state.Update(dt);
 

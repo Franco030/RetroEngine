@@ -457,6 +457,36 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
     e.light = el;
   }
 
+  if (je.contains("facePlayer")) {
+    const json& jf = je.at("facePlayer");
+    if (jf.is_boolean()) {
+      e.facePlayer = jf.get<bool>();
+    } else if (jf.is_object()) {
+      e.facePlayer = true;
+      e.lookRange = jf.value("range", 10.0f);
+      e.turnSpeed = jf.value("turnSpeed", 240.0f);
+      if (e.lookRange <= 0.0f || e.turnSpeed <= 0.0f) {
+        throw std::runtime_error("'facePlayer': 'range' y 'turnSpeed' deben ser positivos");
+      }
+    } else {
+      throw std::runtime_error("'facePlayer' debe ser true o un objeto");
+    }
+  }
+
+  if (je.contains("idle")) {
+    const json& ji = je.at("idle");
+    Entity::Idle idle;
+    if (ji.is_object()) {
+      idle.bob = ji.value("bob", idle.bob);
+      idle.sway = ji.value("sway", idle.sway);
+      idle.speed = ji.value("speed", idle.speed);
+    } else if (!(ji.is_boolean() && ji.get<bool>())) {
+      throw std::runtime_error("'idle' debe ser true o un objeto");
+    }
+    idle.phase = static_cast<float>(std::hash<std::string>{}(name) % 997u);
+    e.idle = idle;
+  }
+
   const Vector3 spin = ReadVec3(je, "spin", {0.0f, 0.0f, 0.0f});
   if (spin.x != 0.0f || spin.y != 0.0f || spin.z != 0.0f) {
     e.SetUpdate([spin](Entity& self, float dt) {

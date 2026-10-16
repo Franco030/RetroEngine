@@ -170,7 +170,7 @@ void SceneManager::Update(float dt) {
   }
 
   if (scene_)
-    scene_->Update(dt);
+    scene_->Update(dt, focus_);
 }
 
 void SceneManager::Draw() {

@@ -70,9 +70,9 @@ bool Scene::Remove(const std::string& name) {
   return std::erase_if(entities_, [&](const auto& e) { return e->Name() == name; }) > 0;
 }
 
-void Scene::Update(float dt) {
+void Scene::Update(float dt, Vector3 focus) {
   for (auto& e : entities_)
-    e->Update(dt);
+    e->Update(dt, focus);
 }
 
 void Scene::CollectLights(std::vector<PointLight>& out) const {

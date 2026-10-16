@@ -438,6 +438,46 @@
                     0.15
                 ]
             }
+        },
+        {
+            "name": "aldeano",
+            "model": "models/persona_m.obj",
+            "texture": "textures/luis_tex.png",
+            "position": [
+                0,
+                0,
+                5
+            ],
+            "scale": [
+                0.96,
+                0.96,
+                0.96
+            ],
+            "facePlayer": {
+                "range": 9
+            },
+            "idle": true,
+            "interact": {
+                "prompt": "Hablar",
+                "box": {
+                    "min": [
+                        -0.7,
+                        0,
+                        -0.7
+                    ],
+                    "max": [
+                        0.7,
+                        2,
+                        0.7
+                    ]
+                },
+                "do": [
+                    {
+                        "message": "Bienvenido a la aldea.\nDe noche se ve mas bonito.",
+                        "seconds": 4
+                    }
+                ]
+            }
         }
     ],
     "triggers": [

@@ -389,18 +389,23 @@
             }
         },
         {
-            "name": "aldeano_1",
-            "sprite": "textures/aldeano.png",
-            "size": [
-                1.0,
-                2.0
-            ],
+            "name": "aldeana",
+            "model": "models/persona_f.obj",
+            "texture": "textures/job_tex.png",
             "position": [
                 -2,
                 0,
                 5
             ],
-            "collider": true,
+            "scale": [
+                0.96,
+                0.96,
+                0.96
+            ],
+            "facePlayer": {
+                "range": 9
+            },
+            "idle": true,
             "interact": {
                 "prompt": "Hablar",
                 "box": {
@@ -424,24 +429,28 @@
             }
         },
         {
-            "name": "aldeano_2",
-            "sprite": "textures/aldeano.png",
-            "size": [
-                1.0,
-                2.0
-            ],
+            "name": "guardia",
+            "model": "models/persona_m.obj",
+            "texture": "textures/martin_2_tex.png",
             "position": [
                 6,
                 0,
                 2
             ],
-            "tint": [
-                255,
-                210,
-                190,
-                255
+            "rotation": [
+                0,
+                200,
+                0
             ],
-            "collider": true,
+            "facePlayer": {
+                "range": 7,
+                "turnSpeed": 160
+            },
+            "idle": {
+                "bob": 0.008,
+                "sway": 0.6,
+                "speed": 1.6
+            },
             "interact": {
                 "prompt": "Hablar",
                 "box": {

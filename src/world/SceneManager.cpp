@@ -51,6 +51,13 @@ void SceneManager::ApplyEnvironment(const Environment& env) {
   engine_.Retro().SetParams(p);
 }
 
+void SceneManager::ApplyAudio(const SceneAudio& a) {
+  AudioSystem& audio = engine_.Audio();
+  audio.PlayMusic(a.music, a.musicVolume, a.fade);
+  audio.PlayAmbient(a.ambient, a.ambientVolume, a.fade);
+  audio.SetFootsteps(a.footsteps, a.footstepVolume);
+}
+
 void SceneManager::LoadNow(std::size_t index) {
   if (index >= paths_.size())
     throw std::out_of_range("SceneManager: indice de escena invalido");
@@ -82,6 +89,8 @@ void SceneManager::LoadNow(std::size_t index) {
     engine_.Retro().SetParams(savedParams);
     throw;
   }
+
+  ApplyAudio(scene_->audio);
 
   // Libera modelos y texturas que solo usaba la escena anterior.
   engine_.Assets().PurgeUnused();

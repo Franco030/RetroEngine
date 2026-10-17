@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include "audio/AudioSystem.hpp"
+#include "audio/Footsteps.hpp"
 #include "core/RetroEngine.hpp"
 #include "game/GameState.hpp"
 #include "graphics/DebugDraw.hpp"
@@ -70,6 +72,9 @@ static void HandleDebugKeys(retro::RetroEngine& engine) {
     q.effects = !q.effects;
     postChanged = true;
   }
+  if (IsKeyPressed(KEY_M)) {
+    engine.Audio().SetMasterVolume(engine.Audio().MasterVolume() > 0.0f ? 0.0f : 1.0f);
+  }
   if (postChanged)
     engine.Post().SetParams(q);
 }
@@ -115,7 +120,7 @@ int main() {
 
     retro::Player player;
     retro::GameState state;
-    retro::ActionRunner runner(scenes, player, state);
+    retro::ActionRunner runner(scenes, player, state, engine.Audio());
 
     std::vector<retro::WorldBox> colliders;
     std::vector<retro::Action> firedActions;
@@ -123,11 +128,13 @@ int main() {
     bool firstPerson = true;
     bool showColliders = false;
     bool showHelp = false;
+    retro::FootstepTracker footsteps;
     std::string interactPrompt;
 
     auto spawnPlayer = [&]() {
       if (const retro::Scene* s = scenes.Current()) {
         player.Spawn(s->spawn.position, s->spawn.yaw);
+        footsteps.Reset(s->spawn.position);
       }
     };
     spawnPlayer();
@@ -194,6 +201,9 @@ int main() {
           } else {
             camera.UpdateOrbit(dt);
           }
+
+          footsteps.Update(player.Feet(), player.Grounded(), IsKeyDown(KEY_LEFT_SHIFT),
+                           firstPerson && !scenes.Transitioning(), engine.Audio());
 
           // --- Triggers ---
           if (firstPerson && !scenes.Transitioning()) {
@@ -268,7 +278,7 @@ int main() {
 
           if (showHelp) {
             ui.Text("1 jitter 2 color 3 dither 4 niebla 5 afin 6 luces", 4, 3, 8, RAYWHITE);
-            ui.Text("F5 recargar  F6 reset  F7 filtro  F8 acabado", 4, 13, 8, RAYWHITE);
+            ui.Text("F5 recargar  F6 reset  F7 filtro  F8 acabado M sonido", 4, 13, 8, RAYWHITE);
             ui.Text(firstPerson ? "WASD mover  Shift correr  Espacio saltar  E usar"
                                 : "Arrastrar/flechas: orbitar  Rueda: zoom",
                     4, 23, 8, RAYWHITE);

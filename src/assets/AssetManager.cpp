@@ -48,12 +48,17 @@ std::shared_ptr<FontResource> AssetManager::GetFont(const std::string& relativeP
   return GetOrLoad(fonts_, key, Resolve(relativePath), baseSize);
 }
 
+std::shared_ptr<SoundResource> AssetManager::GetSound(const std::string& relativePath) {
+  return GetOrLoad(sounds_, relativePath, Resolve(relativePath));
+}
+
 void AssetManager::PurgeUnused() {
   auto unused = [](const auto& entry) { return entry.second.use_count() == 1; };
   std::erase_if(textures_, unused);
   std::erase_if(models_, unused);
   std::erase_if(shaders_, unused);
   std::erase_if(fonts_, unused);
+  std::erase_if(sounds_, unused);
 }
 
 void AssetManager::Clear() {
@@ -61,6 +66,7 @@ void AssetManager::Clear() {
   models_.clear();
   shaders_.clear();
   fonts_.clear();
+  sounds_.clear();
 }
 
 } // namespace retro

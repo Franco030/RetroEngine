@@ -56,6 +56,9 @@ void ActionRunner::Run(const std::vector<Action>& actions) {
             [&](const action::Message& m) {
               state_.ShowMessage(Expand(m.text, state_), m.seconds);
             },
+            [&](const action::PlaySound& s) { audio_.PlaySfx(s.file, s.volume); },
+            [&](const action::PlayMusic& m) { audio_.PlayMusic(m.file, m.volume, m.fade); },
+            [&](const action::StopMusic& m) { audio_.StopMusic(m.fade); },
         },
         a);
   }

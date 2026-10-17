@@ -54,18 +54,31 @@ RetroEngine::WindowGuard::WindowGuard(const EngineConfig& config) {
 
 RetroEngine::WindowGuard::~WindowGuard() { CloseWindow(); }
 
+RetroEngine::AudioGuard::AudioGuard() {
+  InitAudioDevice();
+  ready_ = IsAudioDeviceReady();
+  if (!ready_)
+    std::cerr << "Aviso: no hay dispositivo de audio; el juego sigue sin sonido\n";
+}
+
+RetroEngine::AudioGuard::~AudioGuard() {
+  if (ready_)
+    CloseAudioDevice();
+}
+
 // ---------------------------------------------------------------------------
 // RetroEngine
 // ---------------------------------------------------------------------------
 RetroEngine::RetroEngine(EngineConfig config)
-    : config_(std::move(config)), window_(config_),
+    : config_(std::move(config)), window_(config_), audioGuard_(),
       target_(config_.internalWidth, config_.internalHeight),
       assets_(std::string(GetApplicationDirectory()) + "assets/"),
       retroShader_(assets_.GetShader("shaders/retro.vs", "shaders/retro.fs"),
                    assets_.GetShader("shaders/retro.vs", "shaders/retro_unlit.fs"),
                    assets_.GetShader("shaders/retro.vs", "shaders/retro_sprite.fs"),
                    DefaultShaderParams(config_)),
-      ui_(LoadUiFont(config_, assets_)), post_(assets_.GetShader("", "shaders/post.fs")) {}
+      ui_(LoadUiFont(config_, assets_)), post_(assets_.GetShader("", "shaders/post.fs")),
+      audio_(assets_, audioGuard_.Ready()) {}
 
 void RetroEngine::Run(const UpdateFn& update, const DrawFn& draw, const OverlayFn& overlay) {
   bool running = true;
@@ -75,6 +88,8 @@ void RetroEngine::Run(const UpdateFn& update, const DrawFn& draw, const OverlayF
       running = false;
     if (IsKeyPressed(KEY_F11))
       ToggleBorderlessWindowed();
+
+    audio_.Update(GetFrameTime());
 
     if (update)
       update(GetFrameTime());

@@ -36,6 +36,25 @@
         160,
         210
     ],
+    "audio": {
+        "music": {
+            "file": "audio/musica_aldea.wav",
+            "volume": 0.45
+        },
+        "ambient": {
+            "file": "audio/aldea_amb.wav",
+            "volume": 0.45
+        },
+        "footsteps": {
+            "files": [
+                "audio/paso_pasto_1.wav",
+                "audio/paso_pasto_2.wav",
+                "audio/paso_pasto_3.wav"
+            ],
+            "volume": 0.6
+        },
+        "fade": 1.5
+    },
     "fog": {
         "start": 14,
         "end": 36
@@ -422,6 +441,10 @@
                 },
                 "do": [
                     {
+                        "play_sound": "audio/blip.wav",
+                        "volume": 0.5
+                    },
+                    {
                         "message": "Bienvenido a la aldea.\nDe noche se ve mas bonito.",
                         "seconds": 4
                     }
@@ -466,6 +489,10 @@
                     ]
                 },
                 "do": [
+                    {
+                        "play_sound": "audio/blip.wav",
+                        "volume": 0.5
+                    },
                     {
                         "message": "Cuidado con el molino.\nGira solo, pero no muerde.",
                         "seconds": 4

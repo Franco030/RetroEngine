@@ -1,6 +1,7 @@
 #pragma once
 
 #include "assets/AssetManager.hpp"
+#include "audio/AudioSystem.hpp"
 #include "core/RenderTarget.hpp"
 #include "graphics/PostProcess.hpp"
 #include "graphics/RetroShader.hpp"
@@ -61,6 +62,8 @@ public:
   PostProcess& Post() noexcept { return post_; }
   const EngineConfig& Config() const noexcept { return config_; }
 
+  AudioSystem& Audio() noexcept { return audio_; }
+
   void SetClearColor(Color color);
 
   Rectangle PresentationRect() const;
@@ -76,18 +79,31 @@ private:
     WindowGuard& operator=(const WindowGuard&) = delete;
   };
 
+  class AudioGuard {
+  public:
+    AudioGuard();
+    ~AudioGuard();
+    AudioGuard(const AudioGuard&) = delete;
+    AudioGuard& operator=(const AudioGuard&) = delete;
+    bool Ready() const noexcept { return ready_; }
+
+  private:
+    bool ready_ = false;
+  };
+
   void Present() const;
 
   // orden: se destruyen en orden inverso.
-  //   post_ -> ui_ -> retroShader_ -> assets_ -> target_ -> window_ (CloseWindow)
-  // Todo Unload* necesita el contexto OpenGL vivo.
+  //   audio_ -> post_ -> ui_ -> retroShader_ -> assets_ -> target_ -> audioGuard_ -> window_
   EngineConfig config_;
   WindowGuard window_;
+  AudioGuard audioGuard_;
   RenderTarget target_;
   AssetManager assets_;
   RetroShader retroShader_;
   Ui ui_;
   PostProcess post_;
+  AudioSystem audio_;
 };
 
 } // namespace retro

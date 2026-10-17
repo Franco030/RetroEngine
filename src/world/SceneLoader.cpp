@@ -321,10 +321,31 @@ Action ParseAction(const json& ja) {
     result = a;
     ++found;
   }
+  if (ja.contains("play_sound")) {
+    action::PlaySound a;
+    a.file = ja.at("play_sound").get<std::string>();
+    a.volume = ja.value("volume", 1.0f);
+    result = a;
+    ++found;
+  }
+  if (ja.contains("play_music")) {
+    action::PlayMusic a;
+    a.file = ja.at("play_music").get<std::string>();
+    a.volume = ja.value("volume", 0.6f);
+    a.fade = ja.value("fade", 1.0f);
+    result = a;
+    ++found;
+  }
+  if (ja.contains("stop_music")) {
+    action::StopMusic a;
+    a.fade = ja.value("fade", 1.0f);
+    result = a;
+    ++found;
+  }
 
   if (found != 1) {
     throw std::runtime_error("cada accion debe tener exactamente una de: goto_scene, teleport, "
-                             "set_flag, add_flag, message");
+                             "set_flag, add_flag, message, play_sound, play_music, stop_music");
   }
   return result;
 }
@@ -390,6 +411,46 @@ void AddTrigger(const json& jt, Scene& scene) {
     t.actions.push_back(ParseAction(ja));
 
   scene.triggers.push_back(std::move(t));
+}
+
+// "audio": { "music": "ruta" | { "file": "ruta", "volume": 0.5 },
+//            "ambient": igual,
+//            "footsteps": { "files": [ ... ], "volume": 0.6 },
+//            "fade": 1.5 }
+void ReadAudio(const json& ja, const std::string& root, Scene& scene) {
+  auto checkFile = [&](const std::string& file) {
+    if (!FileExists((root + file).c_str())) {
+      throw std::runtime_error("archivo de audio inexistente: " + file);
+    }
+  };
+  auto track = [&](const char* key, std::string& file, float& volume) {
+    if (!ja.contains(key))
+      return;
+    const json& t = ja.at(key);
+    if (t.is_string()) {
+      file = t.get<std::string>();
+    } else if (t.is_object()) {
+      file = t.at("file").get<std::string>();
+      volume = t.value("volume", volume);
+    } else {
+      throw std::runtime_error(std::string("'") + key + "' debe ser una ruta o { file, volume }");
+    }
+    checkFile(file);
+  };
+
+  SceneAudio& a = scene.audio;
+  track("music", a.music, a.musicVolume);
+  track("ambient", a.ambient, a.ambientVolume);
+
+  if (ja.contains("footsteps")) {
+    const json& f = ja.at("footsteps");
+    for (const json& item : f.at("files")) {
+      a.footsteps.push_back(item.get<std::string>());
+      checkFile(a.footsteps.back());
+    }
+    a.footstepVolume = f.value("volume", a.footstepVolume);
+  }
+  a.fade = ja.value("fade", a.fade);
 }
 
 void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoCollide) {
@@ -567,6 +628,11 @@ void LoadScene(const std::string& relativePath, RetroEngine& engine, Scene& scen
     }
 
     const bool autoCollide = root.value("autoCollide", false);
+
+    if (root.contains("audio")) {
+      context = "audio";
+      ReadAudio(root.at("audio"), engine.Assets().Root(), scene);
+    }
 
     if (root.contains("lights")) {
       int lightIndex = 0;

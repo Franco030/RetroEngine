@@ -69,6 +69,7 @@ private:
   Vector3 focus_{0.0f, 0.0f, 0.0f};
 
   void ApplyEnvironment(const Environment& env);
+  void ApplyAudio(const SceneAudio& audio);
 
   RetroEngine& engine_;
   RetroCamera& camera_;

@@ -36,6 +36,25 @@
         12,
         30
     ],
+    "audio": {
+        "music": {
+            "file": "audio/musica_noche.wav",
+            "volume": 0.45
+        },
+        "ambient": {
+            "file": "audio/grillos.wav",
+            "volume": 0.4
+        },
+        "footsteps": {
+            "files": [
+                "audio/paso_piedra_1.wav",
+                "audio/paso_piedra_2.wav",
+                "audio/paso_piedra_3.wav"
+            ],
+            "volume": 0.6
+        },
+        "fade": 1.5
+    },
     "fog": {
         "start": 4,
         "end": 20
@@ -440,7 +459,7 @@
             }
         },
         {
-            "name": "aldeano",
+            "name": "aldeano_noche",
             "model": "models/persona_m.obj",
             "texture": "textures/luis_tex.png",
             "position": [
@@ -473,6 +492,10 @@
                 },
                 "do": [
                     {
+                        "play_sound": "audio/blip.wav",
+                        "volume": 0.5
+                    },
+                    {
                         "message": "Bienvenido a la aldea.\nDe noche se ve mas bonito.",
                         "seconds": 4
                     }
@@ -501,6 +524,9 @@
                 255
             ],
             "do": [
+                {
+                    "play_sound": "audio/portal.wav"
+                },
                 {
                     "goto_scene": "scenes/demo.json",
                     "position": [
@@ -532,6 +558,9 @@
                 255
             ],
             "do": [
+                {
+                    "play_sound": "audio/portal.wav"
+                },
                 {
                     "goto_scene": "scenes/aldea.json",
                     "position": [

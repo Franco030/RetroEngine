@@ -18,6 +18,16 @@
 
 namespace retro {
 
+struct SceneAudio {
+  std::string music;
+  float musicVolume = 0.6f;
+  std::string ambient;
+  float ambientVolume = 0.5f;
+  std::vector<std::string> footsteps;
+  float footstepVolume = 0.6f;
+  float fade = 1.5f;
+};
+
 class Scene {
 public:
   struct SpawnPoint {
@@ -36,6 +46,7 @@ public:
   SpawnPoint spawn;
   std::string path;
   std::vector<Trigger> triggers;
+  SceneAudio audio;
   std::vector<PointLight> lights;
   std::optional<Bounds> bounds;
 
@@ -49,6 +60,7 @@ public:
     lights.clear();
     bounds.reset();
     triggersPrimed_ = false;
+    audio = SceneAudio{};
   }
 
   void Update(float dt, Vector3 focus);

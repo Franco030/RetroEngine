@@ -31,6 +31,25 @@
             19
         ]
     },
+    "audio": {
+        "music": {
+            "file": "audio/musica_demo.wav",
+            "volume": 0.45
+        },
+        "ambient": {
+            "file": "audio/viento.wav",
+            "volume": 0.35
+        },
+        "footsteps": {
+            "files": [
+                "audio/paso_piedra_1.wav",
+                "audio/paso_piedra_2.wav",
+                "audio/paso_piedra_3.wav"
+            ],
+            "volume": 0.6
+        },
+        "fade": 1.5
+    },
     "fog": {
         "start": 10,
         "end": 26
@@ -95,6 +114,10 @@
             "interact": {
                 "prompt": "Examinar",
                 "do": [
+                    {
+                        "play_sound": "audio/blip.wav",
+                        "volume": 0.5
+                    },
                     {
                         "message": "Una casita vacia.\nParece de juguete."
                     }
@@ -303,6 +326,10 @@
                 },
                 "do": [
                     {
+                        "play_sound": "audio/blip.wav",
+                        "volume": 0.5
+                    },
+                    {
                         "message": "Buenas.\nSi buscas la puerta, esta al este.\nNecesitaras una llave y 3 monedas.",
                         "seconds": 5
                     }
@@ -388,6 +415,9 @@
                 },
                 "do": [
                     {
+                        "play_sound": "audio/moneda.wav"
+                    },
+                    {
                         "set_flag": "moneda_1_tomada"
                     },
                     {
@@ -446,6 +476,9 @@
                     ]
                 },
                 "do": [
+                    {
+                        "play_sound": "audio/moneda.wav"
+                    },
                     {
                         "set_flag": "moneda_2_tomada"
                     },
@@ -506,6 +539,9 @@
                 },
                 "do": [
                     {
+                        "play_sound": "audio/moneda.wav"
+                    },
+                    {
                         "set_flag": "moneda_3_tomada"
                     },
                     {
@@ -559,6 +595,9 @@
             },
             "do": [
                 {
+                    "play_sound": "audio/llave.wav"
+                },
+                {
                     "set_flag": "tiene_llave"
                 },
                 {
@@ -593,6 +632,10 @@
                 }
             },
             "do": [
+                {
+                    "play_sound": "audio/puerta_cerrada.wav",
+                    "volume": 0.8
+                },
                 {
                     "message": "La puerta esta cerrada.\nNecesitas la llave y 3 monedas.\nMonedas: {monedas}/3"
                 }
@@ -630,6 +673,9 @@
                 ]
             },
             "do": [
+                {
+                    "play_sound": "audio/portal.wav"
+                },
                 {
                     "goto_scene": "scenes/noche.json",
                     "position": [

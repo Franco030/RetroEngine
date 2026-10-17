@@ -92,4 +92,40 @@ private:
   Font font_{};
 };
 
+class SoundResource {
+public:
+  explicit SoundResource(const std::string& path);
+  ~SoundResource();
+
+  SoundResource(const SoundResource&) = delete;
+  SoundResource& operator=(const SoundResource&) = delete;
+  SoundResource(SoundResource&& other) noexcept;
+  SoundResource& operator=(SoundResource&& other) noexcept;
+
+  const Sound& Get() const noexcept { return sound_; }
+  bool IsValid() const noexcept { return sound_.frameCount > 0; }
+
+private:
+  void Release() noexcept;
+  Sound sound_{};
+};
+
+class MusicResource {
+public:
+  explicit MusicResource(const std::string& path);
+  ~MusicResource();
+
+  MusicResource(const MusicResource&) = delete;
+  MusicResource& operator=(const MusicResource&) = delete;
+  MusicResource(MusicResource&& other) noexcept;
+  MusicResource& operator=(MusicResource&& other) noexcept;
+
+  Music& Get() noexcept { return music_; }
+  bool IsValid() const noexcept { return music_.frameCount > 0; }
+
+private:
+  void Release() noexcept;
+  Music music_{};
+};
+
 } // namespace retro

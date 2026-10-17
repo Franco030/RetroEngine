@@ -325,6 +325,18 @@ Action ParseAction(const json& ja) {
     action::PlaySound a;
     a.file = ja.at("play_sound").get<std::string>();
     a.volume = ja.value("volume", 1.0f);
+    a.radius = ja.value("radius", 14.0f);
+    a.minDistance = ja.value("minDistance", 1.0f);
+    if (ja.contains("at")) {
+      if (ja.at("at").is_string()) {
+        a.atEntity = ja.at("at").get<std::string>();
+      } else {
+        a.at = ReadVec3(ja, "at", {0.0f, 0.0f, 0.0f});
+      }
+    }
+    if (a.radius <= 0.0f || a.minDistance < 0.0f || a.minDistance >= a.radius) {
+      throw std::runtime_error("'radius' debe ser positivo y mayor que 'minDistance'");
+    }
     result = a;
     ++found;
   }
@@ -453,6 +465,29 @@ void ReadAudio(const json& ja, const std::string& root, Scene& scene) {
   a.fade = ja.value("fade", a.fade);
 }
 
+struct SoundSpec {
+  std::string file;
+  float volume;
+  float radius;
+  float minDistance;
+};
+
+// { "file": "...", "volume": 1.0, "radius": 10, "minDistance": 1 }
+SoundSpec ReadSoundSpec(const json& j, const std::string& root) {
+  SoundSpec s;
+  s.file = j.at("file").get<std::string>();
+  if (!FileExists((root + s.file).c_str())) {
+    throw std::runtime_error("archivo de audio inexistente: " + s.file);
+  }
+  s.volume = j.value("volume", 1.0f);
+  s.radius = j.value("radius", 10.0f);
+  s.minDistance = j.value("minDistance", 1.0f);
+  if (s.radius <= 0.0f || s.minDistance < 0.0f || s.minDistance >= s.radius) {
+    throw std::runtime_error("'radius' debe ser positivo y mayor que 'minDistance'");
+  }
+  return s;
+}
+
 void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoCollide) {
   const std::string name = je.at("name").get<std::string>();
   if (scene.Find(name) != nullptr) {
@@ -508,6 +543,18 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
   e.tint = ReadColor(je, "tint", WHITE);
   e.visible = je.value("visible", true);
   e.showIf = ParseConditions(je, "showIf");
+
+  if (je.contains("sound")) {
+    const json& js = je.at("sound");
+    const SoundSpec spec = ReadSoundSpec(js, engine.Assets().Root());
+    EntitySound es;
+    es.offset = ReadVec3(js, "offset", {0.0f, 0.0f, 0.0f});
+    es.file = spec.file;
+    es.volume = spec.volume;
+    es.radius = spec.radius;
+    es.minDistance = spec.minDistance;
+    e.sound = es;
+  }
 
   if (je.contains("light")) {
     const json& jl = je.at("light");
@@ -641,6 +688,22 @@ void LoadScene(const std::string& relativePath, RetroEngine& engine, Scene& scen
         PointLight l = ReadPointLight(jl, ReadVec3(jl, "position", {0.0f, 0.0f, 0.0f}));
         l.phase = static_cast<float>(lightIndex++);
         scene.lights.push_back(l);
+      }
+    }
+
+    if (root.contains("emitters")) {
+      int emitterIndex = 0;
+      for (const json& je : root.at("emitters")) {
+        context = "emisor #" + std::to_string(emitterIndex);
+        const SoundSpec spec = ReadSoundSpec(je, engine.Assets().Root());
+        Emitter em;
+        em.key = "scene:" + std::to_string(emitterIndex++);
+        em.file = spec.file;
+        em.position = ReadVec3(je, "position", {0.0f, 0.0f, 0.0f});
+        em.volume = spec.volume;
+        em.radius = spec.radius;
+        em.minDistance = spec.minDistance;
+        scene.emitters.push_back(em);
       }
     }
 

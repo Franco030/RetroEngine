@@ -22,6 +22,14 @@ struct EntityLight {
   PointLight light;
 };
 
+struct EntitySound {
+  Vector3 offset{0.0f, 0.0f, 0.0f};
+  std::string file;
+  float volume = 1.0f;
+  float radius = 10.0f;
+  float minDistance = 1.0f;
+};
+
 // Objeto del mundo: un Transform propio y, según el tipo, un modelo 3D
 // compartido o un sprite billboard (textura + tamaño en el mundo).
 class Entity {
@@ -61,6 +69,7 @@ public:
   std::optional<BoxCollider> collider;
   std::optional<Interaction> interact;
   std::optional<EntityLight> light;
+  std::optional<EntitySound> sound;
 
   struct Idle {
     float bob = 0.015f;

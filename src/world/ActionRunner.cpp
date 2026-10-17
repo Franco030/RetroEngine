@@ -56,7 +56,22 @@ void ActionRunner::Run(const std::vector<Action>& actions) {
             [&](const action::Message& m) {
               state_.ShowMessage(Expand(m.text, state_), m.seconds);
             },
-            [&](const action::PlaySound& s) { audio_.PlaySfx(s.file, s.volume); },
+            [&](const action::PlaySound& s) {
+              if (s.at) {
+                audio_.PlaySfxAt(s.file, s.volume, *s.at, s.radius, s.minDistance);
+              } else if (!s.atEntity.empty()) {
+                Scene* scene = scenes_.CurrentMut();
+                Entity* e = scene ? scene->Find(s.atEntity) : nullptr;
+                if (e) {
+                  audio_.PlaySfxAt(s.file, s.volume, e->transform.position, s.radius,
+                                   s.minDistance);
+                } else {
+                  std::cerr << "play_sound: entidad inexistente '" << s.atEntity << "'\n";
+                }
+              } else {
+                audio_.PlaySfx(s.file, s.volume);
+              }
+            },
             [&](const action::PlayMusic& m) { audio_.PlayMusic(m.file, m.volume, m.fade); },
             [&](const action::StopMusic& m) { audio_.StopMusic(m.fade); },
         },

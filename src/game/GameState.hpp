@@ -32,6 +32,9 @@ public:
     timer_ = 0.0f;
   }
 
+  const std::unordered_map<std::string, int>& Flags() const noexcept { return flags_; }
+  void SetFlags(std::unordered_map<std::string, int> flags) { flags_ = std::move(flags); }
+
 private:
   std::unordered_map<std::string, int> flags_;
   std::string message_;

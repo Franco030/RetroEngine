@@ -1,5 +1,6 @@
 #pragma once
 
+#include "audio/Emitter.hpp"
 #include "game/GameState.hpp"
 #include "graphics/Light.hpp"
 #include "physics/Collision.hpp"
@@ -48,6 +49,7 @@ public:
   std::vector<Trigger> triggers;
   SceneAudio audio;
   std::vector<PointLight> lights;
+  std::vector<Emitter> emitters;
   std::optional<Bounds> bounds;
 
   Entity& Add(std::unique_ptr<Entity> entity);
@@ -58,6 +60,7 @@ public:
     entities_.clear();
     triggers.clear();
     lights.clear();
+    emitters.clear();
     bounds.reset();
     triggersPrimed_ = false;
     audio = SceneAudio{};
@@ -71,8 +74,8 @@ public:
 
   // Cajas de colisión en el mundo, con las transformaciones actuales.
   void CollectColliders(std::vector<WorldBox>& out) const;
-
   void CollectLights(std::vector<PointLight>& out) const;
+  void CollectEmitters(std::vector<Emitter>& out) const;
 
   // Recalcula la visibilidad de las entidades con "showIf".
   // Una entidad oculta tampoco tiene colision ni se puede interactuar con ella

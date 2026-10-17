@@ -1,10 +1,13 @@
 #pragma once
 
 #include "assets/AssetManager.hpp"
+#include "audio/Emitter.hpp"
 
 #include <memory>
 #include <random>
+#include <span>
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -30,6 +33,12 @@ public:
   // Efecto puntual. 'volume' 0..1.
   void PlaySfx(const std::string& file, float volume = 1.0f);
 
+  void SetListener(Vector3 position, Vector3 forward);
+  void UpdateEmitters(std::span<const Emitter> emitters, float dt);
+  void ClearEmitters() { voices_.clear(); }
+
+  void PlaySfxAt(const std::string& file, float volume, Vector3 position, float radius,
+                 float minDistance = 1.0f);
   void PlayMusic(const std::string& file, float volume, float fadeSeconds);
   void StopMusic(float fadeSeconds) { PlayMusic("", 0.0f, fadeSeconds); }
   void PlayAmbient(const std::string& file, float volume, float fadeSeconds);
@@ -48,6 +57,20 @@ private:
     float outVolume = 0.0f;
     float outRate = 1.0f;
   };
+
+  struct Voice {
+    std::unique_ptr<MusicResource> stream;
+    float volume = 0.0f;
+    float target = 0.0f;
+    float pan = 0.5f;
+  };
+
+  float Spatialize(Vector3 position, float volume, float radius, float minDistance,
+                   float& pan) const;
+
+  Vector3 listenerPos_{0.0f, 0.0f, 0.0f};
+  Vector3 listenerFwd_{0.0f, 0.0f, -1.0f};
+  std::unordered_map<std::string, Voice> voices_;
 
   void StartChannel(Channel& channel, const std::string& file, float volume, float fade);
   static void UpdateChannel(Channel& channel, float dt);

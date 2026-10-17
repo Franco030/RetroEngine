@@ -1,5 +1,6 @@
 #pragma once
 
+#include "audio/Emitter.hpp"
 #include "graphics/Light.hpp"
 #include "world/Scene.hpp"
 
@@ -41,6 +42,7 @@ public:
   void Reload();
 
   void Update(float dt);
+  void UpdateAudio(float dt);
   void Draw();
   void DrawFade() const;
 
@@ -80,6 +82,7 @@ private:
   std::optional<float> pendingSpawnYaw_;
 
   std::vector<PointLight> lights_;
+  std::vector<Emitter> emitters_;
 
   Environment defaults_{};
   std::unique_ptr<Scene> scene_;

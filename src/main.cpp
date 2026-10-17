@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <exception>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -12,6 +13,7 @@
 #include "audio/Footsteps.hpp"
 #include "core/RetroEngine.hpp"
 #include "game/GameState.hpp"
+#include "game/SaveGame.hpp"
 #include "graphics/DebugDraw.hpp"
 #include "graphics/RetroCamera.hpp"
 #include "graphics/ShaderScope.hpp"
@@ -127,8 +129,15 @@ int main() {
     std::uint64_t seenGeneration = scenes.Generation();
     bool firstPerson = true;
     bool showColliders = false;
-    bool showHelp = false;
+    bool showHelp = true;
     retro::FootstepTracker footsteps;
+
+    retro::SaveManager saves(retro::SaveManager::DefaultDirectory("RetroEngine"));
+    double playTime = 0.0f;
+    std::optional<retro::SaveData> pendingLoad;
+    const auto initialFlags = state.Flags();
+    const std::uint64_t initialGeneration = scenes.Generation();
+
     std::string interactPrompt;
 
     auto spawnPlayer = [&]() {
@@ -140,8 +149,66 @@ int main() {
     spawnPlayer();
     player.SetActive(true);
 
+    auto snapshot = [&]() {
+      retro::SaveData d;
+      d.scene = scenes.CurrentPath();
+      d.position = player.Feet();
+      d.yaw = player.Yaw();
+      d.pitch = player.Pitch();
+      d.playTime = playTime;
+      d.flags = state.Flags();
+      return d;
+    };
+
+    auto saveTo = [&](int slot, const char* confirmation, bool allowDuringTransition = false) {
+      if (scenes.Transitioning() && !allowDuringTransition) {
+        if (confirmation)
+          state.ShowMessage("No se puede guardar durante un cambio de escena", 2.5f);
+        return;
+      }
+      try {
+        saves.Write(slot, snapshot());
+        if (confirmation)
+          state.ShowMessage(confirmation, 2.0f);
+      } catch (const std::exception& e) {
+        std::cerr << "Guardado: " << e.what() << '\n';
+        if (confirmation)
+          state.ShowMessage("Error al guardar (ver consola)", 3.5f);
+      }
+    };
+
+    auto loadFrom = [&](int slot) {
+      if (scenes.Transitioning() || pendingLoad)
+        return;
+      try {
+        bool backup = false;
+        retro::SaveData data = saves.Read(slot, &backup);
+        scenes.GoToPath(data.scene, data.position, data.yaw);
+        pendingLoad = std::move(data);
+        if (backup)
+          std::cerr << "Carga: el guardado estaba danado; se uso la copia de seguridad\n";
+      } catch (const std::exception& e) {
+        std::cerr << "Carga: " << e.what() << '\n';
+        state.ShowMessage("No se pudo cargar la partida (ver consola)", 3.5f);
+      }
+    };
+
+    if (saves.Exists(1) || saves.Exists(retro::SaveManager::kAutosaveSlot)) {
+      state.ShowMessage("Hay una partida guardada.\nF10: cargar    Mayus+F10: autoguardado", 6.0f);
+    }
+
     engine.Run(
         [&](float dt) {
+          playTime += dt;
+
+          if (IsKeyPressed(KEY_F9))
+            saveTo(1, "Partida guardada");
+
+          if (IsKeyPressed(KEY_F10)) {
+            const bool shift = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
+            loadFrom(shift ? retro::SaveManager::kAutosaveSlot : 1);
+          }
+
           if (IsKeyPressed(KEY_TAB)) {
             if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
               scenes.Previous();
@@ -185,6 +252,20 @@ int main() {
           if (scenes.Generation() != seenGeneration) {
             seenGeneration = scenes.Generation();
             spawnPlayer();
+
+            if (pendingLoad) {
+              state.Clear();
+              state.SetFlags(pendingLoad->flags);
+              player.SetPitch(pendingLoad->pitch);
+              playTime = pendingLoad->playTime;
+              pendingLoad.reset();
+              state.ShowMessage("Partida cargada", 2.0f);
+            } else {
+              saveTo(retro::SaveManager::kAutosaveSlot, nullptr, true);
+            }
+          } else if (pendingLoad && !scenes.Transitioning()) {
+            pendingLoad.reset();
+            state.ShowMessage("No se pudo cargar la escena guardada (ver consola)", 3.5f);
           }
 
           if (retro::Scene* s = scenes.CurrentMut())
@@ -204,6 +285,7 @@ int main() {
 
           footsteps.Update(player.Feet(), player.Grounded(), IsKeyDown(KEY_LEFT_SHIFT),
                            firstPerson && !scenes.Transitioning(), engine.Audio());
+          scenes.UpdateAudio(dt);
 
           // --- Triggers ---
           if (firstPerson && !scenes.Transitioning()) {
@@ -282,6 +364,7 @@ int main() {
             ui.Text(firstPerson ? "WASD mover  Shift correr  Espacio saltar  E usar"
                                 : "Arrastrar/flechas: orbitar  Rueda: zoom",
                     4, 23, 8, RAYWHITE);
+            ui.Text("F9 guardar  F10 cargar  Mayus+F10 autoguardado", 4, 43, 8, RAYWHITE);
             ui.Text("Tab escena  F1 ayuda  F2 camara  F3 colisiones", 4, 33, 8, RAYWHITE);
           }
 
@@ -292,6 +375,10 @@ int main() {
           if (state.HasMessage())
             DrawMessageBox(ui, state.MessageText());
         });
+
+    if (scenes.Generation() != initialGeneration || state.Flags() != initialFlags) {
+      saveTo(retro::SaveManager::kAutosaveSlot, nullptr, true);
+    }
   } catch (const std::exception& e) {
     std::cerr << "Error fatal: " << e.what() << '\n';
     return 1;

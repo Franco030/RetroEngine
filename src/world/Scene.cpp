@@ -101,6 +101,28 @@ void Scene::CollectLights(std::vector<PointLight>& out) const {
   }
 }
 
+void Scene::CollectEmitters(std::vector<Emitter>& out) const {
+  out.insert(out.end(), emitters.begin(), emitters.end());
+
+  for (const auto& e : entities_) {
+    if (!e->sound || !e->visible)
+      continue;
+
+    const EntitySound& s = *e->sound;
+    const Vector3& p = e->transform.position;
+    const Vector3& sc = e->transform.scale;
+
+    Emitter em;
+    em.key = "entity:" + e->Name();
+    em.file = s.file;
+    em.position = {p.x + s.offset.x * sc.x, p.y + s.offset.y * sc.y, p.z + s.offset.z * sc.z};
+    em.volume = s.volume;
+    em.radius = s.radius;
+    em.minDistance = s.minDistance;
+    out.push_back(em);
+  }
+}
+
 void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float ambient,
                  std::span<const PointLight> lights) {
   bool anySprite = false;

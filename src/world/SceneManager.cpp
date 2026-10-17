@@ -53,9 +53,22 @@ void SceneManager::ApplyEnvironment(const Environment& env) {
 
 void SceneManager::ApplyAudio(const SceneAudio& a) {
   AudioSystem& audio = engine_.Audio();
+  audio.ClearEmitters();
   audio.PlayMusic(a.music, a.musicVolume, a.fade);
   audio.PlayAmbient(a.ambient, a.ambientVolume, a.fade);
   audio.SetFootsteps(a.footsteps, a.footstepVolume);
+}
+
+void SceneManager::UpdateAudio(float dt) {
+  AudioSystem& audio = engine_.Audio();
+
+  const Vector3 pos = camera_.Position();
+  audio.SetListener(pos, Vector3Subtract(camera_.Target(), pos));
+
+  emitters_.clear();
+  if (scene_)
+    scene_->CollectEmitters(emitters_);
+  audio.UpdateEmitters(emitters_, dt);
 }
 
 void SceneManager::LoadNow(std::size_t index) {

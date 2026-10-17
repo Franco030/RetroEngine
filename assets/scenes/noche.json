@@ -85,6 +85,38 @@
             "flickerRate": 5
         }
     ],
+    "emitters": [
+        {
+            "file": "audio/portal_zumbido.wav",
+            "position": [
+                0,
+                1.2,
+                15
+            ],
+            "volume": 0.6,
+            "radius": 8
+        },
+        {
+            "file": "audio/portal_zumbido.wav",
+            "position": [
+                0,
+                1.2,
+                -14
+            ],
+            "volume": 0.6,
+            "radius": 8
+        },
+        {
+            "file": "audio/portal_zumbido.wav",
+            "position": [
+                0,
+                2.2,
+                0
+            ],
+            "volume": 0.45,
+            "radius": 9
+        }
+    ],
     "entities": [
         {
             "name": "suelo",
@@ -403,6 +435,17 @@
                 "flicker": 0.25,
                 "flickerRate": 9
             },
+            "sound": {
+                "file": "audio/zumbido_farola.wav",
+                "offset": [
+                    0,
+                    2.1,
+                    0
+                ],
+                "volume": 0.5,
+                "radius": 7,
+                "minDistance": 1.2
+            },
             "collider": {
                 "min": [
                     -0.15,
@@ -444,6 +487,17 @@
                 "intensity": 1.6,
                 "flicker": 0.25,
                 "flickerRate": 9
+            },
+            "sound": {
+                "file": "audio/zumbido_farola.wav",
+                "offset": [
+                    0,
+                    2.1,
+                    0
+                ],
+                "volume": 0.5,
+                "radius": 7,
+                "minDistance": 1.2
             },
             "collider": {
                 "min": [

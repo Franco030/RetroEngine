@@ -104,6 +104,10 @@ void Player::Update(float dt, std::span<const WorldBox> boxes) {
     Step(h, boxes);
 }
 
+void Player::SetPitch(float degrees) noexcept {
+  pitch_ = std::clamp(degrees, -kMaxPitch, kMaxPitch);
+}
+
 void Player::Step(float h, std::span<const WorldBox> boxes) {
   // --- Horizontal: mover y sacar del interior de las cajas ---
   Vector2 p{feet_.x + vel_.x * h, feet_.z + vel_.y * h};

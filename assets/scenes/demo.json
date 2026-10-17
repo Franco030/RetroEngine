@@ -70,6 +70,18 @@
             "intensity": 1.2
         }
     ],
+    "emitters": [
+        {
+            "file": "audio/portal_zumbido.wav",
+            "position": [
+                9,
+                1.2,
+                -6
+            ],
+            "volume": 0.6,
+            "radius": 8
+        }
+    ],
     "entities": [
         {
             "name": "suelo",
@@ -115,8 +127,10 @@
                 "prompt": "Examinar",
                 "do": [
                     {
-                        "play_sound": "audio/blip.wav",
-                        "volume": 0.5
+                        "play_sound": "audio/puerta_cerrada.wav",
+                        "at": "casa_izq",
+                        "volume": 0.9,
+                        "radius": 14
                     },
                     {
                         "message": "Una casita vacia.\nParece de juguete."
@@ -278,6 +292,17 @@
                 "radius": 9,
                 "intensity": 1.3,
                 "flicker": 0.15
+            },
+            "sound": {
+                "file": "audio/zumbido_farola.wav",
+                "offset": [
+                    0,
+                    2.1,
+                    0
+                ],
+                "volume": 0.5,
+                "radius": 7,
+                "minDistance": 1.2
             },
             "collider": {
                 "min": [

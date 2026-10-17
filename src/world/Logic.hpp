@@ -43,6 +43,10 @@ struct Message {
 struct PlaySound {
   std::string file;
   float volume = 1.0f;
+  std::optional<Vector3> at;
+  std::string atEntity;
+  float radius = 14.0f;
+  float minDistance = 1.0f;
 };
 
 struct PlayMusic {

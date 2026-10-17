@@ -67,6 +67,18 @@
         ],
         "ambient": 0.5
     },
+    "emitters": [
+        {
+            "file": "audio/portal_zumbido.wav",
+            "position": [
+                0,
+                1.2,
+                16
+            ],
+            "volume": 0.6,
+            "radius": 8
+        }
+    ],
     "entities": [
         {
             "name": "suelo",
@@ -213,7 +225,18 @@
                 0,
                 10,
                 0
-            ]
+            ],
+            "sound": {
+                "file": "audio/molino.wav",
+                "offset": [
+                    0,
+                    1,
+                    0
+                ],
+                "volume": 0.8,
+                "radius": 11,
+                "minDistance": 1.5
+            }
         },
         {
             "name": "arbol_1",

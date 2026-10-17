@@ -1,5 +1,6 @@
 build/
 .cache/
+fotos/
 
 compile_commands.json
 RetroEngine

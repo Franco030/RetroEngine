@@ -40,10 +40,30 @@ struct Message {
   float seconds = 3.0f;
 };
 
+struct PlaySound {
+  std::string file;
+  float volume = 1.0f;
+  std::optional<Vector3> at;
+  std::string atEntity;
+  float radius = 14.0f;
+  float minDistance = 1.0f;
+};
+
+struct PlayMusic {
+  std::string file;
+  float volume = 0.6f;
+  float fade = 1.0f;
+};
+
+struct StopMusic {
+  float fade = 1.0f;
+};
+
 } // namespace action
 
-using Action = std::variant<action::GotoScene, action::Teleport, action::SetFlag, action::AddFlag,
-                            action::Message>;
+using Action =
+    std::variant<action::GotoScene, action::Teleport, action::SetFlag, action::AddFlag,
+                 action::Message, action::PlaySound, action::PlayMusic, action::StopMusic>;
 
 enum class CompareOp { Eq, Ne, Lt, Le, Gt, Ge };
 

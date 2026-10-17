@@ -31,26 +31,73 @@
             19
         ]
     },
+    "audio": {
+        "music": {
+            "file": "audio/musica_demo.wav",
+            "volume": 0.45
+        },
+        "ambient": {
+            "file": "audio/viento.wav",
+            "volume": 0.35
+        },
+        "footsteps": {
+            "files": [
+                "audio/paso_piedra_1.wav",
+                "audio/paso_piedra_2.wav",
+                "audio/paso_piedra_3.wav"
+            ],
+            "volume": 0.6
+        },
+        "fade": 1.5
+    },
     "fog": {
         "start": 10,
         "end": 26
     },
+    "lights": [
+        {
+            "position": [
+                9,
+                1.8,
+                -5.2
+            ],
+            "color": [
+                150,
+                120,
+                255
+            ],
+            "radius": 6,
+            "intensity": 1.2
+        }
+    ],
+    "emitters": [
+        {
+            "file": "audio/portal_zumbido.wav",
+            "position": [
+                9,
+                1.2,
+                -6
+            ],
+            "volume": 0.6,
+            "radius": 8
+        }
+    ],
     "entities": [
         {
             "name": "suelo",
             "model": {
                 "type": "plane",
                 "size": 40,
-                "subdivisions": 20,
+                "subdivisions": 40,
                 "tiles": 20
             },
-            "texture": "textures/suelo.png",
+            "texture": "textures/suelo_piedra.png",
             "wrap": "repeat"
         },
         {
             "name": "casa_centro",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "spin": [
                 0,
                 20,
@@ -60,7 +107,7 @@
         {
             "name": "casa_izq",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 -4,
                 0,
@@ -80,6 +127,12 @@
                 "prompt": "Examinar",
                 "do": [
                     {
+                        "play_sound": "audio/puerta_cerrada.wav",
+                        "at": "casa_izq",
+                        "volume": 0.9,
+                        "radius": 14
+                    },
+                    {
                         "message": "Una casita vacia.\nParece de juguete."
                     }
                 ]
@@ -88,7 +141,7 @@
         {
             "name": "casa_der",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 4,
                 0,
@@ -225,6 +278,32 @@
                 6
             ],
             "emissive": true,
+            "light": {
+                "offset": [
+                    0,
+                    2.1,
+                    0
+                ],
+                "color": [
+                    255,
+                    190,
+                    110
+                ],
+                "radius": 9,
+                "intensity": 1.3,
+                "flicker": 0.15
+            },
+            "sound": {
+                "file": "audio/zumbido_farola.wav",
+                "offset": [
+                    0,
+                    2.1,
+                    0
+                ],
+                "volume": 0.5,
+                "radius": 7,
+                "minDistance": 1.2
+            },
             "collider": {
                 "min": [
                     -0.15,
@@ -240,17 +319,22 @@
         },
         {
             "name": "aldeano",
-            "sprite": "textures/aldeano.png",
-            "size": [
-                1.0,
-                2.0
-            ],
+            "model": "models/persona_m.obj",
+            "texture": "textures/yo_tex.png",
             "position": [
                 -7,
                 0,
                 -4
             ],
-            "collider": true,
+            "facePlayer": {
+                "range": 9,
+                "turnSpeed": 220
+            },
+            "idle": {
+                "bob": 0.012,
+                "sway": 1.0,
+                "speed": 2.0
+            },
             "interact": {
                 "prompt": "Hablar",
                 "box": {
@@ -266,6 +350,10 @@
                     ]
                 },
                 "do": [
+                    {
+                        "play_sound": "audio/blip.wav",
+                        "volume": 0.5
+                    },
                     {
                         "message": "Buenas.\nSi buscas la puerta, esta al este.\nNecesitaras una llave y 3 monedas.",
                         "seconds": 5
@@ -352,6 +440,9 @@
                 },
                 "do": [
                     {
+                        "play_sound": "audio/moneda.wav"
+                    },
+                    {
                         "set_flag": "moneda_1_tomada"
                     },
                     {
@@ -410,6 +501,9 @@
                     ]
                 },
                 "do": [
+                    {
+                        "play_sound": "audio/moneda.wav"
+                    },
                     {
                         "set_flag": "moneda_2_tomada"
                     },
@@ -470,6 +564,9 @@
                 },
                 "do": [
                     {
+                        "play_sound": "audio/moneda.wav"
+                    },
+                    {
                         "set_flag": "moneda_3_tomada"
                     },
                     {
@@ -523,6 +620,9 @@
             },
             "do": [
                 {
+                    "play_sound": "audio/llave.wav"
+                },
+                {
                     "set_flag": "tiene_llave"
                 },
                 {
@@ -557,6 +657,10 @@
                 }
             },
             "do": [
+                {
+                    "play_sound": "audio/puerta_cerrada.wav",
+                    "volume": 0.8
+                },
                 {
                     "message": "La puerta esta cerrada.\nNecesitas la llave y 3 monedas.\nMonedas: {monedas}/3"
                 }
@@ -594,6 +698,9 @@
                 ]
             },
             "do": [
+                {
+                    "play_sound": "audio/portal.wav"
+                },
                 {
                     "goto_scene": "scenes/noche.json",
                     "position": [

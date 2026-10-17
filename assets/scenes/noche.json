@@ -36,6 +36,25 @@
         12,
         30
     ],
+    "audio": {
+        "music": {
+            "file": "audio/musica_noche.wav",
+            "volume": 0.45
+        },
+        "ambient": {
+            "file": "audio/grillos.wav",
+            "volume": 0.4
+        },
+        "footsteps": {
+            "files": [
+                "audio/paso_piedra_1.wav",
+                "audio/paso_piedra_2.wav",
+                "audio/paso_piedra_3.wav"
+            ],
+            "volume": 0.6
+        },
+        "fade": 1.5
+    },
     "fog": {
         "start": 4,
         "end": 20
@@ -48,16 +67,66 @@
         ],
         "ambient": 0.15
     },
+    "lights": [
+        {
+            "position": [
+                0,
+                3.5,
+                0
+            ],
+            "color": [
+                120,
+                140,
+                255
+            ],
+            "radius": 9,
+            "intensity": 1.2,
+            "flicker": 0.12,
+            "flickerRate": 5
+        }
+    ],
+    "emitters": [
+        {
+            "file": "audio/portal_zumbido.wav",
+            "position": [
+                0,
+                1.2,
+                15
+            ],
+            "volume": 0.6,
+            "radius": 8
+        },
+        {
+            "file": "audio/portal_zumbido.wav",
+            "position": [
+                0,
+                1.2,
+                -14
+            ],
+            "volume": 0.6,
+            "radius": 8
+        },
+        {
+            "file": "audio/portal_zumbido.wav",
+            "position": [
+                0,
+                2.2,
+                0
+            ],
+            "volume": 0.45,
+            "radius": 9
+        }
+    ],
     "entities": [
         {
             "name": "suelo",
             "model": {
                 "type": "plane",
                 "size": 40,
-                "subdivisions": 20,
+                "subdivisions": 40,
                 "tiles": 20
             },
-            "texture": "textures/suelo.png",
+            "texture": "textures/suelo_piedra.png",
             "wrap": "repeat",
             "tint": [
                 110,
@@ -69,7 +138,7 @@
         {
             "name": "torre",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "scale": [
                 0.6,
                 2.2,
@@ -90,7 +159,7 @@
         {
             "name": "casa_1",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 6,
                 0,
@@ -111,7 +180,7 @@
         {
             "name": "casa_2",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 3,
                 0,
@@ -132,7 +201,7 @@
         {
             "name": "casa_3",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 -3,
                 0,
@@ -153,7 +222,7 @@
         {
             "name": "casa_4",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 -6,
                 0,
@@ -174,7 +243,7 @@
         {
             "name": "casa_5",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 -3,
                 0,
@@ -195,7 +264,7 @@
         {
             "name": "casa_6",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 3,
                 0,
@@ -350,6 +419,33 @@
                 8
             ],
             "emissive": true,
+            "light": {
+                "offset": [
+                    0,
+                    2.1,
+                    0
+                ],
+                "color": [
+                    255,
+                    190,
+                    110
+                ],
+                "radius": 10,
+                "intensity": 1.6,
+                "flicker": 0.25,
+                "flickerRate": 9
+            },
+            "sound": {
+                "file": "audio/zumbido_farola.wav",
+                "offset": [
+                    0,
+                    2.1,
+                    0
+                ],
+                "volume": 0.5,
+                "radius": 7,
+                "minDistance": 1.2
+            },
             "collider": {
                 "min": [
                     -0.15,
@@ -376,6 +472,33 @@
                 8
             ],
             "emissive": true,
+            "light": {
+                "offset": [
+                    0,
+                    2.1,
+                    0
+                ],
+                "color": [
+                    255,
+                    190,
+                    110
+                ],
+                "radius": 10,
+                "intensity": 1.6,
+                "flicker": 0.25,
+                "flickerRate": 9
+            },
+            "sound": {
+                "file": "audio/zumbido_farola.wav",
+                "offset": [
+                    0,
+                    2.1,
+                    0
+                ],
+                "volume": 0.5,
+                "radius": 7,
+                "minDistance": 1.2
+            },
             "collider": {
                 "min": [
                     -0.15,
@@ -386,6 +509,50 @@
                     0.15,
                     2.6,
                     0.15
+                ]
+            }
+        },
+        {
+            "name": "aldeano_noche",
+            "model": "models/persona_m.obj",
+            "texture": "textures/luis_tex.png",
+            "position": [
+                0,
+                0,
+                5
+            ],
+            "scale": [
+                0.96,
+                0.96,
+                0.96
+            ],
+            "facePlayer": {
+                "range": 9
+            },
+            "idle": true,
+            "interact": {
+                "prompt": "Hablar",
+                "box": {
+                    "min": [
+                        -0.7,
+                        0,
+                        -0.7
+                    ],
+                    "max": [
+                        0.7,
+                        2,
+                        0.7
+                    ]
+                },
+                "do": [
+                    {
+                        "play_sound": "audio/blip.wav",
+                        "volume": 0.5
+                    },
+                    {
+                        "message": "Bienvenido a la aldea.\nDe noche se ve mas bonito.",
+                        "seconds": 4
+                    }
                 ]
             }
         }
@@ -411,6 +578,9 @@
                 255
             ],
             "do": [
+                {
+                    "play_sound": "audio/portal.wav"
+                },
                 {
                     "goto_scene": "scenes/demo.json",
                     "position": [
@@ -442,6 +612,9 @@
                 255
             ],
             "do": [
+                {
+                    "play_sound": "audio/portal.wav"
+                },
                 {
                     "goto_scene": "scenes/aldea.json",
                     "position": [

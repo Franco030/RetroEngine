@@ -1,5 +1,7 @@
 #pragma once
 
+#include "audio/Emitter.hpp"
+#include "graphics/Light.hpp"
 #include "world/Scene.hpp"
 
 #include <raylib.h>
@@ -40,6 +42,7 @@ public:
   void Reload();
 
   void Update(float dt);
+  void UpdateAudio(float dt);
   void Draw();
   void DrawFade() const;
 
@@ -52,6 +55,8 @@ public:
   Scene* CurrentMut() noexcept { return scene_.get(); }
   std::uint64_t Generation() const noexcept { return generation_; }
 
+  void SetFocus(Vector3 focus) noexcept { focus_ = focus; }
+
 private:
   enum class Phase { Idle, FadingOut, FadingIn };
 
@@ -63,7 +68,10 @@ private:
     float ambient;
   };
 
+  Vector3 focus_{0.0f, 0.0f, 0.0f};
+
   void ApplyEnvironment(const Environment& env);
+  void ApplyAudio(const SceneAudio& audio);
 
   RetroEngine& engine_;
   RetroCamera& camera_;
@@ -72,6 +80,9 @@ private:
 
   std::optional<Vector3> pendingSpawnPos_;
   std::optional<float> pendingSpawnYaw_;
+
+  std::vector<PointLight> lights_;
+  std::vector<Emitter> emitters_;
 
   Environment defaults_{};
   std::unique_ptr<Scene> scene_;

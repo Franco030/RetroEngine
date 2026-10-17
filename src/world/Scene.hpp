@@ -1,6 +1,8 @@
 #pragma once
 
+#include "audio/Emitter.hpp"
 #include "game/GameState.hpp"
+#include "graphics/Light.hpp"
 #include "physics/Collision.hpp"
 #include "world/Entity.hpp"
 #include "world/Logic.hpp"
@@ -11,10 +13,21 @@
 #include <cstddef>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
 
 namespace retro {
+
+struct SceneAudio {
+  std::string music;
+  float musicVolume = 0.6f;
+  std::string ambient;
+  float ambientVolume = 0.5f;
+  std::vector<std::string> footsteps;
+  float footstepVolume = 0.6f;
+  float fade = 1.5f;
+};
 
 class Scene {
 public:
@@ -34,7 +47,9 @@ public:
   SpawnPoint spawn;
   std::string path;
   std::vector<Trigger> triggers;
-
+  SceneAudio audio;
+  std::vector<PointLight> lights;
+  std::vector<Emitter> emitters;
   std::optional<Bounds> bounds;
 
   Entity& Add(std::unique_ptr<Entity> entity);
@@ -44,17 +59,23 @@ public:
   void Clear() noexcept {
     entities_.clear();
     triggers.clear();
+    lights.clear();
+    emitters.clear();
     bounds.reset();
     triggersPrimed_ = false;
+    audio = SceneAudio{};
   }
 
-  void Update(float dt);
-  void Draw(const Camera3D& camera, const Shader& spriteShader, float spriteShade);
+  void Update(float dt, Vector3 focus);
+  void Draw(const Camera3D& camera, const Shader& spriteShader, float ambient,
+            std::span<const PointLight> lights);
 
   std::size_t Count() const noexcept { return entities_.size(); }
 
   // Cajas de colisión en el mundo, con las transformaciones actuales.
   void CollectColliders(std::vector<WorldBox>& out) const;
+  void CollectLights(std::vector<PointLight>& out) const;
+  void CollectEmitters(std::vector<Emitter>& out) const;
 
   // Recalcula la visibilidad de las entidades con "showIf".
   // Una entidad oculta tampoco tiene colision ni se puede interactuar con ella

@@ -73,4 +73,59 @@ private:
   Shader shader_{};
 };
 
+class FontResource {
+public:
+  FontResource(const std::string& path, int baseSize);
+  ~FontResource();
+
+  FontResource(const FontResource&) = delete;
+  FontResource& operator=(const FontResource&) = delete;
+  FontResource(FontResource&& other) noexcept;
+  FontResource& operator=(FontResource&& other) noexcept;
+
+  const Font& Get() const noexcept { return font_; }
+  bool IsValid() const noexcept { return font_.texture.id != 0; }
+
+private:
+  void Release() noexcept;
+
+  Font font_{};
+};
+
+class SoundResource {
+public:
+  explicit SoundResource(const std::string& path);
+  ~SoundResource();
+
+  SoundResource(const SoundResource&) = delete;
+  SoundResource& operator=(const SoundResource&) = delete;
+  SoundResource(SoundResource&& other) noexcept;
+  SoundResource& operator=(SoundResource&& other) noexcept;
+
+  const Sound& Get() const noexcept { return sound_; }
+  bool IsValid() const noexcept { return sound_.frameCount > 0; }
+
+private:
+  void Release() noexcept;
+  Sound sound_{};
+};
+
+class MusicResource {
+public:
+  explicit MusicResource(const std::string& path);
+  ~MusicResource();
+
+  MusicResource(const MusicResource&) = delete;
+  MusicResource& operator=(const MusicResource&) = delete;
+  MusicResource(MusicResource&& other) noexcept;
+  MusicResource& operator=(MusicResource&& other) noexcept;
+
+  Music& Get() noexcept { return music_; }
+  bool IsValid() const noexcept { return music_.frameCount > 0; }
+
+private:
+  void Release() noexcept;
+  Music music_{};
+};
+
 } // namespace retro

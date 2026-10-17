@@ -1,8 +1,9 @@
 #include "world/SceneManager.hpp"
-
 #include "core/RetroEngine.hpp"
 #include "graphics/RetroCamera.hpp"
 #include "world/SceneLoader.hpp"
+
+#include <raymath.h>
 
 #include <algorithm>
 #include <cmath>
@@ -16,6 +17,15 @@ namespace {
 
 constexpr float kFadeSteps = 8.0f;
 constexpr float kMaxDt = 0.05f;
+
+void KeepNearest(std::vector<PointLight>& lights, Vector3 from, std::size_t n) {
+  if (lights.size() <= n)
+    return;
+  auto score = [&](const PointLight& l) { return Vector3Distance(l.position, from) - l.radius; };
+  std::partial_sort(lights.begin(), lights.begin() + static_cast<std::ptrdiff_t>(n), lights.end(),
+                    [&](const PointLight& a, const PointLight& b) { return score(a) < score(b); });
+  lights.resize(n);
+}
 
 } // namespace
 
@@ -39,6 +49,26 @@ void SceneManager::ApplyEnvironment(const Environment& env) {
   p.lightDirection = env.lightDirection;
   p.ambient = env.ambient;
   engine_.Retro().SetParams(p);
+}
+
+void SceneManager::ApplyAudio(const SceneAudio& a) {
+  AudioSystem& audio = engine_.Audio();
+  audio.ClearEmitters();
+  audio.PlayMusic(a.music, a.musicVolume, a.fade);
+  audio.PlayAmbient(a.ambient, a.ambientVolume, a.fade);
+  audio.SetFootsteps(a.footsteps, a.footstepVolume);
+}
+
+void SceneManager::UpdateAudio(float dt) {
+  AudioSystem& audio = engine_.Audio();
+
+  const Vector3 pos = camera_.Position();
+  audio.SetListener(pos, Vector3Subtract(camera_.Target(), pos));
+
+  emitters_.clear();
+  if (scene_)
+    scene_->CollectEmitters(emitters_);
+  audio.UpdateEmitters(emitters_, dt);
 }
 
 void SceneManager::LoadNow(std::size_t index) {
@@ -72,6 +102,8 @@ void SceneManager::LoadNow(std::size_t index) {
     engine_.Retro().SetParams(savedParams);
     throw;
   }
+
+  ApplyAudio(scene_->audio);
 
   // Libera modelos y texturas que solo usaba la escena anterior.
   engine_.Assets().PurgeUnused();
@@ -160,16 +192,23 @@ void SceneManager::Update(float dt) {
   }
 
   if (scene_)
-    scene_->Update(dt);
+    scene_->Update(dt, focus_);
 }
 
 void SceneManager::Draw() {
   if (!scene_)
     return;
 
-  const float ambient = engine_.Retro().Params().ambient;
-  const float shade = ambient + (1.0f - ambient) * 0.5f;
-  scene_->Draw(camera_.Raw(), engine_.Retro().Sprite()->Get(), shade);
+  const RetroShaderParams& p = engine_.Retro().Params();
+
+  lights_.clear();
+  if (p.pointLights) {
+    scene_->CollectLights(lights_);
+    KeepNearest(lights_, camera_.Position(), kMaxPointLights);
+  }
+  engine_.Retro().SetPointLights(lights_);
+
+  scene_->Draw(camera_.Raw(), engine_.Retro().Sprite()->Get(), p.ambient, lights_);
 }
 
 void SceneManager::DrawFade() const {

@@ -36,6 +36,25 @@
         160,
         210
     ],
+    "audio": {
+        "music": {
+            "file": "audio/musica_aldea.wav",
+            "volume": 0.45
+        },
+        "ambient": {
+            "file": "audio/aldea_amb.wav",
+            "volume": 0.45
+        },
+        "footsteps": {
+            "files": [
+                "audio/paso_pasto_1.wav",
+                "audio/paso_pasto_2.wav",
+                "audio/paso_pasto_3.wav"
+            ],
+            "volume": 0.6
+        },
+        "fade": 1.5
+    },
     "fog": {
         "start": 14,
         "end": 36
@@ -48,28 +67,34 @@
         ],
         "ambient": 0.5
     },
+    "emitters": [
+        {
+            "file": "audio/portal_zumbido.wav",
+            "position": [
+                0,
+                1.2,
+                16
+            ],
+            "volume": 0.6,
+            "radius": 8
+        }
+    ],
     "entities": [
         {
             "name": "suelo",
             "model": {
                 "type": "plane",
                 "size": 60,
-                "subdivisions": 30,
+                "subdivisions": 60,
                 "tiles": 30
             },
-            "texture": "textures/suelo.png",
-            "wrap": "repeat",
-            "tint": [
-                190,
-                230,
-                170,
-                255
-            ]
+            "texture": "textures/suelo_pasto.png",
+            "wrap": "repeat"
         },
         {
             "name": "casa_1",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 -8,
                 0,
@@ -84,7 +109,7 @@
         {
             "name": "casa_2",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 -3,
                 0,
@@ -104,7 +129,7 @@
         {
             "name": "casa_3",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 5,
                 0,
@@ -124,7 +149,7 @@
         {
             "name": "casa_4",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 9,
                 0,
@@ -144,7 +169,7 @@
         {
             "name": "casa_5",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 7,
                 0,
@@ -164,7 +189,7 @@
         {
             "name": "casa_6",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 -6,
                 0,
@@ -179,7 +204,7 @@
         {
             "name": "molino",
             "model": "models/casa.obj",
-            "texture": "textures/test.png",
+            "texture": "textures/casa_tex.png",
             "position": [
                 0,
                 0,
@@ -200,7 +225,18 @@
                 0,
                 10,
                 0
-            ]
+            ],
+            "sound": {
+                "file": "audio/molino.wav",
+                "offset": [
+                    0,
+                    1,
+                    0
+                ],
+                "volume": 0.8,
+                "radius": 11,
+                "minDistance": 1.5
+            }
         },
         {
             "name": "arbol_1",
@@ -367,6 +403,20 @@
                 9
             ],
             "emissive": true,
+            "light": {
+                "offset": [
+                    0,
+                    2.1,
+                    0
+                ],
+                "color": [
+                    255,
+                    200,
+                    130
+                ],
+                "radius": 8,
+                "intensity": 0.8
+            },
             "collider": {
                 "min": [
                     -0.15,
@@ -381,18 +431,23 @@
             }
         },
         {
-            "name": "aldeano_1",
-            "sprite": "textures/aldeano.png",
-            "size": [
-                1.0,
-                2.0
-            ],
+            "name": "aldeana",
+            "model": "models/persona_f.obj",
+            "texture": "textures/job_tex.png",
             "position": [
                 -2,
                 0,
                 5
             ],
-            "collider": true,
+            "scale": [
+                0.96,
+                0.96,
+                0.96
+            ],
+            "facePlayer": {
+                "range": 9
+            },
+            "idle": true,
             "interact": {
                 "prompt": "Hablar",
                 "box": {
@@ -409,6 +464,10 @@
                 },
                 "do": [
                     {
+                        "play_sound": "audio/blip.wav",
+                        "volume": 0.5
+                    },
+                    {
                         "message": "Bienvenido a la aldea.\nDe noche se ve mas bonito.",
                         "seconds": 4
                     }
@@ -416,24 +475,28 @@
             }
         },
         {
-            "name": "aldeano_2",
-            "sprite": "textures/aldeano.png",
-            "size": [
-                1.0,
-                2.0
-            ],
+            "name": "guardia",
+            "model": "models/persona_m.obj",
+            "texture": "textures/martin_2_tex.png",
             "position": [
                 6,
                 0,
                 2
             ],
-            "tint": [
-                255,
-                210,
-                190,
-                255
+            "rotation": [
+                0,
+                200,
+                0
             ],
-            "collider": true,
+            "facePlayer": {
+                "range": 7,
+                "turnSpeed": 160
+            },
+            "idle": {
+                "bob": 0.008,
+                "sway": 0.6,
+                "speed": 1.6
+            },
             "interact": {
                 "prompt": "Hablar",
                 "box": {
@@ -449,6 +512,10 @@
                     ]
                 },
                 "do": [
+                    {
+                        "play_sound": "audio/blip.wav",
+                        "volume": 0.5
+                    },
                     {
                         "message": "Cuidado con el molino.\nGira solo, pero no muerde.",
                         "seconds": 4

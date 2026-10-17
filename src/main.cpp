@@ -5,27 +5,35 @@
 #include <cstdint>
 #include <exception>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <vector>
 
+#include "audio/AudioSystem.hpp"
+#include "audio/Footsteps.hpp"
 #include "core/RetroEngine.hpp"
 #include "game/GameState.hpp"
+#include "game/SaveGame.hpp"
 #include "graphics/DebugDraw.hpp"
 #include "graphics/RetroCamera.hpp"
 #include "graphics/ShaderScope.hpp"
 #include "player/Player.hpp"
+#include "ui/Ui.hpp"
 #include "world/ActionRunner.hpp"
 #include "world/SceneManager.hpp"
 
 static void HandleDebugKeys(retro::RetroEngine& engine) {
   static bool jitter = true, lowColor = true, dither = true;
+  static int affineStep = 0;
 
   retro::RetroShaderParams p = engine.Retro().Params();
   bool changed = false;
 
   if (IsKeyPressed(KEY_ONE)) {
     jitter = !jitter;
-    p.snapResolution = jitter ? Vector2{320.0f, 240.0f} : Vector2{4096.0f, 4096.0f};
+    p.snapResolution = jitter ? Vector2{static_cast<float>(engine.Config().internalWidth),
+                                        static_cast<float>(engine.Config().internalHeight)}
+                              : Vector2{4096.0f, 4096.0f};
     changed = true;
   }
   if (IsKeyPressed(KEY_TWO)) {
@@ -42,11 +50,38 @@ static void HandleDebugKeys(retro::RetroEngine& engine) {
     p.fogEnabled = !p.fogEnabled;
     changed = true;
   }
+  if (IsKeyPressed(KEY_FIVE)) {
+    static constexpr float kLevels[3] = {0.35f, 1.0f, 0.0f};
+    affineStep = (affineStep + 1) % 3;
+    p.affineAmount = kLevels[affineStep];
+    changed = true;
+  }
+  if (IsKeyPressed(KEY_SIX)) {
+    p.pointLights = !p.pointLights;
+    changed = true;
+  }
   if (changed)
     engine.Retro().SetParams(p);
+
+  retro::PostParams q = engine.Post().Params();
+  bool postChanged = false;
+
+  if (IsKeyPressed(KEY_F7)) {
+    q.filter = static_cast<retro::FilterMode>((static_cast<int>(q.filter) + 1) % 3);
+    postChanged = true;
+  }
+  if (IsKeyPressed(KEY_F8)) {
+    q.effects = !q.effects;
+    postChanged = true;
+  }
+  if (IsKeyPressed(KEY_M)) {
+    engine.Audio().SetMasterVolume(engine.Audio().MasterVolume() > 0.0f ? 0.0f : 1.0f);
+  }
+  if (postChanged)
+    engine.Post().SetParams(q);
 }
 
-static void DrawMessageBox(const std::string& text, int screenW, int screenH) {
+static void DrawMessageBox(const retro::Ui& ui, const std::string& text) {
   std::vector<std::string> lines;
   std::size_t start = 0;
   while (true) {
@@ -57,27 +92,28 @@ static void DrawMessageBox(const std::string& text, int screenW, int screenH) {
     start = nl + 1;
   }
 
-  constexpr int kFont = 10, kLineH = 12;
-  int maxW = 0;
+  constexpr float kSize = 10.0f, kLineH = 13.0f, kPadX = 7.0f, kPadY = 5.0f;
+  float maxW = 0.0f;
   for (const std::string& l : lines)
-    maxW = std::max(maxW, MeasureText(l.c_str(), kFont));
+    maxW = std::max(maxW, ui.TextWidth(l, kSize));
 
-  const int boxW = maxW + 12;
-  const int boxH = static_cast<int>(lines.size()) * kLineH + 8;
-  const int x = (screenW - boxW) / 2;
-  const int y = screenH - boxH - 20;
+  const float boxW = maxW + kPadX * 2.0f;
+  const float boxH = static_cast<float>(lines.size()) * kLineH + kPadY * 2.0f - 2.0f;
+  const float x = (ui.Width() - boxW) * 0.5f;
+  const float y = ui.Height() - boxH - 22.0f;
 
-  DrawRectangle(x, y, boxW, boxH, {0, 0, 0, 200});
-  DrawRectangleLines(x, y, boxW, boxH, RAYWHITE);
+  ui.Rect(x, y, boxW, boxH, {0, 0, 0, 190});
+  ui.RectLines(x, y, boxW, boxH, RAYWHITE);
   for (std::size_t i = 0; i < lines.size(); ++i) {
-    DrawText(lines[i].c_str(), x + 6, y + 4 + static_cast<int>(i) * kLineH, kFont, RAYWHITE);
+    ui.Text(lines[i], x + kPadX, y + kPadY + static_cast<float>(i) * kLineH - 1.0f, kSize, RAYWHITE,
+            false);
   }
 }
 
 int main() {
   try {
     retro::EngineConfig config;
-    config.title = "RetroEngine - Hito 12";
+    config.title = "RetroEngine - Hito 16";
     retro::RetroEngine engine(config);
     retro::RetroCamera camera;
 
@@ -86,25 +122,93 @@ int main() {
 
     retro::Player player;
     retro::GameState state;
-    retro::ActionRunner runner(scenes, player, state);
+    retro::ActionRunner runner(scenes, player, state, engine.Audio());
 
     std::vector<retro::WorldBox> colliders;
     std::vector<retro::Action> firedActions;
     std::uint64_t seenGeneration = scenes.Generation();
     bool firstPerson = true;
     bool showColliders = false;
+    bool showHelp = true;
+    retro::FootstepTracker footsteps;
+
+    retro::SaveManager saves(retro::SaveManager::DefaultDirectory("RetroEngine"));
+    double playTime = 0.0f;
+    std::optional<retro::SaveData> pendingLoad;
+    const auto initialFlags = state.Flags();
+    const std::uint64_t initialGeneration = scenes.Generation();
+
     std::string interactPrompt;
 
     auto spawnPlayer = [&]() {
       if (const retro::Scene* s = scenes.Current()) {
         player.Spawn(s->spawn.position, s->spawn.yaw);
+        footsteps.Reset(s->spawn.position);
       }
     };
     spawnPlayer();
     player.SetActive(true);
 
+    auto snapshot = [&]() {
+      retro::SaveData d;
+      d.scene = scenes.CurrentPath();
+      d.position = player.Feet();
+      d.yaw = player.Yaw();
+      d.pitch = player.Pitch();
+      d.playTime = playTime;
+      d.flags = state.Flags();
+      return d;
+    };
+
+    auto saveTo = [&](int slot, const char* confirmation, bool allowDuringTransition = false) {
+      if (scenes.Transitioning() && !allowDuringTransition) {
+        if (confirmation)
+          state.ShowMessage("No se puede guardar durante un cambio de escena", 2.5f);
+        return;
+      }
+      try {
+        saves.Write(slot, snapshot());
+        if (confirmation)
+          state.ShowMessage(confirmation, 2.0f);
+      } catch (const std::exception& e) {
+        std::cerr << "Guardado: " << e.what() << '\n';
+        if (confirmation)
+          state.ShowMessage("Error al guardar (ver consola)", 3.5f);
+      }
+    };
+
+    auto loadFrom = [&](int slot) {
+      if (scenes.Transitioning() || pendingLoad)
+        return;
+      try {
+        bool backup = false;
+        retro::SaveData data = saves.Read(slot, &backup);
+        scenes.GoToPath(data.scene, data.position, data.yaw);
+        pendingLoad = std::move(data);
+        if (backup)
+          std::cerr << "Carga: el guardado estaba danado; se uso la copia de seguridad\n";
+      } catch (const std::exception& e) {
+        std::cerr << "Carga: " << e.what() << '\n';
+        state.ShowMessage("No se pudo cargar la partida (ver consola)", 3.5f);
+      }
+    };
+
+    if (saves.Exists(1) || saves.Exists(retro::SaveManager::kAutosaveSlot)) {
+      state.ShowMessage("Hay una partida guardada.\nF10: cargar    Mayus+F10: autoguardado", 6.0f);
+    }
+
     engine.Run(
         [&](float dt) {
+          playTime += dt;
+
+          if (IsKeyPressed(KEY_F9))
+            saveTo(1, "Partida guardada");
+
+          if (IsKeyPressed(KEY_F10)) {
+            const bool shift = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
+            loadFrom(shift ? retro::SaveManager::kAutosaveSlot : 1);
+          }
+
           if (IsKeyPressed(KEY_TAB)) {
             if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
               scenes.Previous();
@@ -127,6 +231,9 @@ int main() {
             std::cout << "Estado de la partida reiniciado (F5 para recargar la escena)\n";
           }
 
+          if (IsKeyPressed(KEY_F1))
+            showHelp = !showHelp;
+
           if (IsKeyPressed(KEY_F2)) {
             firstPerson = !firstPerson;
             player.SetActive(firstPerson);
@@ -138,12 +245,27 @@ int main() {
           if (IsKeyPressed(KEY_F3))
             showColliders = !showColliders;
 
+          scenes.SetFocus(player.Feet());
           scenes.Update(dt);
           state.Update(dt);
 
           if (scenes.Generation() != seenGeneration) {
             seenGeneration = scenes.Generation();
             spawnPlayer();
+
+            if (pendingLoad) {
+              state.Clear();
+              state.SetFlags(pendingLoad->flags);
+              player.SetPitch(pendingLoad->pitch);
+              playTime = pendingLoad->playTime;
+              pendingLoad.reset();
+              state.ShowMessage("Partida cargada", 2.0f);
+            } else {
+              saveTo(retro::SaveManager::kAutosaveSlot, nullptr, true);
+            }
+          } else if (pendingLoad && !scenes.Transitioning()) {
+            pendingLoad.reset();
+            state.ShowMessage("No se pudo cargar la escena guardada (ver consola)", 3.5f);
           }
 
           if (retro::Scene* s = scenes.CurrentMut())
@@ -160,6 +282,10 @@ int main() {
           } else {
             camera.UpdateOrbit(dt);
           }
+
+          footsteps.Update(player.Feet(), player.Grounded(), IsKeyDown(KEY_LEFT_SHIFT),
+                           firstPerson && !scenes.Transitioning(), engine.Audio());
+          scenes.UpdateAudio(dt);
 
           // --- Triggers ---
           if (firstPerson && !scenes.Transitioning()) {
@@ -191,8 +317,10 @@ int main() {
 
           if (retro::Scene* s = scenes.CurrentMut())
             s->RefreshVisibility(state);
+
           HandleDebugKeys(engine);
         },
+
         [&]() {
           camera.Begin();
           scenes.Draw();
@@ -215,31 +343,42 @@ int main() {
           camera.End();
 
           scenes.DrawFade();
+        },
 
-          const int w = engine.Config().internalWidth;
-          const int h = engine.Config().internalHeight;
-          const Color crossColor = interactPrompt.empty() ? RAYWHITE : YELLOW;
-          if (firstPerson)
-            DrawRectangle(w / 2 - 1, h / 2 - 1, 2, 2, crossColor);
+        [&](retro::Ui& ui) {
+          const float w = ui.Width();
+          const float h = ui.Height();
 
+          if (firstPerson) {
+            const Color c = interactPrompt.empty() ? RAYWHITE : YELLOW;
+            ui.Rect(w * 0.5f - 1.0f, h * 0.5f - 1.0f, 2.0f, 2.0f, c); // mira
+          }
           if (!interactPrompt.empty()) {
-            const int tw = MeasureText(interactPrompt.c_str(), 10);
-            DrawText(interactPrompt.c_str(), w / 2 - tw / 2, h / 2 + 10, 10, YELLOW);
+            const float tw = ui.TextWidth(interactPrompt, 10.0f);
+            ui.Text(interactPrompt, (w - tw) * 0.5f, h * 0.5f + 8.0f, 10.0f, YELLOW);
           }
 
-          // DrawText("1:jitter 2:color 3:dither 4:niebla  F5:recargar F6:reset", 4, 4, 10,
-          // RAYWHITE); DrawText(firstPerson ? "WASD mover  Shift correr  Espacio saltar"
-          //                      : "Arrastrar/flechas: orbitar  Rueda: zoom",
-          //          4, 16, 10, RAYWHITE);
-          // DrawText("Tab: escena  F2: camara libre  F3: colisiones/triggers", 4, 28, 10,
-          // RAYWHITE); DrawText(TextFormat("Escena %d/%d: %s", static_cast<int>(scenes.Index()) +
-          // 1,
-          //                     static_cast<int>(scenes.Count()), scenes.CurrentPath().c_str()),
-          //          4, h - 12, 10, RAYWHITE);
+          if (showHelp) {
+            ui.Text("1 jitter 2 color 3 dither 4 niebla 5 afin 6 luces", 4, 3, 8, RAYWHITE);
+            ui.Text("F5 recargar  F6 reset  F7 filtro  F8 acabado M sonido", 4, 13, 8, RAYWHITE);
+            ui.Text(firstPerson ? "WASD mover  Shift correr  Espacio saltar  E usar"
+                                : "Arrastrar/flechas: orbitar  Rueda: zoom",
+                    4, 23, 8, RAYWHITE);
+            ui.Text("F9 guardar  F10 cargar  Mayus+F10 autoguardado", 4, 43, 8, RAYWHITE);
+            ui.Text("Tab escena  F1 ayuda  F2 camara  F3 colisiones", 4, 33, 8, RAYWHITE);
+          }
+
+          ui.Text(TextFormat("Escena %d/%d: %s", static_cast<int>(scenes.Index()) + 1,
+                             static_cast<int>(scenes.Count()), scenes.CurrentPath().c_str()),
+                  4, h - 12.0f, 8.0f, RAYWHITE);
 
           if (state.HasMessage())
-            DrawMessageBox(state.MessageText(), w, h);
+            DrawMessageBox(ui, state.MessageText());
         });
+
+    if (scenes.Generation() != initialGeneration || state.Flags() != initialFlags) {
+      saveTo(retro::SaveManager::kAutosaveSlot, nullptr, true);
+    }
   } catch (const std::exception& e) {
     std::cerr << "Error fatal: " << e.what() << '\n';
     return 1;

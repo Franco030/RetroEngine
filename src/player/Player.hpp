@@ -48,6 +48,9 @@ public:
   bool Grounded() const noexcept { return grounded_; }
   float Yaw() const noexcept { return yaw_; }
 
+  float Pitch() const noexcept { return pitch_; }
+  void SetPitch(float degrees) noexcept;
+
 private:
   void Look();
   void Step(float h, std::span<const WorldBox> boxes);

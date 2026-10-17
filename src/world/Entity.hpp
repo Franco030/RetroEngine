@@ -1,12 +1,14 @@
 #pragma once
 
 #include "assets/Resources.hpp"
+#include "graphics/Light.hpp"
 #include "graphics/Transform.hpp"
 #include "physics/Collision.hpp"
 #include "world/Logic.hpp"
 
 #include <raylib.h>
 
+#include <cmath>
 #include <functional>
 #include <memory>
 #include <optional>
@@ -14,6 +16,19 @@
 #include <vector>
 
 namespace retro {
+
+struct EntityLight {
+  Vector3 offset{0.0f, 0.0f, 0.0f};
+  PointLight light;
+};
+
+struct EntitySound {
+  Vector3 offset{0.0f, 0.0f, 0.0f};
+  std::string file;
+  float volume = 1.0f;
+  float radius = 10.0f;
+  float minDistance = 1.0f;
+};
 
 // Objeto del mundo: un Transform propio y, según el tipo, un modelo 3D
 // compartido o un sprite billboard (textura + tamaño en el mundo).
@@ -35,23 +50,40 @@ public:
 
   const std::string& Name() const noexcept { return name_; }
   bool IsSprite() const noexcept { return model_ == nullptr; }
+  float SpriteHeight() const noexcept { return spriteSize_.y * std::fabs(transform.scale.y); }
 
   void SetUpdate(UpdateFn fn) { updateFn_ = std::move(fn); }
-  void Update(float dt);
+  void Update(float dt, Vector3 focus);
 
   void Draw();
-  void DrawSprite(const Camera3D& camera, float shade);
+  void DrawSprite(const Camera3D& camera, Vector3 shade);
 
   Transform transform;
   Color tint = WHITE;
   bool visible = true;
   bool emissive = false;
+  bool facePlayer = false;
+  float lookRange = 10.0f;
+  float turnSpeed = 240.0f;
   std::vector<Condition> showIf;
   std::optional<BoxCollider> collider;
   std::optional<Interaction> interact;
+  std::optional<EntityLight> light;
+  std::optional<EntitySound> sound;
+
+  struct Idle {
+    float bob = 0.015f;
+    float sway = 1.2f;
+    float speed = 2.0f;
+    float phase = 0.0f;
+  };
+  std::optional<Idle> idle;
 
 private:
   std::string name_;
+  float idleTime_ = 0.0f;
+  Vector3 drawOffset_{0.0f, 0.0f, 0.0f};
+  float drawRoll_ = 0.0f;
   std::shared_ptr<ModelResource> model_;
   std::shared_ptr<TextureResource> texture_;
   Vector2 spriteSize_{1.0f, 1.0f};

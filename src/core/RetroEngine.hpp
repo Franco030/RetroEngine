@@ -1,8 +1,11 @@
 #pragma once
 
 #include "assets/AssetManager.hpp"
+#include "audio/AudioSystem.hpp"
 #include "core/RenderTarget.hpp"
+#include "graphics/PostProcess.hpp"
 #include "graphics/RetroShader.hpp"
+#include "ui/Ui.hpp"
 
 #include <raylib.h>
 
@@ -19,7 +22,7 @@
 #define RETRO_WINDOW_WIDTH 1280
 #endif
 #ifndef RETRO_WINDOW_HEIGHT
-#define RETRORETRO_WINDOW_HEIGHT 960
+#define RETRO_WINDOW_HEIGHT 960
 #endif
 
 namespace retro {
@@ -34,13 +37,15 @@ struct EngineConfig {
   bool vsync = true;
   bool resizable = true;
   bool integerScaling = false;
-  Color clearColor = {25, 20, 32, 255};
+  Color clearColor = {24, 20, 32, 255};
+  std::string uiFont = "fonts/ui.ttf";
 };
 
 class RetroEngine {
 public:
   using UpdateFn = std::function<void(float dt)>;
   using DrawFn = std::function<void()>;
+  using OverlayFn = std::function<void(Ui&)>;
 
   explicit RetroEngine(EngineConfig config = {});
   ~RetroEngine() = default;
@@ -50,16 +55,18 @@ public:
   RetroEngine(RetroEngine&&) = delete;
   RetroEngine& operator=(RetroEngine&&) = delete;
 
-  RetroShader& Retro() noexcept { return retroShader_; }
-
-  void Run(const UpdateFn& update, const DrawFn& draw);
+  void Run(const UpdateFn& update, const DrawFn& draw, const OverlayFn& overlay = {});
 
   AssetManager& Assets() noexcept { return assets_; }
+  RetroShader& Retro() noexcept { return retroShader_; }
+  PostProcess& Post() noexcept { return post_; }
   const EngineConfig& Config() const noexcept { return config_; }
 
-  Rectangle PresentationRect() const;
+  AudioSystem& Audio() noexcept { return audio_; }
 
   void SetClearColor(Color color);
+
+  Rectangle PresentationRect() const;
 
   Vector2 WindowToInternal(Vector2 windowPos) const;
 
@@ -72,13 +79,31 @@ private:
     WindowGuard& operator=(const WindowGuard&) = delete;
   };
 
+  class AudioGuard {
+  public:
+    AudioGuard();
+    ~AudioGuard();
+    AudioGuard(const AudioGuard&) = delete;
+    AudioGuard& operator=(const AudioGuard&) = delete;
+    bool Ready() const noexcept { return ready_; }
+
+  private:
+    bool ready_ = false;
+  };
+
   void Present() const;
 
+  // orden: se destruyen en orden inverso.
+  //   audio_ -> post_ -> ui_ -> retroShader_ -> assets_ -> target_ -> audioGuard_ -> window_
   EngineConfig config_;
   WindowGuard window_;
+  AudioGuard audioGuard_;
   RenderTarget target_;
   AssetManager assets_;
   RetroShader retroShader_;
+  Ui ui_;
+  PostProcess post_;
+  AudioSystem audio_;
 };
 
 } // namespace retro

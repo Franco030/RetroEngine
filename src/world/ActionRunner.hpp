@@ -1,5 +1,6 @@
 #pragma once
 
+#include "audio/AudioSystem.hpp"
 #include "game/GameState.hpp"
 #include "world/Trigger.hpp"
 
@@ -15,14 +16,15 @@ class Player;
 // al jugador y al estado.
 class ActionRunner {
 public:
-  ActionRunner(SceneManager& scenes, Player& player, GameState& state)
-      : scenes_(scenes), player_(player), state_(state) {}
+  ActionRunner(SceneManager& scenes, Player& player, GameState& state, AudioSystem& audio)
+      : scenes_(scenes), player_(player), state_(state), audio_(audio) {}
 
   void Run(const std::vector<Action>& actions);
 
 private:
   SceneManager& scenes_;
   Player& player_;
+  AudioSystem& audio_;
   GameState& state_;
 };
 

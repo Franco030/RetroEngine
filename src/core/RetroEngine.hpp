@@ -39,6 +39,7 @@ struct EngineConfig {
   bool integerScaling = false;
   Color clearColor = {24, 20, 32, 255};
   std::string uiFont = "fonts/ui.ttf";
+  std::string assetRoot;
 };
 
 class RetroEngine {

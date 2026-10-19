@@ -27,6 +27,26 @@ Entity::Entity(std::string name, std::shared_ptr<TextureResource> sprite, Vector
   }
 }
 
+BoundingBox Entity::LocalBounds() {
+  if (IsSprite()) {
+    const float halfW = spriteSize_.x * 0.5f;
+    const float halfD = spriteSize_.x * 0.2f;
+    return {{-halfW, 0.0f, -halfD}, {halfW, spriteSize_.y, halfD}};
+  }
+  const Model& model = model_->Get();
+  if (model.meshCount <= 0)
+    return {{-0.5f, 0.0f, -0.5f}, {0.5f, 1.0f, 0.5f}};
+  BoundingBox box = GetMeshBoundingBox(model.meshes[0]);
+  for (int i = 1; i < model.meshCount; ++i) {
+    const BoundingBox b = GetMeshBoundingBox(model.meshes[i]);
+    box.min = {std::min(box.min.x, b.min.x), std::min(box.min.y, b.min.y),
+               std::min(box.min.z, b.min.z)};
+    box.max = {std::max(box.max.x, b.max.x), std::max(box.max.y, b.max.y),
+               std::max(box.max.z, b.max.z)};
+  }
+  return box;
+}
+
 void Entity::Update(float dt, Vector3 focus) {
   if (updateFn_)
     updateFn_(*this, dt);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <nlohmann/json_fwd.hpp>
+
 #include <string>
 
 namespace retro {
@@ -15,5 +17,8 @@ class RetroCamera;
 // Lanza std::runtime_error con el archivo y la entidad que fallo
 void LoadScene(const std::string& relativePath, RetroEngine& engine, Scene& scene,
                RetroCamera& camera);
+
+void LoadSceneFromJson(const nlohmann::json& root, const std::string& relativePath,
+                       RetroEngine& engine, Scene& scene, RetroCamera& camera);
 
 } // namespace retro

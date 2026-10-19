@@ -58,6 +58,8 @@ public:
   void Draw();
   void DrawSprite(const Camera3D& camera, Vector3 shade);
 
+  BoundingBox LocalBounds();
+
   Transform transform;
   Color tint = WHITE;
   bool visible = true;

@@ -90,6 +90,8 @@ std::shared_ptr<ModelResource> LoadModelSpec(const json& spec, RetroEngine& engi
       model = std::make_shared<ModelResource>(MakeTiledPlane(
           spec.value("size", 10.0f), spec.value("size", 10.0f), spec.value("subdivisions", 1),
           spec.value("tiles", 1.0f), spec.value("tiles", 1.0f)));
+    } else {
+      throw std::runtime_error("tipo de modelo desconocido: '" + type + "' (plane)");
     }
   } else {
     throw std::runtime_error("'model' debe ser una ruta o un objeto");
@@ -208,7 +210,6 @@ CompareOp ParseOp(const std::string& s) {
 
 // Una condicion es UNA de:
 //   { "flag": "monedas", "op": ">=", "value": 3 }      (op por defecto "==", value por defecto 1)
-//   { "flag": "x", "not": true }                       (atajo de compatibilidad)
 //   { "all": [ ... ] }   { "any": [ ... ] }   { "not": { ... } }
 Condition ParseCondition(const json& jc, int depth = 0) {
   if (!jc.is_object())
@@ -274,7 +275,6 @@ std::vector<Condition> ParseConditions(const json& j, const char* key = "if") {
 //   { "teleport": [x,y,z], "yaw": 90 }
 //   { "set_flag": "nombre", "value": 1 }
 //   { "message": "texto\notra linea", "seconds": 3 }
-//   { "set_visible": "entidad", "visible": false }
 Action ParseAction(const json& ja) {
   if (!ja.is_object())
     throw std::runtime_error("cada accion debe ser un objeto");
@@ -605,19 +605,11 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
 
 } // namespace
 
-void LoadScene(const std::string& relativePath, RetroEngine& engine, Scene& scene,
-               RetroCamera& camera) {
-  const std::string fullPath = engine.Assets().Root() + relativePath;
-
-  std::ifstream file(fullPath);
-  if (!file)
-    throw std::runtime_error("No se pudo abrir la escena: " + fullPath);
-
+void LoadSceneFromJson(const nlohmann::json& root, const std::string& relativePath,
+                       RetroEngine& engine, Scene& scene, RetroCamera& camera) {
   scene.path = relativePath;
-  std::string context = "parseando JSON";
+  std::string context = "interpretando JSON";
   try {
-    const json root = json::parse(file);
-
     if (root.contains("camera")) {
       context = "camara";
       const json& c = root.at("camera");
@@ -730,6 +722,23 @@ void LoadScene(const std::string& relativePath, RetroEngine& engine, Scene& scen
   } catch (const std::exception& e) {
     throw std::runtime_error(relativePath + " (" + context + "): " + e.what());
   }
+}
+
+void LoadScene(const std::string& relativePath, RetroEngine& engine, Scene& scene,
+               RetroCamera& camera) {
+  const std::string fullPath = engine.Assets().Root() + relativePath;
+
+  std::ifstream file(fullPath);
+  if (!file)
+    throw std::runtime_error("No se pudo abrir la escena: " + fullPath);
+
+  json root;
+  try {
+    root = json::parse(file);
+  } catch (const std::exception& e) {
+    throw std::runtime_error(relativePath + " (parseando JSON): " + e.what());
+  }
+  LoadSceneFromJson(root, relativePath, engine, scene, camera);
 }
 
 } // namespace retro

@@ -72,6 +72,8 @@ public:
 
   std::size_t Count() const noexcept { return entities_.size(); }
 
+  Entity& EntityAt(std::size_t index) { return *entities_.at(index); }
+
   // Cajas de colisión en el mundo, con las transformaciones actuales.
   void CollectColliders(std::vector<WorldBox>& out) const;
   void CollectLights(std::vector<PointLight>& out) const;

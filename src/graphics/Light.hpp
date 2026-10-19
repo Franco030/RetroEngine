@@ -1,9 +1,13 @@
 #pragma once
 
 #include <raylib.h>
+#include <raymath.h>
 
+#include <algorithm>
 #include <cmath>
+#include <cstddef>
 #include <cstdint>
+#include <vector>
 
 namespace retro {
 
@@ -34,6 +38,15 @@ inline float FlickerFactor(const PointLight& l, double time) {
 
   const float noise = static_cast<float>(x & 0xFFFFu) / 65535.0f;
   return 1.0f - l.flicker * noise;
+}
+
+inline void KeepNearestLights(std::vector<PointLight>& lights, Vector3 from, std::size_t n) {
+  if (lights.size() <= n)
+    return;
+  auto score = [&](const PointLight& l) { return Vector3Distance(l.position, from) - l.radius; };
+  std::partial_sort(lights.begin(), lights.begin() + static_cast<std::ptrdiff_t>(n), lights.end(),
+                    [&](const PointLight& a, const PointLight& b) { return score(a) < score(b); });
+  lights.resize(n);
 }
 
 } // namespace retro

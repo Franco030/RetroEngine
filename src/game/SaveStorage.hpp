@@ -33,7 +33,7 @@ inline fs::path DefaultDirectory(const std::string& appName, const fs::path& fal
   if (const char* xdg = std::getenv("XDG_DATA_HOME"); xdg && *xdg) {
     return fs::path(xdg) / appName / "saves";
   }
-  if (const char* hombre = std::getenv("HOME"); home && *home) {
+  if (const char* home =std::getenv("HOME"); home && *home) {
     return fs::path(home) / ".local" / "share" / appName / "saves";
   }
 #endif
@@ -58,7 +58,7 @@ inline std::string ReadText(const fs::path& path) {
 inline void WriteAtomic(const fs::path& target, const std::string& text) {
   std::error_code ec;
   if (!target.parent_path().empty()) {
-    fs::create_directories(target.parent_path());
+    fs::create_directories(target.parent_path(), ec);
     if (ec) {
       throw std::runtime_error("no se pudo crear la carpeta " + target.parent_path().string() +
                                ": " + ec.message());

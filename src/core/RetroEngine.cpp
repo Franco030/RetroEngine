@@ -72,7 +72,8 @@ RetroEngine::AudioGuard::~AudioGuard() {
 RetroEngine::RetroEngine(EngineConfig config)
     : config_(std::move(config)), window_(config_), audioGuard_(),
       target_(config_.internalWidth, config_.internalHeight),
-      assets_(std::string(GetApplicationDirectory()) + "assets/"),
+      assets_(config_.assetRoot.empty() ? std::string(GetApplicationDirectory()) + "assets/"
+                                        : config_.assetRoot),
       retroShader_(assets_.GetShader("shaders/retro.vs", "shaders/retro.fs"),
                    assets_.GetShader("shaders/retro.vs", "shaders/retro_unlit.fs"),
                    assets_.GetShader("shaders/retro.vs", "shaders/retro_sprite.fs"),

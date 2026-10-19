@@ -4,6 +4,7 @@
 #include <rlgl.h>
 
 #include <algorithm>
+#include <initializer_list>
 #include <stdexcept>
 #include <utility>
 
@@ -143,9 +144,14 @@ void ModelResource::Release() noexcept {
 // ---------------------------------------------------------------------------
 // ShaderResource
 // ---------------------------------------------------------------------------
-ShaderResource::ShaderResource(const std::string& vertexPath, const std::string& fragmentPath)
-    : shader_(::LoadShader(ToCStr(vertexPath), ToCStr(fragmentPath))) {
+ShaderResource::ShaderResource(const std::string& vertexPath, const std::string& fragmentPath) {
+  // Con una ruta inexistente Raylib usa su shader por defecto sin dar error: se comprueba antes.
+  for (const std::string* path : {&vertexPath, &fragmentPath}) {
+    if (!path->empty() && !FileExists(path->c_str()))
+      throw std::runtime_error("Shader inexistente: " + *path);
+  }
 
+  shader_ = ::LoadShader(ToCStr(vertexPath), ToCStr(fragmentPath));
   if (!IsShaderValid(shader_)) {
     Release();
     throw std::runtime_error("No se pudo cargar el shader: [" + vertexPath + "] [" + fragmentPath +

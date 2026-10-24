@@ -31,25 +31,36 @@ texturas, arrastrar modelos, editar las propiedades de cada objeto y la lógica 
 
 ## Estado actual
 
-El proyecto avanza por **hitos numerados**. El último entregado es el **Hito 26** (editor de
-lógica), que sigue al 25 (editor de escenas). Lo que existe hoy:
+El proyecto avanza por **hitos numerados**. Los últimos: el **Hito 26** (editor de lógica), el
+**27** (tema moderno del editor) y el **28** (modelos hechos en Blender, sprites y escenas
+nuevas). Lo que existe hoy:
 
 | Área | Qué hay |
 |---|---|
-| Render PS1 | Resolución interna 320x240, temblor de vértices, texturas afines, color de 15 bits con *dithering* Bayer, niebla, iluminación por vértice, post-proceso (escalado nítido, viñeta, grano, tinte). |
+| Render PS1 | Resolución interna 320x240, temblor de vértices, color de 15 bits con *dithering* Bayer, niebla, iluminación por vértice, post-proceso (escalado nítido, viñeta, grano, tinte). |
 | Mundo | Escenas en JSON, entidades con modelo `.obj`, plano procedural o sprite *billboard*, luz y sonido propios, rotación continua, personajes que miran al jugador y se balancean. |
 | Jugador | Primera persona, cilindro que choca contra cajas orientadas, escalones, salto, gravedad, límites de escena. |
 | Lógica | Triggers (zonas) con eventos `enter`/`exit`/`stay`, banderas, condiciones anidadas (`all`/`any`/`not`), interacción con **E**, visibilidad condicional (`showIf`), cambio de escena con fundido. |
 | Audio | Música y ambiente con fundido cruzado, efectos (también posicionales), emisores en bucle con atenuación y paneo, pasos. |
 | Guardado | Ranuras en `%APPDATA%/RetroEngine/saves`, escritura atómica con copia `.bak`, autoguardado. |
 | Editor | Visor 3D con cámara libre, vista PS1 opcional, selección por clic, gizmo de mover, jerarquía, inspector, panel de assets con arrastrar y soltar, deshacer/rehacer, guardar/abrir/crear escenas. Editor de lógica: acciones, condiciones, interacciones y `showIf` en formularios, y un panel de validación que avisa de referencias rotas y banderas sospechosas. |
-| Herramientas | `tools/texconv.py` (imagen a textura PS1) y `tools/charatlas.py` (foto de cara a atlas de personaje). |
+| Contenido | Modelos low-poly hechos con Blender por script (`tools/blender/`): molino con aspas que giran, casas de madera y de piedra (también de noche, con las ventanas encendidas), capilla, cripta, tumbas, verjas, faroles, fuente, pozo y otros objetos, y ocho personajes compatibles con los atlas de caras. Texturas de materiales y sprites procedurales con acabado PS1. |
+| Herramientas | `tools/texconv.py` (imagen a textura PS1), `tools/charatlas.py` (foto de cara a atlas de personaje), `tools/gen_texturas.py`, `tools/gen_sprites.py` y `tools/gen_personajes.py` (texturas, sprites y atlas de personajes procedurales), `tools/gen_musica.py` y `tools/gen_sonidos.py` (música y efectos sintetizados) y los scripts de Blender. |
 
-Los assets actuales (modelos, texturas, audio) son **de relleno**, generados con scripts. No es
-arte final.
+Los assets son **procedurales**, generados con scripts y por tanto se pueden regenerar y retocar;
+no es arte final hecho a mano.
 
-Hay tres escenas de ejemplo conectadas entre sí: `demo.json` (puzle de llave y 3 monedas que abre
-un portal), `noche.json` y `aldea.json`.
+Escenas, conectadas entre sí por portales:
+
+- `demo.json`: escena de pruebas (puzle de llave y 3 monedas que abre un portal).
+- `aldea.json`: aldea de día con molino, casas, pozo y aldeanos.
+- `noche.json`: plaza nocturna con fuente, faroles y un sereno.
+- `cementerio.json`: cementerio con capilla, tumbas, cuervos y un sepulturero; con su llave se
+  entra en la cripta.
+- `cripta.json`: interior de la cripta, con sarcófagos, nichos y una escalera que baja.
+- `tuneles.json`: túneles de tierra bajo la cripta, con un cruce, un osario, un lago, un
+  santuario de cristales con un ermitaño, un derrumbe, una reja que se abre con la llave del
+  osario, y salidas al pozo de la aldea y a una trampilla de la plaza de noche.
 
 ---
 
@@ -83,6 +94,8 @@ Los ejecutables quedan en `build/bin/`:
 - `RetroEditor.exe`: el editor. Edita directamente los assets **de origen** (`assets/` del
   proyecto; la ruta se fija al compilar con `RETRO_PROJECT_ASSETS_DIR`). Se puede cambiar con
   `RetroEditor.exe --assets <carpeta>`.
+- Los dos aceptan `--scene scenes/<escena>.json` para empezar en esa escena (el juego empieza
+  por defecto en la demo).
 
 > Importante: como el juego lee la copia, después de guardar una escena en el editor hay que
 > **volver a compilar** (o al menos ejecutar el destino `CopyAssets`) para verla en el juego.
@@ -96,18 +109,18 @@ Los ejecutables quedan en `build/bin/`:
 | Tecla | Acción |
 |---|---|
 | W A S D / ratón | Moverse / mirar |
-| Mayús | Correr |
+| Shift | Correr |
 | Espacio | Saltar |
 | E | Interactuar con lo que miras |
-| F9 / F10 / Mayús+F10 | Guardar en la ranura 1 / cargar la ranura 1 / cargar el autoguardado |
-| Tab / Mayús+Tab | Escena siguiente / anterior (de las ya conocidas) |
+| F9 / F10 / Shift+F10 | Guardar en la ranura 1 / cargar la ranura 1 / cargar el autoguardado |
+| Tab / Shift+Tab | Escena siguiente / anterior (de las ya conocidas) |
 | F1 | Mostrar u ocultar la ayuda |
 | F2 | Alternar entre primera persona y cámara orbital |
 | F3 | Mostrar las cajas de colisión |
 | F5 | Recargar la escena desde el disco |
 | F6 | Reiniciar el estado (banderas y `once`) |
 | F7 / F8 | Modo de escalado / activar o quitar el acabado del post-proceso |
-| 1 2 3 4 5 6 | Temblor, color de 15 bits, *dithering*, niebla, nivel de textura afín, luces puntuales |
+| 1 2 3 4 6 | Temblor, color de 15 bits, *dithering*, niebla, luces puntuales |
 | M | Silenciar |
 | F11 | Ventana sin bordes |
 | Esc | Salir |
@@ -119,11 +132,11 @@ Los ejecutables quedan en `build/bin/`:
 | Clic izquierdo | Seleccionar (otro clic en el mismo sitio elige el siguiente objeto en esa línea) |
 | Arrastrar flechas del gizmo | Mover en X, Y o Z (Ctrl: ajustar a 0.25) |
 | Arrastrar la esfera central | Mover sobre el plano horizontal |
-| Botón derecho + ratón, W A S D, Q E | Mirar y volar (Mayús: más rápido; rueda: cambia la velocidad) |
+| Botón derecho + ratón, W A S D, Q E | Mirar y volar a 12 m/s (Shift: más rápido; Ctrl: más lento; rueda: cambia la velocidad) |
 | Rueda | Acercar o alejar |
 | Botón central | Desplazar la vista |
 | Arrastrar desde Assets | Modelo o sonido: se crea en el suelo. Textura sobre un objeto: se la cambia. Textura sobre el vacío: crea un sprite |
-| Ctrl+S, Ctrl+Z, Ctrl+Y (o Ctrl+Mayús+Z), Ctrl+D, Supr, F, F5 | Guardar, deshacer, rehacer, duplicar, eliminar, enfocar, recargar |
+| Ctrl+S, Ctrl+Z, Ctrl+Y (o Ctrl+Shift+Z), Ctrl+D, Supr, F, F5 | Guardar, deshacer, rehacer, duplicar, eliminar, enfocar, recargar |
 
 ---
 
@@ -147,10 +160,14 @@ editor/               RetroEditor: EditorApp, EditorLogic (acciones, condiciones
                       EditorValidation (panel Validacion), EditorCamera, AssetCatalog,
                       JsonUtil, JsonFormat
 assets/
-  scenes/             demo.json, noche.json, aldea.json
+  scenes/             demo.json, aldea.json, noche.json, cementerio.json, cripta.json, tuneles.json
   shaders/            retro.vs, retro.fs, retro_unlit.fs, retro_sprite.fs, post.fs
   models/ textures/ audio/ fonts/
-tools/                texconv.py, charatlas.py
+tools/                texconv.py, charatlas.py, gen_texturas.py, gen_sprites.py, gen_personajes.py, gen_musica.py,
+                      gen_sonidos.py
+  blender/            retro_comun.py (piezas y exportador), molino.py, aldea_props.py,
+                      cementerio.py, personajes.py, subterraneo.py (+ tuneles_mapa.py):
+                      los modelos, por script
 docs/SISTEMA.md       funcionamiento detallado de todos los sistemas
 ```
 
@@ -204,7 +221,7 @@ post-proceso y dibujar la interfaz encima. El detalle está en
 |---|---|
 | **Renderizar a 320x240 y escalar** | Es la resolución típica de PS1; además abarata el render y da el píxel grueso de verdad, no un filtro que lo imite. |
 | **Temblor de vértices en el *vertex shader*** (redondear la posición en pantalla a la rejilla de 320x240) | La PS1 no tenía precisión subpíxel; los polígonos "saltan" de píxel en píxel. Es barato y se puede desactivar (tecla 1). |
-| **Textura afín mezclada (`affineAmount` = 0.35)** en vez de afín pura | La deformación afín completa es auténtica pero cansa la vista en suelos grandes. Mezclar ambas UV deja el efecto reconocible y ajustable (tecla 5: 0.35, 1, 0). |
+| **Texturas con perspectiva correcta (sin mapeo afín)** | La PS1 interpolaba las UV en pantalla y las texturas se doblaban sobre polígonos grandes vistos de cerca (una pared de un solo quad). Es auténtico, pero al acercarse a una pared molesta y deforma puertas y ventanas. Se quitó: el aspecto PS1 lo dan la baja resolución, el temblor de vértices, el color de 15 bits con trama y la niebla. |
 | **Iluminación por vértice (Gouraud)** | Es lo que hacía la PS1, cuesta poco, y con modelos de pocos polígonos da ese degradado "a trozos" típico. |
 | **Color de 15 bits con *dithering* Bayer 4x4** | La PS1 dibujaba en 15 bits con trama ordenada; los degradados se ven con bandas y trama, no suaves. |
 | **Niebla con la profundidad `w` medida antes del temblor** | La niebla oculta el final del mundo (como en muchos juegos de PS1) y medirla antes del redondeo evita que tiemble con los vértices. El color de niebla es el del fondo, así lo lejano se funde con el cielo. |
@@ -271,6 +288,19 @@ post-proceso y dibujar la interfaz encima. El detalle está en
 | **Validación en un panel aparte, sin bloquear** | Lo que el cargador acepta pero fallará al jugar (una escena de destino que no existe, una bandera que nadie cambia) se avisa, no se impide: a mitad de construir una escena es normal tener cosas a medias. Las banderas se comparan con **todas** las escenas, porque una llave se puede recoger en otra. |
 | **El editor edita `assets/` de origen** | Lo guardado va al repositorio, no a la copia de `build/`, que se sobrescribe al compilar. |
 
+### Contenido (modelos, texturas y sprites)
+
+| Decisión | Por qué |
+|---|---|
+| **Modelos hechos con Blender por script** (`tools/blender/`), no a mano | Cada modelo es código: se puede regenerar, cambiar una medida y volver a exportar, y las piezas comunes (tejados, ventanas, cuerpos) se reutilizan. Blender se maneja desde Claude con el MCP o ejecutando el script. |
+| **Varios materiales por modelo, con texturas pequeñas que se repiten** | Una pared de madera y un tejado de tejas usan su propia textura de 64 px con UV en metros reales, en vez de un atlas único: más detalle con menos memoria y sin estirar la textura. El `.mtl` apunta a `../textures/`. |
+| **`"texture"` solo reemplaza los materiales sin textura propia** | Así un personaje recibe su atlas de cara y ropa sin perder el sombrero de paja o el farol, que traen su material. Con los modelos que no traen texturas en el `.mtl` el resultado es el de siempre. |
+| **Personajes con la misma distribución de atlas que los antiguos** | Las caras hechas con `charatlas.py` sirven en todos los cuerpos nuevos. |
+| **Cajas de colisión dentro del modelo** | Una sola caja alrededor de todo el modelo hacía chocar con el aire (el vuelo del tejado, las esquinas de una fuente redonda). Cada modelo declara sus cajas en su script y van en el propio `.obj` como comentarios (`# retro:col`): un solo archivo, y cualquier otro programa lo sigue leyendo igual. Las cajas pueden ir giradas, y cuatro franjas forman un octógono exacto. |
+| **Exportación triangulada** | El lector de OBJ de raylib aborta el programa con caras de más de 5 vértices. El motor además lo comprueba al cargar y da un error normal. |
+| **Huecos de verdad, nunca caras pegadas encima de otras** | Dos caras casi en el mismo sitio se pelean en el buffer de profundidad (*z-fighting*) y se ven a trozos: el interior del pozo o el agua de la fuente se modelan por debajo del borde. |
+| **Texturas y sprites procedurales que se repiten sin costuras** | Deterministas (misma semilla, mismo resultado) y con el mismo acabado PS1 que el resto (15 bits y trama). |
+
 ### Código
 
 | Decisión | Por qué |
@@ -296,9 +326,7 @@ JSON.
 
 Se muestra en solo lectura y se conserva intacto al guardar:
 
-- `facePlayer`, `idle` y el `collider` personalizado (`{min, max}`).
-- El bloque `audio` de la escena (música, ambiente, pasos) y el parpadeo (`flicker`,
-  `flickerRate`) de las luces.
+- `facePlayer` e `idle`.
 - Cualquier clave desconocida.
 
 Además el editor no tiene selección múltiple, copiar y pegar entre escenas, gizmos de rotación o
@@ -331,8 +359,10 @@ Encontrados al revisar el código (no todos verificados en ejecución):
   que la nombran. El editor avisa al borrar y el panel Validacion marca la referencia rota, pero
   no la arregla.
 - **Dependencias sin fijar**: ImGui (`docking`) y rlImGui (`main`) siguen ramas.
-- El título de la ventana del juego todavía dice "Hito 16", y `main.cpp` solo conoce
-  `scenes/demo.json` al empezar (las demás se añaden al visitarlas).
+- `main.cpp` solo conoce la escena con la que empieza; las demás se añaden al visitarlas (Tab
+  solo recorre las ya visitadas).
+- **Los modelos de Blender no tienen jerarquía en el motor**: las aspas del molino son otra
+  entidad, colocada a mano en el buje.
 
 ---
 
@@ -346,7 +376,7 @@ Orden sugerido:
 4. Menú principal y pausa, NPCs con rutas simples, *blob shadows*, más tipos de acción.
 5. Empaquetado del juego (ejecutable + assets) y fijar las dependencias.
 
-Pendientes pequeños del editor: `facePlayer`, `idle`, la caja de colisión personalizada, el
+Pendientes pequeños del editor: `facePlayer`, `idle`, el
 bloque `audio` de la escena y el parpadeo de las luces.
 
 ---

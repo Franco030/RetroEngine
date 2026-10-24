@@ -154,9 +154,9 @@ programas con `SetParams`:
 | `snapResolution` | 320x240 | Rejilla a la que se redondean los vértices. |
 | `colorLevels` | 32 | Niveles por canal (32 = 15 bits de color). |
 | `ditherStrength` | 1.0 | Intensidad de la trama Bayer. |
-| `affineAmount` | 0.35 | Mezcla entre UV con perspectiva (0) y afín (1). |
 | `lightDirection` | (-0.5, -1, -0.3) | Hacia dónde viaja la luz direccional. |
 | `ambient` | 0.35 | Luz mínima. |
+| `sun` | 1.0 | Fuerza de la luz direccional (0 en interiores y bajo tierra). |
 | `fogColor` | color de fondo | Se actualiza al cambiar el fondo. |
 | `fogStart` / `fogEnd` | 10 / 26 | Distancias de la niebla. |
 | `fogEnabled` | sí | Si no, la niebla se manda a un millón de unidades. |
@@ -179,14 +179,12 @@ Para cada vértice:
 
    Por eso los polígonos "saltan" de píxel en píxel al moverse, como en la PS1. Con la tecla 1
    la rejilla pasa a 4096x4096 y el efecto desaparece.
-4. Se pasan **dos copias de las UV**: una con `noperspective` (interpolación lineal en pantalla,
-   la deformación afín de la PS1) y otra normal (con perspectiva correcta).
+4. Se pasan las UV con **perspectiva correcta**. No se imita el mapeo afín de la PS1 (UV
+   interpoladas en pantalla): doblaba las texturas de los polígonos grandes vistos de cerca.
 
 ### 3.3 Fragment shader de modelos (`retro.fs`)
 
-1. **UV**: `mix(uvPerspectiva, uvAfin, affineAmount)`. Con 0.35 la textura se deforma un poco
-   al acercarse a polígonos grandes; con 1 es la PS1 pura; con 0 es un render moderno (tecla 5
-   cicla 0.35 → 1 → 0).
+1. **Textura** con las UV en perspectiva correcta: no se deforma aunque te pegues a una pared.
 2. **Recorte por alfa**: si `alfa de la textura × alfa del tinte < 0.5`, el píxel se descarta.
    No hay semitransparencia, así que no hace falta ordenar nada.
 3. **Color**: `textura × tinte × color de vértice × luz del vértice`.
@@ -214,9 +212,9 @@ Para cada vértice:
 con `"wrap": "repeat"`).
 
 Las subdivisiones importan por dos motivos: la iluminación es **por vértice** (un plano de un
-solo cuadrado recibe la luz de una farola solo en sus 4 esquinas) y la deformación afín crece
-con el tamaño de cada polígono en pantalla. Más subdivisiones = luz más precisa y menos
-deformación.
+solo cuadrado recibe la luz de una farola solo en sus 4 esquinas) y la luz se interpola en
+pantalla (`noperspective`), algo que se nota más cuanto más grande es el polígono. Más
+subdivisiones = luz más precisa.
 
 ### 3.5 Post-proceso (`post.fs`) y presentación
 
@@ -252,7 +250,10 @@ sprites ignoran la rotación. No se ordenan por distancia gracias al recorte por
 
 Hay tres tipos de luz:
 
-1. **Una luz direccional** por escena (`"light": { "direction", "ambient" }`), blanca.
+1. **Una luz direccional** por escena (`"light": { "direction", "ambient", "sun" }`), blanca.
+   `sun` (0..1, por defecto 1) es su fuerza: con `0` solo queda el ambiente y las luces
+   puntuales, que es lo que necesitan los interiores (la cripta, los túneles); si no, el "sol"
+   iluminaría las paredes bajo tierra.
 2. **Luces puntuales de escena** (`"lights": [ ... ]`).
 3. **Luces puntuales de entidad** (`"light"` dentro de una entidad).
 
@@ -263,7 +264,7 @@ En `retro.vs`, para cada vértice de un modelo:
 ```
 normal = normalizar(transpuesta(inversa(matModel)) * normal)   // correcta con escala no uniforme
 difusa = max(dot(normal, -normalizar(direccion)), 0)
-luz    = ambiente + (1 - ambiente) * difusa                     // luz direccional, blanca
+luz    = ambiente + (1 - ambiente) * sol * difusa               // luz direccional, blanca
 
 para cada luz puntual i (hasta 8):
     d    = distancia(vértice, luz_i)
@@ -319,7 +320,7 @@ Los sprites no pasan por el cálculo por vértice. `Scene::Draw` calcula **un co
 en la CPU, medido en el centro del sprite:
 
 ```
-base  = ambiente + (1 - ambiente) * 0.5
+base  = ambiente + (1 - ambiente) * 0.5 * sol
 color = (base, base, base)
 para cada una de las 8 luces elegidas:
     t      = clamp(1 - distancia / radio, 0, 1)
@@ -336,8 +337,12 @@ término `base`.
 
 Una entidad (`src/world/Entity.hpp`) es **exactamente uno** de:
 
-- **Modelo**: un `.obj` o un plano procedural, con una textura opcional que **reemplaza** la
-  textura difusa de todos sus materiales.
+- **Modelo**: un `.obj` o un plano procedural. Puede tener varios materiales; los que traen
+  textura en su `.mtl` (madera, tejas...) la conservan, y la textura opcional de la entidad
+  (`"texture"`) va a los materiales **sin textura propia**. Un modelo sin `.mtl` (o un plano)
+  tiene un solo material sin textura, así que `"texture"` lo cubre entero. Si la entidad no da
+  `"texture"`, esos materiales quedan en blanco (no heredan la de otra entidad con el mismo
+  modelo).
 - **Sprite**: una textura dibujada como *billboard* con un tamaño `[ancho, alto]`.
 
 ### 5.1 Transformación
@@ -388,15 +393,20 @@ malla compartida). Para un sprite, `ancho × alto × (0.4 × ancho)` con la base
   Limitación: la altura no tiene en cuenta los giros en X o Z. Un objeto inclinado sigue teniendo
   una caja vertical.
 
-### 6.2 De dónde sale la caja de una entidad
+### 6.2 De dónde salen las cajas de una entidad
+
+Una entidad puede tener **varias cajas** (`Entity::colliders`), y cada caja puede ir girada
+sobre su eje vertical (`BoxCollider::yaw`, alrededor de su propio centro). Con cuatro franjas
+giradas 0°, 45°, 90° y 135° se forma un octógono exacto: así chocan la fuente, el pozo y la
+torre del molino.
 
 El campo `collider` de cada entidad decide:
 
 | Valor de `collider` | Resultado |
 |---|---|
-| `true` o `"auto"` | Caja automática (ver abajo). |
+| `true` o `"auto"` | Cajas automáticas (ver abajo). |
 | `false` | Sin colisión: se atraviesa. |
-| `{ "min": [x,y,z], "max": [x,y,z] }` | Caja personalizada en espacio local (`min` < `max` en los tres ejes). |
+| `{ "min": [x,y,z], "max": [x,y,z], "yaw": 0 }` | Una caja personalizada en espacio local (`min` < `max` en los tres ejes; `yaw` opcional). |
 | ausente | Depende de **`autoCollide`** de la escena. |
 
 **Colisión automática** (`"autoCollide": true` en la raíz de la escena, por defecto `false`):
@@ -406,19 +416,31 @@ plana del tamaño del suelo bloquearía todo) y los sprites tampoco (un árbol c
 automática sería tan ancho como su copa); a un sprite hay que ponerle `"collider": true` o una
 caja.
 
-**La caja automática** se calcula al cargar:
+**Las cajas automáticas** se calculan al cargar:
 
-- Para un modelo: la unión de las cajas de todas sus mallas en espacio local, es decir, la caja
-  que envuelve todo el modelo. Después `MakeWorldBox` le aplica posición, giro en Y y escala de
-  la entidad cada fotograma.
+- Para un modelo que **trae sus propias cajas**: esas. Los modelos hechos con
+  `tools/blender/` las llevan dentro del `.obj`, en comentarios que raylib ignora:
+
+  ```
+  # retro:col min_x min_y min_z max_x max_y max_z yaw
+  ```
+
+  Solo cubren lo que estorba a la altura del jugador (paredes, postes, pilas, bancos), no el
+  vuelo del tejado ni el aire de alrededor. Se definen en el script de cada modelo con
+  `Malla.colision()` y `Malla.octogono()`.
+- Para un modelo sin cajas propias: la unión de las cajas de todas sus mallas en espacio local,
+  es decir, una caja que envuelve todo el modelo.
+- En los dos casos, `MakeWorldBox` les aplica posición, giro en Y y escala de la entidad cada
+  fotograma.
 - Para un sprite: un cuadrado de `0.4 × ancho` de lado en la base, y tan alto como el sprite
   (un "tronco" estrecho, no la copa).
 
 Consecuencias que conviene saber:
 
-- La caja automática es **una sola caja**: un modelo cóncavo (una casa con porche, un arco)
-  es sólido entero. Para entrar por una puerta hay que poner una caja personalizada o
-  `"collider": false` y usar otras entidades como paredes.
+- Un modelo **sin** cajas propias tiene una sola caja: si es cóncavo (una casa con porche, un
+  arco) es sólido entero. La solución es darle cajas en su script de Blender.
+- La caja de interacción por defecto (§11) es la de colisión si la entidad tiene **una**; si
+  tiene varias, la de todo el modelo.
 - Si la entidad **no es visible** (`visible: false` o `showIf` sin cumplir) su caja no existe.
   No se pueden hacer "paredes invisibles" con una entidad oculta.
 - Los límites `bounds` sí son paredes invisibles (§6.4).
@@ -742,7 +764,7 @@ Cada fotograma, con la posición de los pies:
    - no está activo (cámara orbital o durante un fundido);
    - se movió más de 1 unidad en un fotograma (es un teletransporte o un cambio de escena, no
      un paso).
-3. La distancia se acumula. Cuando llega a la **zancada** (1.9 andando, 2.6 con Mayús pulsada),
+3. La distancia se acumula. Cuando llega a la **zancada** (1.9 andando, 2.6 con Shift pulsada),
    suena un paso y se resta la zancada (el sobrante se conserva, así el ritmo es regular).
 
 Correr da pasos más espaciados en distancia pero más frecuentes en el tiempo (6 / 2.6 ≈ 2.3
@@ -811,7 +833,7 @@ recolocar al jugador y autoguardar.
 `GoToPath(ruta, posición, yaw)` (lo usa `goto_scene`, y también cargar partida):
 
 1. Si la ruta no está en la lista de escenas conocidas y el archivo existe, se añade. (Tab y
-   Mayús+Tab recorren esa lista.)
+   Shift+Tab recorren esa lista.)
 2. **Fundido a negro** en 0.35 s, en **8 escalones** (no es suave, como los fundidos de la
    época). Durante el fundido el jugador no se mueve y no se evalúan triggers ni interacciones.
 3. Con la pantalla en negro se carga la escena (el tirón de la carga no se ve).
@@ -872,7 +894,7 @@ el archivo falta o no es válido, se prueba el `.bak` (y se avisa por consola).
 - **F9**: guarda en la ranura 1 (no durante un fundido).
 - **Autoguardado**: cada vez que se carga una escena (también con Tab y F5) salvo cuando la
   carga viene de "cargar partida", y al salir del juego si cambió algo (escena o banderas).
-- **F10 / Mayús+F10**: lee la ranura, cambia a su escena con la posición y el yaw guardados y,
+- **F10 / Shift+F10**: lee la ranura, cambia a su escena con la posición y el yaw guardados y,
   cuando la escena termina de cargar, sustituye todas las banderas por las guardadas y restaura
   inclinación y tiempo de juego. Si la escena no se pudo cargar, avisa.
 - Al arrancar, si hay partida, un mensaje lo recuerda.
@@ -888,8 +910,13 @@ el archivo falta o no es válido, se prueba el `.bak` (y se avisa por consola).
 ruta si falla) y libera en su destructor. No se copian; se pueden mover.
 
 - Las **texturas** usan filtro de punto (texeles nítidos).
-- Los **modelos** `.obj` se cargan con Raylib; las texturas que traiga su `.mtl` pasan a ser del
-  modelo y también usan filtro de punto. A cada modelo se le asigna el shader Lit.
+- Los **modelos** `.obj` se cargan con Raylib; las texturas que traiga su `.mtl` (rutas
+  relativas a la carpeta del `.obj`, como `../textures/mat_madera.png`) pasan a ser del modelo y
+  también usan filtro de punto. `OpenMaterials()` lista los materiales sin textura propia, los
+  que reciben la `"texture"` de la entidad. A cada modelo se le asigna el shader Lit.
+- Antes de cargar un `.obj` se comprueba que ninguna cara tenga más de 5 vértices: el lector de
+  raylib (tinyobj) abortaría el programa entero. Así es un error normal con la línea del
+  archivo.
 - Los **sonidos** (`Sound`) se cargan enteros; la **música** y los emisores (`Music`) se leen
   por *streaming*.
 
@@ -938,7 +965,7 @@ Todos los campos, con su valor por defecto. Solo `entities` es obligatorio en la
 | `bounds` | ninguno | `{ "min": [x, z], "max": [x, z] }`. §6.4. |
 | `background` | `[24, 20, 32]` | También es el color de la niebla. |
 | `fog` | `start` 10, `end` 26 | |
-| `light` | `direction` [-0.5, -1, -0.3], `ambient` 0.35 | Luz direccional. |
+| `light` | `direction` [-0.5, -1, -0.3], `ambient` 0.35, `sun` 1 | Luz direccional (`sun` entre 0 y 1). |
 | `audio` | ninguno | `music` y `ambient`: ruta o `{ "file", "volume" }` (volumen por defecto 0.6 y 0.5). `footsteps`: `{ "files": [...], "volume": 0.6 }`. `fade`: 1.5. |
 | `lights` | `[]` | Luces puntuales (§18.4). |
 | `emitters` | `[]` | `{ "file", "position", "volume": 1, "radius": 10, "minDistance": 1 }`. |
@@ -951,7 +978,7 @@ Todos los campos, con su valor por defecto. Solo `entities` es obligatorio en la
 |---|---|---|
 | `name` | — | Obligatorio y único. |
 | `model` | — | `"models/x.obj"` o `{ "type": "plane", "size": 10, "subdivisions": 1, "tiles": 1 }`. Exactamente uno de `model` o `sprite`. |
-| `texture` | la del `.mtl` | Solo modelos. Sustituye la textura de todos los materiales. |
+| `texture` | — | Solo modelos. Va a los materiales sin textura propia en el `.mtl` (§5). |
 | `wrap` | el de Raylib | `"repeat"`, `"clamp"` o `"mirror"`. |
 | `sprite` | — | Ruta de la textura del sprite. |
 | `size` | — | Obligatorio en sprites: `[ancho, alto]`, positivos. |
@@ -1098,24 +1125,28 @@ entidad que no existe), y aceptan que se les suelte un asset arrastrado.
 
 - **Entidad**: nombre, visible; imagen, tamaño y emisivo (sprite) o modelo / parámetros del
   plano, textura y repetición (modelo); posición, rotación (no en sprites), escala, tinte, giro;
-  colisión (según la escena / sí / no; una caja personalizada se muestra en solo lectura); luz
+  colisión (según la escena / sí / no / caja personalizada, editada como centro y tamaño, con
+  "Ajustar al modelo"); luz
   propia (añadir, offset, color, intensidad, radio, quitar); sonido propio (añadir, archivo,
   offset, volumen, radio, distancia mínima, quitar); "Visible solo si" (`showIf`) e
   interacción (§19.12). El resto de claves (`facePlayer`, `idle`...) aparece en "Otros (solo
   lectura)".
 - **Trigger**: nombre, posición, tamaño, giro, evento, una sola vez, marco y su color;
   condiciones (`if`) y acciones (`do`) (§19.12).
-- **Luz**: posición, color, intensidad, radio (`flicker` se conserva pero no se muestra).
+- **Luz**: posición, color, intensidad, radio, parpadeo y cambios por segundo.
 - **Sonido**: archivo, posición, volumen, radio, distancia mínima.
 - **Escena** (sin nada seleccionado): cámara inicial (con "Usar la vista actual"), inicio del
   jugador (con "Inicio en el centro de la vista"), colisión automática, fondo, niebla, luz
-  direccional y ambiente, límites (activar, editar, quitar). El bloque `audio` y lo desconocido,
+  direccional (dirección, ambiente y fuerza del sol), límites (activar, editar, quitar) y **audio**: música y ambiente
+  (añadir, archivo, volumen 0-1, quitar), pasos (volumen y lista de sonidos: añadir, cambiar,
+  quitar) y fundido al cambiar de escena. Una pista escrita con el atajo `"music": "ruta"`
+  se muestra con un botón "Editar volumen" que la pasa a `{ file, volume }`. Lo desconocido,
   en "Otros (solo lectura)".
 
 ### 19.6 Visor
 
 - **Vista limpia** (por defecto): sin temblor, 256 niveles de color, sin *dithering*, a la
-  resolución del panel. La mezcla afín sigue activa.
+  resolución del panel.
 - **Vista PS1** (menú Ver): se dibuja a 320x240 y se presenta con el post-proceso del juego,
   con bandas negras para mantener la proporción.
 - **Capas** (menú Ver): rejilla, colisiones (rojo), zonas de trigger (verde, o violeta si tienen
@@ -1127,8 +1158,8 @@ entidad que no existe), y aceptan que se les suelte un asset arrastrado.
   `interact`, su caja de interacción en cian.
 
 **Cámara** (`EditorCamera`): con el botón derecho pulsado se captura el ratón para mirar y se
-vuela con W A S D (Q/E bajar y subir, Mayús ×3, rueda cambia la velocidad entre 0.5 y 100). Sin
-el botón derecho, la rueda acerca o aleja 1.5 unidades por paso y el botón central desplaza la
+vuela con W A S D (Q/E bajar y subir, Shift ×3, Ctrl ×0.25, rueda cambia la velocidad entre 1 y 150; empieza en 12 m/s). Sin
+el botón derecho, la rueda acerca o aleja 2.5 unidades por paso y el botón central desplaza la
 vista. F enfoca la selección (se aleja 2.5 veces su radio, mínimo 3).
 
 ### 19.7 Selección (picking)
@@ -1249,8 +1280,8 @@ sus hijos.
 **Interacción** (`interact` de una entidad): "Anadir interaccion" la crea con el texto
 "Interactuar" y un mensaje (el cargador exige al menos una acción, por eso la última acción no se
 puede quitar). Se editan el texto tras "E:", el alcance, "una sola vez", la **caja propia**
-(al marcarla empieza con el tamaño del modelo o del sprite; sin ella se usa la caja de colisión o
-la del modelo), las condiciones y las acciones.
+(al marcarla empieza con la caja de colisión o, si no hay, la del modelo; se edita como centro y
+tamaño; sin ella se usa la caja de colisión o la del modelo), las condiciones y las acciones.
 
 ### 19.13 Panel Validacion (`editor/EditorValidation.cpp`)
 
@@ -1279,7 +1310,105 @@ de añadir un sonido a la carpeta.
 
 ## 20. Herramientas de contenido
 
-Requieren `pip install pillow numpy` (`tools/requirements.txt`).
+Las de Python requieren `pip install pillow numpy` (`tools/requirements.txt`).
+
+### Modelos en Blender (`tools/blender/`)
+
+Cada modelo se construye con un script de Python que se ejecuta **dentro de Blender** (desde
+el MCP de Blender o pegándolo en su consola) y exporta a `assets/models/`:
+
+```python
+exec(open(ruta).read(), {"__file__": ruta, "__name__": "__main__"})
+```
+
+| Script | Modelos |
+|---|---|
+| `molino.py` | `molino` y `molino_aspas` (las aspas giran con `"spin": [0, 0, -40]`; van colocadas en el buje: posición del molino + `[0, 6.9, 2.1]`). |
+| `aldea_props.py` | `casa_madera`, `casa_piedra` y sus variantes `_noche` con las ventanas encendidas, `pozo`, `valla`, `barril`, `caja`, `carreta`. |
+| `cementerio.py` | `capilla`, `cripta`, `tumba`, `lapida`, `cruz`, `verja`, `farol` (luz con offset `[0, 2.75, 0]`), `banco`, `fuente`. |
+| `subterraneo.py` | `cripta_interior`, `tuneles`, `sarcofago`, `atril`, `puerta_cripta`, `estatua`, `reja`, `cuerda_pozo`, `escalera_mano`, `trampilla`. |
+| `personajes.py` | `granjero`, `aldeana`, `anciano`, `nino`, `hombre`, `mujer`, `sepulturero`, `sereno`, `encapuchado` (el ermitaño de los túneles: capucha de sudadera hasta los hombros y gabardina larga abierta por delante, ambas en la región del pantalón del atlas). |
+
+`retro_comun.py` tiene las piezas comunes:
+
+- `Malla`: cajas, prismas, segmentos entre dos puntos, anillos apilados, polígonos y
+  "calcomanías" (puertas y ventanas sobre una pared). Las UV se proyectan en el plano de cada
+  cara con la escala del material en metros, así las tablas y tejas quedan derechas y sin
+  estirar.
+- `material()`: material de Blender con la textura de `assets/textures/` (filtro de punto).
+- `exportar()`: `.obj` triangulado con los ejes del motor (frente del modelo en -Y de Blender →
+  +Z del motor) y `.mtl` limpio con rutas `../textures/`.
+
+Los personajes usan la distribución del atlas de 128x128 (cara, nuca, pelo, piel, torso,
+mangas, antebrazos, pantalón y zapatos): cada parte se mapea a su región, y el hueco `atlas`
+se exporta sin textura para que la entidad la elija con `"texture"`. Los complementos
+(sombrero, horca, bastón, pala, farol) traen su propio material.
+
+### `tools/gen_texturas.py`
+
+Texturas de materiales (`mat_*.png`): madera, madera gris, piedra, revoque, tejas, paja, lona,
+hierro, agua, un negro para huecos, y puerta y ventanas (apagadas y encendidas). Ruido periódico
+para que se repitan sin costuras, y la misma cuantización que `texconv.py`. `--preview` guarda
+ampliaciones.
+
+### `tools/gen_musica.py`
+
+Compone y sintetiza la música de las escenas (`musica_<escena>_v2.wav`: aldea, noche,
+cementerio, demo, cripta y tuneles). Piezas originales lentas y melancólicas, con instrumentos de síntesis
+aditiva hechos con numpy: pad de cuerdas, coro con formantes ("a" u "o"), caja de música,
+flauta con soplo, piano, campana de iglesia, bajo y dron. Reverb de sala grande y eco de ida y
+vuelta.
+
+- **Bucle perfecto**: todo se mezcla en un buffer circular (lo que pasa del final vuelve al
+  principio) y la reverb es una convolución circular por FFT, así que la cola de la reverb del
+  final suena sobre el principio y el bucle no tiene corte.
+- 22050 Hz estéreo de 16 bits, como el resto del audio pero en estéreo.
+- Las piezas se escriben compás a compás en el propio script (acordes, bajos, arpegios y
+  melodías como listas de `(compás, tiempo, duración, nota MIDI)`): para cambiar una melodía se
+  edita la lista y se vuelve a generar.
+- Las músicas antiguas (`musica_aldea.wav`...) siguen en `assets/audio/`; las escenas usan las
+  `_v2`.
+
+### El subterráneo: `subterraneo.py` y `tuneles_mapa.py`
+
+- **Interior de la cripta**: sala cerrada con bóveda de cañón, nichos y una escalera que baja por
+  un hueco del suelo. Como el jugador no puede bajar de Y=0, el **suelo de la sala está a 3 m**
+  (tres bloques de colisión alrededor del hueco) y la escalera baja de 3 a 0 hasta un rellano
+  oscuro; ahí un trigger lleva a los túneles.
+- **Túneles**: el mapa es una cuadrícula de celdas de 3 m en `tuneles_mapa.py` (Python puro):
+  salas como rectángulos y túneles como polilíneas de celdas. `python tuneles_mapa.py` lo dibuja
+  y comprueba que todo esté conectado. El modelo pone suelo, techo y paredes por celda en una
+  rejilla de 1 m (para que la luz por vértice tenga detalle), con escalones de techo entre salas
+  altas y túneles bajos, y luego **deforma con ruido** solo los vértices de tierra: así parecen
+  excavados, y lo que toca piedra o madera no se mueve, de modo que encaja. Todas las piezas
+  comparten los mismos cortes en altura (las alturas de techo), para que no queden grietas.
+- La colisión de los túneles son bloques de roca por filas, metidos 0.2 m en el túnel: la pared
+  deformada puede entrar hasta ~0.3 m y la cámara no debe atravesarla.
+- La cuerda del pozo y la escalera de mano son modelos aparte porque se usan con **E**.
+
+### `tools/gen_sonidos.py`
+
+Efectos y ambientes del subterráneo, mono a 22050 Hz: `cripta_amb` y `tuneles_amb` (bucles
+perfectos: buffer circular y la reverb de `gen_musica.py`), `paso_tierra_1..3`, `reja`,
+`derrumbe` y `gemido`.
+
+### `tools/gen_sprites.py`
+
+Sprites con transparencia (`spr_*.png`): árbol seco, cuervo, velas, hierba alta, flores y setas
+luminosas; y para el subterráneo cristales, telaraña, huesos, raíces que cuelgan, antorcha y unos
+ojos rojos. Pixel art procedural con contorno oscuro y alfa duro. Las velas y las setas se usan
+con `"emissive": true` y una `"light"` en la entidad.
+
+### `tools/gen_personajes.py`
+
+Pinta atlas de personaje completos (`pj_<nombre>.png`, 128x128, misma distribución que
+`charatlas.py`) sin foto: una cara pixel art procedural más el pelo, la nuca, la piel y la ropa.
+Cada personaje es una entrada del diccionario `PERSONAJES` con su piel, pelo, ojos, peinado
+(`corto`, `raya`, `despeinado`, `largo`, `calvo`, `gorro`), barba o bigote, rasgos (pecas,
+rubor, ojeras, arrugas de viejo, cara de niño, gafas, sonrisa) y ropa (color, cuadros o rayas,
+tirantes, delantal, solapas, botones, cinturón, falda o pantalón). Usa la misma cuantización
+que `texconv.py`. Los personajes de `aldea`, `noche` y `cementerio` usan estos atlas; el de la
+demo sigue con `yo_tex.png`.
 
 ### `tools/texconv.py`
 
@@ -1322,7 +1451,6 @@ línea de los ojos para ajustar el `--box`.
 | 2 | 32 / 256 niveles de color |
 | 3 | *Dithering* sí / no |
 | 4 | Niebla sí / no |
-| 5 | Afín 0.35 → 1 → 0 |
 | 6 | Luces puntuales sí / no |
 | F1 | Ayuda en pantalla |
 | F2 | Cámara orbital |
@@ -1343,7 +1471,7 @@ línea de los ojos para ajustar el `--box`.
 - **El panel Validacion** del editor: escenas, sonidos o entidades que una acción nombra y no
   existen, y banderas que se consultan pero nadie cambia (§19.13).
 - **Si todo se ve "moderno"** (sin temblor ni trama): probablemente una tecla de depuración
-  (1, 2, 3 o 5) está activa. Un shader que falta o no compila no pasa en silencio: el motor no
+  (1, 2 o 3) está activa. Un shader que falta o no compila no pasa en silencio: el motor no
   arranca y la consola dice cuál.
 - **Si un objeto no choca**: F3. ¿Tiene `collider`? ¿La escena tiene `autoCollide`? ¿Es un plano
   o un sprite (no tienen colisión automática)? ¿Está visible?

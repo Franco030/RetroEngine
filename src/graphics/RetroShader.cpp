@@ -37,9 +37,9 @@ RetroShader::Program RetroShader::MakeProgram(std::shared_ptr<ShaderResource> sh
   l.snapResolution = GetShaderLocation(s, "snapResolution");
   l.colorLevels = GetShaderLocation(s, "colorLevels");
   l.dither = GetShaderLocation(s, "ditherStrength");
-  l.affine = GetShaderLocation(s, "affineAmount");
   l.lightDir = GetShaderLocation(s, "lightDir");
   l.ambient = GetShaderLocation(s, "ambient");
+  l.sun = GetShaderLocation(s, "sun");
   l.fogColor = GetShaderLocation(s, "fogColor");
   l.fogStart = GetShaderLocation(s, "fogStart");
   l.fogEnd = GetShaderLocation(s, "fogEnd");
@@ -68,9 +68,9 @@ void RetroShader::Upload(const Program& p) const {
   SetUniform(s, l.snapResolution, &params_.snapResolution, SHADER_UNIFORM_VEC2);
   SetUniform(s, l.colorLevels, &params_.colorLevels, SHADER_UNIFORM_FLOAT);
   SetUniform(s, l.dither, &params_.ditherStrength, SHADER_UNIFORM_FLOAT);
-  SetUniform(s, l.affine, &params_.affineAmount, SHADER_UNIFORM_FLOAT);
   SetUniform(s, l.lightDir, &params_.lightDirection, SHADER_UNIFORM_VEC3);
   SetUniform(s, l.ambient, &params_.ambient, SHADER_UNIFORM_FLOAT);
+  SetUniform(s, l.sun, &params_.sun, SHADER_UNIFORM_FLOAT);
   SetUniform(s, l.fogColor, &params_.fogColor, SHADER_UNIFORM_VEC3);
   SetUniform(s, l.fogStart, &fogStart, SHADER_UNIFORM_FLOAT);
   SetUniform(s, l.fogEnd, &fogEnd, SHADER_UNIFORM_FLOAT);

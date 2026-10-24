@@ -6,10 +6,13 @@
 
 namespace retro {
 
-// Caja en el espacio LOCAL de la entidad (antes de aplicar su Transform)
+// Caja en el espacio LOCAL de la entidad (antes de aplicar su Transform). 'yaw' la gira sobre
+// el eje Y alrededor de su propio centro (grados): cuatro franjas giradas 0, 45, 90 y 135 forman
+// un octogono exacto (una fuente, un pozo, una torre).
 struct BoxCollider {
   Vector3 min{-0.5f, 0.0f, -0.5f};
   Vector3 max{0.5f, 1.0f, 0.5f};
+  float yaw = 0.0f;
 };
 
 // Caja ya en el mundo: orientada XZ (solo giro en y) y con rango vertical.

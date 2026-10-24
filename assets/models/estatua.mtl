@@ -1,0 +1,9 @@
+# RetroEngine: estatua
+
+newmtl mat_cripta
+d 1.000000
+map_Kd ../textures/mat_cripta.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png

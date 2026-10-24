@@ -37,7 +37,8 @@ public:
   using UpdateFn = std::function<void(Entity&, float dt)>;
 
   // Modelo. El shader retro debe estar ya asignado (ModelResource::SetShader).
-  // Si se pasa textura, reemplaza el mapa difuso de TODOS los materiales al dibujar.
+  // Si se pasa textura, reemplaza el mapa difuso de los materiales sin textura propia
+  // (ModelResource::OpenMaterials) al dibujar.
   Entity(std::string name, std::shared_ptr<ModelResource> model,
          std::shared_ptr<TextureResource> texture = nullptr);
 
@@ -68,7 +69,8 @@ public:
   float lookRange = 10.0f;
   float turnSpeed = 240.0f;
   std::vector<Condition> showIf;
-  std::optional<BoxCollider> collider;
+  // Cajas de colision (vacia = se atraviesa). Varias si el modelo trae las suyas.
+  std::vector<BoxCollider> colliders;
   std::optional<Interaction> interact;
   std::optional<EntityLight> light;
   std::optional<EntitySound> sound;

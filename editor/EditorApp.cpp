@@ -216,7 +216,8 @@ std::string Sanitize(const std::string& s) {
 // ---------------------------------------------------------------------------
 // Ciclo de vida
 // ---------------------------------------------------------------------------
-EditorApp::EditorApp(retro::RetroEngine& engine) : engine_(engine) {
+EditorApp::EditorApp(retro::RetroEngine& engine, const std::string& initialScene)
+    : engine_(engine) {
   // La fuente se carga en un callback porque rlImGui la necesita en medio de su inicializacion.
   rlImGuiSetLoadFontsCallback(theme::LoadFonts);
   rlImGuiSetup(true);
@@ -233,13 +234,16 @@ EditorApp::EditorApp(retro::RetroEngine& engine) : engine_(engine) {
   layoutPending_ = !FileExists(iniPath_.c_str());
 
   const retro::RetroShaderParams& p = engine_.Retro().Params();
-  defaults_ = {engine_.Config().clearColor, p.fogStart, p.fogEnd, p.lightDirection, p.ambient};
+  defaults_ = {engine_.Config().clearColor, p.fogStart, p.fogEnd, p.lightDirection, p.ambient,
+               p.sun};
 
   Log(false, "Assets: " + engine_.Assets().Root());
   assets_.Scan(engine_.Assets().Root());
   RefreshSceneList();
 
-  if (!sceneList_.empty()) {
+  if (!initialScene.empty() && OpenScene(initialScene, true)) {
+    // abierta la que se pidio con --scene
+  } else if (!sceneList_.empty()) {
     const auto demo = std::find(sceneList_.begin(), sceneList_.end(), "scenes/demo.json");
     OpenScene(demo != sceneList_.end() ? *demo : sceneList_.front(), true);
   } else {
@@ -294,6 +298,7 @@ void EditorApp::ResetEnvironment() {
   p.fogEnd = defaults_.fogEnd;
   p.lightDirection = defaults_.lightDirection;
   p.ambient = defaults_.ambient;
+  p.sun = defaults_.sun;
   engine_.Retro().SetParams(p);
 }
 
@@ -1117,7 +1122,7 @@ void EditorApp::DrawMenuBar() {
     ImGui::BulletText("Arrastrar las flechas: mover (Ctrl: ajustar a 0.25)");
     ImGui::BulletText("Cuadrado central: mover sobre el suelo");
     ImGui::BulletText("Boton derecho + raton: mirar; W A S D mover, Q E bajar y subir");
-    ImGui::BulletText("Mayus: mas rapido; rueda: acercar (o velocidad con el derecho)");
+    ImGui::BulletText("Shift: mas rapido, Ctrl: mas lento; rueda: acercar (o velocidad con el derecho)");
     ImGui::BulletText("Boton central + arrastrar: desplazar");
     ImGui::BulletText("Arrastrar desde Assets: modelo/sonido al suelo, textura a un objeto");
     ImGui::Separator();
@@ -1415,22 +1420,42 @@ void EditorApp::InspectEntity(Json& e) {
   }
 
   if (theme::Section(ICON_FA_BORDER_ALL "  Colision")) {
+    // "collider": ausente (segun autoCollide), true / "auto", false, o una caja {min, max}.
     const Json* c = e.contains("collider") ? &e.at("collider") : nullptr;
-    const int mode = !c ? 0 : (c->is_boolean() ? (c->get<bool>() ? 1 : 2) : 3);
-    if (mode == 3) {
-      ImGui::TextDisabled("Caja personalizada (solo lectura)");
-      ShowJsonValue("collider", *c);
-    } else {
-      const char* items[] = {"Segun la escena", "Si (caja automatica)", "No (atravesable)"};
-      int next = mode;
-      if (ImGui::Combo("Colision", &next, items, 3) && next != mode) {
+    int mode = 0;
+    if (c && c->is_boolean())
+      mode = c->get<bool>() ? 1 : 2;
+    else if (c && c->is_string())
+      mode = 1;
+    else if (c && c->is_object())
+      mode = 3;
+
+    const char* items[] = {"Segun la escena", "Si (cajas del modelo)", "No (atravesable)",
+                           "Caja personalizada"};
+    int next = mode;
+    if (ImGui::Combo("Colision", &next, items, 4) && next != mode) {
+      BeginChange(0);
+      if (next == 0) {
+        e.erase("collider");
+      } else if (next == 3) {
+        // se parte de la caja que tenia (o de la del modelo): luego solo hay que retocarla
+        const BoundingBox b = EntityBox(selection_.index, true);
+        e["collider"] = Json::object({{"min", Vec3Json(b.min)}, {"max", Vec3Json(b.max)}});
+      } else {
+        e["collider"] = (next == 1);
+      }
+      MarkChanged(0);
+      mode = next;
+    }
+    if (mode == 3 && e.at("collider").is_object()) {
+      FieldBox(e["collider"]);
+      if (ImGui::Button(ICON_FA_CUBE "  Ajustar al modelo")) {
+        const BoundingBox b = EntityBox(selection_.index, false);
         BeginChange(0);
-        if (next == 0)
-          e.erase("collider");
-        else
-          e["collider"] = (next == 1);
+        e["collider"] = Json::object({{"min", Vec3Json(b.min)}, {"max", Vec3Json(b.max)}});
         MarkChanged(0);
       }
+      ImGui::TextDisabled("Sin escalar ni girar. En el visor: naranja");
     }
   }
 
@@ -1450,6 +1475,9 @@ void EditorApp::InspectEntity(Json& e) {
       FieldColor("Color", e, "light", "color", WHITE, false);
       FieldFloat("Intensidad", e, "light", "intensity", 1.0f, 0.01f, 0.0f, 10.0f, false);
       FieldFloat("Radio", e, "light", "radius", 8.0f, 0.1f, 0.1f, 100.0f, false);
+      FieldFloat("Parpadeo", e, "light", "flicker", 0.0f, 0.01f, 0.0f, 1.0f);
+      if (ReadNumber(Src(e, "light"), "flicker", 0.0f) > 0.0f)
+        FieldFloat("Cambios por segundo", e, "light", "flickerRate", 10.0f, 0.1f, 0.5f, 40.0f);
       if (ImGui::Button(ICON_FA_TRASH "  Quitar luz")) {
         BeginChange(0);
         e.erase("light");
@@ -1555,6 +1583,9 @@ void EditorApp::InspectLight(Json& l) {
   FieldColor("Color", l, nullptr, "color", WHITE, false);
   FieldFloat("Intensidad", l, nullptr, "intensity", 1.0f, 0.01f, 0.0f, 10.0f);
   FieldFloat("Radio", l, nullptr, "radius", 8.0f, 0.1f, 0.1f, 100.0f);
+  FieldFloat("Parpadeo", l, nullptr, "flicker", 0.0f, 0.01f, 0.0f, 1.0f);
+  if (ReadNumber(&l, "flicker", 0.0f) > 0.0f)
+    FieldFloat("Cambios por segundo", l, nullptr, "flickerRate", 10.0f, 0.1f, 0.5f, 40.0f);
 }
 
 void EditorApp::InspectEmitter(Json& e) {
@@ -1608,6 +1639,16 @@ void EditorApp::InspectScene() {
     FieldFloat("Niebla: fin", d, "fog", "end", defaults_.fogEnd, 0.1f, 0.1f, 500.0f);
     FieldVec3("Luz: direccion", d, "light", "direction", defaults_.lightDirection, 0.01f);
     FieldFloat("Luz: ambiente", d, "light", "ambient", defaults_.ambient, 0.005f, 0.0f, 1.0f);
+    FieldFloat("Luz: sol", d, "light", "sun", defaults_.sun, 0.01f, 0.0f, 1.0f);
+  }
+
+  // Los volumenes por defecto son los de SceneAudio (src/world/Scene.hpp).
+  if (theme::Section(ICON_FA_MUSIC "  Audio")) {
+    AudioTrack(d, "music", "Musica", 0.6f);
+    AudioTrack(d, "ambient", "Ambiente (viento, grillos...)", 0.5f);
+    AudioFootsteps(d);
+    ImGui::SeparatorText("Cambio de escena");
+    FieldFloat("Fundido (s)", d, "audio", "fade", 1.5f, 0.05f, 0.0f, 10.0f);
   }
 
   if (theme::Section(ICON_FA_BORDER_ALL "  Limites jugables")) {
@@ -1632,7 +1673,7 @@ void EditorApp::InspectScene() {
   bool header = false;
   for (auto it = d.begin(); it != d.end(); ++it) {
     if (IsOneOf(it.key(), {"camera", "player", "autoCollide", "bounds", "background", "fog",
-                           "light", "entities", "triggers", "lights", "emitters"})) {
+                           "light", "audio", "entities", "triggers", "lights", "emitters"})) {
       continue;
     }
     if (!header) {
@@ -1642,6 +1683,124 @@ void EditorApp::InspectScene() {
     }
     ShowJsonValue(it.key(), it.value());
   }
+}
+
+namespace {
+
+Json* AudioObject(Json& d) {
+  return d.contains("audio") && d.at("audio").is_object() ? &d.at("audio") : nullptr;
+}
+
+} // namespace
+
+void EditorApp::AudioTrack(Json& d, const char* key, const char* title, float defVolume) {
+  ImGui::PushID(key);
+  ImGui::SeparatorText(title);
+  Json* audio = AudioObject(d);
+
+  if (!audio || !audio->contains(key)) {
+    ImGui::BeginDisabled(assets_.sounds.empty());
+    if (ImGui::Button(ICON_FA_PLUS "  Anadir")) {
+      BeginChange(0);
+      d["audio"][key] =
+          Json::object({{"file", assets_.sounds.front()}, {"volume", Number(defVolume)}});
+      MarkChanged(0);
+    }
+    ImGui::EndDisabled();
+    ImGui::PopID();
+    return;
+  }
+
+  Json& track = audio->at(key);
+  if (track.is_string()) {
+    // atajo "music": "ruta" (sin volumen): se pasa a objeto para poder editarlo
+    ImGui::TextDisabled("%s", track.get_ref<const std::string&>().c_str());
+    if (ImGui::Button(ICON_FA_SLIDERS "  Editar volumen")) {
+      Json file = track;
+      BeginChange(0);
+      track = Json::object({{"file", std::move(file)}, {"volume", Number(defVolume)}});
+      MarkChanged(0);
+    }
+  } else {
+    FieldFile("Archivo", *audio, key, "file", assets_.sounds, false, false);
+    FieldFloat("Volumen", *audio, key, "volume", defVolume, 0.01f, 0.0f, 1.0f, false);
+  }
+
+  if (ImGui::Button(ICON_FA_TRASH "  Quitar")) {
+    BeginChange(0);
+    audio->erase(key);
+    if (audio->empty())
+      d.erase("audio");
+    MarkChanged(0);
+  }
+  ImGui::PopID();
+}
+
+void EditorApp::AudioFootsteps(Json& d) {
+  ImGui::PushID("footsteps");
+  ImGui::SeparatorText("Pasos");
+  Json* audio = AudioObject(d);
+
+  if (!audio || !audio->contains("footsteps") || !audio->at("footsteps").is_object()) {
+    ImGui::BeginDisabled(assets_.sounds.empty());
+    if (ImGui::Button(ICON_FA_PLUS "  Anadir")) {
+      BeginChange(0);
+      d["audio"]["footsteps"] = Json::object(
+          {{"files", Json::array({assets_.sounds.front()})}, {"volume", Number(0.6)}});
+      MarkChanged(0);
+    }
+    ImGui::EndDisabled();
+    ImGui::PopID();
+    return;
+  }
+
+  Json& steps = audio->at("footsteps");
+  FieldFloat("Volumen", *audio, "footsteps", "volume", 0.6f, 0.01f, 0.0f, 1.0f, false);
+
+  if (steps.contains("files") && steps.at("files").is_array()) {
+    Json& files = steps.at("files");
+    // Uno al azar por paso (sin repetir el anterior): con 2 o 3 variaciones ya no suena a bucle.
+    std::size_t remove = files.size();
+    const float trash = ImGui::GetFrameHeight() + ImGui::GetStyle().ItemSpacing.x;
+    for (std::size_t i = 0; i < files.size(); ++i) {
+      ImGui::PushID(static_cast<int>(i));
+      const std::string current = files[i].is_string() ? files[i].get<std::string>() : "";
+      ImGui::SetNextItemWidth(-trash);
+      if (ImGui::BeginCombo("##archivo", current.c_str())) {
+        for (const std::string& s : assets_.sounds) {
+          if (ImGui::Selectable(s.c_str(), s == current) && s != current) {
+            BeginChange(0);
+            files[i] = s;
+            MarkChanged(0);
+          }
+        }
+        ImGui::EndCombo();
+      }
+      ImGui::SameLine();
+      if (theme::IconButton(ICON_FA_TRASH, "Quitar"))
+        remove = i;
+      ImGui::PopID();
+    }
+    ApplyListOp(files, remove < files.size() ? ListOp::Remove : ListOp::None, remove);
+
+    ImGui::BeginDisabled(assets_.sounds.empty());
+    if (ImGui::Button(ICON_FA_PLUS "  Anadir sonido")) {
+      BeginChange(0);
+      files.push_back(assets_.sounds.front());
+      MarkChanged(0);
+    }
+    ImGui::EndDisabled();
+    ImGui::SameLine();
+  }
+
+  if (ImGui::Button(ICON_FA_TRASH "  Quitar pasos")) {
+    BeginChange(0);
+    audio->erase("footsteps");
+    if (audio->empty())
+      d.erase("audio");
+    MarkChanged(0);
+  }
+  ImGui::PopID();
 }
 
 // ---------------------------------------------------------------------------
@@ -2152,6 +2311,47 @@ bool EditorApp::FieldText(const char* label, Json& root, const char* parent, con
   return false;
 }
 
+bool EditorApp::FieldBox(Json& box) {
+  const Vector3 lo = ReadVec3(&box, "min", {-0.5f, 0.0f, -0.5f});
+  const Vector3 hi = ReadVec3(&box, "max", {0.5f, 1.0f, 0.5f});
+  float centro[3] = {(lo.x + hi.x) * 0.5f, (lo.y + hi.y) * 0.5f, (lo.z + hi.z) * 0.5f};
+  float tam[3] = {hi.x - lo.x, hi.y - lo.y, hi.z - lo.z};
+
+  ImGui::PushID("caja");
+  const ImGuiID idCentro = ImGui::GetID("centro");
+  const ImGuiID idTam = ImGui::GetID("tamano");
+  ImGuiID id = 0;
+  if (ImGui::DragFloat3("Centro", centro, 0.02f, 0.0f, 0.0f, "%.2f"))
+    id = idCentro;
+  if (ImGui::IsItemDeactivated())
+    gestureEnded_ = true;
+  if (ImGui::DragFloat3("Tamano", tam, 0.02f, 0.05f, 200.0f, "%.2f",
+                        ImGuiSliderFlags_AlwaysClamp))
+    id = idTam;
+  if (ImGui::IsItemDeactivated())
+    gestureEnded_ = true;
+  ImGui::PopID();
+  if (id == 0)
+    return false;
+
+  BeginChange(id);
+  box["min"] = Vec3Json({centro[0] - tam[0] * 0.5f, centro[1] - tam[1] * 0.5f,
+                         centro[2] - tam[2] * 0.5f});
+  box["max"] = Vec3Json({centro[0] + tam[0] * 0.5f, centro[1] + tam[1] * 0.5f,
+                         centro[2] + tam[2] * 0.5f});
+  MarkChanged(id);
+  return true;
+}
+
+BoundingBox EditorApp::EntityBox(int index, bool preferCollider) const {
+  if (!scene_ || index < 0 || static_cast<std::size_t>(index) >= scene_->Count())
+    return {{-0.5f, 0.0f, -0.5f}, {0.5f, 1.0f, 0.5f}};
+  retro::Entity& e = scene_->EntityAt(static_cast<std::size_t>(index));
+  if (preferCollider && e.colliders.size() == 1)
+    return {e.colliders.front().min, e.colliders.front().max};
+  return e.LocalBounds();
+}
+
 bool EditorApp::FieldChoice(const char* label, Json& root, const char* parent, const char* key,
                             const std::vector<std::string>& options, const std::string& def) {
   IdScope scope(parent, key);
@@ -2236,6 +2436,18 @@ void EditorApp::DrawViewport() {
   const Vector2 mouse{mp.x - origin.x, mp.y - origin.y};
 
   lookingNow_ = camera_.Update(GetFrameTime(), viewportHovered_);
+
+  // Mientras se mira con el boton derecho, ImGui no debe usar el raton ni cambiar el cursor:
+  // rlImGui llama a ShowCursor() al cambiar la forma del cursor, y eso deshace la captura.
+  {
+    ImGuiIO& io = ImGui::GetIO();
+    const ImGuiConfigFlags sinRaton =
+        ImGuiConfigFlags_NoMouse | ImGuiConfigFlags_NoMouseCursorChange;
+    if (lookingNow_)
+      io.ConfigFlags |= sinRaton;
+    else
+      io.ConfigFlags &= ~sinRaton;
+  }
   EnsureTargets(w, h);
   viewW_ = w;
   viewH_ = h;
@@ -2306,7 +2518,13 @@ void EditorApp::DrawViewportToolbar() {
   ImGui::EndDisabled();
 
   // Ayuda corta a la derecha, si cabe.
-  const char* hint = "Clic: seleccionar   Der.+WASD: volar   Ctrl: ajustar a 0.25";
+  // Mientras se vuela, la ayuda muestra la velocidad (la rueda la cambia sin otro aviso).
+  char volando[96];
+  std::snprintf(volando, sizeof volando,
+                "Volando a %.1f m/s   Rueda: velocidad   Shift: rapido   Ctrl: lento",
+                camera_.Speed());
+  const char* hint =
+      lookingNow_ ? volando : "Clic: seleccionar   Der.+WASD: volar   Ctrl: ajustar a 0.25";
   const float hintWidth = ImGui::CalcTextSize(hint).x;
   ImGui::SameLine();
   const float room = ImGui::GetContentRegionAvail().x;
@@ -2376,7 +2594,7 @@ void EditorApp::DrawWorld(const Camera3D& camera) {
   }
   engine_.Retro().SetPointLights(lights_);
 
-  scene_->Draw(camera, engine_.Retro().Sprite()->Get(), p.ambient, lights_);
+  scene_->Draw(camera, engine_.Retro().Sprite()->Get(), p.ambient, p.sun, lights_);
   DrawGizmos();
   DrawSelectionGizmo();
 }
@@ -2450,9 +2668,8 @@ void EditorApp::DrawSelectionGizmo() {
       break;
     retro::Entity& e = scene_->EntityAt(static_cast<std::size_t>(selection_.index));
     DrawOrientedBox(EntityMatrix(e), e.LocalBounds(), yellow);
-    if (e.collider) {
-      retro::DrawWorldBoxWires(retro::MakeWorldBox(*e.collider, e.transform), {255, 140, 60, 255});
-    }
+    for (const retro::BoxCollider& c : e.colliders)
+      retro::DrawWorldBoxWires(retro::MakeWorldBox(c, e.transform), {255, 140, 60, 255});
     if (e.interact) {
       retro::DrawWorldBoxWires(retro::MakeWorldBox(e.interact->box, e.transform),
                                {80, 220, 255, 255});

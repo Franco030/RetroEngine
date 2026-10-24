@@ -24,7 +24,6 @@
 
 static void HandleDebugKeys(retro::RetroEngine& engine) {
   static bool jitter = true, lowColor = true, dither = true;
-  static int affineStep = 0;
 
   retro::RetroShaderParams p = engine.Retro().Params();
   bool changed = false;
@@ -48,12 +47,6 @@ static void HandleDebugKeys(retro::RetroEngine& engine) {
   }
   if (IsKeyPressed(KEY_FOUR)) {
     p.fogEnabled = !p.fogEnabled;
-    changed = true;
-  }
-  if (IsKeyPressed(KEY_FIVE)) {
-    static constexpr float kLevels[3] = {0.35f, 1.0f, 0.0f};
-    affineStep = (affineStep + 1) % 3;
-    p.affineAmount = kLevels[affineStep];
     changed = true;
   }
   if (IsKeyPressed(KEY_SIX)) {
@@ -110,14 +103,21 @@ static void DrawMessageBox(const retro::Ui& ui, const std::string& text) {
   }
 }
 
-int main() {
+// RetroEngine [--scene scenes/x.json]: escena con la que empieza (por defecto la demo).
+int main(int argc, char** argv) {
+  std::string primera = "scenes/demo.json";
+  for (int i = 1; i + 1 < argc; ++i) {
+    if (std::string(argv[i]) == "--scene")
+      primera = argv[i + 1];
+  }
+
   try {
     retro::EngineConfig config;
-    config.title = "RetroEngine - Hito 16";
+    config.title = "RetroEngine";
     retro::RetroEngine engine(config);
     retro::RetroCamera camera;
 
-    retro::SceneManager scenes(engine, camera, {"scenes/demo.json"});
+    retro::SceneManager scenes(engine, camera, {primera});
     scenes.LoadNow(0);
 
     retro::Player player;
@@ -194,7 +194,7 @@ int main() {
     };
 
     if (saves.Exists(1) || saves.Exists(retro::SaveManager::kAutosaveSlot)) {
-      state.ShowMessage("Hay una partida guardada.\nF10: cargar    Mayus+F10: autoguardado", 6.0f);
+      state.ShowMessage("Hay una partida guardada.\nF10: cargar    Shift+F10: autoguardado", 6.0f);
     }
 
     engine.Run(
@@ -359,12 +359,12 @@ int main() {
           }
 
           if (showHelp) {
-            ui.Text("1 jitter 2 color 3 dither 4 niebla 5 afin 6 luces", 4, 3, 8, RAYWHITE);
+            ui.Text("1 jitter 2 color 3 dither 4 niebla 6 luces", 4, 3, 8, RAYWHITE);
             ui.Text("F5 recargar  F6 reset  F7 filtro  F8 acabado M sonido", 4, 13, 8, RAYWHITE);
             ui.Text(firstPerson ? "WASD mover  Shift correr  Espacio saltar  E usar"
                                 : "Arrastrar/flechas: orbitar  Rueda: zoom",
                     4, 23, 8, RAYWHITE);
-            ui.Text("F9 guardar  F10 cargar  Mayus+F10 autoguardado", 4, 43, 8, RAYWHITE);
+            ui.Text("F9 guardar  F10 cargar  Shift+F10 autoguardado", 4, 43, 8, RAYWHITE);
             ui.Text("Tab escena  F1 ayuda  F2 camara  F3 colisiones", 4, 33, 8, RAYWHITE);
           }
 

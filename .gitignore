@@ -4,3 +4,6 @@ fotos/
 
 compile_commands.json
 RetroEngine
+# copias de respaldo del editor y cache de Python
+*.bak
+__pycache__/

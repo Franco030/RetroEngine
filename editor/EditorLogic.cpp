@@ -559,9 +559,7 @@ void EditorApp::EditInteraction(Json& e, int entityIndex) {
   if (ImGui::Checkbox("Caja propia", &ownBox)) {
     BeginChange(0);
     if (ownBox) {
-      BoundingBox b{{-0.5f, 0.0f, -0.5f}, {0.5f, 1.0f, 0.5f}};
-      if (scene_ && entityIndex >= 0 && static_cast<std::size_t>(entityIndex) < scene_->Count())
-        b = scene_->EntityAt(static_cast<std::size_t>(entityIndex)).LocalBounds();
+      const BoundingBox b = EntityBox(entityIndex, true);
       it["box"] = Json::object({{"min", Vec3Json(b.min)}, {"max", Vec3Json(b.max)}});
     } else {
       it.erase("box");
@@ -569,9 +567,8 @@ void EditorApp::EditInteraction(Json& e, int entityIndex) {
     MarkChanged(0);
   }
   if (it.contains("box")) {
-    FieldVec3("Caja: min", it, "box", "min", {-0.5f, 0.0f, -0.5f}, 0.05f, false);
-    FieldVec3("Caja: max", it, "box", "max", {0.5f, 1.0f, 0.5f}, 0.05f, false);
-    ImGui::TextDisabled("En el espacio de la entidad (antes de escalar y girar)");
+    FieldBox(it["box"]);
+    ImGui::TextDisabled("Sin escalar ni girar. En el visor: cian");
   } else {
     ImGui::TextDisabled("Usa la caja de colision, o la del modelo si no tiene");
   }

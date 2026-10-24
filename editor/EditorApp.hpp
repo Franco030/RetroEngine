@@ -45,7 +45,9 @@ struct Issue {
 
 class EditorApp {
 public:
-  explicit EditorApp(retro::RetroEngine& engine);
+  // initialScene: ruta relativa a assets (p. ej. "scenes/aldea.json"); vacia = demo.json o la
+  // primera que haya.
+  EditorApp(retro::RetroEngine& engine, const std::string& initialScene);
   ~EditorApp();
 
   EditorApp(const EditorApp&) = delete;
@@ -64,6 +66,7 @@ private:
     float fogEnd = 0.0f;
     Vector3 lightDirection{};
     float ambient = 0.0f;
+    float sun = 1.0f;
   };
   struct Hit {
     SelectionKind kind;
@@ -138,6 +141,9 @@ private:
   void InspectLight(Json& l);
   void InspectEmitter(Json& e);
   void InspectScene();
+  // "audio" de la escena: musica y ambiente ({ "file", "volume" }) y pasos ({ "files", "volume" }).
+  void AudioTrack(Json& d, const char* key, const char* title, float defVolume);
+  void AudioFootsteps(Json& d);
   void DrawAssets();
   void AssetList(const std::vector<std::string>& files, bool thumbnails);
   void Thumbnail(const std::string& relative, float maxSize);
@@ -169,6 +175,12 @@ private:
                  const std::vector<std::string>& files, bool allowNone, bool thumbnail);
   bool FieldText(const char* label, Json& root, const char* parent, const char* key,
                  bool multiline = false);
+  // Caja {"min": [...], "max": [...]} editada como centro y tamano (lo que se piensa al
+  // ajustar una caja). El tamano nunca baja de 5 cm, asi min < max siempre.
+  bool FieldBox(Json& box);
+  // Caja local de la entidad 'index' de la escena: su colision si la tiene, si no la del
+  // modelo o el sprite.
+  BoundingBox EntityBox(int index, bool preferCollider) const;
   bool FieldChoice(const char* label, Json& root, const char* parent, const char* key,
                    const std::vector<std::string>& options, const std::string& def);
 

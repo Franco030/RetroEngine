@@ -67,7 +67,9 @@ public:
   }
 
   void Update(float dt, Vector3 focus);
-  void Draw(const Camera3D& camera, const Shader& spriteShader, float ambient,
+  // 'ambient' y 'sun' son los de la luz direccional: los sprites no tienen normal y reciben
+  // el ambiente mas la mitad del sol.
+  void Draw(const Camera3D& camera, const Shader& spriteShader, float ambient, float sun,
             std::span<const PointLight> lights);
 
   std::size_t Count() const noexcept { return entities_.size(); }

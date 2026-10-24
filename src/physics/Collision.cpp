@@ -39,8 +39,16 @@ WorldBox MakeWorldBox(const BoxCollider& c, const Transform& t) {
   WorldBox w;
   w.center = Vector3Transform(localMid, m);
 
-  const Vector2 ax{m.m0, m.m2};
-  const Vector2 az{m.m8, m.m10};
+  // Ejes de la caja en el espacio local (girados 'yaw' sobre Y) llevados al mundo con la parte
+  // lineal de la matriz, sin la traslacion.
+  const float a = c.yaw * DEG2RAD;
+  const Vector3 bx{std::cos(a), 0.0f, -std::sin(a)};
+  const Vector3 bz{std::sin(a), 0.0f, std::cos(a)};
+  auto direccion = [&](Vector3 v) {
+    return Vector2{m.m0 * v.x + m.m4 * v.y + m.m8 * v.z, m.m2 * v.x + m.m6 * v.y + m.m10 * v.z};
+  };
+  const Vector2 ax = direccion(bx);
+  const Vector2 az = direccion(bz);
   const float lenX = Vector2Length(ax);
   const float lenZ = Vector2Length(az);
 

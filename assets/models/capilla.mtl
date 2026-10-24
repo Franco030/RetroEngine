@@ -1,0 +1,25 @@
+# RetroEngine: capilla
+
+newmtl mat_metal
+d 1.000000
+map_Kd ../textures/mat_metal.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png
+
+newmtl mat_piedra
+d 1.000000
+map_Kd ../textures/mat_piedra.png
+
+newmtl mat_puerta
+d 1.000000
+map_Kd ../textures/mat_puerta.png
+
+newmtl mat_tejas
+d 1.000000
+map_Kd ../textures/mat_tejas.png
+
+newmtl mat_ventana_luz
+d 1.000000
+map_Kd ../textures/mat_ventana_luz.png

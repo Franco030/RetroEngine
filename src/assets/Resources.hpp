@@ -29,6 +29,16 @@ private:
   Texture2D texture_{};
 };
 
+// Caja de colision que el propio modelo trae en su .obj, en una linea de comentario:
+//   # retro:col min_x min_y min_z max_x max_y max_z yaw
+// (coordenadas del motor; las escribe tools/blender/retro_comun.py). tinyobj ignora los
+// comentarios, asi que el modelo se sigue cargando igual en cualquier otro programa.
+struct ModelBox {
+  Vector3 min{};
+  Vector3 max{};
+  float yaw = 0.0f;
+};
+
 class ModelResource {
 public:
   explicit ModelResource(const std::string& path);
@@ -46,12 +56,22 @@ public:
 
   void SetShader(std::shared_ptr<ShaderResource> shader);
 
+  // Materiales sin textura propia (en el .mtl no traen map_Kd, o el modelo no tiene .mtl): son
+  // los que reciben la textura que la entidad indica con "texture". Los que si traen la suya
+  // (madera, tejas...) la conservan.
+  const std::vector<int>& OpenMaterials() const noexcept { return openMaterials_; }
+
+  // Cajas de colision del .obj (vacio si no trae ninguna: se usa la caja de todo el modelo).
+  const std::vector<ModelBox>& CollisionBoxes() const noexcept { return collisionBoxes_; }
+
 private:
   void Release() noexcept;
   void CollectOwnedTextures();
 
   Model model_{};
   std::vector<Texture2D> ownedTextures_;
+  std::vector<int> openMaterials_;
+  std::vector<ModelBox> collisionBoxes_;
   std::shared_ptr<ShaderResource> shader_;
 };
 

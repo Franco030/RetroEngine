@@ -1,0 +1,981 @@
+{
+  "camera": { "position": [0, 60, 30], "target": [0, 0, -20], "fov": 60 },
+  "player": { "position": [0, 0, -0.5], "yaw": 0 },
+  "autoCollide": true,
+  "bounds": { "min": [-33, -47], "max": [33, 8] },
+  "background": [4, 4, 8],
+  "audio": {
+    "music": { "file": "audio/musica_tuneles_v2.wav", "volume": 0.38 },
+    "ambient": { "file": "audio/tuneles_amb.wav", "volume": 0.15 },
+    "footsteps": {
+      "files": ["audio/paso_tierra_1.wav", "audio/paso_tierra_2.wav", "audio/paso_tierra_3.wav"],
+      "volume": 0.25
+    },
+    "fade": 2.0
+  },
+  "fog": { "start": 3, "end": 18 },
+  "light": { "direction": [0, -1, 0], "ambient": 0.16, "sun": 0 },
+  "lights": [
+    { "position": [-3.0, 2.6, -43.5], "color": [170, 190, 230], "radius": 7, "intensity": 1.1 },
+    { "position": [-3.0, 10.5, -43.5], "color": [230, 235, 255], "radius": 4, "intensity": 1.5 },
+    { "position": [30.0, 4.6, -25.5], "color": [120, 140, 220], "radius": 4, "intensity": 0.9 }
+  ],
+  "entities": [
+    { "name": "tuneles", "model": "models/tuneles.obj", "position": [0, 0, 0] },
+    {
+      "name": "antorcha_1",
+      "sprite": "textures/spr_antorcha.png",
+      "size": [0.32, 0.96],
+      "position": [-3.9, 0.9, 1.5],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [0.5, 0.85, 0.0],
+        "color": [255, 160, 80],
+        "radius": 9,
+        "intensity": 1.7,
+        "flicker": 0.3,
+        "flickerRate": 10
+      }
+    },
+    {
+      "name": "antorcha_2",
+      "sprite": "textures/spr_antorcha.png",
+      "size": [0.32, 0.96],
+      "position": [3.9, 0.9, 1.5],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [-0.5, 0.85, 0.0],
+        "color": [255, 160, 80],
+        "radius": 9,
+        "intensity": 1.7,
+        "flicker": 0.3,
+        "flickerRate": 10
+      }
+    },
+    {
+      "name": "antorcha_3",
+      "sprite": "textures/spr_antorcha.png",
+      "size": [0.32, 0.96],
+      "position": [0.9, 0.9, -10.5],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [-0.5, 0.85, 0.0],
+        "color": [255, 160, 80],
+        "radius": 9,
+        "intensity": 1.7,
+        "flicker": 0.3,
+        "flickerRate": 10
+      }
+    },
+    {
+      "name": "antorcha_4",
+      "sprite": "textures/spr_antorcha.png",
+      "size": [0.32, 0.96],
+      "position": [-9.0, 0.9, -26.4],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [0.0, 0.85, 0.5],
+        "color": [255, 160, 80],
+        "radius": 9,
+        "intensity": 1.7,
+        "flicker": 0.3,
+        "flickerRate": 10
+      }
+    },
+    {
+      "name": "antorcha_5",
+      "sprite": "textures/spr_antorcha.png",
+      "size": [0.32, 0.96],
+      "position": [3.0, 0.9, -26.4],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [0.0, 0.85, 0.5],
+        "color": [255, 160, 80],
+        "radius": 9,
+        "intensity": 1.7,
+        "flicker": 0.3,
+        "flickerRate": 10
+      }
+    },
+    {
+      "name": "antorcha_6",
+      "sprite": "textures/spr_antorcha.png",
+      "size": [0.32, 0.96],
+      "position": [-14.1, 0.9, -16.5],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [-0.5, 0.85, 0.0],
+        "color": [255, 160, 80],
+        "radius": 9,
+        "intensity": 1.7,
+        "flicker": 0.3,
+        "flickerRate": 10
+      }
+    },
+    {
+      "name": "antorcha_7",
+      "sprite": "textures/spr_antorcha.png",
+      "size": [0.32, 0.96],
+      "position": [-15.9, 0.9, -28.5],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [0.5, 0.85, 0.0],
+        "color": [255, 160, 80],
+        "radius": 9,
+        "intensity": 1.7,
+        "flicker": 0.3,
+        "flickerRate": 10
+      }
+    },
+    {
+      "name": "antorcha_8",
+      "sprite": "textures/spr_antorcha.png",
+      "size": [0.32, 0.96],
+      "position": [9.0, 0.9, -32.4],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [0.0, 0.85, 0.5],
+        "color": [255, 160, 80],
+        "radius": 9,
+        "intensity": 1.7,
+        "flicker": 0.3,
+        "flickerRate": 10
+      }
+    },
+    {
+      "name": "antorcha_9",
+      "sprite": "textures/spr_antorcha.png",
+      "size": [0.32, 0.96],
+      "position": [-3.9, 0.9, -34.5],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [0.5, 0.85, 0.0],
+        "color": [255, 160, 80],
+        "radius": 9,
+        "intensity": 1.7,
+        "flicker": 0.3,
+        "flickerRate": 10
+      }
+    },
+    {
+      "name": "antorcha_10",
+      "sprite": "textures/spr_antorcha.png",
+      "size": [0.32, 0.96],
+      "position": [15.0, 0.9, -3.6],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [0.0, 0.85, -0.5],
+        "color": [255, 160, 80],
+        "radius": 9,
+        "intensity": 1.7,
+        "flicker": 0.3,
+        "flickerRate": 10
+      }
+    },
+    {
+      "name": "antorcha_11",
+      "sprite": "textures/spr_antorcha.png",
+      "size": [0.32, 0.96],
+      "position": [21.9, 0.9, -10.5],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [-0.5, 0.85, 0.0],
+        "color": [255, 160, 80],
+        "radius": 9,
+        "intensity": 1.7,
+        "flicker": 0.3,
+        "flickerRate": 10
+      }
+    },
+    {
+      "name": "antorcha_12",
+      "sprite": "textures/spr_antorcha.png",
+      "size": [0.32, 0.96],
+      "position": [8.1, 0.9, -16.5],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [0.5, 0.85, 0.0],
+        "color": [255, 160, 80],
+        "radius": 9,
+        "intensity": 1.7,
+        "flicker": 0.3,
+        "flickerRate": 10
+      }
+    },
+    {
+      "name": "antorcha_13",
+      "sprite": "textures/spr_antorcha.png",
+      "size": [0.32, 0.96],
+      "position": [12.0, 0.9, -26.4],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [0.0, 0.85, 0.5],
+        "color": [255, 160, 80],
+        "radius": 9,
+        "intensity": 1.7,
+        "flicker": 0.3,
+        "flickerRate": 10
+      }
+    },
+    {
+      "name": "antorcha_14",
+      "sprite": "textures/spr_antorcha.png",
+      "size": [0.32, 0.96],
+      "position": [27.0, 0.9, -21.6],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [0.0, 0.85, -0.5],
+        "color": [255, 160, 80],
+        "radius": 9,
+        "intensity": 1.7,
+        "flicker": 0.3,
+        "flickerRate": 10
+      }
+    },
+    {
+      "name": "antorcha_15",
+      "sprite": "textures/spr_antorcha.png",
+      "size": [0.32, 0.96],
+      "position": [-21.0, 0.9, -11.4],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [0.0, 0.85, 0.5],
+        "color": [255, 160, 80],
+        "radius": 9,
+        "intensity": 1.7,
+        "flicker": 0.3,
+        "flickerRate": 10
+      }
+    },
+    {
+      "name": "estatua",
+      "model": "models/estatua.obj",
+      "position": [-3.0, 0, -22.5],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.6,
+        "do": [{ "message": "Una figura encapuchada reza.\nAlguien le ha dejado velas nuevas.", "seconds": 4 }]
+      }
+    },
+    {
+      "name": "velas_estatua_1",
+      "sprite": "textures/spr_velas.png",
+      "size": [0.45, 0.45],
+      "position": [-3.55, 0, -21.55],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [0, 0.4, 0],
+        "color": [255, 170, 90],
+        "radius": 5,
+        "intensity": 1.0,
+        "flicker": 0.25,
+        "flickerRate": 9
+      }
+    },
+    {
+      "name": "velas_estatua_2",
+      "sprite": "textures/spr_velas.png",
+      "size": [0.45, 0.45],
+      "position": [-2.45, 0, -21.55],
+      "emissive": true,
+      "collider": false
+    },
+    {
+      "name": "cristal_cruce_1",
+      "sprite": "textures/spr_cristales.png",
+      "size": [0.8, 1.2],
+      "position": [-9.9, 0, -18.6],
+      "emissive": true,
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] },
+      "light": {
+        "offset": [0, 0.6, 0],
+        "color": [110, 230, 230],
+        "radius": 5.5,
+        "intensity": 1.0,
+        "flicker": 0.06,
+        "flickerRate": 2
+      }
+    },
+    {
+      "name": "cristal_cruce_2",
+      "sprite": "textures/spr_cristales.png",
+      "size": [0.6, 0.9],
+      "position": [3.9, 0, -18.6],
+      "emissive": true,
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] }
+    },
+    {
+      "model": "models/encapuchado.obj",
+      "texture": "textures/pj_encapuchado.png",
+      "position": [-25.5, 0, -41.7],
+      "facePlayer": { "range": 8, "turnSpeed": 70 },
+      "idle": { "bob": 0.004, "sway": 0.3, "speed": 0.7 },
+      "light": {
+        "offset": [0.24, 0.94, 0.34],
+        "color": [255, 190, 110],
+        "radius": 6.5,
+        "intensity": 1.25,
+        "flicker": 0.12,
+        "flickerRate": 6
+      },
+      "name": "ermitano",
+      "showIf": { "not": { "flag": "hablo_ermitano" } },
+      "interact": {
+        "prompt": "Hablar",
+        "box": { "min": [-0.7, 0, -0.7], "max": [0.7, 2, 0.7] },
+        "do": [
+          { "play_sound": "audio/blip.wav", "volume": 0.5 },
+          { "set_flag": "hablo_ermitano" },
+          {
+            "message": "Hacia mucho que nadie bajaba...\nEstos tuneles llegan al pozo de la aldea\ny a la plaza. La reja del este se abre\ncon la llave que guarda el osario.",
+            "seconds": 8
+          }
+        ]
+      }
+    },
+    {
+      "model": "models/encapuchado.obj",
+      "texture": "textures/pj_encapuchado.png",
+      "position": [-25.5, 0, -41.7],
+      "facePlayer": { "range": 8, "turnSpeed": 70 },
+      "idle": { "bob": 0.004, "sway": 0.3, "speed": 0.7 },
+      "light": {
+        "offset": [0.24, 0.94, 0.34],
+        "color": [255, 190, 110],
+        "radius": 6.5,
+        "intensity": 1.25,
+        "flicker": 0.12,
+        "flickerRate": 6
+      },
+      "name": "ermitano_2",
+      "showIf": { "flag": "hablo_ermitano" },
+      "interact": {
+        "prompt": "Hablar",
+        "box": { "min": [-0.7, 0, -0.7], "max": [0.7, 2, 0.7] },
+        "do": [
+          { "play_sound": "audio/blip.wav", "volume": 0.5 },
+          {
+            "message": "El osario esta al oeste del cruce.\nY no mires mucho tiempo el agua del lago.",
+            "seconds": 5
+          }
+        ]
+      }
+    },
+    {
+      "name": "atril_ermitano",
+      "model": "models/atril.obj",
+      "position": [-23.3, 0, -41.5],
+      "rotation": [0, -60, 0],
+      "interact": {
+        "prompt": "Leer",
+        "range": 2.2,
+        "do": [
+          { "play_sound": "audio/blip.wav", "volume": 0.4 },
+          {
+            "message": "\"Dia 300. Los ojos rojos volvieron a\nasomarse en el derrumbe. Si no los miro,\nno se acercan.\"",
+            "seconds": 7
+          }
+        ]
+      }
+    },
+    {
+      "name": "cristal_santuario_1",
+      "sprite": "textures/spr_cristales.png",
+      "size": [1.0, 1.5],
+      "position": [-30.6, 0, -44.1],
+      "emissive": true,
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] },
+      "light": {
+        "offset": [0, 0.6, 0],
+        "color": [110, 230, 230],
+        "radius": 5.5,
+        "intensity": 1.0,
+        "flicker": 0.06,
+        "flickerRate": 2
+      }
+    },
+    {
+      "name": "cristal_santuario_2",
+      "sprite": "textures/spr_cristales.png",
+      "size": [1.0, 1.5],
+      "position": [-20.4, 0, -44.0],
+      "emissive": true,
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] },
+      "light": {
+        "offset": [0, 0.6, 0],
+        "color": [110, 230, 230],
+        "radius": 5.5,
+        "intensity": 1.0,
+        "flicker": 0.06,
+        "flickerRate": 2
+      }
+    },
+    {
+      "name": "cristal_santuario_3",
+      "sprite": "textures/spr_cristales.png",
+      "size": [0.7, 1.05],
+      "position": [-30.7, 0, -37.1],
+      "emissive": true,
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] }
+    },
+    {
+      "name": "cristal_santuario_4",
+      "sprite": "textures/spr_cristales.png",
+      "size": [0.7, 1.05],
+      "position": [-20.3, 0, -37.2],
+      "emissive": true,
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] }
+    },
+    {
+      "name": "cristal_santuario_5",
+      "sprite": "textures/spr_cristales.png",
+      "size": [0.7, 1.05],
+      "position": [-28.0, 0, -44.4],
+      "emissive": true,
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] }
+    },
+    {
+      "name": "altar_osario",
+      "model": "models/sarcofago.obj",
+      "position": [-27.0, 0, -21.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "velas_osario_1",
+      "sprite": "textures/spr_velas.png",
+      "size": [0.45, 0.45],
+      "position": [-27.6, 1.0, -21.0],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [0, 0.4, 0],
+        "color": [255, 170, 90],
+        "radius": 6,
+        "intensity": 1.15,
+        "flicker": 0.25,
+        "flickerRate": 9
+      }
+    },
+    {
+      "name": "velas_osario_2",
+      "sprite": "textures/spr_velas.png",
+      "size": [0.45, 0.45],
+      "position": [-26.3, 1.0, -20.9],
+      "emissive": true,
+      "collider": false
+    },
+    {
+      "name": "velas_osario_3",
+      "sprite": "textures/spr_velas.png",
+      "size": [0.5, 0.5],
+      "position": [-30.9, 0, -26.4],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [0, 0.4, 0],
+        "color": [255, 170, 90],
+        "radius": 5,
+        "intensity": 0.9,
+        "flicker": 0.25,
+        "flickerRate": 9
+      }
+    },
+    {
+      "name": "huesos_osario_1",
+      "sprite": "textures/spr_huesos.png",
+      "size": [1.0, 0.66],
+      "position": [-29.42, 0, -17.47],
+      "tint": [180, 170, 150, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_osario_2",
+      "sprite": "textures/spr_huesos.png",
+      "size": [1.0, 0.66],
+      "position": [-27.86, 0, -15.91],
+      "tint": [180, 170, 150, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_osario_3",
+      "sprite": "textures/spr_huesos.png",
+      "size": [1.0, 0.66],
+      "position": [-29.16, 0, -16.11],
+      "tint": [180, 170, 150, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_osario_4",
+      "sprite": "textures/spr_huesos.png",
+      "size": [1.0, 0.66],
+      "position": [-26.0, 0, -16.02],
+      "tint": [180, 170, 150, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_osario_5",
+      "sprite": "textures/spr_huesos.png",
+      "size": [1.0, 0.66],
+      "position": [-26.77, 0, -17.43],
+      "tint": [180, 170, 150, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_osario_6",
+      "sprite": "textures/spr_huesos.png",
+      "size": [1.0, 0.66],
+      "position": [-23.92, 0, -16.11],
+      "tint": [180, 170, 150, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_osario_7",
+      "sprite": "textures/spr_huesos.png",
+      "size": [1.0, 0.66],
+      "position": [-24.95, 0, -16.02],
+      "tint": [180, 170, 150, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_osario_8",
+      "sprite": "textures/spr_huesos.png",
+      "size": [1.0, 0.66],
+      "position": [-30.75, 0, -21.64],
+      "tint": [180, 170, 150, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_osario_9",
+      "sprite": "textures/spr_huesos.png",
+      "size": [1.0, 0.66],
+      "position": [-27.68, 0, -25.04],
+      "tint": [180, 170, 150, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_osario_10",
+      "sprite": "textures/spr_huesos.png",
+      "size": [1.0, 0.66],
+      "position": [-27.03, 0, -17.13],
+      "tint": [180, 170, 150, 255],
+      "collider": false
+    },
+    {
+      "name": "llave_reja",
+      "model": "models/llave.obj",
+      "texture": "textures/blanco.png",
+      "position": [-30.4, 0.8, -16.2],
+      "scale": [0.5, 0.5, 0.5],
+      "tint": [150, 112, 84, 255],
+      "collider": false,
+      "spin": [0, 60, 0],
+      "showIf": { "not": { "flag": "tiene_llave_reja" } },
+      "light": { "offset": [0, 0.2, 0], "color": [255, 200, 120], "radius": 2.5, "intensity": 0.5 },
+      "interact": {
+        "prompt": "Tomar llave oxidada",
+        "box": { "min": [-1.2, -1.2, -1.2], "max": [1.2, 1.2, 1.2] },
+        "do": [
+          { "play_sound": "audio/llave.wav" },
+          { "set_flag": "tiene_llave_reja" },
+          { "message": "Una llave oxidada.\nHuele a tierra mojada.", "seconds": 3 }
+        ]
+      }
+    },
+    {
+      "name": "setas_lago_1",
+      "sprite": "textures/spr_setas.png",
+      "size": [0.7, 0.7],
+      "position": [21.0, 0, -34.17],
+      "emissive": true,
+      "collider": false,
+      "light": { "offset": [0, 0.35, 0], "color": [110, 170, 255], "radius": 4.5, "intensity": 1.0 }
+    },
+    {
+      "name": "setas_lago_2",
+      "sprite": "textures/spr_setas.png",
+      "size": [0.7, 0.7],
+      "position": [24.8, 0, -33.42],
+      "emissive": true,
+      "collider": false
+    },
+    {
+      "name": "setas_lago_3",
+      "sprite": "textures/spr_setas.png",
+      "size": [0.7, 0.7],
+      "position": [28.2, 0, -33.99],
+      "emissive": true,
+      "collider": false,
+      "light": { "offset": [0, 0.35, 0], "color": [110, 170, 255], "radius": 4.5, "intensity": 1.0 }
+    },
+    {
+      "name": "setas_lago_4",
+      "sprite": "textures/spr_setas.png",
+      "size": [0.7, 0.7],
+      "position": [17.2, 0, -33.5],
+      "emissive": true,
+      "collider": false
+    },
+    {
+      "name": "cristal_lago_1",
+      "sprite": "textures/spr_cristales.png",
+      "size": [0.8, 1.2],
+      "position": [17.2, 0, -41.3],
+      "emissive": true,
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] },
+      "light": {
+        "offset": [0, 0.6, 0],
+        "color": [110, 230, 230],
+        "radius": 5.5,
+        "intensity": 1.0,
+        "flicker": 0.06,
+        "flickerRate": 2
+      }
+    },
+    {
+      "name": "cristal_lago_2",
+      "sprite": "textures/spr_cristales.png",
+      "size": [0.7, 1.05],
+      "position": [30.8, 0, -30.9],
+      "emissive": true,
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] }
+    },
+    {
+      "name": "ojos_lago",
+      "sprite": "textures/spr_ojos.png",
+      "size": [0.55, 0.28],
+      "position": [24.0, 1.1, -41.85],
+      "emissive": true,
+      "collider": false
+    },
+    {
+      "name": "cuerda_pozo",
+      "model": "models/cuerda_pozo.obj",
+      "position": [-3.0, 0, -43.5],
+      "interact": {
+        "prompt": "Trepar por la cuerda",
+        "box": { "min": [-0.7, 0, -0.7], "max": [0.7, 2.2, 0.7] },
+        "do": [
+          { "play_sound": "audio/puerta_cerrada.wav", "volume": 0.4 },
+          { "goto_scene": "scenes/aldea.json", "position": [3.4, 0, 4.6], "yaw": 90 }
+        ]
+      }
+    },
+    {
+      "name": "escalera_mano",
+      "model": "models/escalera_mano.obj",
+      "position": [30.0, 0, -25.5],
+      "interact": {
+        "prompt": "Subir por la escalera",
+        "box": { "min": [-0.7, 0, -0.7], "max": [0.7, 2.2, 0.7] },
+        "do": [
+          { "play_sound": "audio/puerta_cerrada.wav", "volume": 0.7 },
+          { "goto_scene": "scenes/noche.json", "position": [11.5, 0, -2.2], "yaw": 90 }
+        ]
+      }
+    },
+    {
+      "name": "reja",
+      "model": "models/reja.obj",
+      "position": [21.0, 0, -25.5],
+      "rotation": [0, 90, 0],
+      "showIf": { "not": { "flag": "reja_abierta" } },
+      "interact": {
+        "prompt": "Abrir la reja",
+        "if": { "flag": "tiene_llave_reja" },
+        "do": [
+          { "play_sound": "audio/reja.wav", "volume": 0.9 },
+          { "set_flag": "reja_abierta" },
+          { "message": "La llave gira con un chirrido.", "seconds": 3 }
+        ]
+      }
+    },
+    {
+      "name": "ojos_derrumbe",
+      "sprite": "textures/spr_ojos.png",
+      "size": [0.5, 0.25],
+      "position": [-28.6, 0.75, -7.7],
+      "emissive": true,
+      "collider": false
+    },
+    {
+      "name": "raices_1",
+      "sprite": "textures/spr_raices.png",
+      "size": [0.9, 1.35],
+      "position": [-0.35, 1.1, -6.94],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "raices_2",
+      "sprite": "textures/spr_raices.png",
+      "size": [0.9, 1.35],
+      "position": [0.47, 1.1, -13.19],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "raices_3",
+      "sprite": "textures/spr_raices.png",
+      "size": [0.9, 1.35],
+      "position": [-14.68, 1.1, -25.4],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "raices_4",
+      "sprite": "textures/spr_raices.png",
+      "size": [0.9, 1.35],
+      "position": [-14.72, 1.1, -13.95],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "raices_5",
+      "sprite": "textures/spr_raices.png",
+      "size": [0.9, 1.35],
+      "position": [-3.03, 1.1, -34.11],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "raices_6",
+      "sprite": "textures/spr_raices.png",
+      "size": [0.9, 1.35],
+      "position": [8.64, 1.1, -30.99],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "raices_7",
+      "sprite": "textures/spr_raices.png",
+      "size": [0.9, 1.35],
+      "position": [15.47, 1.1, -25.61],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "raices_8",
+      "sprite": "textures/spr_raices.png",
+      "size": [0.9, 1.35],
+      "position": [8.84, 1.1, -4.56],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "raices_9",
+      "sprite": "textures/spr_raices.png",
+      "size": [0.9, 1.35],
+      "position": [20.86, 1.1, -6.91],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "raices_10",
+      "sprite": "textures/spr_raices.png",
+      "size": [0.9, 1.35],
+      "position": [-18.14, 1.1, -23.07],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "raices_11",
+      "sprite": "textures/spr_raices.png",
+      "size": [0.9, 1.35],
+      "position": [-27.49, 1.1, -34.24],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "raices_12",
+      "sprite": "textures/spr_raices.png",
+      "size": [0.9, 1.35],
+      "position": [15.59, 1.1, -13.5],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "raices_13",
+      "sprite": "textures/spr_raices.png",
+      "size": [0.9, 1.35],
+      "position": [-0.01, 1.1, -4.44],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "telarana_1",
+      "sprite": "textures/spr_telarana.png",
+      "size": [1.2, 1.2],
+      "position": [-4.15, 1.95, -2.65],
+      "tint": [160, 160, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "telarana_2",
+      "sprite": "textures/spr_telarana.png",
+      "size": [1.2, 1.2],
+      "position": [4.15, 1.95, -2.65],
+      "tint": [160, 160, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "telarana_3",
+      "sprite": "textures/spr_telarana.png",
+      "size": [1.2, 1.2],
+      "position": [-10.15, 3.35, -26.65],
+      "tint": [160, 160, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "telarana_4",
+      "sprite": "textures/spr_telarana.png",
+      "size": [1.2, 1.2],
+      "position": [4.15, 3.35, -18.35],
+      "tint": [160, 160, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "telarana_5",
+      "sprite": "textures/spr_telarana.png",
+      "size": [1.2, 1.2],
+      "position": [-7.15, 2.15, -44.65],
+      "tint": [160, 160, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "telarana_6",
+      "sprite": "textures/spr_telarana.png",
+      "size": [1.2, 1.2],
+      "position": [31.15, 2.15, -26.65],
+      "tint": [160, 160, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "telarana_7",
+      "sprite": "textures/spr_telarana.png",
+      "size": [1.2, 1.2],
+      "position": [-31.15, 3.35, -36.35],
+      "tint": [160, 160, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_1",
+      "sprite": "textures/spr_huesos.png",
+      "size": [0.9, 0.6],
+      "position": [-14.55, 0, -11.0],
+      "tint": [170, 160, 140, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_2",
+      "sprite": "textures/spr_huesos.png",
+      "size": [0.9, 0.6],
+      "position": [-23.8, 0, -10.4],
+      "tint": [170, 160, 140, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_3",
+      "sprite": "textures/spr_huesos.png",
+      "size": [0.9, 0.6],
+      "position": [6.22, 0, -26.07],
+      "tint": [170, 160, 140, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_4",
+      "sprite": "textures/spr_huesos.png",
+      "size": [0.9, 0.6],
+      "position": [20.41, 0, -4.77],
+      "tint": [170, 160, 140, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_5",
+      "sprite": "textures/spr_huesos.png",
+      "size": [0.9, 0.6],
+      "position": [-2.23, 0, -37.78],
+      "tint": [170, 160, 140, 255],
+      "collider": false
+    },
+    {
+      "name": "setas_1",
+      "sprite": "textures/spr_setas.png",
+      "size": [0.6, 0.6],
+      "position": [16.1, 0, -31.31],
+      "emissive": true,
+      "collider": false
+    },
+    {
+      "name": "setas_2",
+      "sprite": "textures/spr_setas.png",
+      "size": [0.6, 0.6],
+      "position": [-13.9, 0, -22.89],
+      "emissive": true,
+      "collider": false
+    },
+    {
+      "name": "setas_3",
+      "sprite": "textures/spr_setas.png",
+      "size": [0.6, 0.6],
+      "position": [10.1, 0, -20.29],
+      "emissive": true,
+      "collider": false
+    }
+  ],
+  "triggers": [
+    {
+      "name": "subir_cripta",
+      "position": [0, 0, 5.4],
+      "size": [2.6, 4.5, 2.0],
+      "do": [{ "goto_scene": "scenes/cripta.json", "position": [0, 0, -7.0], "yaw": 180 }]
+    },
+    {
+      "name": "reja_cerrada",
+      "position": [19.6, 0, -25.5],
+      "size": [1.0, 2.4, 3.0],
+      "if": [{ "not": { "flag": "reja_abierta" } }, { "not": { "flag": "tiene_llave_reja" } }],
+      "do": [{ "message": "Una reja oxidada cierra el paso.\nTiene un candado.", "seconds": 3 }]
+    },
+    {
+      "name": "derrumbe",
+      "position": [-24.5, 0, -10.5],
+      "size": [1.0, 2.4, 3.0],
+      "once": true,
+      "do": [
+        { "play_sound": "audio/derrumbe.wav", "at": [-30.0, 1.0, -9.0], "radius": 30, "volume": 1.0 },
+        { "message": "El tunel se ha venido abajo.\nAlgo se mueve detras de las piedras.", "seconds": 5 }
+      ]
+    },
+    {
+      "name": "gemido",
+      "position": [-15.0, 0, -19.5],
+      "size": [3, 2.4, 1.0],
+      "once": true,
+      "do": [
+        {
+          "play_sound": "audio/gemido.wav",
+          "at": [-15.0, 1.5, -10.5],
+          "radius": 30,
+          "minDistance": 2,
+          "volume": 0.9
+        }
+      ]
+    }
+  ]
+}

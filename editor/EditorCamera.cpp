@@ -44,12 +44,14 @@ Camera3D EditorCamera::Raw() const {
 bool EditorCamera::Update(float dt, bool hovered) {
   if (!looking_ && hovered && IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
     looking_ = true;
-    skipFrames_ = 2;
+    skipFrames_ = 2; // DisableCursor mueve el raton al centro: ese salto no cuenta como giro
+    anchor_ = GetMousePosition();
     DisableCursor();
   }
   if (looking_ && !IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
     looking_ = false;
-    EnableCursor();
+    EnableCursor(); // tambien lo deja en el centro...
+    SetMousePosition(static_cast<int>(anchor_.x), static_cast<int>(anchor_.y)); // ...se devuelve
   }
 
   const Vector3 fwd = Forward();
@@ -79,18 +81,23 @@ bool EditorCamera::Update(float dt, bool hovered) {
     if (IsKeyDown(KEY_Q))
       move.y -= 1.0f;
 
-    const float speed = speed_ * (IsKeyDown(KEY_LEFT_SHIFT) ? 3.0f : 1.0f);
+    // Shift: rapido; Ctrl: lento, para colocarse con precision.
+    float speed = speed_;
+    if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
+      speed *= 3.0f;
+    if (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL))
+      speed *= 0.25f;
     if (Vector3Length(move) > 0.0f) {
       pos_ = Vector3Add(pos_, Vector3Scale(Vector3Normalize(move), speed * dt));
     }
 
     const float wheel = GetMouseWheelMove();
     if (wheel != 0.0f)
-      speed_ = std::clamp(speed_ * std::pow(1.2f, wheel), 0.5f, 100.0f);
+      speed_ = std::clamp(speed_ * std::pow(1.25f, wheel), 1.0f, 150.0f);
   } else if (hovered) {
     const float wheel = GetMouseWheelMove();
     if (wheel != 0.0f)
-      pos_ = Vector3Add(pos_, Vector3Scale(fwd, wheel * 1.5f));
+      pos_ = Vector3Add(pos_, Vector3Scale(fwd, wheel * 2.5f));
 
     if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {
       const Vector2 d = GetMouseDelta();

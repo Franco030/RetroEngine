@@ -14,13 +14,13 @@ uniform vec2 snapResolution;
 uniform int   useLighting;
 uniform vec3  lightDir;        // luz direccional: hacia donde viaja
 uniform float ambient;
+uniform float sun;             // fuerza de la luz direccional (0 = bajo techo)
 uniform int   lightCount;
 uniform vec4  lightPos[8];     // xyz = posicion de mundo, w = radio
 uniform vec3  lightColor[8];
 
-// Dos versiones de las UV: el fragment shader las mezcla segun affineAmount.
-noperspective out vec2 fragTexCoordAffine;   // lineal en pantalla (deformacion PS1)
-out vec2 fragTexCoordPersp;                  // perspectiva correcta
+// UV con perspectiva correcta: la textura no se deforma de cerca.
+out vec2 fragTexCoord;
 noperspective out vec4 fragColor;
 noperspective out vec3 fragLight;            // luz del vertice, interpolada en pantalla
 
@@ -28,9 +28,8 @@ noperspective out vec3 fragLight;            // luz del vertice, interpolada en 
 out float fragDepth;
 
 void main() {
-    fragTexCoordAffine = vertexTexCoord;
-    fragTexCoordPersp  = vertexTexCoord;
-    fragColor          = vertexColor;
+    fragTexCoord = vertexTexCoord;
+    fragColor    = vertexColor;
 
     vec3 light = vec3(1.0);
     if (useLighting != 0) {
@@ -42,7 +41,7 @@ void main() {
         vec3  n   = len > 1e-5 ? nw / len : vec3(0.0, 1.0, 0.0);
 
         float diff = max(dot(n, -normalize(lightDir)), 0.0);
-        light = vec3(ambient + (1.0 - ambient) * diff);
+        light = vec3(ambient + (1.0 - ambient) * sun * diff);
 
         for (int i = 0; i < min(lightCount, 8); ++i) {
             vec3  toLight = lightPos[i].xyz - worldPos;

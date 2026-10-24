@@ -131,21 +131,30 @@ BoxCollider SpriteBox(Vector2 size) {
   return {{-half, 0.0f, -half}, {half, size.y, half}};
 }
 
-// "collider": true | false | "auto" | { "min": [x,y,z], "max": [x,y,z] }
-// Sin el campo: caja automática solo si la escena tiene autoCollide y el
-// modelo es un archivo .obj (los planos procedurales usan el suelo Y=0).
-std::optional<BoxCollider> ReadCollider(const json& je, const BoxCollider& autoBox, bool isMeshFile,
-                                        bool autoCollide) {
+// Cajas automaticas de un modelo: las que trae su .obj ("# retro:col"), o la caja de todo el
+// modelo si no trae ninguna.
+std::vector<BoxCollider> ModelColliders(const ModelResource& model, const BoxCollider& autoBox) {
+  std::vector<BoxCollider> out;
+  for (const ModelBox& b : model.CollisionBoxes())
+    out.push_back({b.min, b.max, b.yaw});
+  if (out.empty())
+    out.push_back(autoBox);
+  return out;
+}
+
+// "collider": true | false | "auto" | { "min": [x,y,z], "max": [x,y,z], "yaw": 0 }
+// true / "auto": las cajas automaticas (las del modelo, o la de todo el modelo).
+// Sin el campo: las automaticas solo si la escena tiene autoCollide y el modelo es un archivo
+// .obj (los planos procedurales usan el suelo Y=0).
+std::vector<BoxCollider> ReadCollider(const json& je, const std::vector<BoxCollider>& autoBoxes,
+                                      bool isMeshFile, bool autoCollide) {
   if (je.contains("collider")) {
     const json& jc = je.at("collider");
 
-    if (jc.is_boolean()) {
-      if (!jc.get<bool>())
-        return std::nullopt;
-      return autoBox;
-    }
+    if (jc.is_boolean())
+      return jc.get<bool>() ? autoBoxes : std::vector<BoxCollider>{};
     if (jc.is_string() && jc.get<std::string>() == "auto")
-      return autoBox;
+      return autoBoxes;
 
     if (jc.is_object()) {
       if (!jc.contains("min") || !jc.contains("max")) {
@@ -154,18 +163,19 @@ std::optional<BoxCollider> ReadCollider(const json& je, const BoxCollider& autoB
       BoxCollider box;
       box.min = ReadVec3(jc, "min", {0.0f, 0.0f, 0.0f});
       box.max = ReadVec3(jc, "max", {0.0f, 0.0f, 0.0f});
+      box.yaw = jc.value("yaw", 0.0f);
       if (box.min.x >= box.max.x || box.min.y >= box.max.y || box.min.z >= box.max.z) {
         throw std::runtime_error(
             "'collider': cada componente de 'min' debe ser menor que el de 'max'");
       }
-      return box;
+      return {box};
     }
     throw std::runtime_error("'collider' debe ser true, false, \"auto\" o {min, max}");
   }
 
   if (autoCollide && isMeshFile)
-    return autoBox;
-  return std::nullopt;
+    return autoBoxes;
+  return {};
 }
 
 // Zona en el mundo a partir de "position" (centro bajo los pies), "size" y "rotation"
@@ -376,9 +386,10 @@ TriggerEvent ParseEvent(const std::string& s) {
 // "interact": { "prompt": "Abrir", "range": 2.5, "once": true,
 //               "box": { "min": [...], "max": [...] },     (opcional)
 //               "if": ..., "do": [ ... ] }
-// Sin "box": usa el collider de la entidad, o la caja del modelo si no tiene.
+// Sin "box": usa la caja de colision de la entidad si tiene UNA; si no (ninguna o varias), la
+// caja de todo el modelo.
 Interaction ReadInteraction(const json& ji, const BoxCollider& autoBox,
-                            const std::optional<BoxCollider>& collider) {
+                            const std::vector<BoxCollider>& colliders) {
   Interaction it;
   it.prompt = ji.value("prompt", std::string("Interactuar"));
   it.range = ji.value("range", 2.5f);
@@ -399,8 +410,8 @@ Interaction ReadInteraction(const json& ji, const BoxCollider& autoBox,
       throw std::runtime_error(
           "'interact.box': cada componente de 'min' debe ser menor que el de 'max'");
     }
-  } else if (collider) {
-    it.box = *collider;
+  } else if (colliders.size() == 1) {
+    it.box = colliders.front();
   } else {
     it.box = autoBox;
   }
@@ -501,6 +512,7 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
 
   std::unique_ptr<Entity> entity;
   BoxCollider autoBox;
+  std::vector<BoxCollider> autoBoxes;
   bool isMeshFile = false;
 
   if (isSprite) {
@@ -512,6 +524,7 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
       throw std::runtime_error("'size' debe ser positivo");
 
     autoBox = SpriteBox(size);
+    autoBoxes = {autoBox};
     entity = std::make_unique<Entity>(name, std::move(texture), size);
     entity->emissive = je.value("emissive", false);
   } else {
@@ -525,17 +538,18 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
     }
 
     autoBox = ComputeAutoBox(*model);
+    autoBoxes = ModelColliders(*model, autoBox);
     isMeshFile = je.at("model").is_string();
     entity = std::make_unique<Entity>(name, std::move(model), std::move(texture));
   }
 
-  const std::optional<BoxCollider> collider = ReadCollider(je, autoBox, isMeshFile, autoCollide);
+  std::vector<BoxCollider> colliders = ReadCollider(je, autoBoxes, isMeshFile, autoCollide);
   std::optional<Interaction> interact;
   if (je.contains("interact"))
-    interact = ReadInteraction(je.at("interact"), autoBox, collider);
+    interact = ReadInteraction(je.at("interact"), autoBox, colliders);
 
   Entity& e = scene.Add(std::move(entity));
-  e.collider = collider;
+  e.colliders = std::move(colliders);
   e.interact = std::move(interact);
   e.transform.position = ReadVec3(je, "position", {0.0f, 0.0f, 0.0f});
   e.transform.rotation = ReadVec3(je, "rotation", {0.0f, 0.0f, 0.0f});
@@ -637,6 +651,9 @@ void LoadSceneFromJson(const nlohmann::json& root, const std::string& relativePa
         const json& l = root.at("light");
         p.lightDirection = ReadVec3(l, "direction", p.lightDirection);
         p.ambient = l.value("ambient", p.ambient);
+        p.sun = l.value("sun", p.sun);
+        if (p.sun < 0.0f || p.sun > 1.0f)
+          throw std::runtime_error("'sun' debe estar entre 0 y 1");
       }
       engine.Retro().SetParams(p);
     }

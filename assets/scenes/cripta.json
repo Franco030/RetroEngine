@@ -1,0 +1,234 @@
+{
+  "camera": { "position": [6, 8, 9], "target": [0, 3, -1], "fov": 60 },
+  "player": { "position": [0, 3, 3.8], "yaw": 0 },
+  "autoCollide": true,
+  "bounds": { "min": [-4, -10], "max": [4, 5] },
+  "background": [6, 6, 10],
+  "audio": {
+    "music": { "file": "audio/musica_cripta_v2.wav", "volume": 0.38 },
+    "ambient": { "file": "audio/cripta_amb.wav", "volume": 0.12 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.2
+    },
+    "fade": 2.0
+  },
+  "fog": { "start": 3, "end": 17 },
+  "light": { "direction": [0, -1, 0], "ambient": 0.12, "sun": 0 },
+  "lights": [{ "position": [0, 1.6, -7.6], "color": [80, 100, 150], "radius": 5, "intensity": 0.8 }],
+  "entities": [
+    { "name": "sala", "model": "models/cripta_interior.obj", "position": [0, 0, 0] },
+    {
+      "name": "puerta",
+      "model": "models/puerta_cripta.obj",
+      "position": [0, 3, 4.95],
+      "rotation": [0, 180, 0],
+      "interact": {
+        "prompt": "Salir al cementerio",
+        "range": 2.5,
+        "do": [
+          { "play_sound": "audio/puerta_cerrada.wav", "volume": 0.8 },
+          { "goto_scene": "scenes/cementerio.json", "position": [-7.55, 0, -7.94], "yaw": -130 }
+        ]
+      }
+    },
+    { "name": "sarcofago_1", "model": "models/sarcofago.obj", "position": [-2.75, 3, -2.6] },
+    { "name": "sarcofago_2", "model": "models/sarcofago.obj", "position": [-2.75, 3, 1.5] },
+    { "name": "sarcofago_3", "model": "models/sarcofago.obj", "position": [2.75, 3, -2.6] },
+    {
+      "name": "atril",
+      "model": "models/atril.obj",
+      "position": [2.95, 3, 1.6],
+      "rotation": [0, -90, 0],
+      "interact": {
+        "prompt": "Leer",
+        "range": 2.2,
+        "do": [
+          { "play_sound": "audio/blip.wav", "volume": 0.4 },
+          {
+            "message": "\"El molino gira aunque no haya viento.\nBajo esta cripta la tierra respira;\nquien baje, que no siga los ojos rojos.\"",
+            "seconds": 7
+          }
+        ]
+      }
+    },
+    {
+      "name": "velas_1",
+      "sprite": "textures/spr_velas.png",
+      "size": [0.5, 0.5],
+      "position": [-2.75, 4.0, -2.0],
+      "emissive": true,
+      "light": {
+        "offset": [0, 0.45, 0],
+        "color": [255, 170, 90],
+        "radius": 5.5,
+        "intensity": 1.1,
+        "flicker": 0.25,
+        "flickerRate": 9
+      }
+    },
+    {
+      "name": "velas_2",
+      "sprite": "textures/spr_velas.png",
+      "size": [0.5, 0.5],
+      "position": [2.75, 4.0, -3.2],
+      "emissive": true,
+      "light": {
+        "offset": [0, 0.45, 0],
+        "color": [255, 170, 90],
+        "radius": 5.5,
+        "intensity": 1.1,
+        "flicker": 0.25,
+        "flickerRate": 9
+      }
+    },
+    {
+      "name": "velas_3",
+      "sprite": "textures/spr_velas.png",
+      "size": [0.5, 0.5],
+      "position": [2.75, 3.0, 2.5],
+      "emissive": true,
+      "light": {
+        "offset": [0, 0.45, 0],
+        "color": [255, 170, 90],
+        "radius": 5.5,
+        "intensity": 1.1,
+        "flicker": 0.25,
+        "flickerRate": 9
+      }
+    },
+    {
+      "name": "velas_4",
+      "sprite": "textures/spr_velas.png",
+      "size": [0.5, 0.5],
+      "position": [-1.15, 3.95, -1.7],
+      "emissive": true,
+      "light": {
+        "offset": [0, 0.45, 0],
+        "color": [255, 170, 90],
+        "radius": 5.5,
+        "intensity": 1.1,
+        "flicker": 0.25,
+        "flickerRate": 9
+      }
+    },
+    {
+      "name": "velas_5",
+      "sprite": "textures/spr_velas.png",
+      "size": [0.5, 0.5],
+      "position": [1.15, 3.95, -1.7],
+      "emissive": true
+    },
+    {
+      "name": "velas_6",
+      "sprite": "textures/spr_velas.png",
+      "size": [0.5, 0.5],
+      "position": [-2.75, 4.0, 2.1],
+      "emissive": true
+    },
+    {
+      "name": "huesos_1",
+      "sprite": "textures/spr_huesos.png",
+      "size": [0.9, 0.6],
+      "position": [-3.72, 3.61, -2.2],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_2",
+      "sprite": "textures/spr_huesos.png",
+      "size": [0.9, 0.6],
+      "position": [-3.72, 4.61, -1.89],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_3",
+      "sprite": "textures/spr_huesos.png",
+      "size": [0.9, 0.6],
+      "position": [-3.72, 3.61, 1.08],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_4",
+      "sprite": "textures/spr_huesos.png",
+      "size": [0.9, 0.6],
+      "position": [-3.72, 4.61, 0.99],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_5",
+      "sprite": "textures/spr_huesos.png",
+      "size": [0.9, 0.6],
+      "position": [3.72, 3.61, -2.17],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_6",
+      "sprite": "textures/spr_huesos.png",
+      "size": [0.9, 0.6],
+      "position": [3.72, 4.61, -1.82],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_7",
+      "sprite": "textures/spr_huesos.png",
+      "size": [0.9, 0.6],
+      "position": [3.72, 3.61, 1.18],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "huesos_8",
+      "sprite": "textures/spr_huesos.png",
+      "size": [0.9, 0.6],
+      "position": [3.72, 4.61, 1.01],
+      "tint": [150, 140, 130, 255],
+      "collider": false
+    },
+    {
+      "name": "telarana_1",
+      "sprite": "textures/spr_telarana.png",
+      "size": [1.1, 1.1],
+      "position": [-3.5, 5.6, 4.6],
+      "tint": [170, 170, 180, 255],
+      "collider": false
+    },
+    {
+      "name": "telarana_2",
+      "sprite": "textures/spr_telarana.png",
+      "size": [1.1, 1.1],
+      "position": [3.5, 5.6, -5.6],
+      "tint": [170, 170, 180, 255],
+      "collider": false
+    },
+    {
+      "name": "telarana_3",
+      "sprite": "textures/spr_telarana.png",
+      "size": [1.1, 1.1],
+      "position": [-3.5, 5.7, -5.6],
+      "tint": [170, 170, 180, 255],
+      "collider": false
+    },
+    {
+      "name": "telarana_4",
+      "sprite": "textures/spr_telarana.png",
+      "size": [1.1, 1.1],
+      "position": [3.5, 5.5, 4.6],
+      "tint": [170, 170, 180, 255],
+      "collider": false
+    }
+  ],
+  "triggers": [
+    {
+      "name": "bajar",
+      "position": [0, 0, -8.9],
+      "size": [2, 3, 1.2],
+      "do": [{ "goto_scene": "scenes/tuneles.json", "position": [0, 0, -0.5], "yaw": 0 }]
+    }
+  ]
+}

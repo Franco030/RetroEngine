@@ -66,6 +66,7 @@ private:
     float fogEnd;
     Vector3 lightDirection;
     float ambient;
+    float sun;
   };
 
   Vector3 focus_{0.0f, 0.0f, 0.0f};

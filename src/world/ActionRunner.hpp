@@ -22,10 +22,11 @@ public:
   void Run(const std::vector<Action>& actions);
 
 private:
+  // Mismo orden que en la lista de inicializacion del constructor (-Wreorder).
   SceneManager& scenes_;
   Player& player_;
-  AudioSystem& audio_;
   GameState& state_;
+  AudioSystem& audio_;
 };
 
 } // namespace retro

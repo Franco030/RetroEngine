@@ -28,7 +28,8 @@ SceneManager::SceneManager(RetroEngine& engine, RetroCamera& camera,
     throw std::invalid_argument("SceneManager: lista de escenas vacia");
 
   const RetroShaderParams& p = engine_.Retro().Params();
-  defaults_ = {engine_.Config().clearColor, p.fogStart, p.fogEnd, p.lightDirection, p.ambient};
+  defaults_ = {engine_.Config().clearColor, p.fogStart, p.fogEnd, p.lightDirection, p.ambient,
+               p.sun};
 }
 
 void SceneManager::ApplyEnvironment(const Environment& env) {
@@ -39,6 +40,7 @@ void SceneManager::ApplyEnvironment(const Environment& env) {
   p.fogEnd = env.fogEnd;
   p.lightDirection = env.lightDirection;
   p.ambient = env.ambient;
+  p.sun = env.sun;
   engine_.Retro().SetParams(p);
 }
 
@@ -199,7 +201,7 @@ void SceneManager::Draw() {
   }
   engine_.Retro().SetPointLights(lights_);
 
-  scene_->Draw(camera_.Raw(), engine_.Retro().Sprite()->Get(), p.ambient, lights_);
+  scene_->Draw(camera_.Raw(), engine_.Retro().Sprite()->Get(), p.ambient, p.sun, lights_);
 }
 
 void SceneManager::DrawFade() const {

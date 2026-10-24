@@ -1,0 +1,9 @@
+# RetroEngine: caja
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_madera_gris
+d 1.000000
+map_Kd ../textures/mat_madera_gris.png

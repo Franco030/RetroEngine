@@ -1,0 +1,5 @@
+# RetroEngine: lapida
+
+newmtl mat_piedra
+d 1.000000
+map_Kd ../textures/mat_piedra.png

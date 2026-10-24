@@ -1,0 +1,9 @@
+# RetroEngine: fuente
+
+newmtl mat_agua
+d 1.000000
+map_Kd ../textures/mat_agua.png
+
+newmtl mat_piedra
+d 1.000000
+map_Kd ../textures/mat_piedra.png

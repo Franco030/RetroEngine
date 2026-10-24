@@ -1,0 +1,29 @@
+# RetroEngine: molino
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_madera_gris
+d 1.000000
+map_Kd ../textures/mat_madera_gris.png
+
+newmtl mat_piedra
+d 1.000000
+map_Kd ../textures/mat_piedra.png
+
+newmtl mat_puerta
+d 1.000000
+map_Kd ../textures/mat_puerta.png
+
+newmtl mat_tejas
+d 1.000000
+map_Kd ../textures/mat_tejas.png
+
+newmtl mat_ventana
+d 1.000000
+map_Kd ../textures/mat_ventana.png
+
+newmtl mat_yeso
+d 1.000000
+map_Kd ../textures/mat_yeso.png

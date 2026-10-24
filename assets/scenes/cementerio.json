@@ -1,0 +1,701 @@
+{
+  "camera": { "position": [9, 7, 21], "target": [0, 1, 0], "fov": 60 },
+  "player": { "position": [0, 0, 15], "yaw": 0 },
+  "autoCollide": true,
+  "bounds": { "min": [-21, -21], "max": [21, 21] },
+  "background": [16, 19, 32],
+  "audio": {
+    "music": { "file": "audio/musica_cementerio_v2.wav", "volume": 0.38 },
+    "ambient": { "file": "audio/viento.wav", "volume": 0.05 },
+    "footsteps": {
+      "files": ["audio/paso_pasto_1.wav", "audio/paso_pasto_2.wav", "audio/paso_pasto_3.wav"],
+      "volume": 0.2
+    },
+    "fade": 2.0
+  },
+  "fog": { "start": 5, "end": 30 },
+  "light": { "direction": [0.3, -0.6, -0.5], "ambient": 0.16 },
+  "lights": [
+    {
+      "position": [0, 2.2, -6.6],
+      "color": [255, 170, 90],
+      "radius": 6,
+      "intensity": 0.9,
+      "flicker": 0.2,
+      "flickerRate": 6
+    }
+  ],
+  "emitters": [{ "file": "audio/portal_zumbido.wav", "position": [0, 1.2, 19], "volume": 0.6, "radius": 8 }],
+  "entities": [
+    {
+      "name": "suelo",
+      "model": { "type": "plane", "size": 44, "subdivisions": 44, "tiles": 22 },
+      "texture": "textures/suelo_pasto.png",
+      "wrap": "repeat",
+      "tint": [96, 112, 120, 255]
+    },
+    { "name": "verja_f1", "model": "models/verja.obj", "position": [-12.6, 0, 11] },
+    { "name": "verja_f2", "model": "models/verja.obj", "position": [-10.2, 0, 11] },
+    { "name": "verja_f3", "model": "models/verja.obj", "position": [-7.8, 0, 11] },
+    { "name": "verja_f4", "model": "models/verja.obj", "position": [-5.4, 0, 11] },
+    { "name": "verja_f5", "model": "models/verja.obj", "position": [-3.0, 0, 11] },
+    { "name": "verja_f6", "model": "models/verja.obj", "position": [3.0, 0, 11] },
+    { "name": "verja_f7", "model": "models/verja.obj", "position": [5.4, 0, 11] },
+    { "name": "verja_f8", "model": "models/verja.obj", "position": [7.8, 0, 11] },
+    { "name": "verja_f9", "model": "models/verja.obj", "position": [10.2, 0, 11] },
+    { "name": "verja_f10", "model": "models/verja.obj", "position": [12.6, 0, 11] },
+    {
+      "name": "verja_i1",
+      "model": "models/verja.obj",
+      "position": [-13.8, 0, 9.8],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "verja_i2",
+      "model": "models/verja.obj",
+      "position": [-13.8, 0, 7.4],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "verja_i3",
+      "model": "models/verja.obj",
+      "position": [-13.8, 0, 5.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "verja_i4",
+      "model": "models/verja.obj",
+      "position": [-13.8, 0, 2.6],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "verja_i5",
+      "model": "models/verja.obj",
+      "position": [-13.8, 0, 0.2],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "verja_i6",
+      "model": "models/verja.obj",
+      "position": [-13.8, 0, -2.2],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "verja_d1",
+      "model": "models/verja.obj",
+      "position": [13.8, 0, 9.8],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "verja_d2",
+      "model": "models/verja.obj",
+      "position": [13.8, 0, 7.4],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "verja_d3",
+      "model": "models/verja.obj",
+      "position": [13.8, 0, 5.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "verja_d4",
+      "model": "models/verja.obj",
+      "position": [13.8, 0, 2.6],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "verja_d5",
+      "model": "models/verja.obj",
+      "position": [13.8, 0, 0.2],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "verja_d6",
+      "model": "models/verja.obj",
+      "position": [13.8, 0, -2.2],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "farol_1",
+      "model": "models/farol.obj",
+      "position": [-2.1, 0, 11.9],
+      "light": {
+        "offset": [0, 2.75, 0],
+        "color": [255, 186, 110],
+        "radius": 8,
+        "intensity": 1.3,
+        "flicker": 0.15,
+        "flickerRate": 8
+      }
+    },
+    {
+      "name": "farol_2",
+      "model": "models/farol.obj",
+      "position": [2.1, 0, 11.9],
+      "light": {
+        "offset": [0, 2.75, 0],
+        "color": [255, 186, 110],
+        "radius": 8,
+        "intensity": 1.3,
+        "flicker": 0.15,
+        "flickerRate": 8
+      }
+    },
+    {
+      "name": "tumba_1",
+      "model": "models/tumba.obj",
+      "position": [-10.24, 0, 6.54],
+      "rotation": [0, -5.6, 0]
+    },
+    {
+      "name": "tumba_2",
+      "model": "models/tumba.obj",
+      "position": [-7.47, 0, 6.24],
+      "rotation": [0, -7.9, 0]
+    },
+    {
+      "name": "tumba_3",
+      "model": "models/tumba.obj",
+      "position": [-5.0, 0, 6.52],
+      "rotation": [0, 5.0, 0]
+    },
+    {
+      "name": "cruz_4",
+      "model": "models/cruz.obj",
+      "position": [-2.75, 0, 6.47],
+      "rotation": [0, -3.6, 0]
+    },
+    {
+      "name": "tumba_5",
+      "model": "models/tumba.obj",
+      "position": [2.92, 0, 6.35],
+      "rotation": [0, 1.3, 0]
+    },
+    {
+      "name": "cruz_6",
+      "model": "models/cruz.obj",
+      "position": [5.23, 0, 6.64],
+      "rotation": [0, -3.8, 0]
+    },
+    {
+      "name": "tumba_7",
+      "model": "models/tumba.obj",
+      "position": [7.27, 0, 6.45],
+      "rotation": [0, 4.6, 0]
+    },
+    {
+      "name": "tumba_8",
+      "model": "models/tumba.obj",
+      "position": [10.26, 0, 6.45],
+      "rotation": [0, 8.3, 0]
+    },
+    {
+      "name": "tumba_9",
+      "model": "models/tumba.obj",
+      "position": [-9.84, 0, 3.04],
+      "rotation": [0, 6.8, 0]
+    },
+    {
+      "name": "lapida_10",
+      "model": "models/lapida.obj",
+      "position": [-7.6, 0, 2.91],
+      "rotation": [0, -0.1, 0]
+    },
+    {
+      "name": "cruz_11",
+      "model": "models/cruz.obj",
+      "position": [-5.26, 0, 2.76],
+      "rotation": [0, -4.1, 0]
+    },
+    {
+      "name": "tumba_12",
+      "model": "models/tumba.obj",
+      "position": [-3.06, 0, 3.12],
+      "rotation": [0, 2.6, 0]
+    },
+    {
+      "name": "cruz_13",
+      "model": "models/cruz.obj",
+      "position": [2.67, 0, 2.93],
+      "rotation": [0, 3.0, 0]
+    },
+    {
+      "name": "tumba_14",
+      "model": "models/tumba.obj",
+      "position": [5.26, 0, 2.91],
+      "rotation": [0, 2.0, 0]
+    },
+    {
+      "name": "cruz_15",
+      "model": "models/cruz.obj",
+      "position": [7.24, 0, 3.16],
+      "rotation": [0, -6.7, 0]
+    },
+    {
+      "name": "tumba_16",
+      "model": "models/tumba.obj",
+      "position": [9.94, 0, 3.25],
+      "rotation": [0, -0.1, 0]
+    },
+    {
+      "name": "tumba_17",
+      "model": "models/tumba.obj",
+      "position": [-10.03, 0, -0.47],
+      "rotation": [0, 6.9, 0]
+    },
+    {
+      "name": "cruz_18",
+      "model": "models/cruz.obj",
+      "position": [-7.28, 0, -0.63],
+      "rotation": [0, -1.5, 0]
+    },
+    {
+      "name": "lapida_19",
+      "model": "models/lapida.obj",
+      "position": [-4.89, 0, -0.57],
+      "rotation": [0, -4.8, 0]
+    },
+    {
+      "name": "tumba_20",
+      "model": "models/tumba.obj",
+      "position": [-2.99, 0, -0.66],
+      "rotation": [0, -4.8, 0]
+    },
+    {
+      "name": "cruz_21",
+      "model": "models/cruz.obj",
+      "position": [3.0, 0, -0.69],
+      "rotation": [0, -3.9, 0]
+    },
+    {
+      "name": "tumba_22",
+      "model": "models/tumba.obj",
+      "position": [4.95, 0, -0.58],
+      "rotation": [0, 1.2, 0]
+    },
+    {
+      "name": "tumba_23",
+      "model": "models/tumba.obj",
+      "position": [7.61, 0, -0.49],
+      "rotation": [0, 2.1, 0]
+    },
+    {
+      "name": "tumba_24",
+      "model": "models/tumba.obj",
+      "position": [9.97, 0, -0.28],
+      "rotation": [0, 8.1, 0]
+    },
+    {
+      "name": "cruz_25",
+      "model": "models/cruz.obj",
+      "position": [-10.06, 0, -4.06],
+      "rotation": [0, -0.3, 0]
+    },
+    {
+      "name": "cruz_26",
+      "model": "models/cruz.obj",
+      "position": [-7.76, 0, -4.26],
+      "rotation": [0, -5.2, 0]
+    },
+    {
+      "name": "tumba_27",
+      "model": "models/tumba.obj",
+      "position": [-5.23, 0, -3.94],
+      "rotation": [0, -7.2, 0]
+    },
+    {
+      "name": "tumba_28",
+      "model": "models/tumba.obj",
+      "position": [-2.78, 0, -3.73],
+      "rotation": [0, 2.0, 0]
+    },
+    {
+      "name": "tumba_29",
+      "model": "models/tumba.obj",
+      "position": [3.02, 0, -3.93],
+      "rotation": [0, -6.3, 0]
+    },
+    {
+      "name": "lapida_30",
+      "model": "models/lapida.obj",
+      "position": [5.27, 0, -3.94],
+      "rotation": [0, -0.5, 0]
+    },
+    {
+      "name": "tumba_31",
+      "model": "models/tumba.obj",
+      "position": [7.71, 0, -3.7],
+      "rotation": [0, -0.6, 0]
+    },
+    {
+      "name": "cruz_32",
+      "model": "models/cruz.obj",
+      "position": [9.89, 0, -4.21],
+      "rotation": [0, 4.5, 0]
+    },
+    { "name": "capilla", "model": "models/capilla.obj", "position": [0, 0, -11] },
+    {
+      "name": "cripta",
+      "model": "models/cripta.obj",
+      "position": [-10, 0, -10],
+      "rotation": [0, 50, 0],
+      "interact": {
+        "prompt": "Entrar en la cripta",
+        "if": { "flag": "llave_cripta" },
+        "do": [
+          { "play_sound": "audio/puerta_cerrada.wav", "volume": 0.9 },
+          { "set_flag": "cripta_abierta" },
+          { "goto_scene": "scenes/cripta.json", "position": [0, 3, 3.8], "yaw": 0 }
+        ]
+      }
+    },
+    { "name": "banco", "model": "models/banco.obj", "position": [4.5, 0, -8], "rotation": [0, -20, 0] },
+    {
+      "name": "sepulturero",
+      "model": "models/sepulturero.obj",
+      "position": [6.5, 0, -6.2],
+      "rotation": [0, -120, 0],
+      "texture": "textures/pj_sepulturero.png",
+      "facePlayer": { "range": 7, "turnSpeed": 90 },
+      "idle": { "bob": 0.005, "sway": 0.4, "speed": 0.9 },
+      "interact": {
+        "prompt": "Hablar",
+        "box": { "min": [-0.7, 0, -0.7], "max": [0.7, 2, 0.7] },
+        "do": [
+          { "play_sound": "audio/blip.wav", "volume": 0.5 },
+          { "play_sound": "audio/llave.wav", "volume": 0.8 },
+          { "set_flag": "llave_cripta" },
+          {
+            "message": "Otra alma perdida...\nToma la llave de la cripta.\nA mi ya no me sirve.",
+            "seconds": 5
+          }
+        ],
+        "once": true
+      }
+    },
+    {
+      "name": "arbol_seco_1",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.43, 5.2],
+      "position": [-17, 0, 8],
+      "tint": [150, 150, 170, 255],
+      "collider": { "min": [-0.25, 0, -0.25], "max": [0.25, 3.0, 0.25] }
+    },
+    {
+      "name": "arbol_seco_2",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.7, 5.6],
+      "position": [17, 0, 5],
+      "tint": [150, 150, 170, 255],
+      "collider": { "min": [-0.25, 0, -0.25], "max": [0.25, 3.0, 0.25] }
+    },
+    {
+      "name": "arbol_seco_3",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.3, 5.0],
+      "position": [-16, 0, -4],
+      "tint": [150, 150, 170, 255],
+      "collider": { "min": [-0.25, 0, -0.25], "max": [0.25, 3.0, 0.25] }
+    },
+    {
+      "name": "arbol_seco_4",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.83, 5.8],
+      "position": [16, 0, -9],
+      "tint": [150, 150, 170, 255],
+      "collider": { "min": [-0.25, 0, -0.25], "max": [0.25, 3.0, 0.25] }
+    },
+    {
+      "name": "arbol_seco_5",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.56, 5.4],
+      "position": [-7, 0, -16],
+      "tint": [150, 150, 170, 255],
+      "collider": { "min": [-0.25, 0, -0.25], "max": [0.25, 3.0, 0.25] }
+    },
+    {
+      "name": "arbol_seco_6",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.3, 5.0],
+      "position": [8, 0, -16],
+      "tint": [150, 150, 170, 255],
+      "collider": { "min": [-0.25, 0, -0.25], "max": [0.25, 3.0, 0.25] }
+    },
+    {
+      "name": "arbol_seco_7",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.04, 4.6],
+      "position": [-18, 0, 16],
+      "tint": [150, 150, 170, 255],
+      "collider": { "min": [-0.25, 0, -0.25], "max": [0.25, 3.0, 0.25] }
+    },
+    {
+      "name": "arbol_seco_8",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.43, 5.2],
+      "position": [18, 0, 15],
+      "tint": [150, 150, 170, 255],
+      "collider": { "min": [-0.25, 0, -0.25], "max": [0.25, 3.0, 0.25] }
+    },
+    {
+      "name": "cuervo_1",
+      "sprite": "textures/spr_cuervo.png",
+      "size": [0.55, 0.55],
+      "position": [-2.75, 1.5, 6.47]
+    },
+    {
+      "name": "cuervo_2",
+      "sprite": "textures/spr_cuervo.png",
+      "size": [0.55, 0.55],
+      "position": [5.23, 1.5, 6.64]
+    },
+    {
+      "name": "cuervo_3",
+      "sprite": "textures/spr_cuervo.png",
+      "size": [0.55, 0.55],
+      "position": [3.0, 1.42, 11]
+    },
+    {
+      "name": "velas_1",
+      "sprite": "textures/spr_velas.png",
+      "size": [0.45, 0.45],
+      "position": [-9.99, 0.21, 7.14],
+      "emissive": true,
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 80],
+        "radius": 2.6,
+        "intensity": 1.0,
+        "flicker": 0.35,
+        "flickerRate": 12
+      }
+    },
+    {
+      "name": "velas_2",
+      "sprite": "textures/spr_velas.png",
+      "size": [0.45, 0.45],
+      "position": [-7.22, 0.21, 6.84],
+      "emissive": true,
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 80],
+        "radius": 2.6,
+        "intensity": 1.0,
+        "flicker": 0.35,
+        "flickerRate": 12
+      }
+    },
+    {
+      "name": "velas_3",
+      "sprite": "textures/spr_velas.png",
+      "size": [0.45, 0.45],
+      "position": [-4.75, 0.21, 7.12],
+      "emissive": true,
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 80],
+        "radius": 2.6,
+        "intensity": 1.0,
+        "flicker": 0.35,
+        "flickerRate": 12
+      }
+    },
+    {
+      "name": "setas_1",
+      "sprite": "textures/spr_setas.png",
+      "size": [0.9, 0.9],
+      "position": [-15.5, 0, -5],
+      "emissive": true,
+      "light": { "offset": [0, 0.4, 0], "color": [110, 190, 255], "radius": 3.5, "intensity": 1.0 }
+    },
+    {
+      "name": "setas_2",
+      "sprite": "textures/spr_setas.png",
+      "size": [0.9, 0.9],
+      "position": [14.8, 0, -10.2],
+      "emissive": true,
+      "light": { "offset": [0, 0.4, 0], "color": [110, 190, 255], "radius": 3.5, "intensity": 1.0 }
+    },
+    {
+      "name": "hierba_1",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [6.25, 0, 0.62],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_2",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [4.99, 0, 1.29],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_3",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [-7.66, 0, 9.14],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_4",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [-3.59, 0, 4.42],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_5",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [10.77, 0, 5.65],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_6",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [-5.25, 0, 3.57],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_7",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [-10.63, 0, 7.22],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_8",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [2.98, 0, 8.35],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_9",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [-3.75, 0, -3.99],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_10",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [3.58, 0, 1.05],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_11",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [3.55, 0, 3.04],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_12",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [7.5, 0, 5.65],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_13",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [-7.93, 0, -3.69],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_14",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [-2.58, 0, 6.46],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_15",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [-7.8, 0, 0.87],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_16",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [6.01, 0, 9.81],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_17",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [7.54, 0, 0.5],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_18",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [-7.97, 0, 2.89],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_19",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [-4.05, 0, 6.55],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_20",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [5.8, 0, -1.71],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_21",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [12.34, 0, -6.55],
+      "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "hierba_22",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.0],
+      "position": [-10.34, 0, 0.46],
+      "tint": [130, 150, 160, 255]
+    }
+  ],
+  "triggers": [
+    {
+      "name": "cripta_cerrada",
+      "position": [-8.6, 0, -8.6],
+      "size": [3, 2.4, 3],
+      "rotation": 50,
+      "if": { "not": { "flag": "llave_cripta" } },
+      "do": [
+        {
+          "message": "La cripta esta cerrada con una cadena.\nEl sepulturero tendra la llave.",
+          "seconds": 4
+        }
+      ]
+    },
+    {
+      "name": "puerta_noche",
+      "position": [0, 0, 19],
+      "size": [2.4, 2.4, 0.8],
+      "marker": true,
+      "color": [170, 255, 210, 255],
+      "do": [
+        { "play_sound": "audio/portal.wav" },
+        { "goto_scene": "scenes/noche.json", "position": [13, 0, 0], "yaw": 90 }
+      ]
+    }
+  ]
+}

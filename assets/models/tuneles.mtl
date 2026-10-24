@@ -1,0 +1,45 @@
+# RetroEngine: tuneles
+
+newmtl mat_agua
+d 1.000000
+map_Kd ../textures/mat_agua.png
+
+newmtl mat_calaveras
+d 1.000000
+map_Kd ../textures/mat_calaveras.png
+
+newmtl mat_cripta
+d 1.000000
+map_Kd ../textures/mat_cripta.png
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_madera_gris
+d 1.000000
+map_Kd ../textures/mat_madera_gris.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png
+
+newmtl mat_piedra
+d 1.000000
+map_Kd ../textures/mat_piedra.png
+
+newmtl mat_roca
+d 1.000000
+map_Kd ../textures/mat_roca.png
+
+newmtl mat_tierra
+d 1.000000
+map_Kd ../textures/mat_tierra.png
+
+newmtl mat_tierra_suelo
+d 1.000000
+map_Kd ../textures/mat_tierra_suelo.png
+
+newmtl mat_yeso
+d 1.000000
+map_Kd ../textures/mat_yeso.png

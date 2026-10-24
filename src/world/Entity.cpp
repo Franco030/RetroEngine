@@ -2,6 +2,8 @@
 
 #include "graphics/Billboard.hpp"
 
+#include <rlgl.h>
+
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
@@ -78,11 +80,13 @@ void Entity::Draw() {
 
   Model& model = model_->Get();
 
-  // El modelo es compartido: se configura justo antes de cada dibujado.
-  if (texture_) {
-    for (int m = 0; m < model.materialCount; ++m) {
-      SetMaterialTexture(&model.materials[m], MATERIAL_MAP_DIFFUSE, texture_->Get());
-    }
+  // El modelo es compartido: se configura justo antes de cada dibujado. La textura de la
+  // entidad va solo a los materiales sin textura propia; sin "texture", esos quedan en blanco
+  // (si no, heredarian la de la ultima entidad que dibujo el mismo modelo).
+  const Texture2D white{rlGetTextureIdDefault(), 1, 1, 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8};
+  const Texture2D& tex = texture_ ? texture_->Get() : white;
+  for (int m : model_->OpenMaterials()) {
+    SetMaterialTexture(&model.materials[m], MATERIAL_MAP_DIFFUSE, tex);
   }
 
   Transform visual = transform;

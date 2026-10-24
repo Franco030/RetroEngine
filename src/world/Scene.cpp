@@ -123,7 +123,7 @@ void Scene::CollectEmitters(std::vector<Emitter>& out) const {
   }
 }
 
-void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float ambient,
+void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float ambient, float sun,
                  std::span<const PointLight> lights) {
   bool anySprite = false;
   for (auto& e : entities_) {
@@ -136,7 +136,7 @@ void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float ambie
   if (!anySprite)
     return;
 
-  const float base = ambient + (1.0f - ambient) * 0.5f;
+  const float base = ambient + (1.0f - ambient) * 0.5f * sun;
 
   ShaderScope scope(spriteShader);
   for (auto& e : entities_) {
@@ -158,9 +158,10 @@ void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float ambie
 
 void Scene::CollectColliders(std::vector<WorldBox>& out) const {
   for (const auto& e : entities_) {
-    if (e->collider && e->visible) {
-      out.push_back(MakeWorldBox(*e->collider, e->transform));
-    }
+    if (!e->visible)
+      continue;
+    for (const BoxCollider& c : e->colliders)
+      out.push_back(MakeWorldBox(c, e->transform));
   }
 
   if (bounds)
@@ -238,14 +239,17 @@ Scene::InteractHit Scene::FindInteractable(Vector3 origin, Vector3 dir, const Ga
     // La propia se excluye para que su collider no se tape a sí mismo.
     bool blocked = false;
     for (const auto& o : entities_) {
-      if (o.get() == e.get() || !o->collider || !o->visible)
+      if (o.get() == e.get() || !o->visible)
         continue;
-      float to = 0.0f;
-      if (RayIntersectsBox(MakeWorldBox(*o->collider, o->transform), origin, dir, to) &&
-          to < t - 1e-3f) {
-        blocked = true;
-        break;
+      for (const BoxCollider& c : o->colliders) {
+        float to = 0.0f;
+        if (RayIntersectsBox(MakeWorldBox(c, o->transform), origin, dir, to) && to < t - 1e-3f) {
+          blocked = true;
+          break;
+        }
       }
+      if (blocked)
+        break;
     }
     if (blocked)
       continue;

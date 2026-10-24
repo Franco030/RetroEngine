@@ -1,7 +1,6 @@
 #version 330
 
-noperspective in vec2 fragTexCoordAffine;
-in vec2 fragTexCoordPersp;
+in vec2 fragTexCoord;
 noperspective in vec4 fragColor;
 in float fragDepth;
 
@@ -9,7 +8,6 @@ uniform sampler2D texture0;
 
 uniform float colorLevels;
 uniform float ditherStrength;
-uniform float affineAmount;
 
 uniform vec3  fogColor;
 uniform float fogStart;
@@ -24,8 +22,7 @@ const float BAYER4[16] = float[16](
     15.0,  7.0, 13.0,  5.0);
 
 void main() {
-    vec2 uv    = mix(fragTexCoordPersp, fragTexCoordAffine, affineAmount);
-    vec4 texel = texture(texture0, uv) * fragColor;
+    vec4 texel = texture(texture0, fragTexCoord) * fragColor;
     if (texel.a < 0.5) discard;
 
     vec3 rgb = texel.rgb;

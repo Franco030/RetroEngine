@@ -12,6 +12,7 @@
 #include <imgui.h>
 
 #include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <string>
@@ -28,6 +29,16 @@ namespace editor {
 enum class SelectionKind { None, Entity, Trigger, Light, Emitter };
 
 struct Selection {
+  SelectionKind kind = SelectionKind::None;
+  int index = -1;
+};
+
+// Un problema que encuentra el panel Validacion. 'kind' e 'index' dicen que seleccionar al
+// hacer clic (None si no hay un sitio concreto).
+enum class Severity { Error, Warning, Info };
+struct Issue {
+  Severity severity = Severity::Warning;
+  std::string text;
   SelectionKind kind = SelectionKind::None;
   int index = -1;
 };
@@ -132,6 +143,8 @@ private:
   std::shared_ptr<retro::TextureResource> ThumbTexture(const std::string& relative);
   void DrawViewport();
   void DrawMessages();
+  void DrawValidation(); // EditorValidation.cpp
+  void RunValidation();
   void DrawModals();
   void HandleShortcuts();
 
@@ -152,9 +165,39 @@ private:
                   bool alpha);
   bool FieldFile(const char* label, Json& root, const char* parent, const char* key,
                  const std::vector<std::string>& files, bool allowNone, bool thumbnail);
-  bool FieldText(const char* label, Json& root, const char* parent, const char* key);
+  bool FieldText(const char* label, Json& root, const char* parent, const char* key,
+                 bool multiline = false);
   bool FieldChoice(const char* label, Json& root, const char* parent, const char* key,
                    const std::vector<std::string>& options, const std::string& def);
+
+  // ------------------------------------------------------------------ logica (EditorLogic.cpp)
+  // Lo que un elemento de una lista pide hacer con el (se aplica al terminar de dibujar la lista).
+  enum class ListOp { None, Remove, Up, Down };
+  // Posicion de un elemento dentro de su lista, para dibujar sus botones Subir/Bajar/Quitar.
+  struct ListSlot {
+    std::size_t index = 0;
+    std::size_t count = 0;
+    bool canRemove = true;
+  };
+  static ListOp ListButtons(const ListSlot& slot);
+  void ApplyListOp(Json& list, ListOp op, std::size_t index);
+
+  // Lista de acciones owner[key] (por ejemplo el "do" de un trigger): editar, anadir, quitar
+  // y reordenar.
+  // keepOne: la lista no puede quedarse vacia (el "do" de una interaccion lo exige).
+  void EditActionList(Json& owner, const char* key, bool keepOne = false);
+  void EditAction(Json& action);
+  std::vector<std::string> EntityNames() const;
+
+  // Condiciones owner[key] ("if" o "showIf"): ausente, un objeto o un arreglo (deben cumplirse
+  // todas). Cada condicion es un arbol de "flag", "all", "any" y "not".
+  void EditConditions(Json& owner, const char* key);
+  void EditConditionList(Json& list, int depth, bool keepOne);
+  // 'slot' nulo = la condicion no esta en una lista (la raiz unica o el hijo de un "not").
+  ListOp EditCondition(Json& condition, int depth, const ListSlot* slot);
+
+  // "interact" de la entidad 'entityIndex' (texto, alcance, una vez, caja, condiciones y acciones).
+  void EditInteraction(Json& entity, int entityIndex);
 
   // ------------------------------------------------------------------ visor
   void EnsureTargets(int w, int h);
@@ -190,6 +233,10 @@ private:
   Json savedDoc_;
   Json lastGood_;
   bool dirty_ = false;
+  // Sube cada vez que doc_ cambia de verdad; la validacion se repite solo cuando cambia.
+  std::uint64_t docRevision_ = 0;
+  std::uint64_t validatedRevision_ = UINT64_MAX;
+  std::vector<Issue> issues_;
   std::unique_ptr<retro::Scene> scene_;
   std::vector<std::string> sceneList_;
   Selection selection_;

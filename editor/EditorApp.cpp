@@ -309,6 +309,7 @@ bool EditorApp::OpenScene(const std::string& relativePath, bool frameCamera) {
     doc_ = doc;
     savedDoc_ = doc;
     lastGood_ = doc;
+    ++docRevision_;
     undo_.clear();
     redo_.clear();
     gestureBase_.reset();
@@ -464,6 +465,7 @@ void EditorApp::FlushChanges() {
     lastUndoId_ = gestureId_;
     lastUndoTime_ = now;
     lastGood_ = doc_;
+    ++docRevision_;
   } else {
     Log(true, "Cambio descartado: " + error);
     doc_ = lastGood_;
@@ -485,6 +487,7 @@ bool EditorApp::ApplyDocument(const Json& doc) {
   }
   doc_ = doc;
   lastGood_ = doc;
+  ++docRevision_;
   lastUndoId_ = 0;
   gestureBase_.reset();
   ValidateSelection();
@@ -946,6 +949,7 @@ void EditorApp::DrawUi() {
   DrawInspector();
   DrawAssets();
   DrawMessages();
+  DrawValidation();
   DrawViewport();
   DrawModals();
   HandleShortcuts();
@@ -1086,6 +1090,7 @@ void EditorApp::BuildDefaultLayout(ImGuiID dock) {
   ImGui::DockBuilderDockWindow("Visor", view);
   ImGui::DockBuilderDockWindow("Assets", bottom);
   ImGui::DockBuilderDockWindow("Mensajes", bottom);
+  ImGui::DockBuilderDockWindow("###Validacion", bottom);
   ImGui::DockBuilderFinish(dock);
 }
 
@@ -1310,15 +1315,24 @@ void EditorApp::InspectEntity(Json& e) {
     }
   }
 
+  ImGui::SeparatorText("Visible solo si");
+  ImGui::TextDisabled("En el editor se ve siempre; en el juego, solo si se cumplen");
+  ImGui::PushID("showIf");
+  EditConditions(e, "showIf");
+  ImGui::PopID();
+
+  ImGui::SeparatorText("Interaccion (tecla E)");
+  EditInteraction(e, selection_.index);
+
   bool header = false;
   for (auto it = e.begin(); it != e.end(); ++it) {
-    if (IsOneOf(it.key(),
-                {"name", "visible", "model", "sprite", "size", "emissive", "texture", "wrap",
-                 "position", "rotation", "scale", "tint", "spin", "collider", "light", "sound"})) {
+    if (IsOneOf(it.key(), {"name", "visible", "model", "sprite", "size", "emissive", "texture",
+                           "wrap", "position", "rotation", "scale", "tint", "spin", "collider",
+                           "light", "sound", "showIf", "interact"})) {
       continue;
     }
     if (!header) {
-      ImGui::SeparatorText("Logica (solo lectura)");
+      ImGui::SeparatorText("Otros (solo lectura)");
       header = true;
     }
     ShowJsonValue(it.key(), it.value());
@@ -1338,15 +1352,25 @@ void EditorApp::InspectTrigger(Json& t) {
 
   bool header = false;
   for (auto it = t.begin(); it != t.end(); ++it) {
-    if (IsOneOf(it.key(),
-                {"name", "position", "size", "rotation", "on", "once", "marker", "color"}))
+    if (IsOneOf(it.key(), {"name", "position", "size", "rotation", "on", "once", "marker", "color",
+                           "if", "do"}))
       continue;
     if (!header) {
-      ImGui::SeparatorText("Condiciones y acciones (solo lectura)");
+      ImGui::SeparatorText("Otros (solo lectura)");
       header = true;
     }
     ShowJsonValue(it.key(), it.value());
   }
+
+  ImGui::SeparatorText("Condiciones");
+  ImGui::PushID("if");
+  EditConditions(t, "if");
+  ImGui::PopID();
+
+  ImGui::SeparatorText("Acciones");
+  ImGui::PushID("do");
+  EditActionList(t, "do");
+  ImGui::PopID();
 }
 
 void EditorApp::InspectLight(Json& l) {
@@ -1855,7 +1879,7 @@ bool EditorApp::FieldFile(const char* label, Json& root, const char* parent, con
   const bool known = current.empty() || Contains(files, current);
   std::string shown = current.empty() ? std::string("(ninguno)") : current;
   if (!known)
-    shown += "  (no esta en assets)";
+    shown += "  (no existe)";
 
   bool changed = false;
   bool erase = false;
@@ -1907,7 +1931,8 @@ bool EditorApp::FieldFile(const char* label, Json& root, const char* parent, con
   return true;
 }
 
-bool EditorApp::FieldText(const char* label, Json& root, const char* parent, const char* key) {
+bool EditorApp::FieldText(const char* label, Json& root, const char* parent, const char* key,
+                          bool multiline) {
   IdScope scope(parent, key);
   const std::string current = ReadString(Src(root, parent), key);
   const ImGuiID id = ImGui::GetID("w");
@@ -1916,7 +1941,11 @@ bool EditorApp::FieldText(const char* label, Json& root, const char* parent, con
 
   char buffer[sizeof textBuf_];
   std::snprintf(buffer, sizeof buffer, "%s", (editing ? std::string(textBuf_) : current).c_str());
-  if (ImGui::InputText(label, buffer, sizeof buffer)) {
+  const bool edited =
+      multiline ? ImGui::InputTextMultiline(label, buffer, sizeof buffer,
+                                            ImVec2(0.0f, ImGui::GetTextLineHeight() * 4.0f))
+                : ImGui::InputText(label, buffer, sizeof buffer);
+  if (edited) {
     textId_ = sid;
     std::snprintf(textBuf_, sizeof textBuf_, "%s", buffer);
   }
@@ -2164,6 +2193,10 @@ void EditorApp::DrawSelectionGizmo() {
     DrawOrientedBox(EntityMatrix(e), e.LocalBounds(), yellow);
     if (e.collider) {
       retro::DrawWorldBoxWires(retro::MakeWorldBox(*e.collider, e.transform), {255, 140, 60, 255});
+    }
+    if (e.interact) {
+      retro::DrawWorldBoxWires(retro::MakeWorldBox(e.interact->box, e.transform),
+                               {80, 220, 255, 255});
     }
     break;
   }

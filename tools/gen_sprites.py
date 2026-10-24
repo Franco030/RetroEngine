@@ -332,6 +332,40 @@ def ojos(rng):
     return L
 
 
+def llama(rng):
+    """Llama de vela sola (emissive): para poner encima de una vela de un modelo."""
+    L = Lienzo(8, 16)
+    L.elipse(4, 9, 2.6, 6, (230, 90, 20))
+    L.elipse(4, 10, 1.7, 4, (255, 170, 50))
+    L.elipse(4, 11, 0.9, 2.2, (255, 244, 180))
+    return L
+
+
+def flores_marchitas(rng):
+    """Ramo marchito sobre una tumba: tallos secos doblados, cabezas caidas de color apagado y
+    petalos sueltos en el suelo, atado con una cinta descolorida."""
+    L = Lienzo(32, 32)
+    # tallos en abanico desde el atado; arriba se doblan y la flor cuelga hacia fuera
+    for dx in (-10, -6, -2, 2, 6, 10, -4, 4):
+        color = mezcla((58, 56, 36), (100, 86, 52), rng.uniform(0, 1))
+        alto = rng.uniform(15, 25)
+        xm, ym = 16 + dx * 0.9, 30 - alto
+        lado = 1 if dx > 0 else -1
+        xf, yf = xm + lado * rng.uniform(2, 4), ym + rng.uniform(3, 6)
+        L.linea(16 + dx * 0.1, 30, xm, ym, 1, color)
+        L.linea(xm, ym, xf, yf, 1, color)
+        petalo = mezcla((96, 26, 32), (150, 100, 72), rng.uniform(0, 1))
+        L.disco(xf, yf + 1.5, 2.3, petalo)
+        L.punto(xf, yf + 3, mezcla(petalo, (40, 20, 20), 0.5))
+        if rng.random() < 0.5:   # hoja seca
+            L.linea(xm * 0.5 + 8, (ym + 30) / 2, xm * 0.5 + 8 + lado * 3, (ym + 30) / 2 + 2, 1, (88, 74, 40))
+    for _ in range(5):  # petalos caidos
+        L.punto(rng.uniform(6, 26), rng.uniform(29, 31), (110, 50, 46))
+    L.rect(14, 26, 19, 29, (120, 104, 120))   # cinta
+    L.contorno((24, 20, 18), solo_abajo_derecha=True)
+    return L
+
+
 SPRITES = {
     "spr_arbol_seco": arbol_seco,
     "spr_cuervo": cuervo,
@@ -346,6 +380,8 @@ SPRITES = {
     "spr_raices": raices,
     "spr_antorcha": antorcha,
     "spr_ojos": ojos,
+    "spr_llama": llama,
+    "spr_flores_marchitas": flores_marchitas,
 }
 
 

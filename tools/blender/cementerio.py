@@ -46,65 +46,101 @@ def taza(m, centro, r_ext, r_int, alto, nivel_agua, lados=8):
 
 # ---------------------------------------------------------------------------
 def capilla(col):
+    """Capilla de una nave (7 x 11 m) con contrafuertes, espadana y portada con escalinata."""
     m = rc.Malla()
-    W, D, H = 4.6, 7.0, 3.4
-    m.caja((0, 0, 0.15), (W + 0.4, D + 0.4, 0.3), "mat_piedra")         # zocalo
-    m.caja((0, 0, 0.3 + H / 2), (W, D, H), "mat_piedra")
-    z_alero = 0.3 + H
-    ap.hastiales(m, W, D, z_alero, 2.4, "mat_piedra", eje="y")
-    cumbre = ap.tejado(m, W, D, z_alero, 2.4, "mat_tejas", vuelo=0.4, vuelo_lado=0.35,
+    W, D, H = 7.0, 11.0, 5.2
+    z0 = 0.35
+    m.caja((0, 0, z0 / 2), (W + 0.5, D + 0.5, z0), "mat_piedra_musgo")         # zocalo
+    m.caja((0, 0, z0 + H / 2), (W, D, H), "mat_piedra_musgo")
+    z_alero = z0 + H
+    ap.hastiales(m, W, D, z_alero, 3.4, "mat_piedra_musgo", eje="y")
+    cumbre = ap.tejado(m, W, D, z_alero, 3.4, "mat_tejas", vuelo=0.5, vuelo_lado=0.45,
                        eje="y")
     # contrafuertes en los laterales
-    for y in (-2.2, 0.0, 2.2):
+    ys = (-3.9, -1.3, 1.3, 3.9)
+    for y in ys:
         for lado in (-1, 1):
-            m.caja((lado * (W / 2 + 0.2), y, 1.4), (0.4, 0.5, 2.8), "mat_piedra")
-            m.caja((lado * (W / 2 + 0.12), y, 2.95), (0.28, 0.5, 0.4), "mat_piedra",
+            m.caja((lado * (W / 2 + 0.25), y, 2.1), (0.5, 0.6, 4.2), "mat_piedra_musgo")
+            m.caja((lado * (W / 2 + 0.15), y, 4.45), (0.32, 0.6, 0.5), "mat_piedra_musgo",
                    rot=(0, lado * 25, 0))
     # espadana: muro con hueco y campana sobre el hastial del frente
     yf = -D / 2 - 0.05
-    m.caja((0, yf, cumbre + 0.6), (1.3, 0.35, 1.4), "mat_piedra")
-    m.decal((0, yf - 0.18, cumbre + 0.55), FRENTE, 0.7, 0.8, "mat_oscuro", salida=0.0)
-    m.prisma((0, yf - 0.2, cumbre + 0.3), 0.28, 0.12, 0.45, 8, "mat_metal")
-    m.caja((0, yf, cumbre + 1.38), (1.5, 0.45, 0.16), "mat_piedra")
-    # puerta con arco de piedra, peldanos y ventanas encendidas
-    m.decal((0, -D / 2, 0.3 + 1.15), FRENTE, 1.4, 2.3, "mat_puerta")
-    m.caja((0, -D / 2 - 0.06, 0.3 + 2.45), (1.9, 0.25, 0.3), "mat_piedra")
-    m.caja((0, -D / 2 - 0.45, 0.1), (2.2, 0.8, 0.2), "mat_piedra")
-    m.caja((0, -D / 2 - 0.3, 0.25), (1.8, 0.5, 0.1), "mat_piedra")
-    m.decal((0, -D / 2, z_alero + 0.9), FRENTE, 0.8, 0.8, "mat_ventana_luz")   # oculo
-    for y in (-1.1, 1.1):
+    m.caja((0, yf, cumbre + 0.85), (1.8, 0.45, 2.0), "mat_piedra_musgo")
+    m.decal((0, yf - 0.23, cumbre + 0.8), FRENTE, 1.0, 1.1, "mat_oscuro", salida=0.0)
+    m.prisma((0, yf - 0.25, cumbre + 0.45), 0.38, 0.16, 0.6, 8, "mat_metal")
+    m.caja((0, yf, cumbre + 1.92), (2.1, 0.6, 0.22), "mat_piedra_musgo")
+    # portada: puerta con arco de piedra, escalinata, oculo y ventanas encendidas
+    m.decal((0, -D / 2, z0 + 1.5), FRENTE, 1.8, 3.0, "mat_puerta")
+    m.caja((0, -D / 2 - 0.08, z0 + 3.2), (2.5, 0.32, 0.4), "mat_piedra_musgo")
+    for lado in (-1, 1):
+        m.caja((lado * 1.1, -D / 2 - 0.08, z0 + 1.5), (0.35, 0.32, 3.0), "mat_piedra_musgo")
+    m.caja((0, -D / 2 - 0.7, 0.12), (3.2, 1.4, 0.24), "mat_piedra_musgo")
+    m.caja((0, -D / 2 - 0.4, 0.3), (2.6, 0.8, 0.12), "mat_piedra_musgo")
+    m.decal((0, -D / 2, z_alero + 1.3), FRENTE, 1.2, 1.2, "mat_ventana_luz")   # oculo
+    for y in (-2.6, 0.0, 2.6):
         for normal, x in ((DER, W / 2), (IZQ, -W / 2)):
-            m.decal((x, y, 2.2), normal, 0.55, 1.4, "mat_ventana_luz")
+            m.decal((x, y, 2.9), normal, 0.75, 2.2, "mat_ventana_luz")
     # colision: solo lo que estorba a la altura del jugador
-    m.colision((0, 0, 1.85), (W + 0.4, D + 0.4, 3.7))
-    for y in (-2.2, 0.0, 2.2):
+    m.colision((0, 0, 2.6), (W + 0.5, D + 0.5, 5.2))
+    for y in ys:
         for lado in (-1, 1):
-            m.colision((lado * (W / 2 + 0.2), y, 1.4), (0.4, 0.5, 2.8))  # contrafuertes
-    m.colision((0, -D / 2 - 0.45, 0.1), (2.2, 0.8, 0.2))  # peldano (se sube)
+            m.colision((lado * (W / 2 + 0.25), y, 2.1), (0.5, 0.6, 4.2))  # contrafuertes
+    m.colision((0, -D / 2 - 0.7, 0.12), (3.2, 1.4, 0.24))  # escalones (se suben)
+    m.colision((0, -D / 2 - 0.4, 0.3), (2.6, 0.8, 0.12))
     return m.objeto("capilla", col)
 
 
+# Medidas del panteon: por dentro (cripta_interior en subterraneo.py) la sala es de 8 x 11 m,
+# asi que por fuera mide 9 x 12 m mas el porche de columnas.
+CRIPTA_W, CRIPTA_D, CRIPTA_H = 9.0, 12.0, 4.8
+CRIPTA_PORCHE = 1.4      # fondo del porche delante de la puerta
+
+
 def cripta(col):
-    """Panteon pequeno con frontispicio y dos columnas; puerta de hierro."""
+    """Panteon grande: porche de cuatro columnas con frontispicio, puerta de hierro y tejado de
+    losas a dos aguas. Frente hacia +Z del motor."""
     m = rc.Malla()
-    W, D, H = 2.8, 3.4, 2.4
-    m.caja((0, 0, 0.12), (W + 0.5, D + 0.5, 0.24), "mat_piedra")
-    m.caja((0, 0.2, 0.24 + H / 2), (W, D - 0.4, H), "mat_piedra")
-    z = 0.24 + H
-    ap.hastiales(m, W + 0.2, D, z, 0.9, "mat_piedra", eje="y")
-    ap.tejado(m, W + 0.2, D, z, 0.9, "mat_piedra", grosor=0.18, vuelo=0.2, vuelo_lado=0.15,
+    W, D, H, P = CRIPTA_W, CRIPTA_D, CRIPTA_H, CRIPTA_PORCHE
+    z0 = 0.4
+    m.caja((0, 0, z0 / 2), (W + 0.6, D + 0.6, z0), "mat_sillar_viejo")          # basamento
+    yc = P / 2                                                             # centro del cuerpo
+    m.caja((0, yc, z0 + H / 2), (W, D - P, H), "mat_sillar_viejo")
+    # pilastras en las esquinas del cuerpo
+    for x in (-W / 2, W / 2):
+        for y in (-D / 2 + P, D / 2):
+            m.caja((x, y, z0 + H / 2), (0.5, 0.5, H), "mat_sillar_viejo")
+    # porche: cuatro columnas con basa y capitel, y el entablamento
+    yp = -D / 2 + 0.35
+    for x in (-3.3, -1.15, 1.15, 3.3):
+        m.caja((x, yp, z0 + 0.12), (0.62, 0.62, 0.24), "mat_marmol_viejo")
+        m.prisma((x, yp, z0 + 0.24), 0.26, 0.22, H - 0.5, 8, "mat_marmol_viejo")
+        m.caja((x, yp, z0 + H - 0.13), (0.62, 0.62, 0.26), "mat_marmol_viejo")
+    z = z0 + H
+    m.caja((0, yp + 0.1, z + 0.18), (W + 0.4, 0.9, 0.36), "mat_sillar_viejo")    # entablamento
+    m.decal((0, yp - 0.35, z + 0.18), FRENTE, 4.2, 0.24, "mat_oscuro", salida=0.0)  # letrero
+    z += 0.36
+    ap.hastiales(m, W + 0.4, D, z, 2.2, "mat_sillar_viejo", eje="y")
+    ap.tejado(m, W + 0.4, D, z, 2.2, "mat_sillar_viejo", grosor=0.25, vuelo=0.3, vuelo_lado=0.3,
               eje="y")
-    for x in (-1.05, 1.05):
-        m.prisma((x, -D / 2 + 0.2, 0.24), 0.17, 0.15, H, 8, "mat_piedra")
-        m.caja((x, -D / 2 + 0.2, z - 0.08), (0.42, 0.42, 0.16), "mat_piedra")
-    m.caja((0, -D / 2 + 0.2, z + 0.06), (W + 0.25, 0.45, 0.14), "mat_piedra")  # dintel
-    m.decal((0, -D / 2 + 0.4, 0.24 + 1.0), FRENTE, 1.1, 2.0, "mat_metal")       # puerta
-    m.caja((0, -D / 2 + 0.36, 0.24 + 1.05), (0.5, 0.06, 0.08), "mat_metal")     # cerrojo
-    # colision: solo lo que estorba a la altura del jugador
-    m.colision((0, 0, 0.12), (W + 0.5, D + 0.5, 0.24))   # base (se sube)
-    m.colision((0, 0.2, 0.24 + H / 2), (W, D - 0.4, H))
-    for x in (-1.05, 1.05):
-        m.colision((x, -D / 2 + 0.2, 0.24 + H / 2), (0.36, 0.36, H))  # columnas
+    # puerta de hierro con marco y cerrojo
+    yfp = -D / 2 + P
+    m.decal((0, yfp, z0 + 1.35), FRENTE, 1.6, 2.7, "mat_metal")
+    m.caja((0, yfp - 0.05, z0 + 2.85), (2.2, 0.2, 0.3), "mat_sillar_viejo")
+    for lado in (-1, 1):
+        m.caja((lado * 0.95, yfp - 0.05, z0 + 1.35), (0.3, 0.2, 2.7), "mat_sillar_viejo")
+    m.caja((0, yfp - 0.06, z0 + 1.4), (0.6, 0.08, 0.1), "mat_metal")
+    # ventanucos enrejados en los costados
+    for y in (-1.0, 2.6):
+        for normal, x in ((DER, W / 2), (IZQ, -W / 2)):
+            m.decal((x, y + yc, z0 + 3.2), normal, 0.5, 0.9, "mat_oscuro")
+    # escalones hasta el basamento
+    m.caja((0, -D / 2 - 0.55, 0.13), (3.6, 0.5, 0.26), "mat_sillar_viejo")
+    # colision
+    m.colision((0, 0, z0 / 2), (W + 0.6, D + 0.6, z0))                     # basamento (se sube)
+    m.colision((0, -D / 2 - 0.55, 0.13), (3.6, 0.5, 0.26))                 # escalon
+    m.colision((0, yc, z0 + H / 2), (W + 0.5, D - P, H))
+    for x in (-3.3, -1.15, 1.15, 3.3):
+        m.colision((x, yp, z0 + H / 2), (0.55, 0.55, H))                   # columnas
     return m.objeto("cripta", col)
 
 
@@ -112,9 +148,9 @@ def lapida(m, x=0.0, y=0.0, inclinacion=0.0):
     """Lapida de remate redondo (para reutilizar dentro de otros modelos)."""
     rot = (inclinacion, 0, 0)
     base = Vector((x, y, 0))
-    m.caja(base + Vector((0, 0, 0.06)), (0.8, 0.35, 0.12), "mat_piedra")
-    m.caja(base + Vector((0, 0, 0.12 + 0.35)), (0.6, 0.14, 0.7), "mat_piedra", rot=rot)
-    m.prisma(base + Vector((0, 0.07, 0.12 + 0.7)), 0.3, 0.3, 0.14, 8, "mat_piedra",
+    m.caja(base + Vector((0, 0, 0.06)), (0.8, 0.35, 0.12), "mat_lapida")
+    m.caja(base + Vector((0, 0, 0.12 + 0.35)), (0.6, 0.14, 0.7), "mat_lapida", rot=rot)
+    m.prisma(base + Vector((0, 0.07, 0.12 + 0.7)), 0.3, 0.3, 0.14, 8, "mat_lapida",
              rot=(90 + inclinacion, 0, 0), giro=22.5)
 
 
@@ -122,8 +158,8 @@ def tumba(col):
     """Lapida con la losa de la sepultura delante (hacia +Z del motor)."""
     m = rc.Malla()
     lapida(m, 0, 0.9)
-    m.caja((0, 0, 0.08), (0.9, 1.7, 0.16), "mat_piedra")
-    m.caja((0, 0, 0.17), (0.75, 1.5, 0.04), "mat_piedra")
+    m.caja((0, 0, 0.08), (0.9, 1.7, 0.16), "mat_lapida")
+    m.caja((0, 0, 0.17), (0.75, 1.5, 0.04), "mat_lapida")
     # colision: solo lo que estorba a la altura del jugador
     m.colision((0, 0.9, 0.5), (0.8, 0.35, 1.0))           # lapida
     m.colision((0, 0, 0.1), (0.9, 1.7, 0.2))              # losa (se sube)
@@ -140,9 +176,9 @@ def lapida_sola(col):
 
 def cruz(col):
     m = rc.Malla()
-    m.prisma((0, 0, 0), 0.4, 0.34, 0.25, 4, "mat_piedra", giro=45)
-    m.caja((0, 0, 0.25 + 0.75), (0.17, 0.17, 1.5), "mat_piedra")
-    m.caja((0, 0, 0.25 + 1.12), (0.8, 0.17, 0.17), "mat_piedra")
+    m.prisma((0, 0, 0), 0.4, 0.34, 0.25, 4, "mat_granito", giro=45)
+    m.caja((0, 0, 0.25 + 0.75), (0.17, 0.17, 1.5), "mat_granito")
+    m.caja((0, 0, 0.25 + 1.12), (0.8, 0.17, 0.17), "mat_granito")
     # colision: solo lo que estorba a la altura del jugador
     m.colision((0, 0, 0.12), (0.8, 0.8, 0.25))            # peana (se sube)
     m.colision((0, 0, 1.0), (0.2, 0.2, 1.5))
@@ -154,8 +190,8 @@ def verja(col):
     """Tramo de verja de 2.4 m a lo largo de X: dos pilares de piedra y barrotes con punta."""
     m = rc.Malla()
     for x in (-1.2, 1.2):
-        m.caja((x, 0, 0.7), (0.34, 0.34, 1.4), "mat_piedra")
-        m.prisma((x, 0, 1.4), 0.3, 0.0, 0.3, 4, "mat_piedra", giro=45)
+        m.caja((x, 0, 0.7), (0.34, 0.34, 1.4), "mat_granito")
+        m.prisma((x, 0, 1.4), 0.3, 0.0, 0.3, 4, "mat_granito", giro=45)
     for z in (0.25, 1.15):
         m.caja((0, 0, z), (2.1, 0.05, 0.06), "mat_metal")
     n = 13

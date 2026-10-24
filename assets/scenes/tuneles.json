@@ -264,7 +264,7 @@
     },
     {
       "name": "estatua",
-      "model": "models/estatua.obj",
+      "model": "models/estatua_gastada.obj",
       "position": [-3.0, 0, -22.5],
       "interact": {
         "prompt": "Mirar",
@@ -297,28 +297,50 @@
       "collider": false
     },
     {
-      "name": "cristal_cruce_1",
-      "sprite": "textures/spr_cristales.png",
-      "size": [0.8, 1.2],
+      "name": "calavera_cruce_1",
+      "model": "models/calavera_vela.obj",
       "position": [-9.9, 0, -18.6],
-      "emissive": true,
-      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] },
+      "rotation": [0, 135.0, 0],
+      "scale": [1.6, 1.6, 1.6],
       "light": {
-        "offset": [0, 0.6, 0],
-        "color": [110, 230, 230],
-        "radius": 5.5,
-        "intensity": 1.0,
-        "flicker": 0.06,
-        "flickerRate": 2
+        "offset": [0.22, 0.26, -0.22],
+        "color": [255, 150, 60],
+        "radius": 5,
+        "intensity": 1.4,
+        "flicker": 0.3,
+        "flickerRate": 9
       }
     },
     {
-      "name": "cristal_cruce_2",
-      "sprite": "textures/spr_cristales.png",
-      "size": [0.6, 0.9],
-      "position": [3.9, 0, -18.6],
+      "name": "calavera_cruce_1_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.14, 0.28],
+      "position": [-9.9, 0.91, -18.6],
       "emissive": true,
-      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] }
+      "collider": false
+    },
+    {
+      "name": "calavera_cruce_2",
+      "model": "models/calavera_vela.obj",
+      "position": [3.9, 0, -18.6],
+      "rotation": [0, -135.0, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "light": {
+        "offset": [-0.22, 0.26, -0.22],
+        "color": [255, 150, 60],
+        "radius": 5,
+        "intensity": 1.4,
+        "flicker": 0.3,
+        "flickerRate": 9
+      }
+    },
+    {
+      "name": "calavera_cruce_2_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.14, 0.28],
+      "position": [3.9, 0.91, -18.6],
+      "emissive": true,
+      "collider": false
     },
     {
       "model": "models/encapuchado.obj",
@@ -395,60 +417,119 @@
       }
     },
     {
-      "name": "cristal_santuario_1",
-      "sprite": "textures/spr_cristales.png",
-      "size": [1.0, 1.5],
+      "name": "calavera_santuario_1",
+      "model": "models/calavera_vela.obj",
       "position": [-30.6, 0, -44.1],
-      "emissive": true,
-      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] },
+      "rotation": [0, 45.0, 0],
+      "scale": [1.6, 1.6, 1.6],
       "light": {
-        "offset": [0, 0.6, 0],
-        "color": [110, 230, 230],
-        "radius": 5.5,
-        "intensity": 1.0,
-        "flicker": 0.06,
-        "flickerRate": 2
+        "offset": [0.22, 0.26, 0.22],
+        "color": [255, 150, 60],
+        "radius": 5,
+        "intensity": 1.4,
+        "flicker": 0.3,
+        "flickerRate": 9
       }
     },
     {
-      "name": "cristal_santuario_2",
-      "sprite": "textures/spr_cristales.png",
-      "size": [1.0, 1.5],
+      "name": "calavera_santuario_1_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.14, 0.28],
+      "position": [-30.6, 0.91, -44.1],
+      "emissive": true,
+      "collider": false
+    },
+    {
+      "name": "calavera_santuario_2",
+      "model": "models/calavera_vela.obj",
       "position": [-20.4, 0, -44.0],
-      "emissive": true,
-      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] },
+      "rotation": [0, -50.19, 0],
+      "scale": [1.6, 1.6, 1.6],
       "light": {
-        "offset": [0, 0.6, 0],
-        "color": [110, 230, 230],
-        "radius": 5.5,
-        "intensity": 1.0,
-        "flicker": 0.06,
-        "flickerRate": 2
+        "offset": [-0.24, 0.26, 0.2],
+        "color": [255, 150, 60],
+        "radius": 5,
+        "intensity": 1.4,
+        "flicker": 0.3,
+        "flickerRate": 9
       }
     },
     {
-      "name": "cristal_santuario_3",
-      "sprite": "textures/spr_cristales.png",
-      "size": [0.7, 1.05],
+      "name": "calavera_santuario_2_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.14, 0.28],
+      "position": [-20.4, 0.91, -44.0],
+      "emissive": true,
+      "collider": false
+    },
+    {
+      "name": "calavera_santuario_3",
+      "model": "models/calavera_vela.obj",
       "position": [-30.7, 0, -37.1],
-      "emissive": true,
-      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] }
+      "rotation": [0, 119.74, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "light": {
+        "offset": [0.27, 0.26, -0.16],
+        "color": [255, 150, 60],
+        "radius": 5,
+        "intensity": 1.4,
+        "flicker": 0.3,
+        "flickerRate": 9
+      }
     },
     {
-      "name": "cristal_santuario_4",
-      "sprite": "textures/spr_cristales.png",
-      "size": [0.7, 1.05],
+      "name": "calavera_santuario_3_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.14, 0.28],
+      "position": [-30.7, 0.91, -37.1],
+      "emissive": true,
+      "collider": false
+    },
+    {
+      "name": "calavera_santuario_4",
+      "model": "models/calavera_vela.obj",
       "position": [-20.3, 0, -37.2],
-      "emissive": true,
-      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] }
+      "rotation": [0, -113.2, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "light": {
+        "offset": [-0.29, 0.26, -0.12],
+        "color": [255, 150, 60],
+        "radius": 5,
+        "intensity": 1.4,
+        "flicker": 0.3,
+        "flickerRate": 9
+      }
     },
     {
-      "name": "cristal_santuario_5",
-      "sprite": "textures/spr_cristales.png",
-      "size": [0.7, 1.05],
-      "position": [-28.0, 0, -44.4],
+      "name": "calavera_santuario_4_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.14, 0.28],
+      "position": [-20.3, 0.91, -37.2],
       "emissive": true,
-      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] }
+      "collider": false
+    },
+    {
+      "name": "calavera_santuario_5",
+      "model": "models/calavera_vela.obj",
+      "position": [-28.0, 0, -44.4],
+      "rotation": [0, 48.01, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "light": {
+        "offset": [0.23, 0.26, 0.21],
+        "color": [255, 150, 60],
+        "radius": 5,
+        "intensity": 1.4,
+        "flicker": 0.3,
+        "flickerRate": 9
+      }
+    },
+    {
+      "name": "calavera_santuario_5_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.14, 0.28],
+      "position": [-28.0, 0.91, -44.4],
+      "emissive": true,
+      "collider": false
     },
     {
       "name": "altar_osario",
@@ -500,7 +581,7 @@
       "name": "huesos_osario_1",
       "sprite": "textures/spr_huesos.png",
       "size": [1.0, 0.66],
-      "position": [-29.42, 0, -17.47],
+      "position": [-29.61, 0, -16.63],
       "tint": [180, 170, 150, 255],
       "collider": false
     },
@@ -508,7 +589,7 @@
       "name": "huesos_osario_2",
       "sprite": "textures/spr_huesos.png",
       "size": [1.0, 0.66],
-      "position": [-27.86, 0, -15.91],
+      "position": [-26.77, 0, -17.43],
       "tint": [180, 170, 150, 255],
       "collider": false
     },
@@ -516,7 +597,7 @@
       "name": "huesos_osario_3",
       "sprite": "textures/spr_huesos.png",
       "size": [1.0, 0.66],
-      "position": [-29.16, 0, -16.11],
+      "position": [-23.92, 0, -16.11],
       "tint": [180, 170, 150, 255],
       "collider": false
     },
@@ -524,7 +605,7 @@
       "name": "huesos_osario_4",
       "sprite": "textures/spr_huesos.png",
       "size": [1.0, 0.66],
-      "position": [-26.0, 0, -16.02],
+      "position": [-24.95, 0, -16.02],
       "tint": [180, 170, 150, 255],
       "collider": false
     },
@@ -532,7 +613,7 @@
       "name": "huesos_osario_5",
       "sprite": "textures/spr_huesos.png",
       "size": [1.0, 0.66],
-      "position": [-26.77, 0, -17.43],
+      "position": [-30.75, 0, -21.64],
       "tint": [180, 170, 150, 255],
       "collider": false
     },
@@ -540,7 +621,7 @@
       "name": "huesos_osario_6",
       "sprite": "textures/spr_huesos.png",
       "size": [1.0, 0.66],
-      "position": [-23.92, 0, -16.11],
+      "position": [-27.68, 0, -25.04],
       "tint": [180, 170, 150, 255],
       "collider": false
     },
@@ -548,7 +629,7 @@
       "name": "huesos_osario_7",
       "sprite": "textures/spr_huesos.png",
       "size": [1.0, 0.66],
-      "position": [-24.95, 0, -16.02],
+      "position": [-27.03, 0, -17.13],
       "tint": [180, 170, 150, 255],
       "collider": false
     },
@@ -556,7 +637,7 @@
       "name": "huesos_osario_8",
       "sprite": "textures/spr_huesos.png",
       "size": [1.0, 0.66],
-      "position": [-30.75, 0, -21.64],
+      "position": [-30.06, 0, -24.86],
       "tint": [180, 170, 150, 255],
       "collider": false
     },
@@ -564,7 +645,7 @@
       "name": "huesos_osario_9",
       "sprite": "textures/spr_huesos.png",
       "size": [1.0, 0.66],
-      "position": [-27.68, 0, -25.04],
+      "position": [-29.44, 0, -23.08],
       "tint": [180, 170, 150, 255],
       "collider": false
     },
@@ -572,7 +653,7 @@
       "name": "huesos_osario_10",
       "sprite": "textures/spr_huesos.png",
       "size": [1.0, 0.66],
-      "position": [-27.03, 0, -17.13],
+      "position": [-30.76, 0, -22.55],
       "tint": [180, 170, 150, 255],
       "collider": false
     },
@@ -601,7 +682,7 @@
       "name": "setas_lago_1",
       "sprite": "textures/spr_setas.png",
       "size": [0.7, 0.7],
-      "position": [21.0, 0, -34.17],
+      "position": [21.0, 0, -33.46],
       "emissive": true,
       "collider": false,
       "light": { "offset": [0, 0.35, 0], "color": [110, 170, 255], "radius": 4.5, "intensity": 1.0 }
@@ -610,7 +691,7 @@
       "name": "setas_lago_2",
       "sprite": "textures/spr_setas.png",
       "size": [0.7, 0.7],
-      "position": [24.8, 0, -33.42],
+      "position": [24.8, 0, -34.02],
       "emissive": true,
       "collider": false
     },
@@ -618,7 +699,7 @@
       "name": "setas_lago_3",
       "sprite": "textures/spr_setas.png",
       "size": [0.7, 0.7],
-      "position": [28.2, 0, -33.99],
+      "position": [28.2, 0, -33.37],
       "emissive": true,
       "collider": false,
       "light": { "offset": [0, 0.35, 0], "color": [110, 170, 255], "radius": 4.5, "intensity": 1.0 }
@@ -627,33 +708,55 @@
       "name": "setas_lago_4",
       "sprite": "textures/spr_setas.png",
       "size": [0.7, 0.7],
-      "position": [17.2, 0, -33.5],
+      "position": [17.2, 0, -33.4],
       "emissive": true,
       "collider": false
     },
     {
-      "name": "cristal_lago_1",
-      "sprite": "textures/spr_cristales.png",
-      "size": [0.8, 1.2],
+      "name": "calavera_lago_1",
+      "model": "models/calavera_vela.obj",
       "position": [17.2, 0, -41.3],
-      "emissive": true,
-      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] },
+      "rotation": [0, 45.0, 0],
+      "scale": [1.6, 1.6, 1.6],
       "light": {
-        "offset": [0, 0.6, 0],
-        "color": [110, 230, 230],
-        "radius": 5.5,
-        "intensity": 1.0,
-        "flicker": 0.06,
-        "flickerRate": 2
+        "offset": [0.22, 0.26, 0.22],
+        "color": [255, 150, 60],
+        "radius": 5,
+        "intensity": 1.4,
+        "flicker": 0.3,
+        "flickerRate": 9
       }
     },
     {
-      "name": "cristal_lago_2",
-      "sprite": "textures/spr_cristales.png",
-      "size": [0.7, 1.05],
-      "position": [30.8, 0, -30.9],
+      "name": "calavera_lago_1_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.14, 0.28],
+      "position": [17.2, 0.91, -41.3],
       "emissive": true,
-      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 1.0, 0.3] }
+      "collider": false
+    },
+    {
+      "name": "calavera_lago_2",
+      "model": "models/calavera_vela.obj",
+      "position": [30.8, 0, -30.9],
+      "rotation": [0, -126.87, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "light": {
+        "offset": [-0.25, 0.26, -0.19],
+        "color": [255, 150, 60],
+        "radius": 5,
+        "intensity": 1.4,
+        "flicker": 0.3,
+        "flickerRate": 9
+      }
+    },
+    {
+      "name": "calavera_lago_2_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.14, 0.28],
+      "position": [30.8, 0.91, -30.9],
+      "emissive": true,
+      "collider": false
     },
     {
       "name": "ojos_lago",
@@ -717,7 +820,7 @@
       "name": "raices_1",
       "sprite": "textures/spr_raices.png",
       "size": [0.9, 1.35],
-      "position": [-0.35, 1.1, -6.94],
+      "position": [-0.11, 1.1, -7.66],
       "tint": [150, 140, 130, 255],
       "collider": false
     },
@@ -725,7 +828,7 @@
       "name": "raices_2",
       "sprite": "textures/spr_raices.png",
       "size": [0.9, 1.35],
-      "position": [0.47, 1.1, -13.19],
+      "position": [-0.06, 1.1, -13.64],
       "tint": [150, 140, 130, 255],
       "collider": false
     },
@@ -733,7 +836,7 @@
       "name": "raices_3",
       "sprite": "textures/spr_raices.png",
       "size": [0.9, 1.35],
-      "position": [-14.68, 1.1, -25.4],
+      "position": [-14.41, 1.1, -25.64],
       "tint": [150, 140, 130, 255],
       "collider": false
     },
@@ -741,7 +844,7 @@
       "name": "raices_4",
       "sprite": "textures/spr_raices.png",
       "size": [0.9, 1.35],
-      "position": [-14.72, 1.1, -13.95],
+      "position": [-15.57, 1.1, -13.99],
       "tint": [150, 140, 130, 255],
       "collider": false
     },
@@ -749,7 +852,7 @@
       "name": "raices_5",
       "sprite": "textures/spr_raices.png",
       "size": [0.9, 1.35],
-      "position": [-3.03, 1.1, -34.11],
+      "position": [-2.74, 1.1, -33.91],
       "tint": [150, 140, 130, 255],
       "collider": false
     },
@@ -757,7 +860,7 @@
       "name": "raices_6",
       "sprite": "textures/spr_raices.png",
       "size": [0.9, 1.35],
-      "position": [8.64, 1.1, -30.99],
+      "position": [9.0, 1.1, -31.51],
       "tint": [150, 140, 130, 255],
       "collider": false
     },
@@ -765,7 +868,7 @@
       "name": "raices_7",
       "sprite": "textures/spr_raices.png",
       "size": [0.9, 1.35],
-      "position": [15.47, 1.1, -25.61],
+      "position": [15.06, 1.1, -25.2],
       "tint": [150, 140, 130, 255],
       "collider": false
     },
@@ -773,7 +876,7 @@
       "name": "raices_8",
       "sprite": "textures/spr_raices.png",
       "size": [0.9, 1.35],
-      "position": [8.84, 1.1, -4.56],
+      "position": [8.67, 1.1, -4.37],
       "tint": [150, 140, 130, 255],
       "collider": false
     },
@@ -781,7 +884,7 @@
       "name": "raices_9",
       "sprite": "textures/spr_raices.png",
       "size": [0.9, 1.35],
-      "position": [20.86, 1.1, -6.91],
+      "position": [21.07, 1.1, -7.35],
       "tint": [150, 140, 130, 255],
       "collider": false
     },
@@ -789,7 +892,7 @@
       "name": "raices_10",
       "sprite": "textures/spr_raices.png",
       "size": [0.9, 1.35],
-      "position": [-18.14, 1.1, -23.07],
+      "position": [-18.38, 1.1, -22.9],
       "tint": [150, 140, 130, 255],
       "collider": false
     },
@@ -797,7 +900,7 @@
       "name": "raices_11",
       "sprite": "textures/spr_raices.png",
       "size": [0.9, 1.35],
-      "position": [-27.49, 1.1, -34.24],
+      "position": [-27.18, 1.1, -33.99],
       "tint": [150, 140, 130, 255],
       "collider": false
     },
@@ -805,7 +908,7 @@
       "name": "raices_12",
       "sprite": "textures/spr_raices.png",
       "size": [0.9, 1.35],
-      "position": [15.59, 1.1, -13.5],
+      "position": [14.82, 1.1, -13.38],
       "tint": [150, 140, 130, 255],
       "collider": false
     },
@@ -813,7 +916,7 @@
       "name": "raices_13",
       "sprite": "textures/spr_raices.png",
       "size": [0.9, 1.35],
-      "position": [-0.01, 1.1, -4.44],
+      "position": [-0.23, 1.1, -4.98],
       "tint": [150, 140, 130, 255],
       "collider": false
     },
@@ -877,7 +980,7 @@
       "name": "huesos_1",
       "sprite": "textures/spr_huesos.png",
       "size": [0.9, 0.6],
-      "position": [-14.55, 0, -11.0],
+      "position": [-15.78, 0, -9.94],
       "tint": [170, 160, 140, 255],
       "collider": false
     },
@@ -885,7 +988,7 @@
       "name": "huesos_2",
       "sprite": "textures/spr_huesos.png",
       "size": [0.9, 0.6],
-      "position": [-23.8, 0, -10.4],
+      "position": [-23.5, 0, -10.73],
       "tint": [170, 160, 140, 255],
       "collider": false
     },
@@ -893,7 +996,7 @@
       "name": "huesos_3",
       "sprite": "textures/spr_huesos.png",
       "size": [0.9, 0.6],
-      "position": [6.22, 0, -26.07],
+      "position": [6.33, 0, -25.18],
       "tint": [170, 160, 140, 255],
       "collider": false
     },
@@ -901,7 +1004,7 @@
       "name": "huesos_4",
       "sprite": "textures/spr_huesos.png",
       "size": [0.9, 0.6],
-      "position": [20.41, 0, -4.77],
+      "position": [21.72, 0, -3.68],
       "tint": [170, 160, 140, 255],
       "collider": false
     },
@@ -909,7 +1012,7 @@
       "name": "huesos_5",
       "sprite": "textures/spr_huesos.png",
       "size": [0.9, 0.6],
-      "position": [-2.23, 0, -37.78],
+      "position": [-3.17, 0, -36.62],
       "tint": [170, 160, 140, 255],
       "collider": false
     },
@@ -917,7 +1020,7 @@
       "name": "setas_1",
       "sprite": "textures/spr_setas.png",
       "size": [0.6, 0.6],
-      "position": [16.1, 0, -31.31],
+      "position": [16.1, 0, -30.58],
       "emissive": true,
       "collider": false
     },
@@ -925,7 +1028,7 @@
       "name": "setas_2",
       "sprite": "textures/spr_setas.png",
       "size": [0.6, 0.6],
-      "position": [-13.9, 0, -22.89],
+      "position": [-13.9, 0, -22.32],
       "emissive": true,
       "collider": false
     },
@@ -933,7 +1036,7 @@
       "name": "setas_3",
       "sprite": "textures/spr_setas.png",
       "size": [0.6, 0.6],
-      "position": [10.1, 0, -20.29],
+      "position": [10.1, 0, -18.73],
       "emissive": true,
       "collider": false
     }

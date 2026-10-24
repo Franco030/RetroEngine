@@ -321,6 +321,198 @@ def calaveras(rng, size=64, hueso=(178, 164, 132), sombra=(30, 24, 20)):
     return np.clip(out, 0, 1)
 
 
+def hueso(rng, size=32, claro=(214, 202, 172), oscuro=(122, 106, 80)):
+    """Hueso viejo: marfil con manchas de tierra y poros."""
+    v = fbm(rng, (size, size), base=(4, 4), octaves=3)
+    manchas = np.clip((fbm(rng, (size, size), base=(4, 4)) - 0.55) * 3.0, 0, 1)
+    rgb = tint(0.55 + 0.45 * v - 0.5 * manchas, oscuro, claro)
+    poros = rng.random((size, size)) < 0.05
+    rgb[poros] *= 0.75
+    return np.clip(rgb, 0, 1)
+
+
+def cera(rng, size=32, base=(226, 212, 170), sombra=(170, 150, 108)):
+    """Cera de vela: crema con chorretones verticales."""
+    v = fbm(rng, (size, size), base=(16, 2), octaves=2)   # vetas verticales
+    return tint(0.5 + 0.5 * v, sombra, base)
+
+
+def brillo(rng, size=16):
+    """Luz de vela vista a traves de un hueco: naranja que se aclara en el centro."""
+    yy, xx = np.mgrid[0:size, 0:size]
+    d = np.sqrt((xx - size / 2 + 0.5) ** 2 + (yy - size / 2 + 0.5) ** 2) / (size / 2)
+    v = np.clip(1.0 - d, 0, 1) ** 0.7 + 0.1 * fbm(rng, (size, size), base=(4, 4), octaves=2)
+    return tint(np.clip(v, 0, 1), (150, 50, 10), (255, 226, 140))
+
+
+# ---------------------------------------------------------------------------
+# Piedras del cementerio: cada objeto con la suya
+# ---------------------------------------------------------------------------
+def grietas(rng, size, ancho=0.018, base=(4, 4)):
+    """Mascara de grietas finas (periodica): donde el ruido pasa cerca de 0.5."""
+    return np.abs(fbm(rng, (size, size), base=base, octaves=3) - 0.5) < ancho
+
+
+def piedra_musgo(rng, size=64):
+    """Sillares viejos de la capilla: piedra gris verdosa, musgo que sale de las juntas y de
+    abajo, grietas y algun trozo desconchado."""
+    rgb = piedra(rng, size, row=16, dark=(62, 62, 56), light=(140, 136, 120), mortar=(38, 40, 32))
+    yy = np.arange(size)[:, None] % 16 / 15.0          # 0 arriba de cada fila, 1 abajo
+    musgo = fbm(rng, (size, size), base=(8, 8), octaves=3) + 0.35 * yy - 0.25
+    m = np.clip((musgo - 0.45) * 4.0, 0, 1)[..., None]
+    verde = tint(fbm(rng, (size, size), base=(16, 16), octaves=2), (40, 58, 26), (96, 120, 52))
+    rgb = rgb * (1 - m) + verde * m
+    rgb[grietas(rng, size, 0.007, (2, 2))] *= 0.45
+    for _ in range(4):                                  # desconchones: manchas mas claras
+        cy, cx = rng.integers(0, size, 2)
+        yy2, xx2 = np.mgrid[0:size, 0:size]
+        d = ((yy2 - cy + size // 2) % size - size // 2) ** 2 + ((xx2 - cx + size // 2) % size - size // 2) ** 2
+        rgb[d < rng.uniform(4, 12)] *= 1.18
+    return np.clip(rgb, 0, 1)
+
+
+def sillar_viejo(rng, size=64):
+    """Bloques grandes y descuidados del panteon: manchas de humedad y chorretones de lluvia."""
+    rgb = piedra(rng, size, row=32, dark=(56, 52, 48), light=(126, 118, 104), mortar=(32, 30, 28))
+    chorro = fbm(rng, (size, size), base=(1, 16), octaves=2)     # vertical: constante en y
+    rgb *= (1.0 - 0.45 * np.clip((chorro - 0.55) * 4, 0, 1))[..., None]
+    humedad = np.clip((fbm(rng, (size, size), base=(4, 4)) - 0.5) * 3, 0, 1)[..., None]
+    rgb = rgb * (1 - 0.35 * humedad) + np.array([0.18, 0.2, 0.16]) * 0.35 * humedad
+    rgb[grietas(rng, size, 0.006, (2, 2))] *= 0.5
+    return np.clip(rgb, 0, 1)
+
+
+def marmol(rng, size=64, claro=(238, 236, 230), oscuro=(196, 194, 190), vetas=(150, 148, 150),
+           viejo=False):
+    """Marmol blanco con vetas grises. 'viejo': amarillento, sucio y agrietado."""
+    v = fbm(rng, (size, size), base=(4, 4), octaves=3)
+    rgb = tint(0.6 + 0.4 * v, oscuro, claro)
+    veta = np.abs(fbm(rng, (size, size), base=(3, 6), octaves=4) - 0.5) < 0.012
+    rgb[veta] = rgb[veta] * 0.55 + np.array(vetas, np.float32) / 255.0 * 0.45
+    if viejo:
+        rgb *= np.array([0.9, 0.86, 0.76])                     # amarillento
+        suciedad = np.clip((fbm(rng, (size, size), base=(4, 4)) - 0.5) * 2.5, 0, 1)[..., None]
+        rgb *= 1 - 0.3 * suciedad
+        rgb[grietas(rng, size, 0.007, (2, 2))] *= 0.55
+    return np.clip(rgb, 0, 1)
+
+
+def granito(rng, size=32, oscuro=(96, 96, 98), claro=(158, 156, 150), liquen=True, musgo=False):
+    """Granito moteado de las lapidas, con liquenes (manchas amarillas y verde palido)."""
+    rgb = tint(fbm(rng, (size, size), base=(8, 8), octaves=2) * 0.6 + 0.2, oscuro, claro)
+    motas = rng.random((size, size))
+    rgb[motas < 0.035] *= 0.7
+    rgb[motas > 0.97] *= 1.18
+    yy, xx = np.mgrid[0:size, 0:size]
+    if liquen:
+        for color in [(200, 170, 60)] * 3 + [(150, 160, 110)] * 2:
+            cy, cx = rng.integers(0, size, 2)
+            r = rng.uniform(1.5, 3.5)
+            d = np.sqrt(((yy - cy + size // 2) % size - size // 2) ** 2 + ((xx - cx + size // 2) % size - size // 2) ** 2)
+            mancha = (d < r) & (rng.random((size, size)) < 0.8)
+            rgb[mancha] = np.array(color, np.float32) / 255.0 * rng.uniform(0.75, 1.0)
+    if musgo:
+        m = np.clip((fbm(rng, (size, size), base=(4, 4)) - 0.55) * 4, 0, 1)[..., None]
+        rgb = rgb * (1 - m) + np.array([0.2, 0.28, 0.12]) * m
+    return np.clip(rgb, 0, 1)
+
+
+def piedra_gastada(rng, size=64, oscuro=(52, 48, 44), claro=(128, 120, 106)):
+    """Piedra tallada y gastada por la humedad (la estatua de las catacumbas): grano grueso,
+    picaduras, regueros oscuros que bajan y algo de verdin en los huecos."""
+    v = 0.6 * fbm(rng, (size, size), base=(4, 4), octaves=4) + 0.4 * fbm(rng, (size, size), base=(16, 16), octaves=2)
+    rgb = tint(np.clip((v - 0.15) * 1.3, 0, 1), oscuro, claro)
+    reguero = fbm(rng, (size, size), base=(1, 12), octaves=2)          # vertical
+    rgb *= (1.0 - 0.4 * np.clip((reguero - 0.55) * 4, 0, 1))[..., None]
+    picaduras = rng.random((size, size)) < 0.04
+    rgb[picaduras] *= 0.55
+    verdin = np.clip((fbm(rng, (size, size), base=(4, 4)) - 0.62) * 4, 0, 1)[..., None]
+    rgb = rgb * (1 - 0.6 * verdin) + np.array([0.22, 0.27, 0.16]) * 0.6 * verdin
+    rgb[grietas(rng, size, 0.006, (2, 2))] *= 0.5
+    return np.clip(rgb, 0, 1)
+
+
+def hojarasca(rng, size=64, oscuro=(26, 30, 18), claro=(92, 84, 44)):
+    """Suelo de bosque: tierra oscura cubierta de hojas secas y agujas de pino."""
+    rgb = tint(fbm(rng, (size, size), base=(8, 8), octaves=3) * 0.7, oscuro, claro)
+    yy, xx = np.mgrid[0:size, 0:size]
+    for _ in range(70):   # hojas: elipses pequenas de tonos otonales, con vuelta en los bordes
+        cy, cx = rng.uniform(0, size, 2)
+        a = rng.uniform(0, np.pi)
+        dx = (xx - cx + size / 2) % size - size / 2
+        dy = (yy - cy + size / 2) % size - size / 2
+        u = dx * np.cos(a) + dy * np.sin(a)
+        v = -dx * np.sin(a) + dy * np.cos(a)
+        hoja = (u / rng.uniform(1.5, 2.8)) ** 2 + (v / rng.uniform(0.8, 1.4)) ** 2 < 1
+        color = [(110, 70, 30), (130, 96, 40), (80, 56, 30), (96, 92, 44)][int(rng.integers(0, 4))]
+        rgb[hoja] = np.array(color, np.float32) / 255.0 * rng.uniform(0.6, 1.0)
+    agujas = rng.random((size, size)) < 0.03
+    rgb[agujas] = np.array([60, 52, 30], np.float32) / 255.0
+    return np.clip(rgb, 0, 1)
+
+
+def hojas(rng, size=32, oscuro=(18, 40, 16), claro=(92, 140, 52)):
+    """Copa de arbol: racimos de hojas (manchas redondas con luz arriba) y huecos oscuros."""
+    rgb = tint(fbm(rng, (size, size), base=(4, 4), octaves=2) * 0.35, oscuro, claro)
+    yy, xx = np.mgrid[0:size, 0:size]
+    for _ in range(26):
+        cy, cx = rng.uniform(0, size, 2)
+        r = rng.uniform(2.0, 4.0)
+        dy = (yy - cy + size / 2) % size - size / 2
+        dx = (xx - cx + size / 2) % size - size / 2
+        d = np.sqrt(dx * dx + dy * dy)
+        racimo = d < r
+        luz = np.clip(0.55 - dy / r * 0.35 + rng.uniform(-0.1, 0.15), 0, 1)
+        col = tint(luz, oscuro, claro)
+        rgb[racimo] = col[racimo]
+    return np.clip(rgb, 0, 1)
+
+
+def agujas(rng, size=32, oscuro=(12, 30, 22), claro=(54, 96, 62)):
+    """Ramas de pino: trazos cortos inclinados hacia abajo sobre verde azulado oscuro."""
+    rgb = tint(fbm(rng, (size, size), base=(4, 4), octaves=2) * 0.4, oscuro, claro)
+    for _ in range(140):
+        y, x = rng.integers(0, size, 2)
+        t = rng.uniform(0.4, 1.0)
+        for k in range(4):
+            rgb[(y + k // 2) % size, (x + k) % size] = tint(np.array(t), oscuro, claro)
+    return np.clip(rgb, 0, 1)
+
+
+def corteza(rng, size=32, oscuro=(30, 22, 16), claro=(98, 76, 56)):
+    """Corteza: surcos verticales profundos."""
+    surcos = fbm(rng, (size, size), base=(2, 8), octaves=3)          # estirado en vertical
+    v = np.clip((surcos - 0.3) * 1.8, 0, 1)
+    rgb = tint(v, oscuro, claro)
+    rgb[np.abs(surcos - 0.5) < 0.03] *= 0.5
+    return np.clip(rgb, 0, 1)
+
+
+def abedul(rng, size=32):
+    """Corteza de abedul: blanca con marcas negras horizontales."""
+    rgb = tint(0.75 + 0.25 * fbm(rng, (size, size), base=(4, 2), octaves=2), (170, 166, 154), (232, 228, 216))
+    for _ in range(9):
+        y = int(rng.integers(0, size))
+        x0, largo = int(rng.integers(0, size)), int(rng.integers(3, 10))
+        for x in range(x0, x0 + largo):
+            rgb[y % size, x % size] = (0.12, 0.11, 0.1)
+            if rng.random() < 0.5:
+                rgb[(y + 1) % size, x % size] = (0.2, 0.18, 0.16)
+    return np.clip(rgb, 0, 1)
+
+
+def tela_roja(rng, size=32):
+    """Tela roja gastada (la estola de la estatua): pliegues verticales."""
+    pliegues = 0.5 + 0.5 * np.sin(np.arange(size) / size * 2 * np.pi * 4)[None, :]
+    v = 0.55 * pliegues + 0.45 * fbm(rng, (size, size), base=(4, 8), octaves=2)
+    return tint(v, (70, 8, 12), (170, 28, 30))
+
+
+def sangre(rng, size=16):
+    """Rojo oscuro y brillante, para las lagrimas de la estatua."""
+    return tint(fbm(rng, (size, size), base=(4, 4), octaves=2), (90, 4, 8), (170, 16, 20))
+
+
 # ---------------------------------------------------------------------------
 # Piezas que no se repiten (puerta, ventanas)
 # ---------------------------------------------------------------------------
@@ -381,6 +573,25 @@ TEXTURAS = {
     "mat_losa": (losas, {}),
     "mat_cripta": (piedra, {"dark": (40, 40, 46), "light": (112, 108, 104), "mortar": (24, 22, 24)}),
     "mat_calaveras": (calaveras, {}),
+    "mat_hueso": (hueso, {}),
+    "mat_cera": (cera, {}),
+    "mat_brillo": (brillo, {}),
+    "mat_piedra_musgo": (piedra_musgo, {}),
+    "mat_sillar_viejo": (sillar_viejo, {}),
+    "mat_marmol": (marmol, {}),
+    "mat_marmol_viejo": (marmol, {"viejo": True}),
+    "mat_lapida": (granito, {}),
+    "mat_granito": (granito, {"oscuro": (52, 52, 56), "claro": (98, 96, 96), "liquen": False,
+                              "musgo": True}),
+    "mat_tela_roja": (tela_roja, {}),
+    "mat_sangre": (sangre, {}),
+    "mat_piedra_gastada": (piedra_gastada, {}),
+    "mat_hojarasca": (hojarasca, {}),
+    "mat_hojas": (hojas, {}),
+    "mat_hojas_claras": (hojas, {"oscuro": (40, 60, 18), "claro": (150, 176, 70)}),
+    "mat_pino": (agujas, {}),
+    "mat_corteza": (corteza, {}),
+    "mat_abedul": (abedul, {}),
 }
 
 

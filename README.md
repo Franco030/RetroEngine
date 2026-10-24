@@ -50,9 +50,11 @@ nuevas). Lo que existe hoy:
 Los assets son **procedurales**, generados con scripts y por tanto se pueden regenerar y retocar;
 no es arte final hecho a mano.
 
-Escenas, conectadas entre sí por portales:
+Escenas, conectadas entre sí por **senderos que se meten en el bosque** (no hay portales: al
+entrar en la espesura un trigger invisible cambia de escena con un fundido, y se llega a la otra
+saliendo de su propio bosque):
 
-- `demo.json`: escena de pruebas (puzle de llave y 3 monedas que abre un portal).
+- `demo.json`: escena de pruebas (puzle de llave y 3 monedas que abre la verja del sendero).
 - `aldea.json`: aldea de día con molino, casas, pozo y aldeanos.
 - `noche.json`: plaza nocturna con fuente, faroles y un sereno.
 - `cementerio.json`: cementerio con capilla, tumbas, cuervos y un sepulturero; con su llave se
@@ -166,7 +168,7 @@ assets/
 tools/                texconv.py, charatlas.py, gen_texturas.py, gen_sprites.py, gen_personajes.py, gen_musica.py,
                       gen_sonidos.py
   blender/            retro_comun.py (piezas y exportador), molino.py, aldea_props.py,
-                      cementerio.py, personajes.py, subterraneo.py (+ tuneles_mapa.py):
+                      cementerio.py, personajes.py, subterraneo.py (+ tuneles_mapa.py), bosque.py:
                       los modelos, por script
 docs/SISTEMA.md       funcionamiento detallado de todos los sistemas
 ```

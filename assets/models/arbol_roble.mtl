@@ -1,0 +1,9 @@
+# RetroEngine: arbol_roble
+
+newmtl mat_corteza
+d 1.000000
+map_Kd ../textures/mat_corteza.png
+
+newmtl mat_hojas
+d 1.000000
+map_Kd ../textures/mat_hojas.png

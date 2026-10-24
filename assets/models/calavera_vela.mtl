@@ -1,0 +1,17 @@
+# RetroEngine: calavera_vela
+
+newmtl mat_brillo
+d 1.000000
+map_Kd ../textures/mat_brillo.png
+
+newmtl mat_cera
+d 1.000000
+map_Kd ../textures/mat_cera.png
+
+newmtl mat_hueso
+d 1.000000
+map_Kd ../textures/mat_hueso.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png

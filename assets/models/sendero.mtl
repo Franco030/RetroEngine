@@ -1,0 +1,9 @@
+# RetroEngine: sendero
+
+newmtl mat_hojarasca
+d 1.000000
+map_Kd ../textures/mat_hojarasca.png
+
+newmtl mat_tierra_suelo
+d 1.000000
+map_Kd ../textures/mat_tierra_suelo.png

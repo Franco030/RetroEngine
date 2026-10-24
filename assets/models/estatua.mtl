@@ -1,9 +1,21 @@
 # RetroEngine: estatua
 
-newmtl mat_cripta
+newmtl mat_marmol
 d 1.000000
-map_Kd ../textures/mat_cripta.png
+map_Kd ../textures/mat_marmol.png
 
 newmtl mat_oscuro
 d 1.000000
 map_Kd ../textures/mat_oscuro.png
+
+newmtl mat_piedra_musgo
+d 1.000000
+map_Kd ../textures/mat_piedra_musgo.png
+
+newmtl mat_sangre
+d 1.000000
+map_Kd ../textures/mat_sangre.png
+
+newmtl mat_tela_roja
+d 1.000000
+map_Kd ../textures/mat_tela_roja.png

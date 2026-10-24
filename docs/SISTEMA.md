@@ -1043,8 +1043,8 @@ en el juego dependen de banderas.
 ### 19.2 Un fotograma del editor
 
 1. Operaciones diferidas del fotograma anterior (duplicar, eliminar).
-2. Menú, *dockspace*, Jerarquía, Inspector, Assets, Mensajes, Visor (que también gestiona el
-   ratón: cámara, gizmo, selección, soltar assets), diálogos, atajos.
+2. Menú, *dockspace*, Jerarquía, Inspector, Assets, Mensajes, Validacion, Visor (que también
+   gestiona el ratón: cámara, gizmo, selección, soltar assets), diálogos, atajos.
 3. `FlushChanges`: si algo cambió, reconstruir la escena **una sola vez**.
 
 ### 19.3 Protocolo de cambios
@@ -1089,9 +1089,10 @@ el de por defecto si falta), lo muestra y, si cambia, lo escribe con el protocol
 para que el JSON no se llene de valores redundantes. Los números se guardan como enteros si lo
 son y, si no, redondeados a 3 decimales.
 
-Los campos de texto se confirman al terminar de escribir (no en cada letra). Los de archivo
-muestran en rojo una ruta que no está en la carpeta de assets y aceptan que se les suelte un
-asset arrastrado.
+Los campos de texto se confirman al terminar de escribir (no en cada letra); pueden ser de
+varias líneas (el texto de los mensajes). Los desplegables de archivo muestran en rojo, con
+"(no existe)", un valor que no está en la lista (un archivo que no está en assets, o una
+entidad que no existe), y aceptan que se les suelte un asset arrastrado.
 
 ### 19.5 Qué se edita
 
@@ -1099,10 +1100,11 @@ asset arrastrado.
   plano, textura y repetición (modelo); posición, rotación (no en sprites), escala, tinte, giro;
   colisión (según la escena / sí / no; una caja personalizada se muestra en solo lectura); luz
   propia (añadir, offset, color, intensidad, radio, quitar); sonido propio (añadir, archivo,
-  offset, volumen, radio, distancia mínima, quitar). El resto de claves (`interact`, `showIf`,
-  `facePlayer`, `idle`...) aparece en "Logica (solo lectura)".
-- **Trigger**: nombre, posición, tamaño, giro, evento, una sola vez, marco y su color. `if` y
-  `do` en solo lectura.
+  offset, volumen, radio, distancia mínima, quitar); "Visible solo si" (`showIf`) e
+  interacción (§19.12). El resto de claves (`facePlayer`, `idle`...) aparece en "Otros (solo
+  lectura)".
+- **Trigger**: nombre, posición, tamaño, giro, evento, una sola vez, marco y su color;
+  condiciones (`if`) y acciones (`do`) (§19.12).
 - **Luz**: posición, color, intensidad, radio (`flicker` se conserva pero no se muestra).
 - **Sonido**: archivo, posición, volumen, radio, distancia mínima.
 - **Escena** (sin nada seleccionado): cámara inicial (con "Usar la vista actual"), inicio del
@@ -1121,7 +1123,8 @@ asset arrastrado.
   (cilindro del jugador con una línea hacia donde mira), niebla, y "animar la escena" (ejecuta
   `spin`, `facePlayer` mirando a la cámara del editor e `idle`; solo en la vista previa, sin
   tocar el JSON).
-- La selección se resalta con su caja en amarillo y su caja de colisión en naranja.
+- La selección se resalta con su caja en amarillo, su caja de colisión en naranja y, si tiene
+  `interact`, su caja de interacción en cian.
 
 **Cámara** (`EditorCamera`): con el botón derecho pulsado se captura el ratón para mirar y se
 vuela con W A S D (Q/E bajar y subir, Mayús ×3, rueda cambia la velocidad entre 0.5 y 100). Sin
@@ -1198,7 +1201,79 @@ en el centro de la vista.
 - **Cambios sin guardar**: abrir, crear, recargar o cerrar con cambios pendientes pregunta
   Guardar / Descartar / Cancelar.
 - La disposición de los paneles se guarda en `retro_editor.ini` junto al ejecutable. "Ver →
-  Restablecer paneles" vuelve a la disposición por defecto.
+  Restablecer paneles" vuelve a la disposición por defecto (hace falta la primera vez que se
+  añade un panel nuevo, como Validacion, para que se ancle abajo).
+
+### 19.12 Editor de lógica (`editor/EditorLogic.cpp`)
+
+Edita en formularios lo descrito en §8–§11, siempre con el protocolo de §19.3: lo que el cargador
+real rechace se revierte y se explica en Mensajes, así que el editor no repite las reglas del
+formato.
+
+**Listas** (acciones y condiciones): cada elemento es un nodo plegable con **Subir**, **Bajar** y
+**Quitar**. Los botones solo apuntan qué hacer; el cambio se aplica al terminar de dibujar la
+lista, porque borrar o mover dentro del bucle dejaría colgando las referencias a los elementos
+que todavía se están dibujando. Cada operación es un paso de deshacer.
+
+**Acciones** (`do` de triggers e interacciones): "+ Anadir accion" crea una de los 8 tipos con
+valores de partida. Cada tipo muestra sus campos:
+
+| Tipo | Campos |
+|---|---|
+| Mensaje | texto de varias líneas (con `{bandera}`), segundos |
+| Fijar / Sumar a bandera | nombre, valor o cantidad |
+| Cambiar de escena | escena (desplegable de `scenes/`), punto de llegada opcional (posición y giro) |
+| Teletransportar | destino, giro opcional |
+| Sonido | archivo, volumen, dónde suena ("en la cabeza", en un punto o en una entidad) y, si tiene posición, radio y distancia mínima |
+| Música | archivo, volumen, fundido |
+| Parar música | fundido |
+
+Una acción con una clave que no se reconoce se muestra en solo lectura.
+
+**Condiciones** (`if` de triggers e interacciones, `showIf` de entidades): admite los tres
+formatos del cargador. Sin clave = "siempre se cumple"; un objeto = una condición; un arreglo =
+"deben cumplirse todas". Al añadir una segunda condición a una que estaba sola se convierte en
+arreglo, y al quitar la última se borra la clave. Cada nodo tiene un desplegable **Tipo**:
+
+- **Bandera**: nombre, comparación (`==` por defecto, que no se escribe), valor.
+- **Todas se cumplen (Y)** / **Alguna se cumple (O)**: lista de hijos. El último hijo no se puede
+  quitar (un grupo vacío no es válido); se quita el grupo entero.
+- **No se cumple**: un único hijo.
+
+Cambiar el tipo conserva lo que puede: de "todas" a "alguna" mantiene los hijos, una bandera se
+envuelve en el grupo o en el "no", un "no" que pasa a grupo se lleva su hijo, y un grupo que pasa
+a "no" se queda con el primero. A partir del nivel 8 de anidación solo se ofrecen banderas (el
+límite del cargador). El reemplazo del nodo se aplica al final de dibujarlo, cuando ya nadie usa
+sus hijos.
+
+**Interacción** (`interact` de una entidad): "Anadir interaccion" la crea con el texto
+"Interactuar" y un mensaje (el cargador exige al menos una acción, por eso la última acción no se
+puede quitar). Se editan el texto tras "E:", el alcance, "una sola vez", la **caja propia**
+(al marcarla empieza con el tamaño del modelo o del sprite; sin ella se usa la caja de colisión o
+la del modelo), las condiciones y las acciones.
+
+### 19.13 Panel Validacion (`editor/EditorValidation.cpp`)
+
+Busca lo que el cargador **acepta** pero fallará o no tendrá efecto al jugar. No impide guardar:
+a mitad de construir una escena es normal tener cosas a medias.
+
+| Gravedad | Qué detecta |
+|---|---|
+| Error | `goto_scene` a una escena que no existe; `play_sound` en una entidad (`"at": "nombre"`) que no existe. |
+| Aviso | `play_sound` o `play_music` con un archivo que no existe; una bandera que se **consulta** (en condiciones o en `{bandera}` de un mensaje) pero que **ninguna escena** cambia, así que siempre vale 0. |
+| Info | Un trigger sin acciones; una bandera que se cambia pero que ninguna escena consulta. |
+
+Las banderas se comparan con **todas** las escenas de `assets/scenes/`: la llave puede
+recogerse en una escena y usarse en otra. La escena abierta se analiza tal como está en el
+editor (también sin guardar); las demás, como están en el disco.
+
+Cada problema dice dónde está ("Trigger 'puerta': ..."). Un clic lo **selecciona y lo enfoca**.
+El título muestra el número de errores y avisos.
+
+El análisis se repite solo cuando el documento cambia (un contador `docRevision_` sube en cada
+cambio aceptado, al deshacer y al abrir) y **no mientras se arrastra** un valor o el gizmo, para
+no leer las demás escenas en cada fotograma. "Volver a comprobar" lo fuerza, por ejemplo después
+de añadir un sonido a la carpeta.
 
 ---
 
@@ -1265,6 +1340,8 @@ línea de los ojos para ajustar el `--box`.
   inexistentes, problemas al guardar o cargar.
 - **El panel Mensajes** del editor: por qué se descartó un cambio, avisos al borrar, assets que
   no cargan.
+- **El panel Validacion** del editor: escenas, sonidos o entidades que una acción nombra y no
+  existen, y banderas que se consultan pero nadie cambia (§19.13).
 - **Si todo se ve "moderno"** (sin temblor ni trama): probablemente una tecla de depuración
   (1, 2, 3 o 5) está activa. Un shader que falta o no compila no pasa en silencio: el motor no
   arranca y la consola dice cuál.

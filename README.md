@@ -31,8 +31,8 @@ texturas, arrastrar modelos, editar las propiedades de cada objeto y la lógica 
 
 ## Estado actual
 
-El proyecto avanza por **hitos numerados**. El último entregado es el **Hito 25** (editor de
-escenas). Lo que existe hoy:
+El proyecto avanza por **hitos numerados**. El último entregado es el **Hito 26** (editor de
+lógica), que sigue al 25 (editor de escenas). Lo que existe hoy:
 
 | Área | Qué hay |
 |---|---|
@@ -42,7 +42,7 @@ escenas). Lo que existe hoy:
 | Lógica | Triggers (zonas) con eventos `enter`/`exit`/`stay`, banderas, condiciones anidadas (`all`/`any`/`not`), interacción con **E**, visibilidad condicional (`showIf`), cambio de escena con fundido. |
 | Audio | Música y ambiente con fundido cruzado, efectos (también posicionales), emisores en bucle con atenuación y paneo, pasos. |
 | Guardado | Ranuras en `%APPDATA%/RetroEngine/saves`, escritura atómica con copia `.bak`, autoguardado. |
-| Editor | Visor 3D con cámara libre, vista PS1 opcional, selección por clic, gizmo de mover, jerarquía, inspector, panel de assets con arrastrar y soltar, deshacer/rehacer, guardar/abrir/crear escenas. |
+| Editor | Visor 3D con cámara libre, vista PS1 opcional, selección por clic, gizmo de mover, jerarquía, inspector, panel de assets con arrastrar y soltar, deshacer/rehacer, guardar/abrir/crear escenas. Editor de lógica: acciones, condiciones, interacciones y `showIf` en formularios, y un panel de validación que avisa de referencias rotas y banderas sospechosas. |
 | Herramientas | `tools/texconv.py` (imagen a textura PS1) y `tools/charatlas.py` (foto de cara a atlas de personaje). |
 
 Los assets actuales (modelos, texturas, audio) son **de relleno**, generados con scripts. No es
@@ -143,7 +143,9 @@ src/
   audio/              AudioSystem, Emitter, Footsteps
   game/               GameState (banderas y mensajes), SaveStorage, SaveGame
   ui/                 Ui: texto y rectángulos sobre la imagen final
-editor/               RetroEditor: EditorApp, EditorCamera, AssetCatalog, JsonUtil, JsonFormat
+editor/               RetroEditor: EditorApp, EditorLogic (acciones, condiciones, interacción),
+                      EditorValidation (panel Validacion), EditorCamera, AssetCatalog,
+                      JsonUtil, JsonFormat
 assets/
   scenes/             demo.json, noche.json, aldea.json
   shaders/            retro.vs, retro.fs, retro_unlit.fs, retro_sprite.fs, post.fs
@@ -265,6 +267,8 @@ post-proceso y dibujar la interfaz encima. El detalle está en
 | **Deshacer por instantáneas del documento** | Trivialmente correcto para cualquier cambio. Los cambios continuos (arrastrar) se funden en una sola entrada. |
 | **Operaciones estructurales diferidas al siguiente fotograma** | Insertar o borrar en un arreglo invalida los punteros que los widgets están usando ese fotograma. |
 | **El editor muestra todo visible** | Para poder colocar objetos que en el juego dependen de banderas (`showIf`). |
+| **La lógica se edita con el mismo protocolo que el resto** | Acciones y condiciones son JSON como cualquier otro campo: si un cambio deja la escena inválida (por ejemplo, un grupo de condiciones vacío), el cargador real lo rechaza y se revierte. No hace falta duplicar las reglas del formato en el editor. |
+| **Validación en un panel aparte, sin bloquear** | Lo que el cargador acepta pero fallará al jugar (una escena de destino que no existe, una bandera que nadie cambia) se avisa, no se impide: a mitad de construir una escena es normal tener cosas a medias. Las banderas se comparan con **todas** las escenas, porque una llave se puede recoger en otra. |
 | **El editor edita `assets/` de origen** | Lo guardado va al repositorio, no a la copia de `build/`, que se sobrescribe al compilar. |
 
 ### Código
@@ -285,21 +289,20 @@ Un motor para un juego de exploración en primera persona con aspecto PS1: varia
 conectadas por triggers, puzles simples con banderas (llaves, monedas, puertas), mensajes en
 pantalla, interacción con **E**, personajes que te miran, luces de color con parpadeo, audio
 posicional, partidas guardadas, y un editor para construir y modificar las escenas (colocar,
-mover, texturizar, configurar) sin tocar el JSON.
+mover, texturizar, configurar) y su lógica (triggers, condiciones, interacciones) sin tocar el
+JSON.
 
 ### Lo que el editor **todavía no** edita
 
 Se muestra en solo lectura y se conserva intacto al guardar:
 
-- `if` y `do` de los triggers, `interact`, `showIf`, `facePlayer`, `idle`, `collider`
-  personalizado (`{min, max}`).
+- `facePlayer`, `idle` y el `collider` personalizado (`{min, max}`).
 - El bloque `audio` de la escena (música, ambiente, pasos) y el parpadeo (`flicker`,
   `flickerRate`) de las luces.
 - Cualquier clave desconocida.
 
 Además el editor no tiene selección múltiple, copiar y pegar entre escenas, gizmos de rotación o
-escala, reordenar la jerarquía, vista previa de audio, "jugar en el editor" ni panel de
-validación.
+escala, reordenar la jerarquía, vista previa de audio ni "jugar en el editor".
 
 ### Fuera de alcance (el "techo" del motor)
 
@@ -325,7 +328,8 @@ Encontrados al revisar el código (no todos verificados en ejecución):
 - **Los pasos son por escena, no por superficie**: cada escena define una lista de sonidos de
   paso.
 - **Referencias por nombre frágiles**: renombrar o borrar una entidad no actualiza las acciones
-  que la nombran (al borrar, el editor solo avisa).
+  que la nombran. El editor avisa al borrar y el panel Validacion marca la referencia rota, pero
+  no la arregla.
 - **Dependencias sin fijar**: ImGui (`docking`) y rlImGui (`main`) siguen ramas.
 - El título de la ventana del juego todavía dice "Hito 16", y `main.cpp` solo conoce
   `scenes/demo.json` al empezar (las demás se añaden al visitarlas).
@@ -336,12 +340,14 @@ Encontrados al revisar el código (no todos verificados en ejecución):
 
 Orden sugerido:
 
-1. **Editor de lógica**: formularios para acciones, condiciones, interacciones y `showIf`, más un
-   panel de validación (referencias rotas, nombres duplicados).
+1. ~~Editor de lógica y panel de validación~~ (Hito 26, hecho).
 2. Copiar y pegar, selección múltiple, gizmos de rotación y escala, ajuste configurable.
 3. "Jugar" dentro del editor y recarga en caliente.
 4. Menú principal y pausa, NPCs con rutas simples, *blob shadows*, más tipos de acción.
 5. Empaquetado del juego (ejecutable + assets) y fijar las dependencias.
+
+Pendientes pequeños del editor: `facePlayer`, `idle`, la caja de colisión personalizada, el
+bloque `audio` de la escena y el parpadeo de las luces.
 
 ---
 

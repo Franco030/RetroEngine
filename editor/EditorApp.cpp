@@ -1,4 +1,5 @@
 #include "EditorApp.hpp"
+#include "EditorTheme.hpp"
 
 #include "game/SaveStorage.hpp"
 #include "graphics/DebugDraw.hpp"
@@ -27,8 +28,8 @@ namespace {
 
 namespace fs = std::filesystem;
 
-const ImVec4 kAccent(0.45f, 0.75f, 1.0f, 1.0f);
-const ImVec4 kError(1.0f, 0.45f, 0.45f, 1.0f);
+const ImVec4& kAccent = theme::kAccent;
+const ImVec4& kError = theme::kError;
 
 constexpr std::size_t kMaxUndo = 200;
 
@@ -64,14 +65,34 @@ const char* KindTitle(SelectionKind kind) {
   return "";
 }
 
-std::string ItemLabel(SelectionKind kind, int index, const Json& item) {
+const char* KindIcon(SelectionKind kind) {
+  switch (kind) {
+  case SelectionKind::Entity:
+    return ICON_FA_CUBE;
+  case SelectionKind::Trigger:
+    return ICON_FA_VECTOR_SQUARE;
+  case SelectionKind::Light:
+    return ICON_FA_LIGHTBULB;
+  case SelectionKind::Emitter:
+    return ICON_FA_VOLUME_HIGH;
+  case SelectionKind::None:
+    break;
+  }
+  return ICON_FA_GEAR;
+}
+
+const char* ItemIcon(SelectionKind kind, const Json& item) {
+  if (kind == SelectionKind::Entity && item.is_object() && item.contains("sprite"))
+    return ICON_FA_IMAGE;
+  return KindIcon(kind);
+}
+
+// Nombre en texto plano (sin iconos): para la jerarquia, el filtro y la barra de estado.
+std::string ItemName(SelectionKind kind, int index, const Json& item) {
   switch (kind) {
   case SelectionKind::Entity: {
     const std::string name = ReadString(&item, "name");
-    const bool sprite = item.is_object() && item.contains("sprite");
-    const bool hidden = ReadBool(&item, "visible", true) == false;
-    return std::string(sprite ? "[sprite] " : "[modelo] ") +
-           (name.empty() ? "entidad " + std::to_string(index) : name) + (hidden ? " (oculta)" : "");
+    return name.empty() ? "entidad " + std::to_string(index) : name;
   }
   case SelectionKind::Trigger: {
     const std::string name = ReadString(&item, "name");
@@ -87,6 +108,33 @@ std::string ItemLabel(SelectionKind kind, int index, const Json& item) {
     break;
   }
   return {};
+}
+
+// Icono, nombre y marcas: oculta, visible con condiciones, interactuable, trigger con marco.
+std::string ItemLabel(SelectionKind kind, int index, const Json& item) {
+  std::string label = std::string(ItemIcon(kind, item)) + "  " + ItemName(kind, index, item);
+  if (!item.is_object())
+    return label;
+  if (ReadBool(&item, "visible", true) == false)
+    label += "  " ICON_FA_EYE_SLASH;
+  if (item.contains("showIf"))
+    label += "  " ICON_FA_CODE_BRANCH;
+  if (item.contains("interact"))
+    label += "  " ICON_FA_HAND_POINTER;
+  if (kind == SelectionKind::Trigger && ReadBool(&item, "marker", false))
+    label += "  " ICON_FA_DOOR_OPEN;
+  return label;
+}
+
+bool ContainsNoCase(const std::string& text, const std::string& needle) {
+  if (needle.empty())
+    return true;
+  const auto it = std::search(text.begin(), text.end(), needle.begin(), needle.end(),
+                              [](char a, char b) {
+                                return std::tolower(static_cast<unsigned char>(a)) ==
+                                       std::tolower(static_cast<unsigned char>(b));
+                              });
+  return it != text.end();
 }
 
 void ShowJsonValue(const std::string& label, const Json& v) {
@@ -169,13 +217,18 @@ std::string Sanitize(const std::string& s) {
 // Ciclo de vida
 // ---------------------------------------------------------------------------
 EditorApp::EditorApp(retro::RetroEngine& engine) : engine_(engine) {
+  // La fuente se carga en un callback porque rlImGui la necesita en medio de su inicializacion.
+  rlImGuiSetLoadFontsCallback(theme::LoadFonts);
   rlImGuiSetup(true);
+  theme::Apply();
 
   ImGuiIO& io = ImGui::GetIO();
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
   io.ConfigWindowsMoveFromTitleBarOnly = true;
 
-  iniPath_ = std::string(GetApplicationDirectory()) + "retro_editor.ini";
+  // Los paneles llevan icono en el titulo (cambia su ID): un archivo de disposicion nuevo hace
+  // que la primera vez se construya la disposicion por defecto.
+  iniPath_ = std::string(GetApplicationDirectory()) + "retro_editor_layout.ini";
   io.IniFilename = iniPath_.c_str();
   layoutPending_ = !FileExists(iniPath_.c_str());
 
@@ -202,7 +255,7 @@ void EditorApp::Run() {
       RequestQuit();
 
     BeginDrawing();
-    ClearBackground({30, 30, 34, 255});
+    ClearBackground({theme::kClear[0], theme::kClear[1], theme::kClear[2], theme::kClear[3]});
     rlImGuiBegin();
     DrawUi();
     rlImGuiEnd();
@@ -938,6 +991,7 @@ void EditorApp::DrawUi() {
   ExecuteDeferred();
 
   DrawMenuBar();
+  DrawStatusBar(); // antes del dockspace: le quita su franja al area de los paneles
 
   const ImGuiID dock = ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
   if (layoutPending_) {
@@ -995,9 +1049,9 @@ void EditorApp::DrawMenuBar() {
   const bool hasScene = !scenePath_.empty();
 
   if (ImGui::BeginMenu("Archivo")) {
-    if (ImGui::MenuItem("Nueva escena..."))
+    if (ImGui::MenuItem(ICON_FA_FILE_CIRCLE_PLUS "  Nueva escena..."))
       RequestNewScene();
-    if (ImGui::BeginMenu("Abrir escena")) {
+    if (ImGui::BeginMenu(ICON_FA_FOLDER_OPEN "  Abrir escena")) {
       RefreshSceneList();
       for (const std::string& s : sceneList_) {
         if (ImGui::MenuItem(s.c_str(), nullptr, s == scenePath_))
@@ -1006,28 +1060,28 @@ void EditorApp::DrawMenuBar() {
       ImGui::EndMenu();
     }
     ImGui::Separator();
-    if (ImGui::MenuItem("Guardar", "Ctrl+S", false, hasScene))
+    if (ImGui::MenuItem(ICON_FA_FLOPPY_DISK "  Guardar", "Ctrl+S", false, hasScene))
       Save();
-    if (ImGui::MenuItem("Recargar desde el disco", "F5", false, hasScene))
+    if (ImGui::MenuItem(ICON_FA_ARROWS_ROTATE "  Recargar desde el disco", "F5", false, hasScene))
       RequestOpen(scenePath_);
     ImGui::Separator();
-    if (ImGui::MenuItem("Salir"))
+    if (ImGui::MenuItem(ICON_FA_DOOR_OPEN "  Salir"))
       RequestQuit();
     ImGui::EndMenu();
   }
 
   if (ImGui::BeginMenu("Editar")) {
-    if (ImGui::MenuItem("Deshacer", "Ctrl+Z", false, !undo_.empty()))
+    if (ImGui::MenuItem(ICON_FA_ROTATE_LEFT "  Deshacer", "Ctrl+Z", false, !undo_.empty()))
       Undo();
-    if (ImGui::MenuItem("Rehacer", "Ctrl+Y", false, !redo_.empty()))
+    if (ImGui::MenuItem(ICON_FA_ROTATE_RIGHT "  Rehacer", "Ctrl+Y", false, !redo_.empty()))
       Redo();
     ImGui::Separator();
     const bool selected = SelectedJson() != nullptr;
-    if (ImGui::MenuItem("Duplicar", "Ctrl+D", false, selected))
+    if (ImGui::MenuItem(ICON_FA_CLONE "  Duplicar", "Ctrl+D", false, selected))
       deferred_ = Deferred::Duplicate;
-    if (ImGui::MenuItem("Eliminar", "Supr", false, selected))
+    if (ImGui::MenuItem(ICON_FA_TRASH "  Eliminar", "Supr", false, selected))
       deferred_ = Deferred::Delete;
-    if (ImGui::MenuItem("Enfocar", "F", false, selected))
+    if (ImGui::MenuItem(ICON_FA_CROSSHAIRS "  Enfocar", "F", false, selected))
       FocusSelection();
     ImGui::EndMenu();
   }
@@ -1085,33 +1139,104 @@ void EditorApp::BuildDefaultLayout(ImGuiID dock) {
   ImGui::DockBuilderSplitNode(rest, ImGuiDir_Right, 0.27f, &right, &center);
   ImGui::DockBuilderSplitNode(center, ImGuiDir_Down, 0.25f, &bottom, &view);
 
-  ImGui::DockBuilderDockWindow("Jerarquia", left);
-  ImGui::DockBuilderDockWindow("Inspector", right);
-  ImGui::DockBuilderDockWindow("Visor", view);
-  ImGui::DockBuilderDockWindow("Assets", bottom);
-  ImGui::DockBuilderDockWindow("Mensajes", bottom);
+  // Los titulos llevan icono; lo que va tras "###" es el ID fijo de cada panel.
+  ImGui::DockBuilderDockWindow("###Jerarquia", left);
+  ImGui::DockBuilderDockWindow("###Inspector", right);
+  ImGui::DockBuilderDockWindow("###Visor", view);
+  ImGui::DockBuilderDockWindow("###Assets", bottom);
+  ImGui::DockBuilderDockWindow("###Mensajes", bottom);
   ImGui::DockBuilderDockWindow("###Validacion", bottom);
   ImGui::DockBuilderFinish(dock);
+}
+
+// ---------------------------------------------------------------------------
+// Barra de estado (abajo del todo)
+// ---------------------------------------------------------------------------
+void EditorApp::DrawStatusBar() {
+  const ImGuiWindowFlags flags =
+      ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
+  const float height = ImGui::GetFrameHeight();
+  if (ImGui::BeginViewportSideBar("##barra_estado", ImGui::GetMainViewport(), ImGuiDir_Down, height,
+                                  flags)) {
+    if (ImGui::BeginMenuBar()) {
+      // Escena y si hay cambios sin guardar.
+      if (scenePath_.empty()) {
+        ImGui::TextDisabled(ICON_FA_FILE "  Sin escena");
+      } else {
+        ImGui::Text(ICON_FA_FILE "  %s", scenePath_.c_str());
+        ImGui::SameLine();
+        if (dirty_)
+          ImGui::TextColored(theme::kWarning, ICON_FA_CIRCLE "  Sin guardar");
+        else
+          ImGui::TextColored(theme::kSuccess, ICON_FA_CIRCLE_CHECK "  Guardado");
+      }
+      theme::ToolSeparator();
+
+      // Seleccion.
+      if (const Json* item = SelectedJson()) {
+        ImGui::Text("%s  %s: %s", ItemIcon(selection_.kind, *item), KindTitle(selection_.kind),
+                    ItemName(selection_.kind, selection_.index, *item).c_str());
+      } else {
+        ImGui::TextDisabled("Nada seleccionado");
+      }
+      theme::ToolSeparator();
+
+      // Resumen de la validacion (de la ultima vez que se analizo).
+      int errors = 0;
+      int warnings = 0;
+      for (const Issue& issue : issues_) {
+        errors += issue.severity == Severity::Error ? 1 : 0;
+        warnings += issue.severity == Severity::Warning ? 1 : 0;
+      }
+      if (errors + warnings == 0) {
+        ImGui::TextColored(theme::kSuccess, ICON_FA_CIRCLE_CHECK "  Sin problemas");
+      } else {
+        ImGui::TextColored(errors > 0 ? theme::kError : theme::kWarning,
+                           ICON_FA_TRIANGLE_EXCLAMATION "  %d errores, %d avisos", errors,
+                           warnings);
+      }
+
+      // FPS pegado a la derecha.
+      const std::string fps = std::to_string(GetFPS()) + " FPS";
+      const float width = ImGui::CalcTextSize(fps.c_str()).x;
+      ImGui::SameLine(ImGui::GetWindowWidth() - width - ImGui::GetStyle().WindowPadding.x * 2.0f);
+      ImGui::TextDisabled("%s", fps.c_str());
+      ImGui::EndMenuBar();
+    }
+  }
+  ImGui::End();
 }
 
 // ---------------------------------------------------------------------------
 // Jerarquia
 // ---------------------------------------------------------------------------
 void EditorApp::DrawHierarchy() {
-  if (!ImGui::Begin("Jerarquia")) {
+  if (!ImGui::Begin(ICON_FA_LAYER_GROUP "  Jerarquia###Jerarquia")) {
     ImGui::End();
     return;
   }
 
-  ImGui::TextColored(kAccent, "%s%s", scenePath_.empty() ? "(sin escena)" : scenePath_.c_str(),
-                     dirty_ ? " *" : "");
-  if (ImGui::Button("+ Anadir"))
+  // Buscador y boton de anadir en la misma linea.
+  const float addWidth = ImGui::CalcTextSize(ICON_FA_PLUS "  Anadir").x +
+                         ImGui::GetStyle().FramePadding.x * 2.0f;
+  ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - addWidth -
+                          ImGui::GetStyle().ItemSpacing.x);
+  ImGui::InputTextWithHint("##buscar", ICON_FA_MAGNIFYING_GLASS "  Buscar", filter_,
+                           sizeof filter_);
+  ImGui::SameLine();
+  ImGui::BeginDisabled(scenePath_.empty());
+  if (ImGui::Button(ICON_FA_PLUS "  Anadir"))
     ImGui::OpenPopup("anadir_popup");
+  ImGui::EndDisabled();
   if (ImGui::BeginPopup("anadir_popup")) {
     DrawAddItems();
     ImGui::EndPopup();
   }
-  ImGui::Separator();
+  ImGui::Spacing();
+
+  const std::string filter = filter_;
+  const bool filtering = !filter.empty();
+  std::size_t matches = 0;
 
   struct Section {
     const char* title;
@@ -1129,33 +1254,62 @@ void EditorApp::DrawHierarchy() {
                             : nullptr;
     const int count = array ? static_cast<int>(array->size()) : 0;
 
-    // "###clave": el estado abierto/cerrado no se pierde cuando cambia el contador del titulo.
-    const std::string header = std::string(s.title) + " (" + std::to_string(count) + ")###" + s.key;
-    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (!ImGui::CollapsingHeader(header.c_str()))
+    // Que elementos se ven: todos, o los que contienen el texto buscado.
+    std::vector<int> visible;
+    for (int i = 0; i < count; ++i) {
+      if (ContainsNoCase(ItemName(s.kind, i, (*array)[static_cast<std::size_t>(i)]), filter))
+        visible.push_back(i);
+    }
+    matches += visible.size();
+    if (filtering && visible.empty())
       continue;
 
+    // "###clave": el estado abierto/cerrado no se pierde cuando cambia el contador del titulo.
+    // Las cabeceras usan un gris neutro: el acento queda solo para lo seleccionado.
+    const std::string header = std::string(KindIcon(s.kind)) + "  " + s.title + "  (" +
+                               std::to_string(filtering ? visible.size() : count) + ")###" + s.key;
+    ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.0f, 1.0f, 1.0f, 0.04f));
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(1.0f, 1.0f, 1.0f, 0.10f));
+    if (filtering)
+      ImGui::SetNextItemOpen(true);
+    else
+      ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+    const bool open = ImGui::CollapsingHeader(header.c_str());
+    ImGui::PopStyleColor(2);
+    if (!open)
+      continue;
+
+    if (count == 0)
+      ImGui::TextDisabled("    (vacio)");
+
     ImGui::PushID(s.key);
-    for (int i = 0; i < count; ++i) {
+    for (int i : visible) {
       const bool selected = selection_.kind == s.kind && selection_.index == i;
       const std::string label =
           ItemLabel(s.kind, i, (*array)[static_cast<std::size_t>(i)]) + "##" + std::to_string(i);
+      ImGui::Indent(6.0f);
       if (ImGui::Selectable(label.c_str(), selected))
         selection_ = {s.kind, i};
+      if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+        FocusSelection();
+      ImGui::Unindent(6.0f);
 
       if (ImGui::BeginPopupContextItem()) {
         selection_ = {s.kind, i};
-        if (ImGui::MenuItem("Duplicar", "Ctrl+D"))
+        if (ImGui::MenuItem(ICON_FA_CLONE "  Duplicar", "Ctrl+D"))
           deferred_ = Deferred::Duplicate;
-        if (ImGui::MenuItem("Eliminar", "Supr"))
+        if (ImGui::MenuItem(ICON_FA_TRASH "  Eliminar", "Supr"))
           deferred_ = Deferred::Delete;
-        if (ImGui::MenuItem("Enfocar", "F"))
+        if (ImGui::MenuItem(ICON_FA_CROSSHAIRS "  Enfocar", "F"))
           FocusSelection();
         ImGui::EndPopup();
       }
     }
     ImGui::PopID();
   }
+
+  if (filtering && matches == 0)
+    ImGui::TextDisabled("Nada coincide con \"%s\"", filter.c_str());
 
   if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(0) && !ImGui::IsAnyItemHovered()) {
     selection_ = {};
@@ -1167,25 +1321,33 @@ void EditorApp::DrawHierarchy() {
 // Inspector
 // ---------------------------------------------------------------------------
 void EditorApp::DrawInspector() {
-  if (!ImGui::Begin("Inspector")) {
+  if (!ImGui::Begin(ICON_FA_SLIDERS "  Inspector###Inspector")) {
     ImGui::End();
     return;
   }
-  ImGui::PushItemWidth(-125.0f);
+  // Las etiquetas van a la derecha de cada campo; se les reserva el 40 % del ancho.
+  ImGui::PushItemWidth(-std::max(110.0f, ImGui::GetContentRegionAvail().x * 0.40f));
 
   if (Json* item = SelectedJsonMut()) {
     ImGui::PushID(static_cast<int>(selection_.kind) * 100000 + selection_.index);
 
-    ImGui::TextColored(kAccent, "%s", KindTitle(selection_.kind));
-    ImGui::SameLine();
-    if (ImGui::SmallButton("Duplicar"))
+    // Cabecera: icono y tipo en acento, el nombre en grande y las acciones a la derecha.
+    ImGui::TextColored(kAccent, "%s  %s", ItemIcon(selection_.kind, *item),
+                       KindTitle(selection_.kind));
+    const float buttons = ImGui::GetFrameHeight() * 3.0f + ImGui::GetStyle().ItemSpacing.x * 2.0f;
+    ImGui::SameLine(ImGui::GetContentRegionMax().x - buttons);
+    if (theme::IconButton(ICON_FA_CLONE, "Duplicar (Ctrl+D)"))
       deferred_ = Deferred::Duplicate;
     ImGui::SameLine();
-    if (ImGui::SmallButton("Eliminar"))
-      deferred_ = Deferred::Delete;
-    ImGui::SameLine();
-    if (ImGui::SmallButton("Enfocar"))
+    if (theme::IconButton(ICON_FA_CROSSHAIRS, "Enfocar (F)"))
       FocusSelection();
+    ImGui::SameLine();
+    if (theme::IconButton(ICON_FA_TRASH, "Eliminar (Supr)"))
+      deferred_ = Deferred::Delete;
+
+    ImGui::PushFont(nullptr, ImGui::GetStyle().FontSizeBase * 1.25f);
+    ImGui::TextUnformatted(ItemName(selection_.kind, selection_.index, *item).c_str());
+    ImGui::PopFont();
     ImGui::Separator();
 
     switch (selection_.kind) {
@@ -1208,7 +1370,7 @@ void EditorApp::DrawInspector() {
   } else if (doc_.is_object()) {
     InspectScene();
   } else {
-    ImGui::TextDisabled("Abre una escena desde el menu Archivo");
+    ImGui::TextDisabled(ICON_FA_FOLDER_OPEN "  Abre una escena desde el menu Archivo");
   }
 
   ImGui::PopItemWidth();
@@ -1221,37 +1383,38 @@ void EditorApp::InspectEntity(Json& e) {
   FieldText("Nombre", e, nullptr, "name");
   FieldBool("Visible", e, nullptr, "visible", true);
 
-  ImGui::SeparatorText(sprite ? "Sprite" : "Modelo");
-  if (sprite) {
-    FieldFile("Imagen", e, nullptr, "sprite", assets_.textures, false, true);
-    FieldVec2("Tamano", e, nullptr, "size", {1.0f, 2.0f}, 0.05f, false);
-    FieldBool("Emisivo", e, nullptr, "emissive", false);
-  } else {
-    if (e.contains("model") && e.at("model").is_object()) {
-      ImGui::TextDisabled("Modelo primitivo: %s", ReadString(&e.at("model"), "type").c_str());
-      FieldFloat("Tamano", e, "model", "size", 10.0f, 0.1f, 0.1f, 1000.0f, false);
-      FieldInt("Subdivisiones", e, "model", "subdivisions", 1, 1, 256, false);
-      FieldFloat("Repeticiones", e, "model", "tiles", 1.0f, 0.1f, 0.1f, 1000.0f, false);
+  if (theme::Section(sprite ? ICON_FA_IMAGE "  Sprite" : ICON_FA_CUBE "  Modelo")) {
+    if (sprite) {
+      FieldFile("Imagen", e, nullptr, "sprite", assets_.textures, false, true);
+      FieldVec2("Tamano", e, nullptr, "size", {1.0f, 2.0f}, 0.05f, false);
+      FieldBool("Emisivo", e, nullptr, "emissive", false);
     } else {
-      FieldFile("Modelo", e, nullptr, "model", assets_.models, false, false);
-    }
-    FieldFile("Textura", e, nullptr, "texture", assets_.textures, true, true);
-    if (e.contains("texture")) {
-      FieldChoice("Repeticion", e, nullptr, "wrap", {"repeat", "clamp", "mirror"}, "");
+      if (e.contains("model") && e.at("model").is_object()) {
+        ImGui::TextDisabled("Modelo primitivo: %s", ReadString(&e.at("model"), "type").c_str());
+        FieldFloat("Tamano", e, "model", "size", 10.0f, 0.1f, 0.1f, 1000.0f, false);
+        FieldInt("Subdivisiones", e, "model", "subdivisions", 1, 1, 256, false);
+        FieldFloat("Repeticiones", e, "model", "tiles", 1.0f, 0.1f, 0.1f, 1000.0f, false);
+      } else {
+        FieldFile("Modelo", e, nullptr, "model", assets_.models, false, false);
+      }
+      FieldFile("Textura", e, nullptr, "texture", assets_.textures, true, true);
+      if (e.contains("texture")) {
+        FieldChoice("Repeticion", e, nullptr, "wrap", {"repeat", "clamp", "mirror"}, "");
+      }
     }
   }
 
-  ImGui::SeparatorText("Transformacion");
-  FieldVec3("Posicion", e, nullptr, "position", {0.0f, 0.0f, 0.0f}, 0.05f);
-  if (!sprite)
-    FieldVec3("Rotacion", e, nullptr, "rotation", {0.0f, 0.0f, 0.0f}, 0.5f);
-  FieldVec3("Escala", e, nullptr, "scale", {1.0f, 1.0f, 1.0f}, 0.01f);
-  FieldColor("Tinte", e, nullptr, "tint", WHITE, false);
-  if (!sprite)
-    FieldVec3("Giro (grados/s)", e, nullptr, "spin", {0.0f, 0.0f, 0.0f}, 0.5f);
+  if (theme::Section(ICON_FA_UP_DOWN_LEFT_RIGHT "  Transformacion")) {
+    FieldVec3("Posicion", e, nullptr, "position", {0.0f, 0.0f, 0.0f}, 0.05f);
+    if (!sprite)
+      FieldVec3("Rotacion", e, nullptr, "rotation", {0.0f, 0.0f, 0.0f}, 0.5f);
+    FieldVec3("Escala", e, nullptr, "scale", {1.0f, 1.0f, 1.0f}, 0.01f);
+    FieldColor("Tinte", e, nullptr, "tint", WHITE, false);
+    if (!sprite)
+      FieldVec3("Giro (grados/s)", e, nullptr, "spin", {0.0f, 0.0f, 0.0f}, 0.5f);
+  }
 
-  ImGui::SeparatorText("Colision");
-  {
+  if (theme::Section(ICON_FA_BORDER_ALL "  Colision")) {
     const Json* c = e.contains("collider") ? &e.at("collider") : nullptr;
     const int mode = !c ? 0 : (c->is_boolean() ? (c->get<bool>() ? 1 : 2) : 3);
     if (mode == 3) {
@@ -1271,58 +1434,65 @@ void EditorApp::InspectEntity(Json& e) {
     }
   }
 
-  ImGui::SeparatorText("Luz propia");
-  if (!e.contains("light") || !e.at("light").is_object()) {
-    if (ImGui::Button("Anadir luz")) {
-      BeginChange(0);
-      e["light"] = Json::object({{"offset", Vec3Json({0.0f, 2.0f, 0.0f})},
-                                 {"color", Json::array({255, 200, 120})},
-                                 {"radius", 8},
-                                 {"intensity", 1}});
-      MarkChanged(0);
-    }
-  } else {
-    FieldVec3("Desplazamiento", e, "light", "offset", {0.0f, 0.0f, 0.0f}, 0.05f, false);
-    FieldColor("Color", e, "light", "color", WHITE, false);
-    FieldFloat("Intensidad", e, "light", "intensity", 1.0f, 0.01f, 0.0f, 10.0f, false);
-    FieldFloat("Radio", e, "light", "radius", 8.0f, 0.1f, 0.1f, 100.0f, false);
-    if (ImGui::Button("Quitar luz")) {
-      BeginChange(0);
-      e.erase("light");
-      MarkChanged(0);
-    }
-  }
-
-  ImGui::SeparatorText("Sonido propio");
-  if (!e.contains("sound") || !e.at("sound").is_object()) {
-    ImGui::BeginDisabled(assets_.sounds.empty());
-    if (ImGui::Button("Anadir sonido")) {
-      BeginChange(0);
-      e["sound"] = Json::object({{"file", assets_.sounds.front()}, {"volume", 1}, {"radius", 10}});
-      MarkChanged(0);
-    }
-    ImGui::EndDisabled();
-  } else {
-    FieldFile("Archivo", e, "sound", "file", assets_.sounds, false, false);
-    FieldVec3("Desplazamiento", e, "sound", "offset", {0.0f, 0.0f, 0.0f}, 0.05f, false);
-    FieldFloat("Volumen", e, "sound", "volume", 1.0f, 0.01f, 0.0f, 2.0f, false);
-    FieldFloat("Radio", e, "sound", "radius", 10.0f, 0.1f, 0.1f, 200.0f, false);
-    FieldFloat("Distancia minima", e, "sound", "minDistance", 1.0f, 0.05f, 0.0f, 100.0f, false);
-    if (ImGui::Button("Quitar sonido")) {
-      BeginChange(0);
-      e.erase("sound");
-      MarkChanged(0);
+  const bool hasLight = e.contains("light") && e.at("light").is_object();
+  if (theme::Section(ICON_FA_LIGHTBULB "  Luz propia", hasLight)) {
+    if (!hasLight) {
+      if (ImGui::Button(ICON_FA_PLUS "  Anadir luz")) {
+        BeginChange(0);
+        e["light"] = Json::object({{"offset", Vec3Json({0.0f, 2.0f, 0.0f})},
+                                   {"color", Json::array({255, 200, 120})},
+                                   {"radius", 8},
+                                   {"intensity", 1}});
+        MarkChanged(0);
+      }
+    } else {
+      FieldVec3("Desplazamiento", e, "light", "offset", {0.0f, 0.0f, 0.0f}, 0.05f, false);
+      FieldColor("Color", e, "light", "color", WHITE, false);
+      FieldFloat("Intensidad", e, "light", "intensity", 1.0f, 0.01f, 0.0f, 10.0f, false);
+      FieldFloat("Radio", e, "light", "radius", 8.0f, 0.1f, 0.1f, 100.0f, false);
+      if (ImGui::Button(ICON_FA_TRASH "  Quitar luz")) {
+        BeginChange(0);
+        e.erase("light");
+        MarkChanged(0);
+      }
     }
   }
 
-  ImGui::SeparatorText("Visible solo si");
-  ImGui::TextDisabled("En el editor se ve siempre; en el juego, solo si se cumplen");
-  ImGui::PushID("showIf");
-  EditConditions(e, "showIf");
-  ImGui::PopID();
+  const bool hasSound = e.contains("sound") && e.at("sound").is_object();
+  if (theme::Section(ICON_FA_VOLUME_HIGH "  Sonido propio", hasSound)) {
+    if (!hasSound) {
+      ImGui::BeginDisabled(assets_.sounds.empty());
+      if (ImGui::Button(ICON_FA_PLUS "  Anadir sonido")) {
+        BeginChange(0);
+        e["sound"] =
+            Json::object({{"file", assets_.sounds.front()}, {"volume", 1}, {"radius", 10}});
+        MarkChanged(0);
+      }
+      ImGui::EndDisabled();
+    } else {
+      FieldFile("Archivo", e, "sound", "file", assets_.sounds, false, false);
+      FieldVec3("Desplazamiento", e, "sound", "offset", {0.0f, 0.0f, 0.0f}, 0.05f, false);
+      FieldFloat("Volumen", e, "sound", "volume", 1.0f, 0.01f, 0.0f, 2.0f, false);
+      FieldFloat("Radio", e, "sound", "radius", 10.0f, 0.1f, 0.1f, 200.0f, false);
+      FieldFloat("Distancia minima", e, "sound", "minDistance", 1.0f, 0.05f, 0.0f, 100.0f,
+                 false);
+      if (ImGui::Button(ICON_FA_TRASH "  Quitar sonido")) {
+        BeginChange(0);
+        e.erase("sound");
+        MarkChanged(0);
+      }
+    }
+  }
 
-  ImGui::SeparatorText("Interaccion (tecla E)");
-  EditInteraction(e, selection_.index);
+  if (theme::Section(ICON_FA_CODE_BRANCH "  Visible solo si", e.contains("showIf"))) {
+    ImGui::TextDisabled("En el editor se ve siempre; en el juego, solo si se cumplen");
+    ImGui::PushID("showIf");
+    EditConditions(e, "showIf");
+    ImGui::PopID();
+  }
+
+  if (theme::Section(ICON_FA_HAND_POINTER "  Interaccion (tecla E)", e.contains("interact")))
+    EditInteraction(e, selection_.index);
 
   bool header = false;
   for (auto it = e.begin(); it != e.end(); ++it) {
@@ -1332,8 +1502,9 @@ void EditorApp::InspectEntity(Json& e) {
       continue;
     }
     if (!header) {
-      ImGui::SeparatorText("Otros (solo lectura)");
       header = true;
+      if (!theme::Section(ICON_FA_FILE "  Otros (solo lectura)", false))
+        break;
     }
     ShowJsonValue(it.key(), it.value());
   }
@@ -1341,14 +1512,29 @@ void EditorApp::InspectEntity(Json& e) {
 
 void EditorApp::InspectTrigger(Json& t) {
   FieldText("Nombre", t, nullptr, "name");
-  FieldVec3("Posicion", t, nullptr, "position", {0.0f, 0.0f, 0.0f}, 0.05f);
-  FieldVec3("Tamano", t, nullptr, "size", {2.0f, 2.4f, 0.8f}, 0.05f);
-  FieldFloat("Giro (grados)", t, nullptr, "rotation", 0.0f, 0.5f, -360.0f, 360.0f);
-  FieldChoice("Evento", t, nullptr, "on", {"enter", "exit", "stay"}, "enter");
-  FieldBool("Una sola vez", t, nullptr, "once", false);
-  FieldBool("Dibujar marco", t, nullptr, "marker", false);
-  if (ReadBool(&t, "marker", false))
-    FieldColor("Color del marco", t, nullptr, "color", {255, 200, 80, 255}, false);
+
+  if (theme::Section(ICON_FA_VECTOR_SQUARE "  Zona")) {
+    FieldVec3("Posicion", t, nullptr, "position", {0.0f, 0.0f, 0.0f}, 0.05f);
+    FieldVec3("Tamano", t, nullptr, "size", {2.0f, 2.4f, 0.8f}, 0.05f);
+    FieldFloat("Giro (grados)", t, nullptr, "rotation", 0.0f, 0.5f, -360.0f, 360.0f);
+    FieldChoice("Evento", t, nullptr, "on", {"enter", "exit", "stay"}, "enter");
+    FieldBool("Una sola vez", t, nullptr, "once", false);
+    FieldBool("Dibujar marco", t, nullptr, "marker", false);
+    if (ReadBool(&t, "marker", false))
+      FieldColor("Color del marco", t, nullptr, "color", {255, 200, 80, 255}, false);
+  }
+
+  if (theme::Section(ICON_FA_CODE_BRANCH "  Condiciones")) {
+    ImGui::PushID("if");
+    EditConditions(t, "if");
+    ImGui::PopID();
+  }
+
+  if (theme::Section(ICON_FA_BOLT "  Acciones")) {
+    ImGui::PushID("do");
+    EditActionList(t, "do");
+    ImGui::PopID();
+  }
 
   bool header = false;
   for (auto it = t.begin(); it != t.end(); ++it) {
@@ -1356,21 +1542,12 @@ void EditorApp::InspectTrigger(Json& t) {
                            "if", "do"}))
       continue;
     if (!header) {
-      ImGui::SeparatorText("Otros (solo lectura)");
       header = true;
+      if (!theme::Section(ICON_FA_FILE "  Otros (solo lectura)", false))
+        break;
     }
     ShowJsonValue(it.key(), it.value());
   }
-
-  ImGui::SeparatorText("Condiciones");
-  ImGui::PushID("if");
-  EditConditions(t, "if");
-  ImGui::PopID();
-
-  ImGui::SeparatorText("Acciones");
-  ImGui::PushID("do");
-  EditActionList(t, "do");
-  ImGui::PopID();
 }
 
 void EditorApp::InspectLight(Json& l) {
@@ -1389,59 +1566,66 @@ void EditorApp::InspectEmitter(Json& e) {
 }
 
 void EditorApp::InspectScene() {
-  ImGui::TextColored(kAccent, "Ajustes de la escena");
-  ImGui::TextDisabled("Selecciona un objeto para editarlo");
+  ImGui::TextColored(kAccent, ICON_FA_MOUNTAIN_SUN "  Escena");
+  ImGui::PushFont(nullptr, ImGui::GetStyle().FontSizeBase * 1.25f);
+  ImGui::TextUnformatted(scenePath_.c_str());
+  ImGui::PopFont();
+  ImGui::TextDisabled("Selecciona un objeto en el visor o en la jerarquia para editarlo");
   ImGui::Separator();
 
   Json& d = doc_;
 
-  ImGui::SeparatorText("Camara inicial");
-  FieldVec3("Posicion", d, "camera", "position", {7.0f, 5.0f, 9.0f}, 0.1f, false);
-  FieldVec3("Mira hacia", d, "camera", "target", {0.0f, 1.0f, 0.0f}, 0.1f, false);
-  FieldFloat("Campo de vision", d, "camera", "fov", 60.0f, 0.5f, 20.0f, 120.0f, false);
-  if (ImGui::Button("Usar la vista actual")) {
-    const Vector3 p = camera_.Position();
-    const Vector3 t = Vector3Add(p, Vector3Scale(camera_.Forward(), 6.0f));
-    BeginChange(0);
-    Store(d, "camera", "position", Vec3Json(p), false);
-    Store(d, "camera", "target", Vec3Json(t), false);
-    Store(d, "camera", "fov", Number(camera_.fov), false);
-    MarkChanged(0);
-  }
-
-  ImGui::SeparatorText("Jugador");
-  FieldVec3("Inicio", d, "player", "position", {0.0f, 0.0f, 0.0f}, 0.1f, false);
-  FieldFloat("Giro inicial", d, "player", "yaw", 0.0f, 0.5f, -360.0f, 360.0f, false);
-  if (ImGui::Button("Inicio en el centro de la vista")) {
-    const Vector3 p = PlacementPoint();
-    BeginChange(0);
-    Store(d, "player", "position", Vec3Json(p), false);
-    MarkChanged(0);
-  }
-
-  ImGui::SeparatorText("Mundo");
-  FieldBool("Colision automatica", d, nullptr, "autoCollide", false, false);
-  FieldColor("Fondo", d, nullptr, "background", defaults_.background, false);
-  FieldFloat("Niebla: inicio", d, "fog", "start", defaults_.fogStart, 0.1f, 0.0f, 500.0f);
-  FieldFloat("Niebla: fin", d, "fog", "end", defaults_.fogEnd, 0.1f, 0.1f, 500.0f);
-  FieldVec3("Luz: direccion", d, "light", "direction", defaults_.lightDirection, 0.01f);
-  FieldFloat("Luz: ambiente", d, "light", "ambient", defaults_.ambient, 0.005f, 0.0f, 1.0f);
-
-  ImGui::SeparatorText("Limites jugables");
-  if (!d.contains("bounds") || !d.at("bounds").is_object()) {
-    if (ImGui::Button("Activar limites")) {
+  if (theme::Section(ICON_FA_VIDEO "  Camara inicial")) {
+    FieldVec3("Posicion", d, "camera", "position", {7.0f, 5.0f, 9.0f}, 0.1f, false);
+    FieldVec3("Mira hacia", d, "camera", "target", {0.0f, 1.0f, 0.0f}, 0.1f, false);
+    FieldFloat("Campo de vision", d, "camera", "fov", 60.0f, 0.5f, 20.0f, 120.0f, false);
+    if (ImGui::Button(ICON_FA_CAMERA "  Usar la vista actual")) {
+      const Vector3 p = camera_.Position();
+      const Vector3 t = Vector3Add(p, Vector3Scale(camera_.Forward(), 6.0f));
       BeginChange(0);
-      d["bounds"] =
-          Json::object({{"min", Vec2Json({-19.0f, -19.0f})}, {"max", Vec2Json({19.0f, 19.0f})}});
+      Store(d, "camera", "position", Vec3Json(p), false);
+      Store(d, "camera", "target", Vec3Json(t), false);
+      Store(d, "camera", "fov", Number(camera_.fov), false);
       MarkChanged(0);
     }
-  } else {
-    FieldVec2("Minimo (X, Z)", d, "bounds", "min", {-19.0f, -19.0f}, 0.1f, false);
-    FieldVec2("Maximo (X, Z)", d, "bounds", "max", {19.0f, 19.0f}, 0.1f, false);
-    if (ImGui::Button("Quitar limites")) {
+  }
+
+  if (theme::Section(ICON_FA_PERSON "  Jugador")) {
+    FieldVec3("Inicio", d, "player", "position", {0.0f, 0.0f, 0.0f}, 0.1f, false);
+    FieldFloat("Giro inicial", d, "player", "yaw", 0.0f, 0.5f, -360.0f, 360.0f, false);
+    if (ImGui::Button(ICON_FA_CROSSHAIRS "  Inicio en el centro de la vista")) {
+      const Vector3 p = PlacementPoint();
       BeginChange(0);
-      d.erase("bounds");
+      Store(d, "player", "position", Vec3Json(p), false);
       MarkChanged(0);
+    }
+  }
+
+  if (theme::Section(ICON_FA_CLOUD "  Mundo")) {
+    FieldBool("Colision automatica", d, nullptr, "autoCollide", false, false);
+    FieldColor("Fondo", d, nullptr, "background", defaults_.background, false);
+    FieldFloat("Niebla: inicio", d, "fog", "start", defaults_.fogStart, 0.1f, 0.0f, 500.0f);
+    FieldFloat("Niebla: fin", d, "fog", "end", defaults_.fogEnd, 0.1f, 0.1f, 500.0f);
+    FieldVec3("Luz: direccion", d, "light", "direction", defaults_.lightDirection, 0.01f);
+    FieldFloat("Luz: ambiente", d, "light", "ambient", defaults_.ambient, 0.005f, 0.0f, 1.0f);
+  }
+
+  if (theme::Section(ICON_FA_BORDER_ALL "  Limites jugables")) {
+    if (!d.contains("bounds") || !d.at("bounds").is_object()) {
+      if (ImGui::Button(ICON_FA_PLUS "  Activar limites")) {
+        BeginChange(0);
+        d["bounds"] =
+            Json::object({{"min", Vec2Json({-19.0f, -19.0f})}, {"max", Vec2Json({19.0f, 19.0f})}});
+        MarkChanged(0);
+      }
+    } else {
+      FieldVec2("Minimo (X, Z)", d, "bounds", "min", {-19.0f, -19.0f}, 0.1f, false);
+      FieldVec2("Maximo (X, Z)", d, "bounds", "max", {19.0f, 19.0f}, 0.1f, false);
+      if (ImGui::Button(ICON_FA_TRASH "  Quitar limites")) {
+        BeginChange(0);
+        d.erase("bounds");
+        MarkChanged(0);
+      }
     }
   }
 
@@ -1452,8 +1636,9 @@ void EditorApp::InspectScene() {
       continue;
     }
     if (!header) {
-      ImGui::SeparatorText("Otros (solo lectura)");
       header = true;
+      if (!theme::Section(ICON_FA_FILE "  Otros (solo lectura)", false))
+        break;
     }
     ShowJsonValue(it.key(), it.value());
   }
@@ -1569,12 +1754,12 @@ void EditorApp::AssetList(const std::vector<std::string>& files, bool thumbnails
 }
 
 void EditorApp::DrawAssets() {
-  if (!ImGui::Begin("Assets")) {
+  if (!ImGui::Begin(ICON_FA_FOLDER_OPEN "  Assets###Assets")) {
     ImGui::End();
     return;
   }
 
-  if (ImGui::SmallButton("Volver a leer la carpeta")) {
+  if (ImGui::SmallButton(ICON_FA_ARROWS_ROTATE "  Volver a leer la carpeta")) {
     assets_.Scan(engine_.Assets().Root());
     thumbs_.clear();
     badAssets_.clear();
@@ -1583,22 +1768,22 @@ void EditorApp::DrawAssets() {
                    std::to_string(assets_.sounds.size()) + " sonidos");
   }
   ImGui::SameLine();
-  ImGui::TextDisabled("Arrastra al visor, o doble clic");
+  ImGui::TextDisabled("Arrastra al visor o a un campo; doble clic para aplicar");
 
   if (ImGui::BeginTabBar("assets_tabs")) {
-    if (ImGui::BeginTabItem("Modelos")) {
+    if (ImGui::BeginTabItem(ICON_FA_CUBE "  Modelos")) {
       ImGui::BeginChild("lista_modelos");
       AssetList(assets_.models, false);
       ImGui::EndChild();
       ImGui::EndTabItem();
     }
-    if (ImGui::BeginTabItem("Texturas")) {
+    if (ImGui::BeginTabItem(ICON_FA_IMAGE "  Texturas")) {
       ImGui::BeginChild("lista_texturas");
       AssetList(assets_.textures, true);
       ImGui::EndChild();
       ImGui::EndTabItem();
     }
-    if (ImGui::BeginTabItem("Sonidos")) {
+    if (ImGui::BeginTabItem(ICON_FA_VOLUME_HIGH "  Sonidos")) {
       ImGui::BeginChild("lista_sonidos");
       AssetList(assets_.sounds, false);
       ImGui::EndChild();
@@ -1613,11 +1798,11 @@ void EditorApp::DrawAssets() {
 // Mensajes, dialogos y atajos
 // ---------------------------------------------------------------------------
 void EditorApp::DrawMessages() {
-  if (!ImGui::Begin("Mensajes")) {
+  if (!ImGui::Begin(ICON_FA_MESSAGE "  Mensajes###Mensajes")) {
     ImGui::End();
     return;
   }
-  if (ImGui::SmallButton("Limpiar"))
+  if (ImGui::SmallButton(ICON_FA_TRASH "  Limpiar"))
     log_.clear();
   ImGui::Separator();
 
@@ -1625,9 +1810,11 @@ void EditorApp::DrawMessages() {
   for (const LogLine& line : log_) {
     if (line.error) {
       ImGui::PushStyleColor(ImGuiCol_Text, kError);
-      ImGui::TextWrapped("%s", line.text.c_str());
+      ImGui::TextWrapped(ICON_FA_CIRCLE_XMARK "  %s", line.text.c_str());
       ImGui::PopStyleColor();
     } else {
+      ImGui::TextDisabled(ICON_FA_CIRCLE_INFO);
+      ImGui::SameLine();
       ImGui::TextWrapped("%s", line.text.c_str());
     }
   }
@@ -2016,7 +2203,7 @@ void EditorApp::EnsureTargets(int w, int h) {
 
 void EditorApp::DrawViewport() {
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-  const bool open = ImGui::Begin("Visor", nullptr,
+  const bool open = ImGui::Begin(ICON_FA_VIDEO "  Visor###Visor", nullptr,
                                  ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
   ImGui::PopStyleVar();
   if (!open) {
@@ -2026,11 +2213,19 @@ void EditorApp::DrawViewport() {
   }
 
   if (!scene_) {
-    ImGui::TextDisabled("Abre una escena desde el menu Archivo");
+    const char* hint = ICON_FA_FOLDER_OPEN "  Abre una escena desde el menu Archivo";
+    const ImVec2 size = ImGui::CalcTextSize(hint);
+    const ImVec2 region = ImGui::GetContentRegionAvail();
+    ImGui::SetCursorPos(ImVec2((region.x - size.x) * 0.5f, (region.y - size.y) * 0.5f));
+    ImGui::TextDisabled("%s", hint);
     viewportHovered_ = false;
     ImGui::End();
     return;
   }
+
+  // La barra va ENCIMA de la imagen (no superpuesta): asi un clic en un boton nunca selecciona
+  // nada en la escena.
+  DrawViewportToolbar();
 
   const ImVec2 avail = ImGui::GetContentRegionAvail();
   const int w = std::max(16, static_cast<int>(avail.x));
@@ -2057,10 +2252,74 @@ void EditorApp::DrawViewport() {
     ImGui::EndDragDropTarget();
   }
 
-  ImGui::SetCursorPos(ImVec2(8.0f, 8.0f));
-  ImGui::TextColored(ImVec4(1, 1, 1, 0.75f), "%s%s   %d FPS%s", scenePath_.c_str(),
-                     dirty_ ? " *" : "", GetFPS(), ps1View_ ? "   [vista PS1]" : "");
   ImGui::End();
+}
+
+void EditorApp::DrawViewportToolbar() {
+  // SetCursorPos cuenta desde la esquina de la ventana (incluida la pestana): se parte de donde
+  // empieza el contenido.
+  const ImVec2 start = ImGui::GetCursorPos();
+  ImGui::SetCursorPos(ImVec2(start.x + 6.0f, start.y + 5.0f));
+  ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4.0f, 4.0f));
+
+  // Vista
+  if (theme::ToolToggle(ICON_FA_TV, ps1View_, "Aspecto PS1 (320x240 + acabado)")) {
+    ps1View_ = !ps1View_;
+    ApplyViewMode();
+  }
+  ImGui::SameLine();
+  if (theme::ToolToggle(ICON_FA_CLOUD, fogOn_, "Niebla")) {
+    fogOn_ = !fogOn_;
+    ApplyViewMode();
+  }
+  ImGui::SameLine();
+  if (theme::ToolToggle(ICON_FA_PLAY, animate_, "Animar la escena (giros, aldeanos)"))
+    animate_ = !animate_;
+  theme::ToolSeparator();
+
+  // Capas: cada boton enciende o apaga una ayuda visual. 'bool*' apunta al miembro que cambia.
+  struct Layer {
+    const char* icon;
+    bool* value;
+    const char* tooltip;
+  };
+  const Layer layers[] = {
+      {ICON_FA_TABLE_CELLS, &showGrid_, "Rejilla"},
+      {ICON_FA_CUBE, &showColliders_, "Cajas de colision"},
+      {ICON_FA_VECTOR_SQUARE, &showTriggers_, "Zonas de trigger"},
+      {ICON_FA_LIGHTBULB, &showLights_, "Luces"},
+      {ICON_FA_VOLUME_HIGH, &showEmitters_, "Sonidos"},
+      {ICON_FA_BORDER_ALL, &showBounds_, "Limites jugables"},
+      {ICON_FA_PERSON, &showSpawn_, "Punto de inicio del jugador"},
+  };
+  for (const Layer& layer : layers) {
+    if (theme::ToolToggle(layer.icon, *layer.value, layer.tooltip))
+      *layer.value = !*layer.value;
+    ImGui::SameLine();
+  }
+  theme::ToolSeparator();
+
+  // Acciones sobre la seleccion
+  ImGui::BeginDisabled(SelectedJson() == nullptr);
+  if (theme::ToolToggle(ICON_FA_CROSSHAIRS, false, "Enfocar la seleccion (F)"))
+    FocusSelection();
+  ImGui::EndDisabled();
+
+  // Ayuda corta a la derecha, si cabe.
+  const char* hint = "Clic: seleccionar   Der.+WASD: volar   Ctrl: ajustar a 0.25";
+  const float hintWidth = ImGui::CalcTextSize(hint).x;
+  ImGui::SameLine();
+  const float room = ImGui::GetContentRegionAvail().x;
+  if (room > hintWidth + 12.0f) {
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + room - hintWidth - 8.0f);
+    ImGui::AlignTextToFramePadding();
+    ImGui::TextDisabled("%s", hint);
+  } else {
+    ImGui::NewLine();
+  }
+
+  ImGui::PopStyleVar();
+  ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 1.0f);
 }
 
 void EditorApp::RenderViewport(int w, int h) {

@@ -1,6 +1,7 @@
 // Panel Validacion: busca en la escena lo que el cargador NO rechaza pero fallara al jugar:
 // escenas y sonidos que no existen, entidades nombradas que no existen y banderas sospechosas.
 #include "EditorApp.hpp"
+#include "EditorTheme.hpp"
 
 #include <algorithm>
 #include <exception>
@@ -267,32 +268,33 @@ void EditorApp::DrawValidation() {
   }
 
   // "###Validacion": el titulo muestra el contador, pero el ID de la ventana no cambia.
-  const std::string title = "Validacion (" + std::to_string(errors + warnings) + ")###Validacion";
+  const std::string title =
+      ICON_FA_LIST_CHECK "  Validacion (" + std::to_string(errors + warnings) + ")###Validacion";
   if (!ImGui::Begin(title.c_str())) {
     ImGui::End();
     return;
   }
 
-  if (ImGui::SmallButton("Volver a comprobar"))
+  if (ImGui::SmallButton(ICON_FA_ARROWS_ROTATE "  Volver a comprobar"))
     RunValidation();
   ImGui::SameLine();
   ImGui::TextDisabled("%d errores, %d avisos", errors, warnings);
   ImGui::Separator();
 
   if (issues_.empty())
-    ImGui::TextColored(ImVec4(0.5f, 0.9f, 0.5f, 1.0f), "Sin problemas");
+    ImGui::TextColored(theme::kSuccess, ICON_FA_CIRCLE_CHECK "  Sin problemas");
 
   ImGui::BeginChild("validacion_lista");
   for (std::size_t i = 0; i < issues_.size(); ++i) {
     const Issue& issue = issues_[i];
-    ImVec4 color(0.65f, 0.65f, 0.65f, 1.0f);
-    const char* tag = "[info] ";
+    ImVec4 color = theme::kTextDim;
+    const char* tag = ICON_FA_CIRCLE_INFO "  ";
     if (issue.severity == Severity::Error) {
-      color = ImVec4(1.0f, 0.45f, 0.45f, 1.0f);
-      tag = "[error] ";
+      color = theme::kError;
+      tag = ICON_FA_CIRCLE_XMARK "  ";
     } else if (issue.severity == Severity::Warning) {
-      color = ImVec4(1.0f, 0.8f, 0.35f, 1.0f);
-      tag = "[aviso] ";
+      color = theme::kWarning;
+      tag = ICON_FA_TRIANGLE_EXCLAMATION "  ";
     }
 
     ImGui::PushID(static_cast<int>(i));

@@ -128,6 +128,7 @@ private:
   // ------------------------------------------------------------------ interfaz
   void DrawUi();
   void DrawMenuBar();
+  void DrawStatusBar();
   void DrawAddItems();
   void BuildDefaultLayout(ImGuiID dock);
   void DrawHierarchy();
@@ -142,6 +143,7 @@ private:
   void Thumbnail(const std::string& relative, float maxSize);
   std::shared_ptr<retro::TextureResource> ThumbTexture(const std::string& relative);
   void DrawViewport();
+  void DrawViewportToolbar();
   void DrawMessages();
   void DrawValidation(); // EditorValidation.cpp
   void RunValidation();
@@ -259,6 +261,9 @@ private:
   bool openUnsavedPopup_ = false;
   bool openNewScenePopup_ = false;
   char newSceneName_[64] = "";
+
+  // texto del buscador de la jerarquia
+  char filter_[64] = "";
 
   // campo de texto en edicion (se confirma al terminar de escribir)
   std::string textId_;

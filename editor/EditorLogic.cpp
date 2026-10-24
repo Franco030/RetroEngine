@@ -1,4 +1,5 @@
 #include "EditorApp.hpp"
+#include "EditorTheme.hpp"
 
 #include <array>
 #include <cstddef>
@@ -87,20 +88,27 @@ Json NewAction(const std::string& key, const std::vector<std::string>& scenes,
 EditorApp::ListOp EditorApp::ListButtons(const ListSlot& slot) {
   ListOp op = ListOp::None;
 
+  // En la misma fila que la cabecera del elemento, pegados a la derecha. Los tres iconos tienen
+  // el mismo ancho (GlyphMinAdvanceX en EditorTheme.cpp).
+  const ImGuiStyle& style = ImGui::GetStyle();
+  const float button = ImGui::CalcTextSize(ICON_FA_TRASH).x + 8.0f;
+  const float width = button * 3.0f + style.ItemSpacing.x * 2.0f;
+  ImGui::SameLine(ImGui::GetContentRegionMax().x - width);
+
   ImGui::BeginDisabled(slot.index == 0);
-  if (ImGui::SmallButton("Subir"))
+  if (theme::IconButton(ICON_FA_ARROW_UP, "Subir"))
     op = ListOp::Up;
   ImGui::EndDisabled();
   ImGui::SameLine();
 
   ImGui::BeginDisabled(slot.index + 1 >= slot.count);
-  if (ImGui::SmallButton("Bajar"))
+  if (theme::IconButton(ICON_FA_ARROW_DOWN, "Bajar"))
     op = ListOp::Down;
   ImGui::EndDisabled();
   ImGui::SameLine();
 
   ImGui::BeginDisabled(!slot.canRemove);
-  if (ImGui::SmallButton("Quitar"))
+  if (theme::IconButton(ICON_FA_TRASH, "Quitar"))
     op = ListOp::Remove;
   ImGui::EndDisabled();
   return op;
@@ -156,12 +164,15 @@ void EditorApp::EditActionList(Json& owner, const char* key, bool keepOne) {
 
     // "###accion": el ID no depende del texto, asi el nodo no se cierra al cambiar el resumen.
     const std::string header = std::to_string(i + 1) + ". " + ActionSummary(list[i]) + "###accion";
-    if (ImGui::TreeNodeEx(header.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-      const ListOp asked = ListButtons({i, list.size(), !(keepOne && list.size() == 1)});
-      if (asked != ListOp::None) {
-        op = asked;
-        target = i;
-      }
+    // AllowOverlap: los botones de la derecha se pueden pulsar aunque esten sobre la cabecera.
+    const bool open = ImGui::TreeNodeEx(
+        header.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap);
+    const ListOp asked = ListButtons({i, list.size(), !(keepOne && list.size() == 1)});
+    if (asked != ListOp::None) {
+      op = asked;
+      target = i;
+    }
+    if (open) {
       EditAction(list[i]);
       ImGui::TreePop();
     }
@@ -169,7 +180,7 @@ void EditorApp::EditActionList(Json& owner, const char* key, bool keepOne) {
   }
   ApplyListOp(list, op, target);
 
-  if (ImGui::BeginCombo("##nueva_accion", "+ Anadir accion")) {
+  if (ImGui::BeginCombo("##nueva_accion", ICON_FA_PLUS "  Anadir accion")) {
     for (const ActionInfo& info : kActions) {
       if (ImGui::Selectable(info.title)) {
         BeginChange(0);
@@ -380,7 +391,7 @@ bool AddConditionCombo(const char* id, int depth, Json& out) {
   const int choices = depth < kMaxConditionDepth ? 4 : 1;
 
   bool added = false;
-  if (ImGui::BeginCombo(id, "+ Anadir condicion")) {
+  if (ImGui::BeginCombo(id, ICON_FA_PLUS "  Anadir condicion")) {
     for (int k = 0; k < choices; ++k) {
       if (ImGui::Selectable(kinds[k])) {
         out = NewCondition(static_cast<CondKind>(k));
@@ -461,10 +472,11 @@ void EditorApp::EditConditionList(Json& list, int depth, bool keepOne) {
 EditorApp::ListOp EditorApp::EditCondition(Json& c, int depth, const ListSlot* slot) {
   const CondKind kind = KindOf(c);
   const std::string header = Shorten(ConditionSummary(c), 48) + "###condicion";
-  if (!ImGui::TreeNodeEx(header.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
-    return ListOp::None;
-
+  const bool open = ImGui::TreeNodeEx(
+      header.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap);
   const ListOp op = slot ? ListButtons(*slot) : ListOp::None;
+  if (!open)
+    return op;
 
   if (kind == CondKind::Unknown) {
     ImGui::TextDisabled("No reconocida (solo lectura):");

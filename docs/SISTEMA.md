@@ -586,7 +586,10 @@ sobrevive al cambio de escena y a guardar y cargar. F6 lo reinicia.
 ### 8.4 Marco visible
 
 Con `"marker": true` el trigger se dibuja como un marco de alambre con dos rectángulos que suben
-en bucle, del color `color` (por defecto `[255, 200, 80, 255]`). Se usa para portales.
+en bucle, del color `color` (por defecto `[255, 200, 80, 255]`). Sirve para ver zonas mientras se
+diseña; las salidas de las escenas no lo usan: son senderos que entran en el bosque (modelo
+`sendero` de `tools/blender/bosque.py`, filas de árboles cada vez más cerradas, hojarasca más
+allá del borde y un trigger invisible ancho como la arboleda que suena a hojas y cambia de escena).
 
 ### 8.5 Patrón típico: dos triggers en el mismo sitio
 
@@ -1325,8 +1328,9 @@ exec(open(ruta).read(), {"__file__": ruta, "__name__": "__main__"})
 |---|---|
 | `molino.py` | `molino` y `molino_aspas` (las aspas giran con `"spin": [0, 0, -40]`; van colocadas en el buje: posición del molino + `[0, 6.9, 2.1]`). |
 | `aldea_props.py` | `casa_madera`, `casa_piedra` y sus variantes `_noche` con las ventanas encendidas, `pozo`, `valla`, `barril`, `caja`, `carreta`. |
-| `cementerio.py` | `capilla`, `cripta`, `tumba`, `lapida`, `cruz`, `verja`, `farol` (luz con offset `[0, 2.75, 0]`), `banco`, `fuente`. |
-| `subterraneo.py` | `cripta_interior`, `tuneles`, `sarcofago`, `atril`, `puerta_cripta`, `estatua`, `reja`, `cuerda_pozo`, `escalera_mano`, `trampilla`. |
+| `cementerio.py` | `capilla` (7 x 11 m), `cripta` (panteón de 9 x 12 m con porche: por fuera abarca la sala de 8 x 11 m de `cripta_interior`), `tumba`, `lapida`, `cruz`, `verja`, `farol` (luz con offset `[0, 2.75, 0]`), `banco`, `fuente`. |
+| `bosque.py` | `sendero`, `tronco`, árboles 3D `arbol_pino`, `arbol_pino_alto`, `arbol_roble`, `arbol_roble_2`, `arbol_abedul`, `arbol_muerto` y arbustos `arbusto_hojas`, `arbusto_bayas` (low-poly, copas de icosferas deformadas; se mezclan con los sprites de árbol: en los bosques de las salidas, la mitad son 3D, con giro y tamaño al azar y el mismo tinte que el sprite). |
+| `subterraneo.py` | `cripta_interior`, `tuneles`, `sarcofago`, `atril`, `puerta_cripta`, `estatua` (mármol, cementerio), `estatua_gastada` (piedra, catacumbas), `reja`, `cuerda_pozo`, `escalera_mano`, `trampilla`, `osamenta` (calavera y huesos para los nichos), `calavera_vela` (vela que sale por la coronilla y ojos encendidos; la llama es el sprite `spr_llama`). |
 | `personajes.py` | `granjero`, `aldeana`, `anciano`, `nino`, `hombre`, `mujer`, `sepulturero`, `sereno`, `encapuchado` (el ermitaño de los túneles: capucha de sudadera hasta los hombros y gabardina larga abierta por delante, ambas en la región del pantalón del atlas). |
 
 `retro_comun.py` tiene las piezas comunes:
@@ -1347,7 +1351,14 @@ se exporta sin textura para que la entidad la elija con `"texture"`. Los complem
 ### `tools/gen_texturas.py`
 
 Texturas de materiales (`mat_*.png`): madera, madera gris, piedra, revoque, tejas, paja, lona,
-hierro, agua, un negro para huecos, y puerta y ventanas (apagadas y encendidas). Ruido periódico
+hierro, agua, un negro para huecos, y puerta y ventanas (apagadas y encendidas). Para el cementerio, cada
+objeto tiene su piedra: `mat_piedra_musgo` (capilla: sillares con musgo y grietas),
+`mat_sillar_viejo` (panteón: bloques grandes con chorretones), `mat_marmol_viejo` (columnas y
+sarcófagos), `mat_marmol` (estatuas del cementerio, limpias a propósito), `mat_piedra_gastada` (la estatua
+de las catacumbas), `mat_lapida` (granito con líquenes) y
+`mat_granito` (cruces y verjas); más `mat_tela_roja` y `mat_sangre` (la estola y las lágrimas de
+la estatua). Subterráneo: tierra, roca, losas, piedra de cripta, pared de calaveras, hueso, cera
+y el brillo de vela. Ruido periódico
 para que se repitan sin costuras, y la misma cuantización que `texconv.py`. `--preview` guarda
 ampliaciones.
 
@@ -1371,7 +1382,8 @@ vuelta.
 
 ### El subterráneo: `subterraneo.py` y `tuneles_mapa.py`
 
-- **Interior de la cripta**: sala cerrada con bóveda de cañón, nichos y una escalera que baja por
+- **Interior de la cripta**: sala cerrada con bóveda de cañón, nichos con hueco de verdad (la
+  pared se trocea alrededor y cada nicho tiene fondo, techo y lados) y una escalera que baja por
   un hueco del suelo. Como el jugador no puede bajar de Y=0, el **suelo de la sala está a 3 m**
   (tres bloques de colisión alrededor del hueco) y la escalera baja de 3 a 0 hasta un rellano
   oscuro; ahí un trigger lleva a los túneles.
@@ -1395,8 +1407,8 @@ perfectos: buffer circular y la reverb de `gen_musica.py`), `paso_tierra_1..3`, 
 ### `tools/gen_sprites.py`
 
 Sprites con transparencia (`spr_*.png`): árbol seco, cuervo, velas, hierba alta, flores y setas
-luminosas; y para el subterráneo cristales, telaraña, huesos, raíces que cuelgan, antorcha y unos
-ojos rojos. Pixel art procedural con contorno oscuro y alfa duro. Las velas y las setas se usan
+luminosas; para el subterráneo cristales, telaraña, huesos, raíces que cuelgan, antorcha, unos ojos
+rojos y la llama de vela; y flores marchitas para las tumbas. Pixel art procedural con contorno oscuro y alfa duro. Las velas y las setas se usan
 con `"emissive": true` y una `"light"` en la entidad.
 
 ### `tools/gen_personajes.py`

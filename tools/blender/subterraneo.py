@@ -178,6 +178,30 @@ TOPE_TRAMPILLA = 5.4                   # altura de la trampilla de salida (tunel
 Z_RELLANO = -9.5                       # fin del rellano de abajo
 
 
+# Nichos de las paredes largas (las dos iguales): (z0, z1, y0, y1). Encima de los sarcofagos.
+NICHOS = [(z0, z1, y0, y0 + 0.7) for z0, z1 in ((-3.0, -1.0), (0.0, 2.0)) for y0 in (4.0, 5.0)]
+FONDO_NICHO = 0.55
+
+
+def pared_con_nichos(m, x, nx, y0, nichos):
+    """Pared larga de la cripta (plano x, mirando hacia nx) con huecos de verdad: la pared se
+    trocea por los bordes de los nichos y cada nicho tiene fondo, techo, suelo y lados."""
+    zs = cortes(Z_ATRAS, Z_FRENTE, extra=[v for n in nichos for v in n[:2]] + [Z_HUECO])
+    ys = cortes(y0, ALTO_PARED, extra=[v for n in nichos for v in n[2:]])
+    for za, zb in zip(zs, zs[1:]):
+        for ya, yb in zip(ys, ys[1:]):
+            if any(n[0] <= za and zb <= n[1] and n[2] <= ya and yb <= n[3] for n in nichos):
+                continue
+            cara(m, [(x, ya, za), (x, ya, zb), (x, yb, zb), (x, yb, za)], "mat_cripta", (nx, 0, 0))
+    xf = x - nx * FONDO_NICHO     # el fondo, metido en el muro
+    for za, zb, ya, yb in nichos:
+        cara(m, [(xf, ya, za), (xf, ya, zb), (xf, yb, zb), (xf, yb, za)], "mat_oscuro", (nx, 0, 0))
+        cara(m, [(x, ya, za), (xf, ya, za), (xf, ya, zb), (x, ya, zb)], "mat_cripta", (0, 1, 0))
+        cara(m, [(x, yb, za), (xf, yb, za), (xf, yb, zb), (x, yb, zb)], "mat_cripta", (0, -1, 0))
+        cara(m, [(x, ya, za), (xf, ya, za), (xf, yb, za), (x, yb, za)], "mat_cripta", (0, 0, 1))
+        cara(m, [(x, ya, zb), (xf, ya, zb), (xf, yb, zb), (x, yb, zb)], "mat_cripta", (0, 0, -1))
+
+
 def boveda_y(x):
     return ALTO_PARED + 1.5 * math.sqrt(max(0.0, 1.0 - (x / X_SALA) ** 2))
 
@@ -192,8 +216,8 @@ def cripta_interior(col_):
     plano(m, -X_SALA, X_SALA, Z_ATRAS, Z_FRENTE, y0, "mat_losa", True,
           hueco=(-X_HUECO, X_HUECO, Z_ATRAS, Z_HUECO), xs=xs, zs=zs)
     # paredes
-    pared(m, (-X_SALA, Z_ATRAS), (-X_SALA, Z_FRENTE), y0, ALTO_PARED, "mat_cripta", (1, 0, 0))
-    pared(m, (X_SALA, Z_ATRAS), (X_SALA, Z_FRENTE), y0, ALTO_PARED, "mat_cripta", (-1, 0, 0))
+    for lado in (-1, 1):
+        pared_con_nichos(m, lado * X_SALA, -lado, y0, NICHOS)
     pared(m, (-X_SALA, Z_ATRAS), (X_SALA, Z_ATRAS), y0, ALTO_PARED, "mat_cripta", (0, 0, 1))
     pared(m, (-X_SALA, Z_FRENTE), (X_SALA, Z_FRENTE), y0, ALTO_PARED, "mat_cripta", (0, 0, -1))
 
@@ -220,15 +244,12 @@ def cripta_interior(col_):
                 return B(x + d.x * 0.12, y + d.y * 0.12, z)
             m.segmento(dentro(xa, ya), dentro(xb, yb), 0.13, 0.13, 4, "mat_cripta")
 
-    # nichos en las paredes largas: hueco oscuro con marco
+    # repisa de piedra bajo cada nicho
     for lado in (-1, 1):
-        x = lado * (X_SALA - 0.02)
-        for zc in (-2.0, 1.0):
-            for yc in (y0 + 0.9, y0 + 1.9):
-                m.decal(B(x, yc, zc), (-lado, 0, 0), 1.8, 0.6, "mat_oscuro", salida=0.0)
-                for dy in (-0.34, 0.34):
-                    caja(m, (x - 0.08, yc + dy - 0.05, zc - 1.0), (x + 0.08, yc + dy + 0.05, zc + 1.0),
-                         "mat_cripta")
+        x = lado * X_SALA
+        for za, zb, ya, _ in NICHOS:
+            caja(m, (min(x, x - lado * 0.14), ya - 0.1, za - 0.1), (max(x, x - lado * 0.14), ya, zb + 0.1),
+                 "mat_cripta")
 
     # hueco de la escalera: paredes hasta el suelo de abajo, rellano y escalones
     pared(m, (-X_HUECO, Z_RELLANO), (-X_HUECO, Z_HUECO), 0.0, y0, "mat_cripta", (1, 0, 0))
@@ -271,11 +292,11 @@ def cripta_interior(col_):
 def sarcofago(col_):
     """Sarcofago de piedra, largo en z. Base en el suelo."""
     m = rc.Malla()
-    caja(m, (-0.5, 0, -1.1), (0.5, 0.12, 1.1), "mat_cripta")
-    caja(m, (-0.45, 0.12, -1.05), (0.45, 0.78, 1.05), "mat_cripta")
-    caja(m, (-0.53, 0.78, -1.15), (0.53, 0.92, 1.15), "mat_cripta")      # tapa
-    caja(m, (-0.08, 0.92, -0.8), (0.08, 1.0, 0.75), "mat_cripta")         # cruz en relieve
-    caja(m, (-0.32, 0.92, 0.3), (0.32, 1.0, 0.44), "mat_cripta")
+    caja(m, (-0.5, 0, -1.1), (0.5, 0.12, 1.1), "mat_marmol_viejo")
+    caja(m, (-0.45, 0.12, -1.05), (0.45, 0.78, 1.05), "mat_marmol_viejo")
+    caja(m, (-0.53, 0.78, -1.15), (0.53, 0.92, 1.15), "mat_marmol_viejo")      # tapa
+    caja(m, (-0.08, 0.92, -0.8), (0.08, 1.0, 0.75), "mat_marmol_viejo")         # cruz en relieve
+    caja(m, (-0.32, 0.92, 0.3), (0.32, 1.0, 0.44), "mat_marmol_viejo")
     caja(m, (-0.4, 0.2, 1.05), (0.4, 0.7, 1.08), "mat_oscuro")            # inscripcion
     col(m, (-0.53, 0, -1.15), (0.53, 1.0, 1.15))
     return m.objeto("sarcofago", col_)
@@ -308,24 +329,38 @@ def puerta_cripta(col_):
     return m.objeto("puerta_cripta", col_)
 
 
-def estatua(col_):
-    """Figura encapuchada que reza, sobre un pedestal (cruce de los tuneles)."""
+def estatua(col_, nombre="estatua", M="mat_marmol"):
+    """Figura encapuchada que reza, con una estola roja y lagrimas de sangre, sobre un pedestal
+    de piedra con musgo. La del cementerio es de marmol blanco sospechosamente limpio (todo lo
+    demas tiene musgo); la de las catacumbas, de piedra gastada (estatua_gastada)."""
     m = rc.Malla()
-    caja(m, (-0.7, 0, -0.7), (0.7, 0.2, 0.7), "mat_cripta")
-    caja(m, (-0.55, 0.2, -0.55), (0.55, 0.75, 0.55), "mat_cripta")
-    caja(m, (-0.62, 0.75, -0.62), (0.62, 0.85, 0.62), "mat_cripta")
+    caja(m, (-0.7, 0, -0.7), (0.7, 0.2, 0.7), "mat_piedra_musgo")
+    caja(m, (-0.55, 0.2, -0.55), (0.55, 0.75, 0.55), "mat_piedra_musgo")
+    caja(m, (-0.62, 0.75, -0.62), (0.62, 0.85, 0.62), "mat_piedra_musgo")
     # tunica: anillos de revolucion desde el pedestal; cabeza inclinada bajo la capucha
     m.anillos(B(0, 0.85, 0), [(0.0, 0.42, 0.38), (0.6, 0.34, 0.3), (1.2, 0.3, 0.26),
-                              (1.5, 0.28, 0.24), (1.62, 0.16, 0.16)], 8, "mat_cripta")
+                              (1.5, 0.28, 0.24), (1.62, 0.16, 0.16)], 8, M)
     m.anillos(B(0, 2.42, 0.06), [(0.0, 0.16, 0.17), (0.12, 0.2, 0.21), (0.26, 0.18, 0.19),
-                                 (0.36, 0.0, 0.0)], 8, "mat_cripta", tapa_arriba=False)
-    m.decal(B(0, 2.56, 0.26), (0, -1, 0), 0.2, 0.22, "mat_oscuro", salida=0.0)  # rostro
+                                 (0.36, 0.0, 0.0)], 8, M, tapa_arriba=False)
+    m.decal(B(0, 2.56, 0.26), (0, -1, 0), 0.2, 0.22, "mat_oscuro", salida=0.0)  # rostro en sombra
+    for dx in (-0.045, 0.045):                                                 # lagrimas de sangre
+        m.decal(B(dx, 2.5, 0.262), (0, -1, 0), 0.022, 0.14, "mat_sangre", salida=0.004)
     # manos juntas delante del pecho
-    m.segmento(B(-0.22, 1.95, 0.18), B(0, 2.02, 0.36), 0.06, 0.05, 6, "mat_cripta")
-    m.segmento(B(0.22, 1.95, 0.18), B(0, 2.02, 0.36), 0.06, 0.05, 6, "mat_cripta")
-    m.caja(B(0, 2.14, 0.38), (0.08, 0.06, 0.24), "mat_cripta")
+    m.segmento(B(-0.22, 1.95, 0.18), B(0, 2.02, 0.36), 0.06, 0.05, 6, M)
+    m.segmento(B(0.22, 1.95, 0.18), B(0, 2.02, 0.36), 0.06, 0.05, 6, M)
+    m.caja(B(0, 2.14, 0.38), (0.08, 0.06, 0.24), M)
+    # estola roja: cuello y dos bandas que caen por delante
+    m.anillos(B(0, 2.3, 0.02), [(0.0, 0.2, 0.19), (0.08, 0.17, 0.16)], 8, "mat_tela_roja",
+              tapa_abajo=False, tapa_arriba=False)
+    for lado in (-1, 1):
+        m.segmento(B(lado * 0.12, 2.32, 0.2), B(lado * 0.15, 1.3, 0.32), 0.06, 0.065, 4,
+                   "mat_tela_roja", ovalo=(1.0, 0.25))
     col(m, (-0.7, 0, -0.7), (0.7, 2.8, 0.7))
-    return m.objeto("estatua", col_)
+    return m.objeto(nombre, col_)
+
+
+def estatua_gastada(col_):
+    return estatua(col_, "estatua_gastada", "mat_piedra_gastada")
 
 
 def reja(col_):
@@ -369,6 +404,66 @@ def escalera_mano(col_):
         y += 0.35
     col(m, (-0.4, 0, -0.12), (0.4, 3.0, 0.12))
     return m.objeto("escalera_mano", col_)
+
+
+def craneo(m, c, e, ojos="mat_oscuro"):
+    """Calavera en c (motor; c es la base) de tamano e (1 = 23 cm de alto), mirando a +Z."""
+    cx, cy, cz = c
+    m.anillos(B(cx, cy + 0.05 * e, cz),
+              [(0.0, 0.07 * e, 0.08 * e), (0.06 * e, 0.095 * e, 0.11 * e),
+               (0.13 * e, 0.1 * e, 0.115 * e), (0.19 * e, 0.085 * e, 0.1 * e),
+               (0.23 * e, 0.0, 0.0)], 8, "mat_hueso", tapa_arriba=False)
+    caja(m, (cx - 0.042 * e, cy + 0.01 * e, cz + 0.035 * e),
+         (cx + 0.042 * e, cy + 0.065 * e, cz + 0.092 * e), "mat_hueso")      # mandibula
+    frente = cz + 0.112 * e
+    for dx in (-0.036, 0.036):
+        m.decal(B(cx + dx * e, cy + 0.15 * e, frente), (0, -1, 0), 0.042 * e, 0.046 * e, ojos,
+                salida=0.01 * e)
+    m.decal(B(cx, cy + 0.105 * e, frente), (0, -1, 0), 0.02 * e, 0.03 * e, "mat_oscuro",
+            salida=0.01 * e)                                                # nariz
+    m.decal(B(cx, cy + 0.05 * e, cz + 0.092 * e), (0, -1, 0), 0.07 * e, 0.012 * e, "mat_oscuro",
+            salida=0.004 * e)                                               # dientes
+
+
+def hueso_largo(m, p0, p1, r=0.022, nudo=0.038):
+    """Hueso largo (femur, tibia) de p0 a p1 (motor) con los extremos abultados."""
+    m.segmento(B(*p0), B(*p1), r, r * 0.9, 6, "mat_hueso")
+    for p in (p0, p1):
+        res = bmesh.ops.create_icosphere(m.bm, subdivisions=1, radius=nudo)
+        for v in res["verts"]:
+            v.co += B(*p)
+        for f in {f for v in res["verts"] for f in v.link_faces}:
+            f.material_index = m._indice("mat_hueso")
+
+
+def osamenta(col_):
+    """Restos en un nicho: calavera, dos femures cruzados y huesos sueltos. Largo en X (1.1 m),
+    la calavera mira a +Z."""
+    m = rc.Malla()
+    craneo(m, (-0.42, 0, 0.0), 1.0)
+    hueso_largo(m, (-0.18, 0.035, -0.09), (0.5, 0.035, 0.07))
+    hueso_largo(m, (-0.12, 0.07, 0.08), (0.55, 0.05, -0.06))
+    hueso_largo(m, (0.15, 0.025, 0.12), (0.62, 0.025, 0.1), r=0.016, nudo=0.028)
+    for k in range(4):   # costillas: arcos cortos
+        z = -0.12 + k * 0.05
+        m.segmento(B(0.05, 0.02, z), B(0.2, 0.06, z + 0.02), 0.009, 0.008, 4, "mat_hueso")
+        m.segmento(B(0.2, 0.06, z + 0.02), B(0.32, 0.015, z + 0.01), 0.008, 0.007, 4, "mat_hueso")
+    col(m, (-0.55, 0, -0.15), (0.65, 0.25, 0.15))
+    return m.objeto("osamenta", col_)
+
+
+def calavera_vela(col_):
+    """Calavera grande con una vela que sale por la coronilla y los ojos encendidos por dentro
+    (la llama es un sprite y la luz, de la entidad). Base en el origen, mira a +Z."""
+    m = rc.Malla()
+    e = 1.7
+    craneo(m, (0, 0, 0), e, ojos="mat_brillo")
+    alto = 0.05 * e + 0.19 * e                       # donde la vela asoma por arriba
+    m.prisma(B(0, alto - 0.04, 0), 0.05, 0.045, 0.22, 8, "mat_cera")
+    for x, z, largo in ((0.06, 0.05, 0.12), (-0.07, 0.02, 0.09), (0.0, -0.08, 0.14)):
+        caja(m, (x - 0.012, alto - largo, z - 0.012), (x + 0.012, alto + 0.01, z + 0.012), "mat_cera")
+    col(m, (-0.2, 0, -0.2), (0.2, 0.6, 0.2))
+    return m.objeto("calavera_vela", col_)
 
 
 def trampilla(col_):
@@ -573,11 +668,14 @@ PIEZAS = [
     (sarcofago, "Sarcofago de piedra (largo en z)."),
     (atril, "Atril con libro abierto."),
     (puerta_cripta, "Puerta de hierro de la cripta vista desde dentro (frente +Z)."),
-    (estatua, "Figura encapuchada sobre pedestal."),
+    (estatua, "Figura encapuchada sobre pedestal (marmol blanco, cementerio)."),
+    (estatua_gastada, "Figura encapuchada sobre pedestal (piedra gastada, catacumbas)."),
     (reja, "Reja de hierro para un tunel de 3 m (plano XY)."),
     (cuerda_pozo, "Cuerda del pozo de la aldea y cubo (origen bajo el centro del tiro)."),
     (escalera_mano, "Escalera de mano hasta la trampilla de la plaza."),
     (trampilla, "Trampilla de madera en el suelo (plaza de noche); sin colision."),
+    (osamenta, "Calavera y huesos para los nichos (largo en X, la calavera mira a +Z)."),
+    (calavera_vela, "Calavera con vela; la llama va encima, a 0.58 m (sprite spr_llama)."),
     (tuneles, "Red de tuneles (mapa en tools/blender/tuneles_mapa.py). Origen: centro de la\n"
               "llegada; la escalera a la cripta sube hacia +Z."),
 ]

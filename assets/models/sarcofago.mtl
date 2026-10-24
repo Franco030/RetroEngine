@@ -1,8 +1,8 @@
 # RetroEngine: sarcofago
 
-newmtl mat_cripta
+newmtl mat_marmol_viejo
 d 1.000000
-map_Kd ../textures/mat_cripta.png
+map_Kd ../textures/mat_marmol_viejo.png
 
 newmtl mat_oscuro
 d 1.000000

@@ -9,6 +9,8 @@ gen_sonidos: sintetiza los efectos y ambientes del subterraneo (assets/audio/).
   reja.wav           reja de hierro que se abre (chirrido y golpe)
   derrumbe.wav       rocas que se desprenden a lo lejos
   gemido.wav         un lamento lejano (para asustar una sola vez)
+  hojas.wav          pasos entre hojas secas (al meterse en el bosque)
+  buho.wav, pajaros.wav  bucles de bosque de noche y de dia (emisores)
 
 Mono, 22050 Hz, 16 bits, como el resto de efectos. Los ambientes son BUCLES PERFECTOS: se
 mezclan en un buffer circular y la reverb es circular (las funciones de gen_musica.py).
@@ -206,6 +208,56 @@ def gemido(rng):
     return reverb(out, rng, 4.0, 0.7)
 
 
+def hojas(rng):
+    """Pasos entre maleza y hojas secas: crujidos cortos de ruido agudo, tres o cuatro pasos."""
+    n = int(1.5 * SR)
+    s = np.zeros(n, np.float32)
+    for k in range(4):
+        t0 = 0.05 + k * 0.33 + rng.uniform(-0.03, 0.03)
+        m = int(0.22 * SR)
+        r = rng.standard_normal(m).astype(np.float32)
+        r = r - suavizar(r, 4)                                  # solo lo agudo: hojarasca
+        crujidos = (rng.random(m) < 0.06).astype(np.float32)
+        r *= np.exp(-np.arange(m) / (0.06 * SR)) * (0.4 + suavizar(crujidos, 30) * 20)
+        i = int(t0 * SR)
+        s[i:i + m] += r[:n - i] * (1 - 0.15 * k)
+    return reverb(s, rng, 0.8, 0.15)
+
+
+def buho(rng):
+    """Bucle de bosque de noche: un buho a lo lejos (dos ululatos) y mucho silencio."""
+    seg = 14.0
+    buf = np.zeros(int(seg * SR), np.float32)
+    def ulular(f0, dur):
+        n = int(dur * SR)
+        t = np.arange(n) / SR
+        f = f0 * (1 + 0.04 * np.sin(np.pi * t / dur))            # sube y baja un poco
+        fase = 2 * np.pi * np.cumsum(f) / SR
+        voz = np.sin(fase) + 0.2 * np.sin(2 * fase)
+        return (voz * np.sin(np.pi * t / dur) ** 1.5).astype(np.float32)
+    for t0, f0, dur in ((2.0, 390, 0.35), (2.6, 360, 0.7), (8.4, 385, 0.35), (8.9, 355, 0.25),
+                        (9.3, 350, 0.75)):
+        poner(buf, ulular(f0, dur) * 0.6, t0)
+    buf += ruido_filtrado(rng, len(buf), 90) * 0.5            # aire entre los arboles
+    return reverb(buf, rng, 3.0, 0.5)
+
+
+def pajaros(rng):
+    """Bucle de bosque de dia: trinos cortos de dos o tres pajaros y brisa en las hojas."""
+    seg = 12.0
+    buf = ruido_filtrado(rng, int(seg * SR), 12) * 0.25          # brisa
+    for _ in range(9):
+        t0 = rng.uniform(0, seg)
+        f0 = rng.uniform(2200, 3600)
+        for k in range(int(rng.integers(2, 6))):                  # frase de varios trinos
+            n = int(rng.uniform(0.05, 0.12) * SR)
+            t = np.arange(n) / SR
+            f = f0 * (1 + rng.uniform(-0.25, 0.25) * t / t[-1])
+            tr = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.sin(np.pi * t / t[-1])
+            poner(buf, tr.astype(np.float32) * 0.35, t0 + k * rng.uniform(0.09, 0.16))
+    return reverb(buf, rng, 1.5, 0.3)
+
+
 SONIDOS = {
     "cripta_amb": cripta_amb,
     "tuneles_amb": tuneles_amb,
@@ -215,6 +267,9 @@ SONIDOS = {
     "reja": reja,
     "derrumbe": derrumbe,
     "gemido": gemido,
+    "hojas": hojas,
+    "buho": buho,
+    "pajaros": pajaros,
 }
 
 
@@ -230,7 +285,7 @@ def main():
         rng = np.random.default_rng(args.seed * 100 + list(SONIDOS).index(nombre))
         x = SONIDOS[nombre](rng)
         ruta = os.path.join(args.out, nombre + ".wav")
-        escribir_mono(ruta, x, 0.8 if nombre.endswith("_amb") else 0.9)
+        escribir_mono(ruta, x, 0.8 if nombre.endswith("_amb") or nombre in ("buho", "pajaros") else 0.9)
         print(f"{ruta}  {len(x) / SR:.2f} s")
 
 

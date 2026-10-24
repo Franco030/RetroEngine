@@ -1,5 +1,5 @@
 # RetroEngine: tumba
 
-newmtl mat_piedra
+newmtl mat_lapida
 d 1.000000
-map_Kd ../textures/mat_piedra.png
+map_Kd ../textures/mat_lapida.png

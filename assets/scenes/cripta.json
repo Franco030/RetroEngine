@@ -28,7 +28,7 @@
         "range": 2.5,
         "do": [
           { "play_sound": "audio/puerta_cerrada.wav", "volume": 0.8 },
-          { "goto_scene": "scenes/cementerio.json", "position": [-7.55, 0, -7.94], "yaw": -130 }
+          { "goto_scene": "scenes/cementerio.json", "position": [-13.5, 0, -6.2], "yaw": 180 }
         ]
       }
     },
@@ -127,67 +127,59 @@
       "emissive": true
     },
     {
-      "name": "huesos_1",
-      "sprite": "textures/spr_huesos.png",
-      "size": [0.9, 0.6],
-      "position": [-3.72, 3.61, -2.2],
-      "tint": [150, 140, 130, 255],
+      "name": "osamenta_1",
+      "model": "models/osamenta.obj",
+      "position": [-4.27, 4.0, -2.17],
+      "rotation": [0, 93.04, 0],
       "collider": false
     },
     {
-      "name": "huesos_2",
-      "sprite": "textures/spr_huesos.png",
-      "size": [0.9, 0.6],
-      "position": [-3.72, 4.61, -1.89],
-      "tint": [150, 140, 130, 255],
+      "name": "osamenta_2",
+      "model": "models/osamenta.obj",
+      "position": [-4.27, 5.0, -1.93],
+      "rotation": [0, 89.67, 0],
       "collider": false
     },
     {
-      "name": "huesos_3",
-      "sprite": "textures/spr_huesos.png",
-      "size": [0.9, 0.6],
-      "position": [-3.72, 3.61, 1.08],
-      "tint": [150, 140, 130, 255],
+      "name": "osamenta_3",
+      "model": "models/osamenta.obj",
+      "position": [-4.27, 4.0, 0.86],
+      "rotation": [0, 94.68, 0],
       "collider": false
     },
     {
-      "name": "huesos_4",
-      "sprite": "textures/spr_huesos.png",
-      "size": [0.9, 0.6],
-      "position": [-3.72, 4.61, 0.99],
-      "tint": [150, 140, 130, 255],
+      "name": "osamenta_4",
+      "model": "models/osamenta.obj",
+      "position": [-4.27, 5.0, 1.15],
+      "rotation": [0, 90.2, 0],
       "collider": false
     },
     {
-      "name": "huesos_5",
-      "sprite": "textures/spr_huesos.png",
-      "size": [0.9, 0.6],
-      "position": [3.72, 3.61, -2.17],
-      "tint": [150, 140, 130, 255],
+      "name": "osamenta_5",
+      "model": "models/osamenta.obj",
+      "position": [4.27, 4.0, -2.0],
+      "rotation": [0, -94.22, 0],
       "collider": false
     },
     {
-      "name": "huesos_6",
-      "sprite": "textures/spr_huesos.png",
-      "size": [0.9, 0.6],
-      "position": [3.72, 4.61, -1.82],
-      "tint": [150, 140, 130, 255],
+      "name": "osamenta_6",
+      "model": "models/osamenta.obj",
+      "position": [4.27, 5.0, -2.25],
+      "rotation": [0, -92.06, 0],
       "collider": false
     },
     {
-      "name": "huesos_7",
-      "sprite": "textures/spr_huesos.png",
-      "size": [0.9, 0.6],
-      "position": [3.72, 3.61, 1.18],
-      "tint": [150, 140, 130, 255],
+      "name": "osamenta_7",
+      "model": "models/osamenta.obj",
+      "position": [4.27, 4.0, 1.04],
+      "rotation": [0, -96.89, 0],
       "collider": false
     },
     {
-      "name": "huesos_8",
-      "sprite": "textures/spr_huesos.png",
-      "size": [0.9, 0.6],
-      "position": [3.72, 4.61, 1.01],
-      "tint": [150, 140, 130, 255],
+      "name": "osamenta_8",
+      "model": "models/osamenta.obj",
+      "position": [4.27, 5.0, 1.15],
+      "rotation": [0, -94.28, 0],
       "collider": false
     },
     {

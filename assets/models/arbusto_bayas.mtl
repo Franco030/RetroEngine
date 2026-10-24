@@ -1,0 +1,9 @@
+# RetroEngine: arbusto_bayas
+
+newmtl mat_hojas
+d 1.000000
+map_Kd ../textures/mat_hojas.png
+
+newmtl mat_sangre
+d 1.000000
+map_Kd ../textures/mat_sangre.png

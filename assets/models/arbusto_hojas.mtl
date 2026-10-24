@@ -1,0 +1,5 @@
+# RetroEngine: arbusto_hojas
+
+newmtl mat_hojas
+d 1.000000
+map_Kd ../textures/mat_hojas.png

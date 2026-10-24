@@ -17,7 +17,7 @@
   "light": { "direction": [0.3, -0.6, -0.5], "ambient": 0.16 },
   "lights": [
     {
-      "position": [0, 2.2, -6.6],
+      "position": [0, 2.8, -7.4],
       "color": [255, 170, 90],
       "radius": 6,
       "intensity": 0.9,
@@ -25,7 +25,7 @@
       "flickerRate": 6
     }
   ],
-  "emitters": [{ "file": "audio/portal_zumbido.wav", "position": [0, 1.2, 19], "volume": 0.6, "radius": 8 }],
+  "emitters": [{ "file": "audio/buho.wav", "position": [-3.0, 4.0, 23.6], "volume": 0.5, "radius": 14 }],
   "entities": [
     {
       "name": "suelo",
@@ -334,12 +334,11 @@
       "position": [9.89, 0, -4.21],
       "rotation": [0, 4.5, 0]
     },
-    { "name": "capilla", "model": "models/capilla.obj", "position": [0, 0, -11] },
+    { "name": "capilla", "model": "models/capilla.obj", "position": [0, 0, -14] },
     {
       "name": "cripta",
       "model": "models/cripta.obj",
-      "position": [-10, 0, -10],
-      "rotation": [0, 50, 0],
+      "position": [-13.5, 0, -14.5],
       "interact": {
         "prompt": "Entrar en la cripta",
         "if": { "flag": "llave_cripta" },
@@ -347,8 +346,71 @@
           { "play_sound": "audio/puerta_cerrada.wav", "volume": 0.9 },
           { "set_flag": "cripta_abierta" },
           { "goto_scene": "scenes/cripta.json", "position": [0, 3, 3.8], "yaw": 0 }
-        ]
+        ],
+        "box": { "min": [-1.6, 0, 4.0], "max": [1.6, 3.2, 6.8] },
+        "range": 2.0
       }
+    },
+    {
+      "name": "estatua_1",
+      "model": "models/estatua.obj",
+      "position": [-5.6, 0, -9.4],
+      "rotation": [0, 8, 0]
+    },
+    {
+      "name": "estatua_2",
+      "model": "models/estatua.obj",
+      "position": [6.2, 0, -10.6],
+      "rotation": [0, -12, 0]
+    },
+    {
+      "name": "flores_marchitas_1",
+      "sprite": "textures/spr_flores_marchitas.png",
+      "size": [0.6, 0.6],
+      "position": [-7.47, 0.19, 5.99],
+      "collider": false
+    },
+    {
+      "name": "flores_marchitas_2",
+      "sprite": "textures/spr_flores_marchitas.png",
+      "size": [0.6, 0.6],
+      "position": [2.92, 0.19, 6.1],
+      "collider": false
+    },
+    {
+      "name": "flores_marchitas_3",
+      "sprite": "textures/spr_flores_marchitas.png",
+      "size": [0.6, 0.6],
+      "position": [-9.84, 0.19, 2.79],
+      "collider": false
+    },
+    {
+      "name": "flores_marchitas_4",
+      "sprite": "textures/spr_flores_marchitas.png",
+      "size": [0.6, 0.6],
+      "position": [5.26, 0.19, 2.66],
+      "collider": false
+    },
+    {
+      "name": "flores_marchitas_5",
+      "sprite": "textures/spr_flores_marchitas.png",
+      "size": [0.6, 0.6],
+      "position": [4.95, 0.19, -0.83],
+      "collider": false
+    },
+    {
+      "name": "flores_marchitas_6",
+      "sprite": "textures/spr_flores_marchitas.png",
+      "size": [0.6, 0.6],
+      "position": [-5.23, 0.19, -4.19],
+      "collider": false
+    },
+    {
+      "name": "flores_marchitas_7",
+      "sprite": "textures/spr_flores_marchitas.png",
+      "size": [0.6, 0.6],
+      "position": [7.71, 0.19, -3.95],
+      "collider": false
     },
     { "name": "banco", "model": "models/banco.obj", "position": [4.5, 0, -8], "rotation": [0, -20, 0] },
     {
@@ -384,11 +446,11 @@
     },
     {
       "name": "arbol_seco_2",
-      "sprite": "textures/spr_arbol_seco.png",
-      "size": [3.7, 5.6],
+      "model": "models/arbol_muerto.obj",
       "position": [17, 0, 5],
-      "tint": [150, 150, 170, 255],
-      "collider": { "min": [-0.25, 0, -0.25], "max": [0.25, 3.0, 0.25] }
+      "rotation": [0, 267.0, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255]
     },
     {
       "name": "arbol_seco_3",
@@ -400,11 +462,11 @@
     },
     {
       "name": "arbol_seco_4",
-      "sprite": "textures/spr_arbol_seco.png",
-      "size": [3.83, 5.8],
+      "model": "models/arbol_muerto.obj",
       "position": [16, 0, -9],
-      "tint": [150, 150, 170, 255],
-      "collider": { "min": [-0.25, 0, -0.25], "max": [0.25, 3.0, 0.25] }
+      "rotation": [0, 265.1, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255]
     },
     {
       "name": "arbol_seco_5",
@@ -416,11 +478,11 @@
     },
     {
       "name": "arbol_seco_6",
-      "sprite": "textures/spr_arbol_seco.png",
-      "size": [3.3, 5.0],
+      "model": "models/arbol_muerto.obj",
       "position": [8, 0, -16],
-      "tint": [150, 150, 170, 255],
-      "collider": { "min": [-0.25, 0, -0.25], "max": [0.25, 3.0, 0.25] }
+      "rotation": [0, 212.6, 0],
+      "scale": [1.23, 1.23, 1.23],
+      "tint": [150, 150, 170, 255]
     },
     {
       "name": "arbol_seco_7",
@@ -670,14 +732,761 @@
       "size": [1.0, 1.0],
       "position": [-10.34, 0, 0.46],
       "tint": [130, 150, 160, 255]
+    },
+    {
+      "name": "bosque_noche_sendero",
+      "model": "models/sendero.obj",
+      "position": [0, 0, 12.5],
+      "rotation": [0, 180.0, 0],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_hojarasca",
+      "model": { "type": "plane", "size": 22, "subdivisions": 11, "tiles": 11 },
+      "texture": "textures/mat_hojarasca.png",
+      "wrap": "repeat",
+      "position": [0.0, -0.01, 24.6],
+      "tint": [100, 110, 120, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_1",
+      "model": "models/arbol_muerto.obj",
+      "position": [3.5, 0, 11.78],
+      "rotation": [0, 181.9, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_2",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-3.5, 0, 11.47],
+      "rotation": [0, 79.4, 0],
+      "scale": [1.18, 1.18, 1.18],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_3",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.41, 5.12],
+      "position": [5.22, 0, 11.22],
+      "tint": [150, 150, 170, 255],
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 2.5, 0.3] }
+    },
+    {
+      "name": "bosque_noche_arbol_4",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.54, 5.31],
+      "position": [-6.83, 0, 11.62],
+      "tint": [150, 150, 170, 255],
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 2.5, 0.3] }
+    },
+    {
+      "name": "bosque_noche_arbol_5",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [3.45, 0, 12.67],
+      "rotation": [0, 122.5, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_6",
+      "model": "models/arbol_pino.obj",
+      "position": [-3.47, 0, 13.18],
+      "rotation": [0, 36.8, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_7",
+      "model": "models/arbol_pino.obj",
+      "position": [-5.15, 0, 12.86],
+      "rotation": [0, 217.3, 0],
+      "scale": [0.76, 0.76, 0.76],
+      "tint": [130, 140, 175, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_8",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.73, 5.6],
+      "position": [7.1, 0, 13.32],
+      "tint": [150, 150, 170, 255],
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 2.5, 0.3] }
+    },
+    {
+      "name": "bosque_noche_arbol_9",
+      "sprite": "textures/pino.png",
+      "size": [3.07, 3.07],
+      "position": [-6.93, 0, 12.86],
+      "tint": [130, 140, 175, 255],
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 2.5, 0.3] }
+    },
+    {
+      "name": "bosque_noche_arbol_10",
+      "sprite": "textures/pino.png",
+      "size": [3.7, 3.7],
+      "position": [-2.44, 0, 14.06],
+      "tint": [130, 140, 175, 255],
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 2.5, 0.3] }
+    },
+    {
+      "name": "bosque_noche_arbol_11",
+      "sprite": "textures/pino.png",
+      "size": [3.84, 3.84],
+      "position": [3.82, 0, 14.02],
+      "tint": [130, 140, 175, 255],
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 2.5, 0.3] }
+    },
+    {
+      "name": "bosque_noche_arbol_12",
+      "model": "models/arbol_pino.obj",
+      "position": [-3.72, 0, 14.71],
+      "rotation": [0, 207.8, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_13",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [4.33, 6.49],
+      "position": [-5.26, 0, 14.94],
+      "tint": [150, 150, 170, 255],
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 2.5, 0.3] }
+    },
+    {
+      "name": "bosque_noche_arbol_14",
+      "model": "models/arbol_pino.obj",
+      "position": [7.2, 0, 14.11],
+      "rotation": [0, 354.7, 0],
+      "scale": [0.85, 0.85, 0.85],
+      "tint": [130, 140, 175, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_15",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.61, 5.41],
+      "position": [2.07, 0, 16.01],
+      "tint": [150, 150, 170, 255],
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 2.5, 0.3] }
+    },
+    {
+      "name": "bosque_noche_arbol_16",
+      "sprite": "textures/pino.png",
+      "size": [3.92, 3.92],
+      "position": [-2.04, 0, 16.05],
+      "tint": [130, 140, 175, 255],
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 2.5, 0.3] }
+    },
+    {
+      "name": "bosque_noche_arbol_17",
+      "model": "models/arbol_pino.obj",
+      "position": [3.78, 0, 16.13],
+      "rotation": [0, 58.6, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_18",
+      "model": "models/arbol_muerto.obj",
+      "position": [-3.94, 0, 15.55],
+      "rotation": [0, 219.3, 0],
+      "scale": [0.78, 0.78, 0.78],
+      "tint": [130, 140, 175, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_19",
+      "model": "models/arbol_muerto.obj",
+      "position": [5.26, 0, 16.24],
+      "rotation": [0, 166.4, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "tint": [130, 140, 175, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_20",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.43, 0, 16.48],
+      "rotation": [0, 246.5, 0],
+      "scale": [0.81, 0.81, 0.81],
+      "tint": [130, 140, 175, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_21",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.53, 5.3],
+      "position": [-7.32, 0, 16.23],
+      "tint": [150, 150, 170, 255],
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 2.5, 0.3] }
+    },
+    {
+      "name": "bosque_noche_arbol_22",
+      "sprite": "textures/pino.png",
+      "size": [3.37, 3.37],
+      "position": [-2.1, 0, 17.06],
+      "tint": [130, 140, 175, 255],
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 2.5, 0.3] }
+    },
+    {
+      "name": "bosque_noche_arbol_23",
+      "model": "models/arbol_pino.obj",
+      "position": [3.64, 0, 17.45],
+      "rotation": [0, 144.4, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_24",
+      "model": "models/arbol_pino.obj",
+      "position": [-3.89, 0, 17.47],
+      "rotation": [0, 76.5, 0],
+      "scale": [0.84, 0.84, 0.84],
+      "tint": [130, 140, 175, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_25",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [5.25, 0, 17.5],
+      "rotation": [0, 51.4, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_26",
+      "model": "models/arbol_pino.obj",
+      "position": [-5.35, 0, 17.55],
+      "rotation": [0, 268.9, 0],
+      "scale": [0.88, 0.88, 0.88],
+      "tint": [130, 140, 175, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_27",
+      "model": "models/arbol_pino.obj",
+      "position": [7.21, 0, 17.66],
+      "rotation": [0, 79.0, 0],
+      "scale": [0.89, 0.89, 0.89],
+      "tint": [130, 140, 175, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_28",
+      "sprite": "textures/pino.png",
+      "size": [3.84, 3.84],
+      "position": [-7.34, 0, 17.26],
+      "tint": [130, 140, 175, 255],
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 2.5, 0.3] }
+    },
+    {
+      "name": "bosque_noche_arbol_29",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.98, 5.97],
+      "position": [-2.18, 0, 18.51],
+      "tint": [150, 150, 170, 255],
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 2.5, 0.3] }
+    },
+    {
+      "name": "bosque_noche_arbol_30",
+      "model": "models/arbol_muerto.obj",
+      "position": [3.74, 0, 19.32],
+      "rotation": [0, 55.0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "tint": [130, 140, 175, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_31",
+      "model": "models/arbol_muerto.obj",
+      "position": [-3.91, 0, 18.85],
+      "rotation": [0, 138.5, 0],
+      "scale": [0.81, 0.81, 0.81],
+      "tint": [130, 140, 175, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_32",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [4.27, 6.4],
+      "position": [5.64, 0, 19.19],
+      "tint": [150, 150, 170, 255],
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 2.5, 0.3] }
+    },
+    {
+      "name": "bosque_noche_arbol_33",
+      "model": "models/arbol_muerto.obj",
+      "position": [7.26, 0, 18.86],
+      "rotation": [0, 244.9, 0],
+      "scale": [1.22, 1.22, 1.22],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_34",
+      "model": "models/arbol_pino.obj",
+      "position": [-6.85, 0, 19.23],
+      "rotation": [0, 276.7, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_35",
+      "model": "models/arbol_muerto.obj",
+      "position": [3.45, 0, 20.03],
+      "rotation": [0, 163.3, 0],
+      "scale": [0.85, 0.85, 0.85],
+      "tint": [130, 140, 175, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_36",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.62, 5.43],
+      "position": [-3.73, 0, 20.69],
+      "tint": [150, 150, 170, 255],
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 2.5, 0.3] }
+    },
+    {
+      "name": "bosque_noche_arbol_37",
+      "sprite": "textures/pino.png",
+      "size": [3.98, 3.98],
+      "position": [5.59, 0, 20.17],
+      "tint": [130, 140, 175, 255],
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 2.5, 0.3] }
+    },
+    {
+      "name": "bosque_noche_arbol_38",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.3, 0, 20.55],
+      "rotation": [0, 182.8, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_39",
+      "model": "models/arbol_muerto.obj",
+      "position": [7.29, 0, 20.24],
+      "rotation": [0, 55.0, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "bosque_noche_arbol_40",
+      "sprite": "textures/pino.png",
+      "size": [3.95, 3.95],
+      "position": [-7.27, 0, 20.86],
+      "tint": [130, 140, 175, 255],
+      "collider": { "min": [-0.3, 0, -0.3], "max": [0.3, 2.5, 0.3] }
+    },
+    {
+      "name": "bosque_noche_arbol_41",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.95, 5.92],
+      "position": [-2.03, 0, 21.8],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_42",
+      "sprite": "textures/pino.png",
+      "size": [3.96, 3.96],
+      "position": [3.6, 0, 22.32],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_43",
+      "sprite": "textures/pino.png",
+      "size": [3.47, 3.47],
+      "position": [5.28, 0, 21.66],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_44",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.26, 0, 22.11],
+      "rotation": [0, 40.3, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_45",
+      "model": "models/arbol_pino.obj",
+      "position": [-7.07, 0, 22.42],
+      "rotation": [0, 86.2, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_46",
+      "model": "models/arbol_muerto.obj",
+      "position": [2.15, 0, 23.98],
+      "rotation": [0, 30.8, 0],
+      "scale": [0.83, 0.83, 0.83],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_47",
+      "model": "models/arbol_muerto.obj",
+      "position": [-1.95, 0, 23.85],
+      "rotation": [0, 46.2, 0],
+      "scale": [0.74, 0.74, 0.74],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_48",
+      "model": "models/arbol_pino.obj",
+      "position": [3.54, 0, 23.42],
+      "rotation": [0, 190.0, 0],
+      "scale": [0.84, 0.84, 0.84],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_49",
+      "sprite": "textures/pino.png",
+      "size": [3.14, 3.14],
+      "position": [5.45, 0, 23.02],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_50",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [4.18, 6.27],
+      "position": [6.76, 0, 23.83],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_51",
+      "sprite": "textures/pino.png",
+      "size": [3.24, 3.24],
+      "position": [-6.77, 0, 23.47],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_52",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [4.12, 6.18],
+      "position": [-0.05, 0, 23.29],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_53",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.42, 5.12],
+      "position": [-0.92, 0, 23.13],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_54",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.86, 5.8],
+      "position": [3.8, 0, 24.86],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_55",
+      "model": "models/arbol_pino.obj",
+      "position": [-3.76, 0, 25.05],
+      "rotation": [0, 157.7, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_56",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.41, 5.12],
+      "position": [5.31, 0, 25.28],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_57",
+      "model": "models/arbol_pino.obj",
+      "position": [-5.34, 0, 25.34],
+      "rotation": [0, 7.6, 0],
+      "scale": [0.87, 0.87, 0.87],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_58",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.7, 5.56],
+      "position": [1.22, 0, 24.5],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_59",
+      "sprite": "textures/pino.png",
+      "size": [3.91, 3.91],
+      "position": [-1.04, 0, 24.64],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_60",
+      "model": "models/arbol_muerto.obj",
+      "position": [2.11, 0, 26.54],
+      "rotation": [0, 82.4, 0],
+      "scale": [0.98, 0.98, 0.98],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_61",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.47, 5.2],
+      "position": [-2.34, 0, 26.23],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_62",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.73, 5.6],
+      "position": [3.39, 0, 26.43],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_63",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-3.48, 0, 26.84],
+      "rotation": [0, 77.1, 0],
+      "scale": [0.7, 0.7, 0.7],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_64",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [5.23, 0, 26.13],
+      "rotation": [0, 87.5, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_65",
+      "model": "models/arbol_muerto.obj",
+      "position": [7.12, 0, 26.16],
+      "rotation": [0, 34.9, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_66",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-6.92, 0, 26.75],
+      "rotation": [0, 311.0, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_67",
+      "model": "models/arbol_muerto.obj",
+      "position": [0.17, 0, 26.88],
+      "rotation": [0, 21.8, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_68",
+      "sprite": "textures/pino.png",
+      "size": [3.69, 3.69],
+      "position": [0.96, 0, 26.49],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_69",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.54, 5.31],
+      "position": [-1.09, 0, 26.29],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_70",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-2.0, 0, 28.05],
+      "rotation": [0, 50.5, 0],
+      "scale": [1.23, 1.23, 1.23],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_71",
+      "model": "models/arbol_muerto.obj",
+      "position": [3.62, 0, 28.36],
+      "rotation": [0, 159.5, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_72",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [4.11, 6.17],
+      "position": [-3.4, 0, 28.16],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_73",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [4.26, 6.4],
+      "position": [5.32, 0, 28.01],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_74",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.53, 0, 27.82],
+      "rotation": [0, 348.8, 0],
+      "scale": [0.91, 0.91, 0.91],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_75",
+      "sprite": "textures/pino.png",
+      "size": [3.05, 3.05],
+      "position": [7.32, 0, 27.65],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_76",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.48, 5.23],
+      "position": [-0.04, 0, 28.41],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_77",
+      "model": "models/arbol_muerto.obj",
+      "position": [0.95, 0, 27.74],
+      "rotation": [0, 311.3, 0],
+      "scale": [0.8, 0.8, 0.8],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_78",
+      "sprite": "textures/pino.png",
+      "size": [3.8, 3.8],
+      "position": [-1.18, 0, 27.88],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_79",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [2.36, 0, 29.43],
+      "rotation": [0, 95.5, 0],
+      "scale": [0.81, 0.81, 0.81],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_80",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [4.14, 6.21],
+      "position": [-1.91, 0, 29.4],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_81",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [3.91, 0, 29.49],
+      "rotation": [0, 55.7, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_82",
+      "model": "models/arbol_muerto.obj",
+      "position": [-3.88, 0, 29.47],
+      "rotation": [0, 269.3, 0],
+      "scale": [0.78, 0.78, 0.78],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_83",
+      "model": "models/arbol_muerto.obj",
+      "position": [5.16, 0, 29.46],
+      "rotation": [0, 20.5, 0],
+      "scale": [0.8, 0.8, 0.8],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_84",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [3.77, 5.66],
+      "position": [-5.58, 0, 29.39],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_85",
+      "sprite": "textures/pino.png",
+      "size": [3.11, 3.11],
+      "position": [7.2, 0, 29.82],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_86",
+      "model": "models/arbol_muerto.obj",
+      "position": [0.06, 0, 29.75],
+      "rotation": [0, 145.4, 0],
+      "scale": [1.22, 1.22, 1.22],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_87",
+      "sprite": "textures/spr_arbol_seco.png",
+      "size": [4.07, 6.11],
+      "position": [1.32, 0, 29.47],
+      "tint": [150, 150, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_arbol_88",
+      "sprite": "textures/pino.png",
+      "size": [3.29, 3.29],
+      "position": [-1.19, 0, 29.67],
+      "tint": [130, 140, 175, 255],
+      "collider": false
+    },
+    {
+      "name": "bosque_noche_tronco",
+      "model": "models/tronco.obj",
+      "position": [2.8, 0, 16.41],
+      "rotation": [0, 163.16, 0]
     }
   ],
   "triggers": [
     {
       "name": "cripta_cerrada",
-      "position": [-8.6, 0, -8.6],
-      "size": [3, 2.4, 3],
-      "rotation": 50,
+      "position": [-13.5, 0, -7.1],
+      "size": [3.6, 2.4, 1.4],
       "if": { "not": { "flag": "llave_cripta" } },
       "do": [
         {
@@ -687,14 +1496,13 @@
       ]
     },
     {
-      "name": "puerta_noche",
-      "position": [0, 0, 19],
-      "size": [2.4, 2.4, 0.8],
-      "marker": true,
-      "color": [170, 255, 210, 255],
+      "name": "bosque_noche",
+      "position": [0.0, 0, 19.6],
+      "size": [14, 3, 1.2],
+      "rotation": 180.0,
       "do": [
-        { "play_sound": "audio/portal.wav" },
-        { "goto_scene": "scenes/noche.json", "position": [13, 0, 0], "yaw": 90 }
+        { "play_sound": "audio/hojas.wav", "volume": 0.7 },
+        { "goto_scene": "scenes/noche.json", "position": [15.5, 0, 0], "yaw": 90 }
       ]
     }
   ]

@@ -1,0 +1,25 @@
+{
+  "speaker": "Ermitano",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Hacia mucho que nadie bajaba...",
+        "Estos tuneles llegan al pozo de la aldea\ny a la plaza.",
+        "La reja del este se abre\ncon la llave que guarda el osario."
+      ]
+    },
+    {
+      "if": {
+        "all": [{ "flag": "tiene_llave_reja" }, { "not": { "flag": "reja_abierta" } }]
+      },
+      "once": true,
+      "lines": ["La encontraste. Bien.\nAhora no hagas ruido al abrir."]
+    },
+    {
+      "if": { "flag": "reja_abierta" },
+      "lines": ["Mas alla de la reja no hay nada que buscar.\nPero buscaras igual."]
+    },
+    { "lines": ["El osario esta al oeste del cruce.\nY no mires mucho tiempo el agua del lago."] }
+  ]
+}

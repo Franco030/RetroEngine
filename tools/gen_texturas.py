@@ -501,6 +501,80 @@ def abedul(rng, size=32):
     return np.clip(rgb, 0, 1)
 
 
+VIDRIOS = [(30, 50, 150), (150, 20, 34), (90, 30, 120), (200, 150, 40), (30, 110, 90), (60, 80, 180)]
+
+
+def vidriera(rng, w=32, h=64):
+    """Vidriera alargada con arco: rombos de vidrio de colores con emplomado negro, un marco y
+    una figura de pie en el centro (un santo sin rostro)."""
+    yy, xx = np.mgrid[0:h, 0:w]
+    rgb = np.zeros((h, w, 3), np.float32)
+    lado = 6
+    u, v = (xx + yy) // lado, (xx - yy + 64) // lado          # celdas en rombo
+    for a in np.unique(u):
+        for b in np.unique(v):
+            celda = (u == a) & (v == b)
+            col = np.array(VIDRIOS[int(rng.integers(0, len(VIDRIOS)))], np.float32) / 255.0
+            rgb[celda] = col * rng.uniform(0.75, 1.15)
+    rgb[((xx + yy) % lado == 0) | ((xx - yy) % lado == 0)] = 0.05            # plomo
+    # figura: tunica y cabeza claras con aureola dorada
+    cx = w / 2
+    cuerpo = (np.abs(xx - cx) < 3 + (yy - 26) * 0.12) & (yy > 26) & (yy < 56)
+    rgb[cuerpo] = np.array([0.86, 0.84, 0.78]) * (0.85 + 0.15 * ((xx[cuerpo] // 2) % 2))[..., None]
+    aureola = np.abs(np.sqrt((xx - cx) ** 2 + (yy - 21) ** 2) - 5) < 1
+    rgb[aureola] = (0.95, 0.75, 0.2)
+    cabeza = np.sqrt((xx - cx) ** 2 + (yy - 21) ** 2) < 3.5
+    rgb[cabeza] = (0.15, 0.1, 0.12)                                         # sin rostro
+    # marco de piedra y remate en arco
+    arco = (yy < w / 2) & (np.sqrt((xx - cx + 0.5) ** 2 + (yy - w / 2) ** 2) > w / 2 - 1)
+    marco = (xx < 2) | (xx >= w - 2) | (yy >= h - 2) | arco
+    rgb[marco] = (0.22, 0.21, 0.2)
+    return np.clip(rgb, 0, 1)
+
+
+def roseton(rng, size=64):
+    """Roseton: circulo de petalos de vidrio de colores alrededor de un centro rojo."""
+    yy, xx = np.mgrid[0:size, 0:size]
+    c = size / 2 - 0.5
+    r = np.sqrt((xx - c) ** 2 + (yy - c) ** 2) / (size / 2)
+    a = np.arctan2(yy - c, xx - c)
+    rgb = np.full((size, size, 3), 0.22, np.float32)                         # piedra alrededor
+    petalo = (np.cos(a * 8) * 0.18 + 0.72 > r) & (r < 0.92)
+    anillo = (r < 0.92) & (r > 0.35)
+    colores = np.array(VIDRIOS, np.float32) / 255.0
+    sector = ((a + np.pi) / (2 * np.pi) * 16).astype(int) % 16
+    rgb[anillo] = colores[sector[anillo] % len(colores)] * 0.9
+    rgb[petalo & (r > 0.35)] = colores[(sector[petalo & (r > 0.35)] + 3) % len(colores)]
+    rgb[r < 0.35] = (0.7, 0.08, 0.1)
+    rgb[np.abs(r - 0.35) < 0.03] = 0.05
+    rgb[np.abs(r - 0.92) < 0.04] = 0.05
+    radios = (np.abs(np.sin(a * 8)) < 0.08) & (r < 0.92) & (r > 0.35)
+    rgb[radios] = 0.05
+    return np.clip(rgb, 0, 1)
+
+
+def plumas(rng, size=32, oscuro=(10, 10, 16), claro=(54, 58, 82)):
+    """Plumas negras con brillo azulado: escamas en hileras."""
+    rgb = tint(fbm(rng, (size, size), base=(4, 4), octaves=2) * 0.4, oscuro, claro)
+    yy, xx = np.mgrid[0:size, 0:size]
+    escama = ((yy % 4) == 0) | (((xx + (yy // 4) * 2) % 4) == 0)
+    rgb[escama] *= 0.55
+    brillo = ((yy % 4) == 1) & (((xx + (yy // 4) * 2) % 4) == 2)
+    rgb[brillo] = np.minimum(rgb[brillo] * 1.8, 1)
+    return np.clip(rgb, 0, 1)
+
+
+def liso(rng, size=16, oscuro=(0, 0, 0), claro=(255, 255, 255)):
+    """Color casi liso con un poco de grano (petalos, setas, ojos)."""
+    return tint(0.4 + 0.6 * fbm(rng, (size, size), base=(4, 4), octaves=2), oscuro, claro)
+
+
+def hierba(rng, size=32, oscuro=(30, 60, 20), claro=(110, 160, 60)):
+    """Briznas: rayas verticales de verdes."""
+    v = fbm(rng, (size, size), base=(1, 16), octaves=2)
+    return tint(v, oscuro, claro)
+
+
 def tela_roja(rng, size=32):
     """Tela roja gastada (la estola de la estatua): pliegues verticales."""
     pliegues = 0.5 + 0.5 * np.sin(np.arange(size) / size * 2 * np.pi * 4)[None, :]
@@ -592,6 +666,18 @@ TEXTURAS = {
     "mat_pino": (agujas, {}),
     "mat_corteza": (corteza, {}),
     "mat_abedul": (abedul, {}),
+    "mat_vidriera": (vidriera, {}),
+    "mat_roseton": (roseton, {}),
+    # detalles 3D que sustituyen a los sprites
+    "mat_plumas": (plumas, {}),
+    "mat_seta": (liso, {"oscuro": (70, 140, 180), "claro": (190, 240, 255)}),
+    "mat_hierba": (hierba, {}),
+    "mat_flor_roja": (liso, {"oscuro": (120, 20, 24), "claro": (230, 70, 60)}),
+    "mat_flor_amarilla": (liso, {"oscuro": (170, 130, 30), "claro": (250, 220, 90)}),
+    "mat_flor_blanca": (liso, {"oscuro": (170, 170, 180), "claro": (245, 245, 250)}),
+    "mat_flor_morada": (liso, {"oscuro": (80, 40, 120), "claro": (170, 110, 210)}),
+    "mat_flor_marchita": (liso, {"oscuro": (60, 24, 24), "claro": (130, 84, 64)}),
+    "mat_ojo": (liso, {"oscuro": (170, 20, 16), "claro": (255, 120, 80)}),
 }
 
 

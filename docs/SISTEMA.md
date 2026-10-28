@@ -82,7 +82,7 @@ falta alguno; si el shader no compila, lanza `No se pudo cargar el shader`. En l
 programa termina con el mensaje en la consola.
 
 **Configuración por defecto** (`EngineConfig`): ventana de 1280x960 redimensionable, 60 FPS,
-vsync, resolución interna 320x240, color de fondo `(24, 20, 32)`, fuente `fonts/ui.ttf`. La
+vsync, resolución interna 320x240, color de fondo `(24, 20, 32)`, fuente `fonts/roboto_medium.ttf`. La
 resolución interna y la de ventana también se pueden cambiar con las macros
 `RETRO_INTERNAL_WIDTH/HEIGHT` y `RETRO_WINDOW_WIDTH/HEIGHT` del CMake.
 
@@ -130,7 +130,7 @@ en la textura interna con la función `draw`, se presenta escalada con el post-p
 
 Después el motor escala la textura a la ventana con el post-proceso y dibuja la interfaz: la
 mira (amarilla si hay algo con lo que interactuar), el texto "E: ...", la ayuda, el nombre de la
-escena y el cuadro de mensajes.
+escena y los mensajes (como subtítulos).
 
 ---
 
@@ -637,10 +637,11 @@ ejecuta `ActionRunner` en orden.
 | `{ "teleport": [x, y, z] }` | `yaw` (el actual) | Mueve al jugador al instante (reinicia su velocidad). |
 | `{ "set_flag": "nombre" }` | `value` (1) | Fija la bandera. |
 | `{ "add_flag": "nombre" }` | `amount` (1) | Suma a la bandera (puede ser negativo). |
-| `{ "message": "texto" }` | `seconds` (3) | Muestra un cuadro de texto abajo. `\n` hace saltos de línea y `{bandera}` se sustituye por su valor: `"Monedas: {monedas}/3"`. Un mensaje nuevo reemplaza al anterior. |
+| `{ "message": "texto" }` | `seconds` (3) | Muestra el texto abajo, como un subtítulo sobre la imagen. `\n` hace saltos de línea y `{bandera}` se sustituye por su valor: `"Monedas: {monedas}/3"`. Un mensaje nuevo reemplaza al anterior. |
 | `{ "play_sound": "audio/x.wav" }` | `volume` (1), `at`, `radius` (14), `minDistance` (1) | Efecto de sonido. Sin `at`, suena "en la cabeza" (sin posición). Con `at: [x,y,z]` o `at: "nombre_de_entidad"`, suena en ese punto con atenuación y paneo (§12.3). |
 | `{ "play_music": "audio/x.wav" }` | `volume` (0.6), `fade` (1) | Cambia la música con fundido cruzado. |
 | `{ "stop_music": true }` | `fade` (1) | Apaga la música con fundido (el valor de la clave no importa). |
+| `{ "dialogue": "sepulturero" }` | — | Abre el diálogo `assets/dialogues/sepulturero.json` (§11.1). Si ninguna de sus entradas se cumple, no dice nada; si el archivo falla, se avisa por consola. |
 
 No existe una acción `set_visible`: la visibilidad se controla con banderas y `showIf` (por
 ejemplo, la llave tiene `"showIf": { "not": { "flag": "tiene_llave" } }` y el trigger que la
@@ -680,6 +681,61 @@ sus acciones; con `once`, se marca la bandera `interact:<escena>#<nombre>`.
 
 Truco usado en las monedas: una `box` mucho más grande que el objeto (`[-1.5..1.5]`) para que
 sea fácil apuntar a algo pequeño.
+
+### 11.1 Diálogos (`src/world/Dialogue.cpp`, `assets/dialogues/`)
+
+Lo que dice un NPC (o lo que se lee en una nota) no se escribe en la escena: vive en un archivo
+propio y la interacción solo lo abre con `{ "dialogue": "<id>" }`. Así un texto se corrige sin
+tocar la escena, varias entidades pueden compartir un diálogo y el diálogo puede **cambiar** con
+lo que ha pasado.
+
+```jsonc
+{
+  "speaker": "Sepulturero",            // nombre encima del subtitulo (opcional: notas, "mirar")
+  "entries": [                          // en orden: sale la PRIMERA que se pueda decir
+    { "once": true,                     // solo la primera vez que se elige
+      "lines": ["Otra alma perdida...", // cada texto es una pagina; E pasa a la siguiente
+                "Toma la llave de la cripta.\nA mi ya no me sirve."],
+      "do": [ { "set_flag": "llave_cripta" } ] },          // al cerrar la ultima pagina
+    { "if": { "flag": "cripta_abierta" }, "once": true,     // condiciones como en §9
+      "lines": ["Asi que bajaste."] },
+    { "lines": ["La cripta no se va a mover."] }            // sin nada: la que se repite
+  ]
+}
+```
+
+**Regla de elección** (`DialogueSystem::Start`): se recorren las entradas en orden y gana la
+primera cuyas condiciones se cumplan y que no sea un `once` ya dicho. Con eso salen los casos
+típicos sin código:
+
+- *Dice A, luego B y después repite C*: `A once`, `B once`, `C`.
+- *Cambia según lo que hiciste*: entradas con `if` antes que la de por defecto (el aldeano de la
+  demo responde distinto si ya tienes la llave y las monedas).
+- *Algo que solo pasa una vez y luego otro texto*: `once` con `do` (el sepulturero da la llave).
+
+**Memoria**: el sistema no guarda nada propio; todo son banderas de `GameState`, así que
+persisten al cambiar de escena y en las partidas guardadas, y se pueden consultar desde
+cualquier condición:
+
+| Bandera | Valor |
+|---|---|
+| `dlg:<id>` | Veces que se ha abierto el diálogo (el anciano de la aldea comenta algo distinto si `dlg:ermitano >= 1`). |
+| `dlg:<id>.<clave>` | 1 si la entrada `once` ya salió. La clave es `"key"` si la entrada la tiene; si no, su número (0, 1...). Con `key` se pueden reordenar entradas sin que cambie su bandera. |
+
+**Flujo en el juego**: la acción `dialogue` es un *comando* más de `ActionRunner` (el mismo
+patrón que las demás: datos que se ejecutan). `DialogueSystem` elige la entrada, apunta las
+banderas y escribe la página como el mensaje de `GameState` (con el nombre en `MessageSpeaker`);
+la interfaz no sabe nada de diálogos, solo dibuja el mensaje que haya (§17). Mientras hay un
+diálogo abierto el jugador queda quieto; **E** muestra la página entera si aún se escribe, si no
+pasa a la siguiente y, en la última, cierra el diálogo y ejecuta su `do` (que puede abrir otro
+diálogo o cambiar de escena). Si otro mensaje reemplaza la página (un anuncio), el diálogo se da
+por cerrado (`DialogueSystem::Update`).
+
+Los archivos se leen la primera vez que se usan y se guardan en caché; **F5** los vuelve a leer
+junto con la escena. `{bandera}` funciona en las páginas igual que en los mensajes.
+
+Los mensajes sueltos (`message`) siguen sirviendo para anuncios de triggers y para recoger
+objetos ("Recogiste la llave"): son una frase que no cambia.
 
 ---
 
@@ -843,6 +899,35 @@ recolocar al jugador y autoguardar.
 4. Si la carga falla, se avisa por consola y se sigue en la escena anterior.
 5. Fundido de vuelta.
 
+Al arrancar el juego también se entra con un fundido desde negro (`FadeInFromBlack`).
+
+### 14.5 Precarga de las escenas vecinas y medición
+
+Cada carga escribe en la consola cuánto ha costado y en qué:
+
+```
+[carga] scenes/aldea.json: 57 ms | modelos 0 (0 ms) | texturas 0 (0 ms) | sonidos 3 (15 ms) | resto 42 ms
+```
+
+(`AssetManager::Stats` cuenta solo lo que no estaba en caché.) Sin precarga, cada cambio costaba
+70-220 ms, casi todo en modelos.
+
+Para que eso no se pague al cruzar, tras cargar una escena `PlanPrefetch` busca sus **vecinas**
+(todas las rutas de `goto_scene` de su JSON) y los modelos y texturas de sus entidades:
+
+- Lo que ya está en memoria (por ejemplo, la escena de la que se viene) se **retiene**
+  (`keepModels_`, `keepTextures_`), así `PurgeUnused` no lo libera.
+- Lo que falta va a una cola, sin repetidos y **lo más pesado primero**. `StepPrefetch` la carga
+  poco a poco: con la pantalla aún casi negra (fundido de entrada) hasta 40 ms por fotograma, y
+  jugando solo 3 ms por fotograma. Un modelo no se puede partir, por eso lo grande va mientras
+  está oscuro.
+
+Resultado medido: los cambios de escena bajan a 22-65 ms (los modelos ya están: 0 ms) y el peor
+fotograma de la precarga mientras se juega es de 0-14 ms. Al terminar escribe
+`[precarga] terminada: N recursos en X ms repartidos en F fotogramas (el peor jugando: M ms)`.
+Lo que queda en cada carga ("resto") es leer el JSON, crear las entidades y las mallas
+procedurales (suelos) y los sonidos de pasos.
+
 F5 (`Reload`) recarga la escena actual al instante desde el disco, sin fundido.
 
 ---
@@ -946,11 +1031,30 @@ fuerzan `clamp`.
 `Ui` dibuja texto y rectángulos **a la resolución de la ventana**, después del post-proceso (el
 texto queda nítido, sin temblor ni cuantización). Las coordenadas se dan en una rejilla de
 referencia de **320 de ancho** (la altura sale de la proporción), así el diseño no cambia si se
-cambia la resolución interna. La fuente es `fonts/ui.ttf` cargada a 48 px; si no existe, se usa
+cambia la resolución interna. La fuente es `fonts/roboto_medium.ttf` (Roboto Medium, licencia Apache 2.0) cargada a 48 px; si no existe, se usa
 la de Raylib.
 
-El cuadro de mensajes va centrado abajo, con fondo negro semitransparente y borde blanco; cada
-`\n` es una línea.
+Los mensajes se dibujan como **subtítulos**, sin cuadro: centrados abajo, en blanco con un
+contorno negro (la misma línea en negro desplazada alrededor), y cada `\n` es una línea.
+
+El texto se **escribe letra a letra** a 40 letras por segundo (`GameState::VisibleBytes`, que
+corta siempre en una letra UTF-8 completa); los `seconds` del mensaje empiezan a contar cuando ya
+se ve entero. Cada línea se coloca según su ancho completo, así no se desplaza mientras crece.
+Cada dos letras suena un chasquido de estática (`letra_1..3.wav`, de `gen_sonidos.py`,
+alternados). En un mensaje de interacción, E primero muestra el texto entero y la segunda vez
+lo cierra; en un diálogo (§11.1) pasa a la página siguiente. Si el mensaje tiene quien habla, su
+nombre va encima en dorado, y en un diálogo un triángulo parpadea al final cuando la página ya
+está entera.
+
+Hay dos clases de mensaje, según de dónde salen:
+
+- **Diálogo o "mirar"**: el mensaje (o el diálogo) sale de una interacción (E sobre una entidad). Mientras se
+  lee, el jugador se queda quieto (`Player::SetFrozen`) y la vista gira suave hacia lo que se
+  mira (`Player::TurnTowards`): el punto es el centro de la caja de interacción de la entidad o,
+  si mide más de 1.4 m (una persona), 0.4 m bajo su borde de arriba, a la altura de la cara. La
+  mira se oculta y E cierra el mensaje antes de tiempo (pasado 0.3 s).
+- **Anuncio**: el mensaje sale de un trigger o del sistema (guardar, cargar...). La cámara sigue
+  libre.
 
 ---
 
@@ -985,7 +1089,10 @@ Todos los campos, con su valor por defecto. Solo `entities` es obligatorio en la
 | `wrap` | el de Raylib | `"repeat"`, `"clamp"` o `"mirror"`. |
 | `sprite` | — | Ruta de la textura del sprite. |
 | `size` | — | Obligatorio en sprites: `[ancho, alto]`, positivos. |
-| `emissive` | `false` | Solo sprites: ignora la luz. |
+| `emissive` | `false` | Ignora la luz y se ve a pleno color. En un modelo, se dibuja con el shader de los sprites (textura sin luces, con niebla y trama): para vidrieras y cosas que brillan. |
+| `layer` | `0` | Solo modelos: capa para superficies apoyadas en otras (un sendero sobre el suelo, una alfombra). `1` siempre gana a lo de debajo y `-1` pierde, sin parpadeo (*z-fighting*): el vertex shader resta `layer * 3e-5` a la profundidad (`depthBias`, en NDC), sin mover la superficie en pantalla. El paso crece con la distancia igual que el error de profundidad y de cerca equivale a pocos centímetros. Los senderos usan `1`, la hojarasca bajo el bosque `-1` y la alfombra de la iglesia (modelo aparte) `1`. |
+| `frames` | `1` | Solo sprites: la imagen es una tira horizontal de N fotogramas iguales que se pasan en bucle, sin mezclar (como en la PS1). Cada copia empieza en un punto distinto según su posición, así dos llamas no parpadean a la vez. |
+| `fps` | `8` | Fotogramas por segundo de la animación (con `frames` > 1). |
 | `position` | `[0, 0, 0]` | En sprites, el punto bajo los pies. |
 | `rotation` | `[0, 0, 0]` | Grados. Los sprites la ignoran al dibujarse. |
 | `scale` | `[1, 1, 1]` | |
@@ -1146,6 +1253,23 @@ entidad que no existe), y aceptan que se les suelte un asset arrastrado.
   se muestra con un botón "Editar volumen" que la pasa a `{ file, volume }`. Lo desconocido,
   en "Otros (solo lectura)".
 
+### 19.5b Comodidades para interiores, superficies y animaciones
+
+- **Superficies que no parpadean**: si un modelo es plano (menos de 15 cm de alto) y no tiene
+  capa, el inspector lo avisa y ofrece "Poner capa 1". "Apoyar sobre lo de debajo" (en
+  Transformación) lo baja o sube hasta el suelo o la parte de arriba de la caja de colisión que
+  tenga debajo, y si es plano le pone la capa.
+- **Interiores**: en la barra del visor, las tijeras cortan todo lo que quede por encima de una
+  altura (se arrastra el número), para ver una sala por dentro desde arriba; es `clipY` en los
+  shaders y en el juego no se usa. En la escena, "Ambiente de interior" pone sin sol, ambiente
+  0.12, niebla 3-18 y fondo casi negro; "Exterior" vuelve a lo de por defecto. En Límites,
+  "Ajustar a la entidad más grande" los deja dentro de la sala.
+- **Animaciones**: los modelos tienen la sección "Animación" con el giro, el balanceo (`idle`),
+  "Mirar al jugador" (`facePlayer`) y "Poner llama encima", que crea una llama animada en lo alto
+  del modelo y, si no tiene, una luz que parpadea. En "Añadir" están "Llama animada" y "Velas con
+  llamas" (el modelo `velas_grupo` con sus tres llamas). En el visor, el botón de reproducir
+  anima la escena (giros, llamas, balanceos).
+
 ### 19.6 Visor
 
 - **Vista limpia** (por defecto): sin temblor, 256 niveles de color, sin *dithering*, a la
@@ -1249,11 +1373,12 @@ formato.
 lista, porque borrar o mover dentro del bucle dejaría colgando las referencias a los elementos
 que todavía se están dibujando. Cada operación es un paso de deshacer.
 
-**Acciones** (`do` de triggers e interacciones): "+ Anadir accion" crea una de los 8 tipos con
+**Acciones** (`do` de triggers e interacciones): "+ Anadir accion" crea una de los 9 tipos con
 valores de partida. Cada tipo muestra sus campos:
 
 | Tipo | Campos |
 |---|---|
+| Dialogo | desplegable con los de `dialogues/` y "Editar dialogo", que lo abre en su panel (§19.14) |
 | Mensaje | texto de varias líneas (con `{bandera}`), segundos |
 | Fijar / Sumar a bandera | nombre, valor o cantidad |
 | Cambiar de escena | escena (desplegable de `scenes/`), punto de llegada opcional (posición y giro) |
@@ -1285,6 +1410,9 @@ sus hijos.
 puede quitar). Se editan el texto tras "E:", el alcance, "una sola vez", la **caja propia**
 (al marcarla empieza con la caja de colisión o, si no hay, la del modelo; se edita como centro y
 tamaño; sin ella se usa la caja de colisión o la del modelo), las condiciones y las acciones.
+Si las acciones tienen mensajes, **"Pasar mensajes a un dialogo"** crea
+`dialogues/<nombre de la entidad>.json` con esos textos como páginas y pone la acción Dialogo en
+el sitio del primero; las demás acciones (sonidos, banderas) se quedan como estaban.
 
 ### 19.13 Panel Validacion (`editor/EditorValidation.cpp`)
 
@@ -1293,12 +1421,13 @@ a mitad de construir una escena es normal tener cosas a medias.
 
 | Gravedad | Qué detecta |
 |---|---|
-| Error | `goto_scene` a una escena que no existe; `play_sound` en una entidad (`"at": "nombre"`) que no existe. |
+| Error | `goto_scene` a una escena que no existe; `dialogue` con un diálogo que no existe; `play_sound` en una entidad (`"at": "nombre"`) que no existe. |
 | Aviso | `play_sound` o `play_music` con un archivo que no existe; una bandera que se **consulta** (en condiciones o en `{bandera}` de un mensaje) pero que **ninguna escena** cambia, así que siempre vale 0. |
 | Info | Un trigger sin acciones; una bandera que se cambia pero que ninguna escena consulta. |
 
-Las banderas se comparan con **todas** las escenas de `assets/scenes/`: la llave puede
-recogerse en una escena y usarse en otra. La escena abierta se analiza tal como está en el
+Las banderas se comparan con **todas** las escenas de `assets/scenes/` y con **todos** los
+diálogos de `assets/dialogues/` (sus condiciones, páginas y acciones, más las banderas `dlg:` que
+el juego les lleva): la llave puede recogerse en una escena, o darla un NPC, y usarse en otra. La escena abierta se analiza tal como está en el
 editor (también sin guardar); las demás, como están en el disco.
 
 Cada problema dice dónde está ("Trigger 'puerta': ..."). Un clic lo **selecciona y lo enfoca**.
@@ -1308,6 +1437,28 @@ El análisis se repite solo cuando el documento cambia (un contador `docRevision
 cambio aceptado, al deshacer y al abrir) y **no mientras se arrastra** un valor o el gizmo, para
 no leer las demás escenas en cada fotograma. "Volver a comprobar" lo fuerza, por ejemplo después
 de añadir un sonido a la carpeta.
+
+### 19.14 Panel Dialogos (`editor/EditorLogic.cpp`)
+
+Pestaña junto al Inspector. Arriba se elige un diálogo de `assets/dialogues/` o se crea uno con
+un nombre (empieza con la plantilla "primera vez" + "lo que repite después"). Se editan quién
+habla y la lista de **entradas** (Subir, Bajar, Quitar; la cabecera resume `[1 vez]`, `[si ...]` y
+el principio del texto). Cada entrada tiene "Solo la primera vez", su clave, **Cuando sale**
+(el mismo editor de condiciones que las escenas), las **páginas** (texto de varias líneas, se
+reordenan y se añaden) y **Al terminar** (el mismo editor de acciones). Abajo recuerda los
+nombres de las banderas de memoria (§11.1).
+
+Un diálogo es **otro documento**, no parte de la escena: mientras se dibuja el panel
+(`dialogueMode_`), `BeginChange`/`MarkChanged` marcan el diálogo en vez de la escena (no se
+reconstruye la escena ni se crea un paso de deshacer). El diálogo **se guarda solo** al soltar el
+control que se estaba usando (`SaveDialogueIfChanged`, con el mismo formateador que las escenas)
+y después se carga con `retro::LoadDialogue`, el mismo código que el juego, para mostrar en rojo
+cualquier error. Los diálogos **no tienen deshacer**.
+
+El botón "Editar dialogo" de una acción no abre el diálogo en el momento: lo apunta
+(`pendingDialogue_`) y el panel lo abre al empezar a dibujarse, porque cambiarlo a mitad de
+dibujar una lista dejaría colgando las referencias a sus elementos (lo mismo que las operaciones
+diferidas de §19.3).
 
 ---
 
@@ -1329,8 +1480,10 @@ exec(open(ruta).read(), {"__file__": ruta, "__name__": "__main__"})
 | `molino.py` | `molino` y `molino_aspas` (las aspas giran con `"spin": [0, 0, -40]`; van colocadas en el buje: posición del molino + `[0, 6.9, 2.1]`). |
 | `aldea_props.py` | `casa_madera`, `casa_piedra` y sus variantes `_noche` con las ventanas encendidas, `pozo`, `valla`, `barril`, `caja`, `carreta`. |
 | `cementerio.py` | `capilla` (7 x 11 m), `cripta` (panteón de 9 x 12 m con porche: por fuera abarca la sala de 8 x 11 m de `cripta_interior`), `tumba`, `lapida`, `cruz`, `verja`, `farol` (luz con offset `[0, 2.75, 0]`), `banco`, `fuente`. |
+| `detalles.py` | Los detalles pequeños en 3D que sustituyen a los sprites billboard: `velas_grupo` (las llamas siguen siendo el sprite animado), `cuervo`, `setas_grupo`, `hierba_mata`, `flores_campo`, `flores_marchitas`, `huesos_pila`, `ojos` (emisivos y con `facePlayer`: te siguen), `raices` (cuelgan del techo) y `telarana` (quad de dos caras con textura transparente, tendido cruzando una esquina). En las escenas ya no hay sprites billboard salvo las llamas animadas. |
+| `iglesia.py` | `capilla_interior` (nave de 6.4 x 10.4 m a juego con el exterior), `vidrieras` (emisivas), `banco_iglesia`, `altar`, `candelabro`, `lampara`, `organo`. |
 | `bosque.py` | `sendero`, `tronco`, árboles 3D `arbol_pino`, `arbol_pino_alto`, `arbol_roble`, `arbol_roble_2`, `arbol_abedul`, `arbol_muerto` y arbustos `arbusto_hojas`, `arbusto_bayas` (low-poly, copas de icosferas deformadas; se mezclan con los sprites de árbol: en los bosques de las salidas, la mitad son 3D, con giro y tamaño al azar y el mismo tinte que el sprite). |
-| `subterraneo.py` | `cripta_interior`, `tuneles`, `sarcofago`, `atril`, `puerta_cripta`, `estatua` (mármol, cementerio), `estatua_gastada` (piedra, catacumbas), `reja`, `cuerda_pozo`, `escalera_mano`, `trampilla`, `osamenta` (calavera y huesos para los nichos), `calavera_vela` (vela que sale por la coronilla y ojos encendidos; la llama es el sprite `spr_llama`). |
+| `subterraneo.py` | `cripta_interior`, `tuneles`, `sarcofago`, `atril`, `puerta_cripta`, `estatua` (mármol, cementerio), `estatua_gastada` (piedra, catacumbas), `reja`, `cuerda_pozo`, `escalera_mano`, `trampilla`, `antorcha_pared` (antorcha con un brazo de hierro largo que siempre se mete en la pared deformada; la llama es un sprite), `osamenta` (calavera y huesos para los nichos), `calavera_vela` (vela que sale por la coronilla y ojos encendidos; la llama es el sprite `spr_llama`). |
 | `personajes.py` | `granjero`, `aldeana`, `anciano`, `nino`, `hombre`, `mujer`, `sepulturero`, `sereno`, `encapuchado` (el ermitaño de los túneles: capucha de sudadera hasta los hombros y gabardina larga abierta por delante, ambas en la región del pantalón del atlas). |
 
 `retro_comun.py` tiene las piezas comunes:
@@ -1365,7 +1518,8 @@ ampliaciones.
 ### `tools/gen_musica.py`
 
 Compone y sintetiza la música de las escenas (`musica_<escena>_v2.wav`: aldea, noche,
-cementerio, demo, cripta y tuneles). Piezas originales lentas y melancólicas, con instrumentos de síntesis
+cementerio, demo, cripta, tuneles e iglesia). La de la iglesia usa un instrumento de órgano
+(principal con octava y quinta, trémolo y soplo). Piezas originales lentas y melancólicas, con instrumentos de síntesis
 aditiva hechos con numpy: pad de cuerdas, coro con formantes ("a" u "o"), caja de música,
 flauta con soplo, piano, campana de iglesia, bajo y dron. Reverb de sala grande y eco de ida y
 vuelta.
@@ -1408,7 +1562,9 @@ perfectos: buffer circular y la reverb de `gen_musica.py`), `paso_tierra_1..3`, 
 
 Sprites con transparencia (`spr_*.png`): árbol seco, cuervo, velas, hierba alta, flores y setas
 luminosas; para el subterráneo cristales, telaraña, huesos, raíces que cuelgan, antorcha, unos ojos
-rojos y la llama de vela; y flores marchitas para las tumbas. Pixel art procedural con contorno oscuro y alfa duro. Las velas y las setas se usan
+rojos y la llama de vela; y flores marchitas para las tumbas. La llama y las velas son ANIMADAS:
+cuatro fotogramas en una tira (la llama cambia de alto, se inclina y suelta chispas) y se
+usan con `"frames": 4`. Pixel art procedural con contorno oscuro y alfa duro. Las velas y las setas se usan
 con `"emissive": true` y una `"light"` en la entidad.
 
 ### `tools/gen_personajes.py`

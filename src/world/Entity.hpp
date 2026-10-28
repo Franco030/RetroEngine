@@ -53,10 +53,19 @@ public:
   bool IsSprite() const noexcept { return model_ == nullptr; }
   float SpriteHeight() const noexcept { return spriteSize_.y * std::fabs(transform.scale.y); }
 
+  // Sprite animado: la imagen es una tira horizontal de 'frames' fotogramas iguales que se
+  // pasan a 'fps' por segundo. 'phase' (segundos) desfasa unas copias de otras.
+  void SetAnimation(int frames, float fps, float phase) noexcept {
+    frames_ = frames;
+    fps_ = fps;
+    animTime_ = phase;
+  }
+
   void SetUpdate(UpdateFn fn) { updateFn_ = std::move(fn); }
   void Update(float dt, Vector3 focus);
 
-  void Draw();
+  // 'fullbright': shader sin iluminacion (el de los sprites) para los modelos emisivos.
+  void Draw(const Shader& fullbright);
   void DrawSprite(const Camera3D& camera, Vector3 shade);
 
   BoundingBox LocalBounds();
@@ -65,6 +74,9 @@ public:
   Color tint = WHITE;
   bool visible = true;
   bool emissive = false;
+  // Capa de dibujo para superficies apoyadas en otras (modelos): 1 gana siempre a lo que tiene
+  // debajo, -1 pierde. Ver depthBias en retro.vs.
+  int layer = 0;
   bool facePlayer = false;
   float lookRange = 10.0f;
   float turnSpeed = 240.0f;
@@ -86,6 +98,9 @@ public:
 private:
   std::string name_;
   float idleTime_ = 0.0f;
+  int frames_ = 1;
+  float fps_ = 8.0f;
+  float animTime_ = 0.0f;
   Vector3 drawOffset_{0.0f, 0.0f, 0.0f};
   float drawRoll_ = 0.0f;
   std::shared_ptr<ModelResource> model_;

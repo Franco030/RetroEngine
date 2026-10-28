@@ -130,7 +130,7 @@ void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float ambie
     if (e->IsSprite()) {
       anySprite = anySprite || e->visible;
     } else {
-      e->Draw();
+      e->Draw(spriteShader);
     }
   }
   if (!anySprite)
@@ -139,6 +139,10 @@ void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float ambie
   const float base = ambient + (1.0f - ambient) * 0.5f * sun;
 
   ShaderScope scope(spriteShader);
+  // Los billboards se mandan ya en coordenadas de mundo: matriz de modelo identidad (si no, el
+  // shader se quedaria con la del ultimo modelo emisivo dibujado y fragWorldY saldria mal).
+  if (const int loc = GetShaderLocation(spriteShader, "matModel"); loc >= 0)
+    SetShaderValueMatrix(spriteShader, loc, MatrixIdentity());
   for (auto& e : entities_) {
     if (!e->IsSprite() || !e->visible)
       continue;

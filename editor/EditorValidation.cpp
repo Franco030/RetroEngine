@@ -1,7 +1,10 @@
 // Panel Validacion: busca en la escena lo que el cargador NO rechaza pero fallara al jugar:
-// escenas y sonidos que no existen, entidades nombradas que no existen y banderas sospechosas.
+// escenas, sonidos y dialogos que no existen, entidades nombradas que no existen y banderas
+// sospechosas (contando tambien las que leen y cambian los dialogos).
 #include "EditorApp.hpp"
 #include "EditorTheme.hpp"
+
+#include "world/Dialogue.hpp"
 
 #include <algorithm>
 #include <exception>
@@ -51,7 +54,7 @@ void CollectConditionFlags(const Json& c, std::set<std::string>& out) {
   }
 }
 
-// Banderas que un mensaje muestra con {nombre} (como Expand en ActionRunner.cpp).
+// Banderas que un mensaje muestra con {nombre} (como ExpandFlags en Logic.cpp).
 void CollectTextFlags(const std::string& text, std::set<std::string>& out) {
   std::size_t open = text.find('{');
   while (open != std::string::npos) {
@@ -112,35 +115,69 @@ void ForEachLogic(const Json& doc, ActionsFn&& actions, CondFn&& conditions) {
   }
 }
 
-// Que banderas lee y cuales cambia la escena. try_emplace NO sobrescribe: se queda el primer
-// sitio en que aparece cada una.
+// Banderas de una lista de acciones y de un arbol de condiciones. try_emplace NO sobrescribe:
+// se queda el primer sitio en que aparece cada una.
+void CollectActionFlags(const Json& list, const Place& place, FlagUse& use) {
+  if (!list.is_array())
+    return;
+  for (const Json& a : list) {
+    if (!a.is_object())
+      continue;
+    for (const char* key : {"set_flag", "add_flag"}) {
+      if (a.contains(key) && a.at(key).is_string())
+        use.written.try_emplace(a.at(key).get<std::string>(), place);
+    }
+    if (a.contains("message") && a.at("message").is_string()) {
+      std::set<std::string> shown;
+      CollectTextFlags(a.at("message").get<std::string>(), shown);
+      for (const std::string& flag : shown)
+        use.read.try_emplace(flag, place);
+    }
+  }
+}
+
+void CollectReadFlags(const Json& c, const Place& place, FlagUse& use) {
+  std::set<std::string> flags;
+  CollectConditionFlags(c, flags);
+  for (const std::string& flag : flags)
+    use.read.try_emplace(flag, place);
+}
+
+// Que banderas lee y cuales cambia la escena.
 void CollectFlags(const Json& doc, FlagUse& use) {
   ForEachLogic(
-      doc,
-      [&](const Json& list, const Place& place) {
-        if (!list.is_array())
-          return;
-        for (const Json& a : list) {
-          if (!a.is_object())
-            continue;
-          for (const char* key : {"set_flag", "add_flag"}) {
-            if (a.contains(key) && a.at(key).is_string())
-              use.written.try_emplace(a.at(key).get<std::string>(), place);
-          }
-          if (a.contains("message") && a.at("message").is_string()) {
-            std::set<std::string> shown;
-            CollectTextFlags(a.at("message").get<std::string>(), shown);
-            for (const std::string& flag : shown)
-              use.read.try_emplace(flag, place);
-          }
-        }
-      },
-      [&](const Json& c, const Place& place) {
-        std::set<std::string> flags;
-        CollectConditionFlags(c, flags);
-        for (const std::string& flag : flags)
-          use.read.try_emplace(flag, place);
-      });
+      doc, [&](const Json& list, const Place& place) { CollectActionFlags(list, place, use); },
+      [&](const Json& c, const Place& place) { CollectReadFlags(c, place, use); });
+}
+
+// Lo mismo para un dialogo 'id': sus condiciones, sus paginas con {bandera}, sus acciones y las
+// banderas de memoria que el juego le lleva (dlg:<id> y dlg:<id>.<clave>, ver Dialogue.hpp).
+void CollectDialogueFlags(const std::string& id, const Json& d, FlagUse& use) {
+  if (!d.is_object() || !d.contains("entries") || !d.at("entries").is_array())
+    return;
+  const Place place{SelectionKind::None, -1, "Dialogo '" + id + "'"};
+  use.written.try_emplace(retro::DialogueCountFlag(id), place);
+  const Json& entries = d.at("entries");
+  for (std::size_t i = 0; i < entries.size(); ++i) {
+    const Json& e = entries[i];
+    if (!e.is_object())
+      continue;
+    const std::string key = e.contains("key") ? ReadString(&e, "key") : std::to_string(i);
+    use.written.try_emplace(retro::DialogueEntryFlag(id, key), place);
+    if (e.contains("if"))
+      CollectReadFlags(e.at("if"), place, use);
+    if (e.contains("do"))
+      CollectActionFlags(e.at("do"), place, use);
+    if (e.contains("lines") && e.at("lines").is_array()) {
+      std::set<std::string> shown;
+      for (const Json& line : e.at("lines")) {
+        if (line.is_string())
+          CollectTextFlags(line.get<std::string>(), shown);
+      }
+      for (const std::string& flag : shown)
+        use.read.try_emplace(flag, place);
+    }
+  }
 }
 
 bool AssetExists(const fs::path& root, const std::string& relative) {
@@ -187,6 +224,11 @@ std::vector<Issue> ValidateDocument(const Json& doc, const fs::path& root, const
               issues.push_back(
                   MakeIssue(Severity::Warning, place, "el sonido '" + file + "' no existe"));
             }
+          }
+          const std::string dialogue = ReadString(&a, "dialogue");
+          if (a.contains("dialogue") && !AssetExists(root, "dialogues/" + dialogue + ".json")) {
+            issues.push_back(MakeIssue(Severity::Error, place,
+                                       "abre el dialogo '" + dialogue + "', que no existe"));
           }
           if (a.contains("play_sound") && a.contains("at") && a.at("at").is_string()) {
             const std::string target = a.at("at").get<std::string>();
@@ -245,6 +287,18 @@ void EditorApp::RunValidation() {
       CollectFlags(Json::parse(in), others);
     } catch (const std::exception&) {
       issues_.push_back({Severity::Warning, "No se pudo leer " + path + " para buscar banderas",
+                         SelectionKind::None, -1});
+    }
+  }
+
+  // Y las de los dialogos: una bandera que fija un dialogo (la llave que da un NPC) cuenta.
+  RefreshDialogueList();
+  for (const std::string& id : dialogueList_) {
+    try {
+      std::ifstream in(root / ("dialogues/" + id + ".json"));
+      CollectDialogueFlags(id, Json::parse(in), others);
+    } catch (const std::exception&) {
+      issues_.push_back({Severity::Warning, "No se pudo leer el dialogo " + id,
                          SelectionKind::None, -1});
     }
   }

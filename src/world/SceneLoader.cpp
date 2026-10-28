@@ -14,6 +14,7 @@
 #include <nlohmann/json.hpp>
 
 #include <algorithm>
+#include <cmath>
 #include <fstream>
 #include <functional>
 #include <memory>
@@ -261,8 +262,10 @@ Condition ParseCondition(const json& jc, int depth = 0) {
   return c;
 }
 
+} // namespace
+
 // <key>: { ... }  o  <key>: [ { ... }, { ... } ]   (todas deben cumplirse)
-std::vector<Condition> ParseConditions(const json& j, const char* key = "if") {
+std::vector<Condition> ParseConditions(const json& j, const char* key) {
   std::vector<Condition> out;
   if (!j.contains(key))
     return out;
@@ -285,6 +288,7 @@ std::vector<Condition> ParseConditions(const json& j, const char* key = "if") {
 //   { "teleport": [x,y,z], "yaw": 90 }
 //   { "set_flag": "nombre", "value": 1 }
 //   { "message": "texto\notra linea", "seconds": 3 }
+//   { "dialogue": "sepulturero" }                      (assets/dialogues/sepulturero.json)
 Action ParseAction(const json& ja) {
   if (!ja.is_object())
     throw std::runtime_error("cada accion debe ser un objeto");
@@ -364,13 +368,24 @@ Action ParseAction(const json& ja) {
     result = a;
     ++found;
   }
+  if (ja.contains("dialogue")) {
+    action::StartDialogue a;
+    a.id = ja.at("dialogue").get<std::string>();
+    if (a.id.empty())
+      throw std::runtime_error("'dialogue' necesita el id de un dialogo");
+    result = a;
+    ++found;
+  }
 
   if (found != 1) {
     throw std::runtime_error("cada accion debe tener exactamente una de: goto_scene, teleport, "
-                             "set_flag, add_flag, message, play_sound, play_music, stop_music");
+                             "set_flag, add_flag, message, play_sound, play_music, stop_music, "
+                             "dialogue");
   }
   return result;
 }
+
+namespace {
 
 TriggerEvent ParseEvent(const std::string& s) {
   if (s == "enter")
@@ -526,7 +541,6 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
     autoBox = SpriteBox(size);
     autoBoxes = {autoBox};
     entity = std::make_unique<Entity>(name, std::move(texture), size);
-    entity->emissive = je.value("emissive", false);
   } else {
     auto model = LoadModelSpec(je.at("model"), engine);
 
@@ -542,6 +556,7 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
     isMeshFile = je.at("model").is_string();
     entity = std::make_unique<Entity>(name, std::move(model), std::move(texture));
   }
+  entity->emissive = je.value("emissive", false);
 
   std::vector<BoxCollider> colliders = ReadCollider(je, autoBoxes, isMeshFile, autoCollide);
   std::optional<Interaction> interact;
@@ -555,6 +570,23 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
   e.transform.rotation = ReadVec3(je, "rotation", {0.0f, 0.0f, 0.0f});
   e.transform.scale = ReadVec3(je, "scale", {1.0f, 1.0f, 1.0f});
   e.tint = ReadColor(je, "tint", WHITE);
+  if (je.contains("layer")) {
+    if (e.IsSprite())
+      throw std::runtime_error("'layer' solo vale para modelos");
+    e.layer = je.at("layer").get<int>();
+  }
+  if (je.contains("frames")) {
+    if (!e.IsSprite())
+      throw std::runtime_error("'frames' solo vale para sprites");
+    const int frames = je.at("frames").get<int>();
+    const float fps = je.value("fps", 8.0f);
+    if (frames < 1 || fps <= 0.0f)
+      throw std::runtime_error("'frames' debe ser >= 1 y 'fps' positivo");
+    // desfase segun la posicion: dos llamas no parpadean a la vez
+    const Vector3 p = e.transform.position;
+    const float h = std::sin(p.x * 12.9898f + p.y * 4.1414f + p.z * 78.233f) * 43758.5453f;
+    e.SetAnimation(frames, fps, (h - std::floor(h)) * static_cast<float>(frames) / fps);
+  }
   e.visible = je.value("visible", true);
   e.showIf = ParseConditions(je, "showIf");
 

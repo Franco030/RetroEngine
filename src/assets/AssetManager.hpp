@@ -27,6 +27,21 @@ public:
 
   void PurgeUnused();
 
+  // Que ya esta en la cache (no costaria nada pedirlo).
+  bool HasModel(const std::string& relativePath) const { return models_.contains(relativePath); }
+  bool HasTexture(const std::string& relativePath) const {
+    return textures_.contains(relativePath);
+  }
+
+  // Lo que se ha cargado de verdad (no estaba en cache) desde el ultimo ResetStats: para medir
+  // cuanto cuesta cada cambio de escena.
+  struct LoadStats {
+    int models = 0, textures = 0, sounds = 0;
+    double modelMs = 0.0, textureMs = 0.0, soundMs = 0.0;
+  };
+  const LoadStats& Stats() const noexcept { return stats_; }
+  void ResetStats() noexcept { stats_ = {}; }
+
   void Clear();
 
   std::size_t TextureCount() const noexcept { return textures_.size(); }
@@ -46,6 +61,7 @@ private:
   std::unordered_map<std::string, std::shared_ptr<ShaderResource>> shaders_;
   std::unordered_map<std::string, std::shared_ptr<FontResource>> fonts_;
   std::unordered_map<std::string, std::shared_ptr<SoundResource>> sounds_;
+  LoadStats stats_;
 };
 
 } // namespace retro

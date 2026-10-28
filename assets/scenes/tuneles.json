@@ -24,221 +24,337 @@
     { "name": "tuneles", "model": "models/tuneles.obj", "position": [0, 0, 0] },
     {
       "name": "antorcha_1",
-      "sprite": "textures/spr_antorcha.png",
-      "size": [0.32, 0.96],
-      "position": [-3.9, 0.9, 1.5],
-      "emissive": true,
+      "model": "models/antorcha_pared.obj",
+      "position": [-4.1, 0, 1.5],
+      "rotation": [0, 90.0, 0],
       "collider": false,
       "light": {
-        "offset": [0.5, 0.85, 0.0],
+        "offset": [0.6, 1.75, 0.0],
         "color": [255, 160, 80],
         "radius": 9,
         "intensity": 1.7,
         "flicker": 0.3,
         "flickerRate": 10
       }
+    },
+    {
+      "name": "antorcha_1_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.2, 0.4],
+      "position": [-3.86, 1.64, 1.5],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "antorcha_2",
-      "sprite": "textures/spr_antorcha.png",
-      "size": [0.32, 0.96],
-      "position": [3.9, 0.9, 1.5],
-      "emissive": true,
+      "model": "models/antorcha_pared.obj",
+      "position": [4.1, 0, 1.5],
+      "rotation": [0, -90.0, 0],
       "collider": false,
       "light": {
-        "offset": [-0.5, 0.85, 0.0],
+        "offset": [-0.6, 1.75, 0.0],
         "color": [255, 160, 80],
         "radius": 9,
         "intensity": 1.7,
         "flicker": 0.3,
         "flickerRate": 10
       }
+    },
+    {
+      "name": "antorcha_2_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.2, 0.4],
+      "position": [3.86, 1.64, 1.5],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "antorcha_3",
-      "sprite": "textures/spr_antorcha.png",
-      "size": [0.32, 0.96],
-      "position": [0.9, 0.9, -10.5],
-      "emissive": true,
+      "model": "models/antorcha_pared.obj",
+      "position": [1.1, 0, -10.5],
+      "rotation": [0, -90.0, 0],
       "collider": false,
       "light": {
-        "offset": [-0.5, 0.85, 0.0],
+        "offset": [-0.6, 1.75, 0.0],
         "color": [255, 160, 80],
         "radius": 9,
         "intensity": 1.7,
         "flicker": 0.3,
         "flickerRate": 10
       }
+    },
+    {
+      "name": "antorcha_3_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.2, 0.4],
+      "position": [0.86, 1.64, -10.5],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "antorcha_4",
-      "sprite": "textures/spr_antorcha.png",
-      "size": [0.32, 0.96],
-      "position": [-9.0, 0.9, -26.4],
-      "emissive": true,
+      "model": "models/antorcha_pared.obj",
+      "position": [-9.0, 0, -26.6],
+      "rotation": [0, 0.0, 0],
       "collider": false,
       "light": {
-        "offset": [0.0, 0.85, 0.5],
+        "offset": [0.0, 1.75, 0.6],
         "color": [255, 160, 80],
         "radius": 9,
         "intensity": 1.7,
         "flicker": 0.3,
         "flickerRate": 10
       }
+    },
+    {
+      "name": "antorcha_4_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.2, 0.4],
+      "position": [-9.0, 1.64, -26.36],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "antorcha_5",
-      "sprite": "textures/spr_antorcha.png",
-      "size": [0.32, 0.96],
-      "position": [3.0, 0.9, -26.4],
-      "emissive": true,
+      "model": "models/antorcha_pared.obj",
+      "position": [3.0, 0, -26.6],
+      "rotation": [0, 0.0, 0],
       "collider": false,
       "light": {
-        "offset": [0.0, 0.85, 0.5],
+        "offset": [0.0, 1.75, 0.6],
         "color": [255, 160, 80],
         "radius": 9,
         "intensity": 1.7,
         "flicker": 0.3,
         "flickerRate": 10
       }
+    },
+    {
+      "name": "antorcha_5_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.2, 0.4],
+      "position": [3.0, 1.64, -26.36],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "antorcha_6",
-      "sprite": "textures/spr_antorcha.png",
-      "size": [0.32, 0.96],
-      "position": [-14.1, 0.9, -16.5],
-      "emissive": true,
+      "model": "models/antorcha_pared.obj",
+      "position": [-13.9, 0, -16.5],
+      "rotation": [0, -90.0, 0],
       "collider": false,
       "light": {
-        "offset": [-0.5, 0.85, 0.0],
+        "offset": [-0.6, 1.75, 0.0],
         "color": [255, 160, 80],
         "radius": 9,
         "intensity": 1.7,
         "flicker": 0.3,
         "flickerRate": 10
       }
+    },
+    {
+      "name": "antorcha_6_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.2, 0.4],
+      "position": [-14.14, 1.64, -16.5],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "antorcha_7",
-      "sprite": "textures/spr_antorcha.png",
-      "size": [0.32, 0.96],
-      "position": [-15.9, 0.9, -28.5],
-      "emissive": true,
+      "model": "models/antorcha_pared.obj",
+      "position": [-16.1, 0, -28.5],
+      "rotation": [0, 90.0, 0],
       "collider": false,
       "light": {
-        "offset": [0.5, 0.85, 0.0],
+        "offset": [0.6, 1.75, 0.0],
         "color": [255, 160, 80],
         "radius": 9,
         "intensity": 1.7,
         "flicker": 0.3,
         "flickerRate": 10
       }
+    },
+    {
+      "name": "antorcha_7_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.2, 0.4],
+      "position": [-15.86, 1.64, -28.5],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "antorcha_8",
-      "sprite": "textures/spr_antorcha.png",
-      "size": [0.32, 0.96],
-      "position": [9.0, 0.9, -32.4],
-      "emissive": true,
+      "model": "models/antorcha_pared.obj",
+      "position": [9.0, 0, -32.6],
+      "rotation": [0, 0.0, 0],
       "collider": false,
       "light": {
-        "offset": [0.0, 0.85, 0.5],
+        "offset": [0.0, 1.75, 0.6],
         "color": [255, 160, 80],
         "radius": 9,
         "intensity": 1.7,
         "flicker": 0.3,
         "flickerRate": 10
       }
+    },
+    {
+      "name": "antorcha_8_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.2, 0.4],
+      "position": [9.0, 1.64, -32.36],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "antorcha_9",
-      "sprite": "textures/spr_antorcha.png",
-      "size": [0.32, 0.96],
-      "position": [-3.9, 0.9, -34.5],
-      "emissive": true,
+      "model": "models/antorcha_pared.obj",
+      "position": [-4.1, 0, -34.5],
+      "rotation": [0, 90.0, 0],
       "collider": false,
       "light": {
-        "offset": [0.5, 0.85, 0.0],
+        "offset": [0.6, 1.75, 0.0],
         "color": [255, 160, 80],
         "radius": 9,
         "intensity": 1.7,
         "flicker": 0.3,
         "flickerRate": 10
       }
+    },
+    {
+      "name": "antorcha_9_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.2, 0.4],
+      "position": [-3.86, 1.64, -34.5],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "antorcha_10",
-      "sprite": "textures/spr_antorcha.png",
-      "size": [0.32, 0.96],
-      "position": [15.0, 0.9, -3.6],
-      "emissive": true,
+      "model": "models/antorcha_pared.obj",
+      "position": [15.0, 0, -3.4],
+      "rotation": [0, 180.0, 0],
       "collider": false,
       "light": {
-        "offset": [0.0, 0.85, -0.5],
+        "offset": [0.0, 1.75, -0.6],
         "color": [255, 160, 80],
         "radius": 9,
         "intensity": 1.7,
         "flicker": 0.3,
         "flickerRate": 10
       }
+    },
+    {
+      "name": "antorcha_10_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.2, 0.4],
+      "position": [15.0, 1.64, -3.64],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "antorcha_11",
-      "sprite": "textures/spr_antorcha.png",
-      "size": [0.32, 0.96],
-      "position": [21.9, 0.9, -10.5],
-      "emissive": true,
+      "model": "models/antorcha_pared.obj",
+      "position": [22.1, 0, -10.5],
+      "rotation": [0, -90.0, 0],
       "collider": false,
       "light": {
-        "offset": [-0.5, 0.85, 0.0],
+        "offset": [-0.6, 1.75, 0.0],
         "color": [255, 160, 80],
         "radius": 9,
         "intensity": 1.7,
         "flicker": 0.3,
         "flickerRate": 10
       }
+    },
+    {
+      "name": "antorcha_11_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.2, 0.4],
+      "position": [21.86, 1.64, -10.5],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "antorcha_12",
-      "sprite": "textures/spr_antorcha.png",
-      "size": [0.32, 0.96],
-      "position": [8.1, 0.9, -16.5],
-      "emissive": true,
+      "model": "models/antorcha_pared.obj",
+      "position": [7.9, 0, -16.5],
+      "rotation": [0, 90.0, 0],
       "collider": false,
       "light": {
-        "offset": [0.5, 0.85, 0.0],
+        "offset": [0.6, 1.75, 0.0],
         "color": [255, 160, 80],
         "radius": 9,
         "intensity": 1.7,
         "flicker": 0.3,
         "flickerRate": 10
       }
+    },
+    {
+      "name": "antorcha_12_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.2, 0.4],
+      "position": [8.14, 1.64, -16.5],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "antorcha_13",
-      "sprite": "textures/spr_antorcha.png",
-      "size": [0.32, 0.96],
-      "position": [12.0, 0.9, -26.4],
-      "emissive": true,
+      "model": "models/antorcha_pared.obj",
+      "position": [12.0, 0, -26.6],
+      "rotation": [0, 0.0, 0],
       "collider": false,
       "light": {
-        "offset": [0.0, 0.85, 0.5],
+        "offset": [0.0, 1.75, 0.6],
         "color": [255, 160, 80],
         "radius": 9,
         "intensity": 1.7,
         "flicker": 0.3,
         "flickerRate": 10
       }
+    },
+    {
+      "name": "antorcha_13_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.2, 0.4],
+      "position": [12.0, 1.64, -26.36],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "antorcha_14",
-      "sprite": "textures/spr_antorcha.png",
-      "size": [0.32, 0.96],
-      "position": [27.0, 0.9, -21.6],
-      "emissive": true,
+      "model": "models/antorcha_pared.obj",
+      "position": [27.0, 0, -21.4],
+      "rotation": [0, 180.0, 0],
       "collider": false,
       "light": {
-        "offset": [0.0, 0.85, -0.5],
+        "offset": [0.0, 1.75, -0.6],
         "color": [255, 160, 80],
         "radius": 9,
         "intensity": 1.7,
@@ -247,38 +363,54 @@
       }
     },
     {
-      "name": "antorcha_15",
-      "sprite": "textures/spr_antorcha.png",
-      "size": [0.32, 0.96],
-      "position": [-21.0, 0.9, -11.4],
+      "name": "antorcha_14_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.2, 0.4],
+      "position": [27.0, 1.64, -21.64],
       "emissive": true,
       "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "antorcha_15",
+      "model": "models/antorcha_pared.obj",
+      "position": [-21.0, 0, -11.6],
+      "rotation": [0, 0.0, 0],
+      "collider": false,
       "light": {
-        "offset": [0.0, 0.85, 0.5],
+        "offset": [0.0, 1.75, 0.6],
         "color": [255, 160, 80],
         "radius": 9,
         "intensity": 1.7,
         "flicker": 0.3,
         "flickerRate": 10
       }
+    },
+    {
+      "name": "antorcha_15_llama",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.2, 0.4],
+      "position": [-21.0, 1.64, -11.36],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "estatua",
       "model": "models/estatua_gastada.obj",
       "position": [-3.0, 0, -22.5],
-      "interact": {
-        "prompt": "Mirar",
-        "range": 2.6,
-        "do": [{ "message": "Una figura encapuchada reza.\nAlguien le ha dejado velas nuevas.", "seconds": 4 }]
-      }
+      "interact": { "prompt": "Mirar", "range": 2.6, "do": [{ "dialogue": "estatua_tuneles" }] }
     },
     {
       "name": "velas_estatua_1",
-      "sprite": "textures/spr_velas.png",
-      "size": [0.45, 0.45],
+      "model": "models/velas_grupo.obj",
       "position": [-3.55, 0, -21.55],
-      "emissive": true,
+      "rotation": [0, 255.8, 0],
+      "scale": [0.9, 0.9, 0.9],
       "collider": false,
+      "emissive": true,
       "light": {
         "offset": [0, 0.4, 0],
         "color": [255, 170, 90],
@@ -289,12 +421,73 @@
       }
     },
     {
-      "name": "velas_estatua_2",
-      "sprite": "textures/spr_velas.png",
-      "size": [0.45, 0.45],
-      "position": [-2.45, 0, -21.55],
+      "name": "velas_estatua_1_llama_0",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.054, 0.108],
+      "position": [-3.541, 0.171, -21.659],
       "emissive": true,
-      "collider": false
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_estatua_1_llama_1",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.054, 0.108],
+      "position": [-3.524, 0.252, -21.543],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_estatua_1_llama_2",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.054, 0.108],
+      "position": [-3.603, 0.126, -21.452],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_estatua_2",
+      "model": "models/velas_grupo.obj",
+      "position": [-2.45, 0, -21.55],
+      "rotation": [0, 324.4, 0],
+      "scale": [0.9, 0.9, 0.9],
+      "collider": false,
+      "emissive": true
+    },
+    {
+      "name": "velas_estatua_2_llama_0",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.054, 0.108],
+      "position": [-2.548, 0.171, -21.598],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_estatua_2_llama_1",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.054, 0.108],
+      "position": [-2.434, 0.252, -21.572],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_estatua_2_llama_2",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.054, 0.108],
+      "position": [-2.378, 0.126, -21.465],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "calavera_cruce_1",
@@ -317,7 +510,9 @@
       "size": [0.14, 0.28],
       "position": [-9.9, 0.91, -18.6],
       "emissive": true,
-      "collider": false
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "calavera_cruce_2",
@@ -340,7 +535,9 @@
       "size": [0.14, 0.28],
       "position": [3.9, 0.91, -18.6],
       "emissive": true,
-      "collider": false
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "model": "models/encapuchado.obj",
@@ -357,46 +554,10 @@
         "flickerRate": 6
       },
       "name": "ermitano",
-      "showIf": { "not": { "flag": "hablo_ermitano" } },
       "interact": {
         "prompt": "Hablar",
         "box": { "min": [-0.7, 0, -0.7], "max": [0.7, 2, 0.7] },
-        "do": [
-          { "play_sound": "audio/blip.wav", "volume": 0.5 },
-          { "set_flag": "hablo_ermitano" },
-          {
-            "message": "Hacia mucho que nadie bajaba...\nEstos tuneles llegan al pozo de la aldea\ny a la plaza. La reja del este se abre\ncon la llave que guarda el osario.",
-            "seconds": 8
-          }
-        ]
-      }
-    },
-    {
-      "model": "models/encapuchado.obj",
-      "texture": "textures/pj_encapuchado.png",
-      "position": [-25.5, 0, -41.7],
-      "facePlayer": { "range": 8, "turnSpeed": 70 },
-      "idle": { "bob": 0.004, "sway": 0.3, "speed": 0.7 },
-      "light": {
-        "offset": [0.24, 0.94, 0.34],
-        "color": [255, 190, 110],
-        "radius": 6.5,
-        "intensity": 1.25,
-        "flicker": 0.12,
-        "flickerRate": 6
-      },
-      "name": "ermitano_2",
-      "showIf": { "flag": "hablo_ermitano" },
-      "interact": {
-        "prompt": "Hablar",
-        "box": { "min": [-0.7, 0, -0.7], "max": [0.7, 2, 0.7] },
-        "do": [
-          { "play_sound": "audio/blip.wav", "volume": 0.5 },
-          {
-            "message": "El osario esta al oeste del cruce.\nY no mires mucho tiempo el agua del lago.",
-            "seconds": 5
-          }
-        ]
+        "do": [{ "play_sound": "audio/blip.wav", "volume": 0.5 }, { "dialogue": "ermitano" }]
       }
     },
     {
@@ -407,13 +568,7 @@
       "interact": {
         "prompt": "Leer",
         "range": 2.2,
-        "do": [
-          { "play_sound": "audio/blip.wav", "volume": 0.4 },
-          {
-            "message": "\"Dia 300. Los ojos rojos volvieron a\nasomarse en el derrumbe. Si no los miro,\nno se acercan.\"",
-            "seconds": 7
-          }
-        ]
+        "do": [{ "play_sound": "audio/blip.wav", "volume": 0.4 }, { "dialogue": "diario_ermitano" }]
       }
     },
     {
@@ -437,7 +592,9 @@
       "size": [0.14, 0.28],
       "position": [-30.6, 0.91, -44.1],
       "emissive": true,
-      "collider": false
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "calavera_santuario_2",
@@ -460,7 +617,9 @@
       "size": [0.14, 0.28],
       "position": [-20.4, 0.91, -44.0],
       "emissive": true,
-      "collider": false
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "calavera_santuario_3",
@@ -483,7 +642,9 @@
       "size": [0.14, 0.28],
       "position": [-30.7, 0.91, -37.1],
       "emissive": true,
-      "collider": false
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "calavera_santuario_4",
@@ -506,7 +667,9 @@
       "size": [0.14, 0.28],
       "position": [-20.3, 0.91, -37.2],
       "emissive": true,
-      "collider": false
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "calavera_santuario_5",
@@ -529,7 +692,9 @@
       "size": [0.14, 0.28],
       "position": [-28.0, 0.91, -44.4],
       "emissive": true,
-      "collider": false
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "altar_osario",
@@ -539,11 +704,12 @@
     },
     {
       "name": "velas_osario_1",
-      "sprite": "textures/spr_velas.png",
-      "size": [0.45, 0.45],
+      "model": "models/velas_grupo.obj",
       "position": [-27.6, 1.0, -21.0],
-      "emissive": true,
+      "rotation": [0, 6.0, 0],
+      "scale": [0.9, 0.9, 0.9],
       "collider": false,
+      "emissive": true,
       "light": {
         "offset": [0, 0.4, 0],
         "color": [255, 170, 90],
@@ -554,20 +720,82 @@
       }
     },
     {
-      "name": "velas_osario_2",
-      "sprite": "textures/spr_velas.png",
-      "size": [0.45, 0.45],
-      "position": [-26.3, 1.0, -20.9],
+      "name": "velas_osario_1_llama_0",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.054, 0.108],
+      "position": [-27.706, 1.171, -20.971],
       "emissive": true,
-      "collider": false
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_osario_1_llama_1",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.054, 0.108],
+      "position": [-27.603, 1.252, -21.027],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_osario_1_llama_2",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.054, 0.108],
+      "position": [-27.49, 1.126, -20.985],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_osario_2",
+      "model": "models/velas_grupo.obj",
+      "position": [-26.3, 1.0, -20.9],
+      "rotation": [0, 339.1, 0],
+      "scale": [0.9, 0.9, 0.9],
+      "collider": false,
+      "emissive": true
+    },
+    {
+      "name": "velas_osario_2_llama_0",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.054, 0.108],
+      "position": [-26.407, 1.171, -20.922],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_osario_2_llama_1",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.054, 0.108],
+      "position": [-26.29, 1.252, -20.925],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_osario_2_llama_2",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.054, 0.108],
+      "position": [-26.209, 1.126, -20.836],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "velas_osario_3",
-      "sprite": "textures/spr_velas.png",
-      "size": [0.5, 0.5],
+      "model": "models/velas_grupo.obj",
       "position": [-30.9, 0, -26.4],
-      "emissive": true,
+      "rotation": [0, 295.6, 0],
+      "scale": [1.0, 1.0, 1.0],
       "collider": false,
+      "emissive": true,
       "light": {
         "offset": [0, 0.4, 0],
         "color": [255, 170, 90],
@@ -578,84 +806,124 @@
       }
     },
     {
+      "name": "velas_osario_3_llama_0",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [-30.97, 0.19, -26.5],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_osario_3_llama_1",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [-30.873, 0.28, -26.413],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_osario_3_llama_2",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [-30.875, 0.14, -26.279],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
       "name": "huesos_osario_1",
-      "sprite": "textures/spr_huesos.png",
-      "size": [1.0, 0.66],
+      "model": "models/huesos_pila.obj",
       "position": [-29.61, 0, -16.63],
-      "tint": [180, 170, 150, 255],
-      "collider": false
+      "rotation": [0, 20.4, 0],
+      "scale": [1.111, 1.111, 1.111],
+      "collider": false,
+      "tint": [180, 170, 150, 255]
     },
     {
       "name": "huesos_osario_2",
-      "sprite": "textures/spr_huesos.png",
-      "size": [1.0, 0.66],
+      "model": "models/huesos_pila.obj",
       "position": [-26.77, 0, -17.43],
-      "tint": [180, 170, 150, 255],
-      "collider": false
+      "rotation": [0, 290.3, 0],
+      "scale": [1.111, 1.111, 1.111],
+      "collider": false,
+      "tint": [180, 170, 150, 255]
     },
     {
       "name": "huesos_osario_3",
-      "sprite": "textures/spr_huesos.png",
-      "size": [1.0, 0.66],
+      "model": "models/huesos_pila.obj",
       "position": [-23.92, 0, -16.11],
-      "tint": [180, 170, 150, 255],
-      "collider": false
+      "rotation": [0, 289.6, 0],
+      "scale": [1.111, 1.111, 1.111],
+      "collider": false,
+      "tint": [180, 170, 150, 255]
     },
     {
       "name": "huesos_osario_4",
-      "sprite": "textures/spr_huesos.png",
-      "size": [1.0, 0.66],
+      "model": "models/huesos_pila.obj",
       "position": [-24.95, 0, -16.02],
-      "tint": [180, 170, 150, 255],
-      "collider": false
+      "rotation": [0, 67.6, 0],
+      "scale": [1.111, 1.111, 1.111],
+      "collider": false,
+      "tint": [180, 170, 150, 255]
     },
     {
       "name": "huesos_osario_5",
-      "sprite": "textures/spr_huesos.png",
-      "size": [1.0, 0.66],
+      "model": "models/huesos_pila.obj",
       "position": [-30.75, 0, -21.64],
-      "tint": [180, 170, 150, 255],
-      "collider": false
+      "rotation": [0, 349.7, 0],
+      "scale": [1.111, 1.111, 1.111],
+      "collider": false,
+      "tint": [180, 170, 150, 255]
     },
     {
       "name": "huesos_osario_6",
-      "sprite": "textures/spr_huesos.png",
-      "size": [1.0, 0.66],
+      "model": "models/huesos_pila.obj",
       "position": [-27.68, 0, -25.04],
-      "tint": [180, 170, 150, 255],
-      "collider": false
+      "rotation": [0, 131.0, 0],
+      "scale": [1.111, 1.111, 1.111],
+      "collider": false,
+      "tint": [180, 170, 150, 255]
     },
     {
       "name": "huesos_osario_7",
-      "sprite": "textures/spr_huesos.png",
-      "size": [1.0, 0.66],
+      "model": "models/huesos_pila.obj",
       "position": [-27.03, 0, -17.13],
-      "tint": [180, 170, 150, 255],
-      "collider": false
+      "rotation": [0, 162.3, 0],
+      "scale": [1.111, 1.111, 1.111],
+      "collider": false,
+      "tint": [180, 170, 150, 255]
     },
     {
       "name": "huesos_osario_8",
-      "sprite": "textures/spr_huesos.png",
-      "size": [1.0, 0.66],
+      "model": "models/huesos_pila.obj",
       "position": [-30.06, 0, -24.86],
-      "tint": [180, 170, 150, 255],
-      "collider": false
+      "rotation": [0, 235.4, 0],
+      "scale": [1.111, 1.111, 1.111],
+      "collider": false,
+      "tint": [180, 170, 150, 255]
     },
     {
       "name": "huesos_osario_9",
-      "sprite": "textures/spr_huesos.png",
-      "size": [1.0, 0.66],
+      "model": "models/huesos_pila.obj",
       "position": [-29.44, 0, -23.08],
-      "tint": [180, 170, 150, 255],
-      "collider": false
+      "rotation": [0, 248.5, 0],
+      "scale": [1.111, 1.111, 1.111],
+      "collider": false,
+      "tint": [180, 170, 150, 255]
     },
     {
       "name": "huesos_osario_10",
-      "sprite": "textures/spr_huesos.png",
-      "size": [1.0, 0.66],
+      "model": "models/huesos_pila.obj",
       "position": [-30.76, 0, -22.55],
-      "tint": [180, 170, 150, 255],
-      "collider": false
+      "rotation": [0, 268.8, 0],
+      "scale": [1.111, 1.111, 1.111],
+      "collider": false,
+      "tint": [180, 170, 150, 255]
     },
     {
       "name": "llave_reja",
@@ -680,37 +948,41 @@
     },
     {
       "name": "setas_lago_1",
-      "sprite": "textures/spr_setas.png",
-      "size": [0.7, 0.7],
+      "model": "models/setas_grupo.obj",
       "position": [21.0, 0, -33.46],
-      "emissive": true,
+      "rotation": [0, 100.1, 0],
+      "scale": [1.0, 1.0, 1.0],
       "collider": false,
+      "emissive": true,
       "light": { "offset": [0, 0.35, 0], "color": [110, 170, 255], "radius": 4.5, "intensity": 1.0 }
     },
     {
       "name": "setas_lago_2",
-      "sprite": "textures/spr_setas.png",
-      "size": [0.7, 0.7],
+      "model": "models/setas_grupo.obj",
       "position": [24.8, 0, -34.02],
-      "emissive": true,
-      "collider": false
+      "rotation": [0, 174.2, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "emissive": true
     },
     {
       "name": "setas_lago_3",
-      "sprite": "textures/spr_setas.png",
-      "size": [0.7, 0.7],
+      "model": "models/setas_grupo.obj",
       "position": [28.2, 0, -33.37],
-      "emissive": true,
+      "rotation": [0, 49.5, 0],
+      "scale": [1.0, 1.0, 1.0],
       "collider": false,
+      "emissive": true,
       "light": { "offset": [0, 0.35, 0], "color": [110, 170, 255], "radius": 4.5, "intensity": 1.0 }
     },
     {
       "name": "setas_lago_4",
-      "sprite": "textures/spr_setas.png",
-      "size": [0.7, 0.7],
+      "model": "models/setas_grupo.obj",
       "position": [17.2, 0, -33.4],
-      "emissive": true,
-      "collider": false
+      "rotation": [0, 98.9, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "emissive": true
     },
     {
       "name": "calavera_lago_1",
@@ -733,7 +1005,9 @@
       "size": [0.14, 0.28],
       "position": [17.2, 0.91, -41.3],
       "emissive": true,
-      "collider": false
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "calavera_lago_2",
@@ -756,15 +1030,19 @@
       "size": [0.14, 0.28],
       "position": [30.8, 0.91, -30.9],
       "emissive": true,
-      "collider": false
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "ojos_lago",
-      "sprite": "textures/spr_ojos.png",
-      "size": [0.55, 0.28],
-      "position": [24.0, 1.1, -41.85],
-      "emissive": true,
-      "collider": false
+      "model": "models/ojos.obj",
+      "position": [24.0, 1.24, -41.85],
+      "rotation": [0, 0, 0],
+      "scale": [1.833, 1.833, 1.833],
+      "collider": false,
+      "facePlayer": { "range": 25, "turnSpeed": 60 },
+      "emissive": true
     },
     {
       "name": "cuerda_pozo",
@@ -810,235 +1088,265 @@
     },
     {
       "name": "ojos_derrumbe",
-      "sprite": "textures/spr_ojos.png",
-      "size": [0.5, 0.25],
-      "position": [-28.6, 0.75, -7.7],
-      "emissive": true,
-      "collider": false
+      "model": "models/ojos.obj",
+      "position": [-28.6, 0.875, -7.7],
+      "rotation": [0, 0, 0],
+      "scale": [1.667, 1.667, 1.667],
+      "collider": false,
+      "facePlayer": { "range": 25, "turnSpeed": 60 },
+      "emissive": true
     },
     {
       "name": "raices_1",
-      "sprite": "textures/spr_raices.png",
-      "size": [0.9, 1.35],
-      "position": [-0.11, 1.1, -7.66],
-      "tint": [150, 140, 130, 255],
-      "collider": false
+      "model": "models/raices.obj",
+      "position": [-0.11, 2.55, -7.66],
+      "rotation": [0, 125.6, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [150, 140, 130, 255]
     },
     {
       "name": "raices_2",
-      "sprite": "textures/spr_raices.png",
-      "size": [0.9, 1.35],
-      "position": [-0.06, 1.1, -13.64],
-      "tint": [150, 140, 130, 255],
-      "collider": false
+      "model": "models/raices.obj",
+      "position": [-0.06, 2.55, -13.64],
+      "rotation": [0, 293.4, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [150, 140, 130, 255]
     },
     {
       "name": "raices_3",
-      "sprite": "textures/spr_raices.png",
-      "size": [0.9, 1.35],
-      "position": [-14.41, 1.1, -25.64],
-      "tint": [150, 140, 130, 255],
-      "collider": false
+      "model": "models/raices.obj",
+      "position": [-14.41, 2.55, -25.64],
+      "rotation": [0, 64.4, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [150, 140, 130, 255]
     },
     {
       "name": "raices_4",
-      "sprite": "textures/spr_raices.png",
-      "size": [0.9, 1.35],
-      "position": [-15.57, 1.1, -13.99],
-      "tint": [150, 140, 130, 255],
-      "collider": false
+      "model": "models/raices.obj",
+      "position": [-15.57, 2.55, -13.99],
+      "rotation": [0, 156.0, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [150, 140, 130, 255]
     },
     {
       "name": "raices_5",
-      "sprite": "textures/spr_raices.png",
-      "size": [0.9, 1.35],
-      "position": [-2.74, 1.1, -33.91],
-      "tint": [150, 140, 130, 255],
-      "collider": false
+      "model": "models/raices.obj",
+      "position": [-2.74, 2.55, -33.91],
+      "rotation": [0, 13.5, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [150, 140, 130, 255]
     },
     {
       "name": "raices_6",
-      "sprite": "textures/spr_raices.png",
-      "size": [0.9, 1.35],
-      "position": [9.0, 1.1, -31.51],
-      "tint": [150, 140, 130, 255],
-      "collider": false
+      "model": "models/raices.obj",
+      "position": [9.0, 2.55, -31.51],
+      "rotation": [0, 265.5, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [150, 140, 130, 255]
     },
     {
       "name": "raices_7",
-      "sprite": "textures/spr_raices.png",
-      "size": [0.9, 1.35],
-      "position": [15.06, 1.1, -25.2],
-      "tint": [150, 140, 130, 255],
-      "collider": false
+      "model": "models/raices.obj",
+      "position": [15.06, 2.55, -25.2],
+      "rotation": [0, 36.1, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [150, 140, 130, 255]
     },
     {
       "name": "raices_8",
-      "sprite": "textures/spr_raices.png",
-      "size": [0.9, 1.35],
-      "position": [8.67, 1.1, -4.37],
-      "tint": [150, 140, 130, 255],
-      "collider": false
+      "model": "models/raices.obj",
+      "position": [8.67, 2.55, -4.37],
+      "rotation": [0, 65.4, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [150, 140, 130, 255]
     },
     {
       "name": "raices_9",
-      "sprite": "textures/spr_raices.png",
-      "size": [0.9, 1.35],
-      "position": [21.07, 1.1, -7.35],
-      "tint": [150, 140, 130, 255],
-      "collider": false
+      "model": "models/raices.obj",
+      "position": [21.07, 2.55, -7.35],
+      "rotation": [0, 268.3, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [150, 140, 130, 255]
     },
     {
       "name": "raices_10",
-      "sprite": "textures/spr_raices.png",
-      "size": [0.9, 1.35],
-      "position": [-18.38, 1.1, -22.9],
-      "tint": [150, 140, 130, 255],
-      "collider": false
+      "model": "models/raices.obj",
+      "position": [-18.38, 2.55, -22.9],
+      "rotation": [0, 159.2, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [150, 140, 130, 255]
     },
     {
       "name": "raices_11",
-      "sprite": "textures/spr_raices.png",
-      "size": [0.9, 1.35],
-      "position": [-27.18, 1.1, -33.99],
-      "tint": [150, 140, 130, 255],
-      "collider": false
+      "model": "models/raices.obj",
+      "position": [-27.18, 2.55, -33.99],
+      "rotation": [0, 199.1, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [150, 140, 130, 255]
     },
     {
       "name": "raices_12",
-      "sprite": "textures/spr_raices.png",
-      "size": [0.9, 1.35],
-      "position": [14.82, 1.1, -13.38],
-      "tint": [150, 140, 130, 255],
-      "collider": false
+      "model": "models/raices.obj",
+      "position": [14.82, 2.55, -13.38],
+      "rotation": [0, 219.3, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [150, 140, 130, 255]
     },
     {
       "name": "raices_13",
-      "sprite": "textures/spr_raices.png",
-      "size": [0.9, 1.35],
-      "position": [-0.23, 1.1, -4.98],
-      "tint": [150, 140, 130, 255],
-      "collider": false
+      "model": "models/raices.obj",
+      "position": [-0.23, 2.55, -4.98],
+      "rotation": [0, 178.8, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [150, 140, 130, 255]
     },
     {
       "name": "telarana_1",
-      "sprite": "textures/spr_telarana.png",
-      "size": [1.2, 1.2],
-      "position": [-4.15, 1.95, -2.65],
-      "tint": [160, 160, 170, 255],
-      "collider": false
+      "model": "models/telarana.obj",
+      "position": [-3.97, 3.2, -2.47],
+      "rotation": [0, 45.0, 0],
+      "scale": [1, 1, 1],
+      "collider": false,
+      "tint": [160, 160, 170, 255]
     },
     {
       "name": "telarana_2",
-      "sprite": "textures/spr_telarana.png",
-      "size": [1.2, 1.2],
-      "position": [4.15, 1.95, -2.65],
-      "tint": [160, 160, 170, 255],
-      "collider": false
+      "model": "models/telarana.obj",
+      "position": [3.97, 3.2, -2.47],
+      "rotation": [0, -45.0, 0],
+      "scale": [1, 1, 1],
+      "collider": false,
+      "tint": [160, 160, 170, 255]
     },
     {
       "name": "telarana_3",
-      "sprite": "textures/spr_telarana.png",
-      "size": [1.2, 1.2],
-      "position": [-10.15, 3.35, -26.65],
-      "tint": [160, 160, 170, 255],
-      "collider": false
+      "model": "models/telarana.obj",
+      "position": [-9.97, 4.6, -26.47],
+      "rotation": [0, 45.0, 0],
+      "scale": [1, 1, 1],
+      "collider": false,
+      "tint": [160, 160, 170, 255]
     },
     {
       "name": "telarana_4",
-      "sprite": "textures/spr_telarana.png",
-      "size": [1.2, 1.2],
-      "position": [4.15, 3.35, -18.35],
-      "tint": [160, 160, 170, 255],
-      "collider": false
+      "model": "models/telarana.obj",
+      "position": [3.97, 4.6, -18.53],
+      "rotation": [0, -135.0, 0],
+      "scale": [1, 1, 1],
+      "collider": false,
+      "tint": [160, 160, 170, 255]
     },
     {
       "name": "telarana_5",
-      "sprite": "textures/spr_telarana.png",
-      "size": [1.2, 1.2],
-      "position": [-7.15, 2.15, -44.65],
-      "tint": [160, 160, 170, 255],
-      "collider": false
+      "model": "models/telarana.obj",
+      "position": [-6.97, 3.4, -44.47],
+      "rotation": [0, 45.0, 0],
+      "scale": [1, 1, 1],
+      "collider": false,
+      "tint": [160, 160, 170, 255]
     },
     {
       "name": "telarana_6",
-      "sprite": "textures/spr_telarana.png",
-      "size": [1.2, 1.2],
-      "position": [31.15, 2.15, -26.65],
-      "tint": [160, 160, 170, 255],
-      "collider": false
+      "model": "models/telarana.obj",
+      "position": [30.97, 3.4, -26.47],
+      "rotation": [0, -45.0, 0],
+      "scale": [1, 1, 1],
+      "collider": false,
+      "tint": [160, 160, 170, 255]
     },
     {
       "name": "telarana_7",
-      "sprite": "textures/spr_telarana.png",
-      "size": [1.2, 1.2],
-      "position": [-31.15, 3.35, -36.35],
-      "tint": [160, 160, 170, 255],
-      "collider": false
+      "model": "models/telarana.obj",
+      "position": [-30.97, 4.6, -36.53],
+      "rotation": [0, 135.0, 0],
+      "scale": [1, 1, 1],
+      "collider": false,
+      "tint": [160, 160, 170, 255]
     },
     {
       "name": "huesos_1",
-      "sprite": "textures/spr_huesos.png",
-      "size": [0.9, 0.6],
+      "model": "models/huesos_pila.obj",
       "position": [-15.78, 0, -9.94],
-      "tint": [170, 160, 140, 255],
-      "collider": false
+      "rotation": [0, 76.9, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [170, 160, 140, 255]
     },
     {
       "name": "huesos_2",
-      "sprite": "textures/spr_huesos.png",
-      "size": [0.9, 0.6],
+      "model": "models/huesos_pila.obj",
       "position": [-23.5, 0, -10.73],
-      "tint": [170, 160, 140, 255],
-      "collider": false
+      "rotation": [0, 47.2, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [170, 160, 140, 255]
     },
     {
       "name": "huesos_3",
-      "sprite": "textures/spr_huesos.png",
-      "size": [0.9, 0.6],
+      "model": "models/huesos_pila.obj",
       "position": [6.33, 0, -25.18],
-      "tint": [170, 160, 140, 255],
-      "collider": false
+      "rotation": [0, 96.8, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [170, 160, 140, 255]
     },
     {
       "name": "huesos_4",
-      "sprite": "textures/spr_huesos.png",
-      "size": [0.9, 0.6],
+      "model": "models/huesos_pila.obj",
       "position": [21.72, 0, -3.68],
-      "tint": [170, 160, 140, 255],
-      "collider": false
+      "rotation": [0, 47.5, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [170, 160, 140, 255]
     },
     {
       "name": "huesos_5",
-      "sprite": "textures/spr_huesos.png",
-      "size": [0.9, 0.6],
+      "model": "models/huesos_pila.obj",
       "position": [-3.17, 0, -36.62],
-      "tint": [170, 160, 140, 255],
-      "collider": false
+      "rotation": [0, 298.5, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
+      "tint": [170, 160, 140, 255]
     },
     {
       "name": "setas_1",
-      "sprite": "textures/spr_setas.png",
-      "size": [0.6, 0.6],
+      "model": "models/setas_grupo.obj",
       "position": [16.1, 0, -30.58],
-      "emissive": true,
-      "collider": false
+      "rotation": [0, 343.2, 0],
+      "scale": [0.857, 0.857, 0.857],
+      "collider": false,
+      "emissive": true
     },
     {
       "name": "setas_2",
-      "sprite": "textures/spr_setas.png",
-      "size": [0.6, 0.6],
+      "model": "models/setas_grupo.obj",
       "position": [-13.9, 0, -22.32],
-      "emissive": true,
-      "collider": false
+      "rotation": [0, 275.7, 0],
+      "scale": [0.857, 0.857, 0.857],
+      "collider": false,
+      "emissive": true
     },
     {
       "name": "setas_3",
-      "sprite": "textures/spr_setas.png",
-      "size": [0.6, 0.6],
+      "model": "models/setas_grupo.obj",
       "position": [10.1, 0, -18.73],
-      "emissive": true,
-      "collider": false
+      "rotation": [0, 343.3, 0],
+      "scale": [0.857, 0.857, 0.857],
+      "collider": false,
+      "emissive": true
     }
   ],
   "triggers": [

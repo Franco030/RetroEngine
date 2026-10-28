@@ -1,0 +1,12 @@
+{
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "El caliz tiene un agua negra que no refleja nada.",
+        "El libro esta abierto por una pagina en blanco."
+      ]
+    },
+    { "lines": ["La pagina sigue en blanco.\nEl agua, quieta."] }
+  ]
+}

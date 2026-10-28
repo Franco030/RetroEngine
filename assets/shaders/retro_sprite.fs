@@ -3,6 +3,10 @@
 in vec2 fragTexCoord;
 noperspective in vec4 fragColor;
 in float fragDepth;
+in float fragWorldY;
+
+// Corte por altura (editor: ver un interior por dentro). Fuera del editor es enorme.
+uniform float clipY;
 
 uniform sampler2D texture0;
 
@@ -22,6 +26,7 @@ const float BAYER4[16] = float[16](
     15.0,  7.0, 13.0,  5.0);
 
 void main() {
+    if (fragWorldY > clipY) discard;
     vec4 texel = texture(texture0, fragTexCoord) * fragColor;
     if (texel.a < 0.5) discard;
 

@@ -1,0 +1,9 @@
+# RetroEngine: setas_grupo
+
+newmtl mat_hueso
+d 1.000000
+map_Kd ../textures/mat_hueso.png
+
+newmtl mat_seta
+d 1.000000
+map_Kd ../textures/mat_seta.png

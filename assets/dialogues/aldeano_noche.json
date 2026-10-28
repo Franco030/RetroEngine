@@ -1,0 +1,8 @@
+{
+  "speaker": "Aldeano",
+  "entries": [
+    { "once": true, "lines": ["Bienvenido a la aldea.\nDe noche se ve mas bonito."] },
+    { "once": true, "lines": ["Mira las velas de las ventanas.\nLas encendemos para que no entren."] },
+    { "lines": ["Para que no entren... ya sabes quienes."] }
+  ]
+}

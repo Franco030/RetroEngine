@@ -63,6 +63,15 @@ ESCALA_UV = {
     "mat_pino": 0.9,
     "mat_corteza": 0.9,
     "mat_abedul": 0.9,
+    "mat_plumas": 0.25,
+    "mat_seta": 0.3,
+    "mat_hierba": 0.3,
+    "mat_flor_roja": 0.1,
+    "mat_flor_amarilla": 0.1,
+    "mat_flor_blanca": 0.1,
+    "mat_flor_morada": 0.1,
+    "mat_flor_marchita": 0.1,
+    "mat_ojo": 0.1,
 }
 
 

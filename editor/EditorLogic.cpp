@@ -1,10 +1,23 @@
 #include "EditorApp.hpp"
 #include "EditorTheme.hpp"
 
+#include "game/SaveStorage.hpp"
+#include "world/Dialogue.hpp"
+
+#include <imgui_internal.h>
+
+#include <algorithm>
 #include <array>
+#include <cctype>
 #include <cstddef>
+#include <cstdio>
+#include <exception>
+#include <filesystem>
+#include <fstream>
 #include <optional>
+#include <stdexcept>
 #include <string>
+#include <system_error>
 #include <utility>
 #include <vector>
 
@@ -17,7 +30,8 @@ struct ActionInfo {
   const char* title;
 };
 
-constexpr std::array<ActionInfo, 8> kActions{{
+constexpr std::array<ActionInfo, 9> kActions{{
+    {"dialogue", "Dialogo"},
     {"message", "Mensaje"},
     {"set_flag", "Fijar bandera"},
     {"add_flag", "Sumar a bandera"},
@@ -59,10 +73,13 @@ std::string ActionSummary(const Json& action) {
 }
 
 Json NewAction(const std::string& key, const std::vector<std::string>& scenes,
-               const std::vector<std::string>& sounds) {
+               const std::vector<std::string>& sounds,
+               const std::vector<std::string>& dialogues = {}) {
   const std::string firstScene = scenes.empty() ? std::string() : scenes.front();
   const std::string firstSound = sounds.empty() ? std::string() : sounds.front();
 
+  if (key == "dialogue")
+    return Json::object({{"dialogue", dialogues.empty() ? std::string() : dialogues.front()}});
   if (key == "message")
     return Json::object({{"message", "Texto"}});
   if (key == "set_flag")
@@ -181,10 +198,12 @@ void EditorApp::EditActionList(Json& owner, const char* key, bool keepOne) {
   ApplyListOp(list, op, target);
 
   if (ImGui::BeginCombo("##nueva_accion", ICON_FA_PLUS "  Anadir accion")) {
+    if (ImGui::IsWindowAppearing()) // al abrirse (no a cada fotograma): por si hay dialogos nuevos
+      RefreshDialogueList();
     for (const ActionInfo& info : kActions) {
       if (ImGui::Selectable(info.title)) {
         BeginChange(0);
-        list.push_back(NewAction(info.key, sceneList_, assets_.sounds));
+        list.push_back(NewAction(info.key, sceneList_, assets_.sounds, dialogueList_));
         MarkChanged(0);
       }
     }
@@ -201,7 +220,23 @@ void EditorApp::EditAction(Json& a) {
   }
   const std::string key = info->key;
 
-  if (key == "message") {
+  if (key == "dialogue") {
+    if (dialogueList_.empty())
+      RefreshDialogueList();
+    FieldFile("Dialogo", a, nullptr, "dialogue", dialogueList_, false, false);
+    const std::string id = ReadString(&a, "dialogue");
+    const bool exists =
+        std::find(dialogueList_.begin(), dialogueList_.end(), id) != dialogueList_.end();
+    if (exists) {
+      if (ImGui::Button(ICON_FA_PEN "  Editar dialogo")) {
+        pendingDialogue_ = id; // se abre en su panel al dibujarlo (no a mitad de esta lista)
+        focusDialogues_ = true;
+      }
+    } else {
+      ImGui::TextDisabled("Elige uno, o crealo en el panel Dialogos");
+    }
+
+  } else if (key == "message") {
     FieldText("Texto", a, nullptr, "message", true);
     ImGui::TextDisabled("{bandera} muestra el valor de esa bandera");
     FieldFloat("Segundos", a, nullptr, "seconds", 3.0f, 0.1f, 0.5f, 60.0f);
@@ -583,9 +618,23 @@ void EditorApp::EditInteraction(Json& e, int entityIndex) {
   EditActionList(it, "do", true);
   ImGui::PopID();
 
+  const bool hasMessages =
+      it.contains("do") && it.at("do").is_array() &&
+      std::any_of(it.at("do").begin(), it.at("do").end(),
+                  [](const Json& a) { return a.is_object() && a.contains("message"); });
+  bool toDialogue = false;
+  if (hasMessages) {
+    toDialogue = ImGui::Button(ICON_FA_COMMENTS "  Pasar mensajes a un dialogo");
+    ImGui::SetItemTooltip("Crea dialogues/<nombre>.json con estos textos como paginas y pone la\n"
+                          "accion Dialogo en su lugar. Luego se le anaden respuestas distintas.");
+  }
+
   ImGui::Spacing();
   const bool remove = ImGui::Button("Quitar interaccion");
   ImGui::PopID();
+
+  if (toDialogue && !remove)
+    MessagesToDialogue(e);
 
   // Lo ultimo: despues de esto 'it' ya no existe.
   if (remove) {
@@ -593,6 +642,370 @@ void EditorApp::EditInteraction(Json& e, int entityIndex) {
     e.erase("interact");
     MarkChanged(0);
   }
+}
+
+// ---------------------------------------------------------------------------
+// Dialogos (panel aparte: cada uno es un archivo de assets/dialogues/)
+// ---------------------------------------------------------------------------
+namespace {
+
+namespace fs = std::filesystem;
+
+// "if" de una entrada en una linea: una condicion, o varias unidas con "y".
+std::string ConditionsSummary(const Json& entry) {
+  if (!entry.contains("if"))
+    return {};
+  const Json& c = entry.at("if");
+  if (!c.is_array())
+    return ConditionSummary(c);
+  std::string out;
+  for (const Json& item : c)
+    out += (out.empty() ? "" : " y ") + ConditionSummary(item);
+  return out;
+}
+
+std::string FirstLine(const Json& entry) {
+  if (!entry.contains("lines") || !entry.at("lines").is_array() || entry.at("lines").empty() ||
+      !entry.at("lines")[0].is_string())
+    return "(sin texto)";
+  std::string s = entry.at("lines")[0].get<std::string>();
+  for (char& c : s) {
+    if (c == '\n')
+      c = ' ';
+  }
+  return "\"" + Shorten(s, 34) + "\"";
+}
+
+// Lo que se ve en la cabecera de cada entrada: cuando sale y como empieza.
+std::string EntrySummary(const Json& entry, std::size_t index) {
+  std::string text = std::to_string(index + 1) + ". ";
+  if (ReadBool(&entry, "once", false))
+    text += "[1 vez] ";
+  const std::string cond = ConditionsSummary(entry);
+  if (!cond.empty())
+    text += "[si " + Shorten(cond, 28) + "] ";
+  return text + FirstLine(entry);
+}
+
+// Primera vez algo, despues otra cosa que se repite: lo que mas se usa.
+Json DialogueTemplate(const std::string& speaker) {
+  return Json::object(
+      {{"speaker", speaker},
+       {"entries", Json::array({Json::object({{"once", true},
+                                              {"lines", Json::array({"Lo que dice la primera vez."})}}),
+                                Json::object({{"lines", Json::array({"Lo que repite despues."})}})})}});
+}
+
+} // namespace
+
+std::string EditorApp::DialoguePath(const std::string& id) const {
+  return "dialogues/" + id + ".json";
+}
+
+void EditorApp::RefreshDialogueList() {
+  dialogueList_.clear();
+  const fs::path dir = fs::path(engine_.Assets().Root()) / "dialogues";
+  std::error_code ec;
+  if (!fs::exists(dir, ec))
+    return;
+  for (fs::recursive_directory_iterator it(dir, ec), end; !ec && it != end; it.increment(ec)) {
+    if (!it->is_regular_file(ec) || it->path().extension() != ".json")
+      continue;
+    fs::path rel = fs::relative(it->path(), dir, ec);
+    rel.replace_extension();
+    dialogueList_.push_back(rel.generic_string());
+  }
+  std::sort(dialogueList_.begin(), dialogueList_.end());
+}
+
+void EditorApp::OpenDialogue(const std::string& id) {
+  SaveDialogueIfChanged();
+  try {
+    std::ifstream in(fs::path(engine_.Assets().Root()) / DialoguePath(id));
+    if (!in)
+      throw std::runtime_error("no existe");
+    dialogueDoc_ = Json::parse(in);
+    dialogueId_ = id;
+    CheckDialogue();
+  } catch (const std::exception& e) {
+    Log(true, "No se pudo abrir el dialogo '" + id + "': " + e.what());
+  }
+}
+
+bool EditorApp::CreateDialogue(const std::string& id, Json content) {
+  if (id.empty()) {
+    Log(true, "Nombre de dialogo no valido: usa letras o numeros");
+    return false;
+  }
+  const fs::path path = fs::path(engine_.Assets().Root()) / DialoguePath(id);
+  std::error_code ec;
+  if (fs::exists(path, ec)) {
+    Log(true, "Ya existe " + DialoguePath(id));
+    return false;
+  }
+  try {
+    fs::create_directories(path.parent_path(), ec);
+    retro::savefile::WriteAtomic(path, jsonfmt::FormatJson(content));
+  } catch (const std::exception& e) {
+    Log(true, std::string("No se pudo crear el dialogo: ") + e.what());
+    return false;
+  }
+  Log(false, "Dialogo creado: " + DialoguePath(id));
+  RefreshDialogueList();
+  OpenDialogue(id);
+  return true;
+}
+
+// Se guarda solo, cuando se suelta el control que se estaba usando (no a cada letra o arrastre).
+void EditorApp::SaveDialogueIfChanged() {
+  if (!dialogueChanged_ || dialogueId_.empty() || ImGui::IsAnyItemActive())
+    return;
+  dialogueChanged_ = false;
+  try {
+    std::string text = jsonfmt::FormatJson(dialogueDoc_);
+    if (Json::parse(text) != dialogueDoc_)
+      text = dialogueDoc_.dump(2) + "\n";
+    retro::savefile::WriteAtomic(fs::path(engine_.Assets().Root()) / DialoguePath(dialogueId_),
+                                 text);
+  } catch (const std::exception& e) {
+    Log(true, std::string("No se pudo guardar el dialogo: ") + e.what());
+  }
+  CheckDialogue();
+}
+
+void EditorApp::CheckDialogue() {
+  dialogueError_.clear();
+  try {
+    retro::LoadDialogue(engine_.Assets().Root(), DialoguePath(dialogueId_));
+  } catch (const std::exception& e) {
+    dialogueError_ = e.what();
+  }
+}
+
+bool EditorApp::EditLine(const char* label, Json& value) {
+  const std::string current = value.is_string() ? value.get<std::string>() : std::string();
+  const ImGuiID id = ImGui::GetID(label);
+  const std::string sid = std::to_string(id);
+  const bool editing = textId_ == sid;
+
+  char buffer[sizeof textBuf_];
+  std::snprintf(buffer, sizeof buffer, "%s", (editing ? std::string(textBuf_) : current).c_str());
+  if (ImGui::InputTextMultiline(label, buffer, sizeof buffer,
+                                ImVec2(-1.0f, ImGui::GetTextLineHeight() * 3.2f))) {
+    textId_ = sid;
+    std::snprintf(textBuf_, sizeof textBuf_, "%s", buffer);
+  }
+  if (ImGui::IsItemDeactivatedAfterEdit()) {
+    const std::string next = textBuf_;
+    textId_.clear();
+    if (next == current)
+      return false;
+    BeginChange(0);
+    value = next;
+    MarkChanged(0);
+    return true;
+  }
+  if (editing && !ImGui::IsItemActive())
+    textId_.clear();
+  return false;
+}
+
+void EditorApp::EditDialogueEntry(Json& entry, std::size_t index) {
+  FieldBool("Solo la primera vez", entry, nullptr, "once", false);
+  FieldText("Clave", entry, nullptr, "key");
+  ImGui::SetItemTooltip("Nombre de su bandera dlg:%s.<clave>. Sin clave se usa su numero (%d):\n"
+                        "ponle una si vas a reordenar entradas de 'primera vez'.",
+                        dialogueId_.c_str(), static_cast<int>(index));
+
+  ImGui::SeparatorText("Cuando sale");
+  ImGui::PushID("if");
+  EditConditions(entry, "if");
+  ImGui::PopID();
+
+  ImGui::SeparatorText("Paginas (E pasa a la siguiente)");
+  if (!entry.contains("lines") || !entry.at("lines").is_array())
+    entry["lines"] = Json::array();
+  Json& lines = entry["lines"];
+  ListOp op = ListOp::None;
+  std::size_t target = 0;
+  for (std::size_t i = 0; i < lines.size(); ++i) {
+    ImGui::PushID(static_cast<int>(i));
+    ImGui::TextDisabled("Pagina %d", static_cast<int>(i + 1));
+    const ListOp asked = ListButtons({i, lines.size(), lines.size() > 1});
+    if (asked != ListOp::None) {
+      op = asked;
+      target = i;
+    }
+    EditLine("##linea", lines[i]);
+    ImGui::PopID();
+  }
+  ApplyListOp(lines, op, target);
+  if (ImGui::Button(ICON_FA_PLUS "  Anadir pagina")) {
+    BeginChange(0);
+    lines.push_back("...");
+    MarkChanged(0);
+  }
+  ImGui::TextDisabled("{bandera} muestra su valor. Enter parte la linea.");
+
+  ImGui::SeparatorText("Al terminar");
+  // "do" es opcional en el archivo; para editarlo hace falta la lista (vacia no se guarda).
+  const bool hadDo = entry.contains("do");
+  if (!hadDo)
+    entry["do"] = Json::array();
+  ImGui::PushID("do");
+  EditActionList(entry, "do");
+  ImGui::PopID();
+  if (entry.contains("do") && entry.at("do").is_array() && entry.at("do").empty())
+    entry.erase("do");
+}
+
+void EditorApp::DrawDialogues() {
+  if (focusDialogues_) {
+    ImGui::SetNextWindowFocus();
+    focusDialogues_ = false;
+  }
+  // Con una disposicion guardada de antes de existir este panel, la primera vez se acopla como
+  // pestana del Inspector (en vez de flotar pequeno en una esquina).
+  if (const ImGuiWindow* inspector = ImGui::FindWindowByName("###Inspector");
+      inspector && inspector->DockId != 0)
+    ImGui::SetNextWindowDockID(inspector->DockId, ImGuiCond_FirstUseEver);
+  if (!ImGui::Begin(ICON_FA_COMMENTS "  Dialogos###Dialogos")) {
+    ImGui::End();
+    return;
+  }
+  if (!pendingDialogue_.empty()) {
+    RefreshDialogueList();
+    OpenDialogue(pendingDialogue_);
+    pendingDialogue_.clear();
+  }
+
+  // --- elegir o crear ---
+  if (ImGui::BeginCombo("Dialogo", dialogueId_.empty() ? "(ninguno)" : dialogueId_.c_str())) {
+    if (ImGui::IsWindowAppearing())
+      RefreshDialogueList();
+    for (const std::string& id : dialogueList_) {
+      if (ImGui::Selectable(id.c_str(), id == dialogueId_) && id != dialogueId_)
+        pendingDialogue_ = id;
+    }
+    ImGui::EndCombo();
+  }
+  ImGui::InputTextWithHint("##nuevo", "nombre del dialogo nuevo", newDialogueName_,
+                           sizeof newDialogueName_);
+  ImGui::SameLine();
+  if (ImGui::Button(ICON_FA_PLUS "  Crear")) {
+    const std::string id = Sanitize(Trim(newDialogueName_));
+    std::string speaker = id;
+    std::replace(speaker.begin(), speaker.end(), '_', ' ');
+    if (!speaker.empty())
+      speaker[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(speaker[0])));
+    if (CreateDialogue(id, DialogueTemplate(speaker)))
+      newDialogueName_[0] = '\0';
+  }
+
+  if (dialogueId_.empty()) {
+    ImGui::Spacing();
+    ImGui::TextWrapped("Un dialogo es una lista de entradas. Al hablar sale la PRIMERA que se "
+                       "cumpla; las de 'Solo la primera vez' ya dichas se saltan. Asi un NPC "
+                       "dice A, luego B y despues repite C.");
+    ImGui::TextWrapped("Se usa con la accion 'Dialogo' (en una interaccion o un trigger). En la "
+                       "interaccion de una entidad, 'Pasar mensajes a un dialogo' lo crea solo.");
+    ImGui::End();
+    return;
+  }
+
+  ImGui::TextDisabled("assets/%s  (se guarda solo)", DialoguePath(dialogueId_).c_str());
+  if (!dialogueError_.empty()) {
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.45f, 0.4f, 1.0f));
+    ImGui::TextWrapped(ICON_FA_TRIANGLE_EXCLAMATION "  %s", dialogueError_.c_str());
+    ImGui::PopStyleColor();
+  }
+
+  dialogueMode_ = true; // desde aqui los Field* y las listas cambian el dialogo
+  ImGui::PushID("dialogo");
+  FieldText("Quien habla", dialogueDoc_, nullptr, "speaker");
+
+  ImGui::SeparatorText("Entradas (gana la primera que se cumpla)");
+  if (!dialogueDoc_.contains("entries") || !dialogueDoc_.at("entries").is_array())
+    dialogueDoc_["entries"] = Json::array();
+  Json& entries = dialogueDoc_["entries"];
+  ListOp op = ListOp::None;
+  std::size_t target = 0;
+  for (std::size_t i = 0; i < entries.size(); ++i) {
+    ImGui::PushID(static_cast<int>(i));
+    const std::string header = EntrySummary(entries[i], i) + "###entrada";
+    const bool open = ImGui::TreeNodeEx(
+        header.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowOverlap);
+    const ListOp asked = ListButtons({i, entries.size(), entries.size() > 1});
+    if (asked != ListOp::None) {
+      op = asked;
+      target = i;
+    }
+    if (open) {
+      if (entries[i].is_object())
+        EditDialogueEntry(entries[i], i);
+      ImGui::TreePop();
+    }
+    ImGui::PopID();
+  }
+  ApplyListOp(entries, op, target);
+  if (ImGui::Button(ICON_FA_PLUS "  Anadir entrada")) {
+    BeginChange(0);
+    entries.push_back(Json::object({{"lines", Json::array({"..."})}}));
+    MarkChanged(0);
+  }
+  ImGui::PopID();
+  dialogueMode_ = false;
+
+  ImGui::SeparatorText("Memoria (banderas, se guardan con la partida)");
+  ImGui::TextDisabled("%s = veces que se ha hablado", retro::DialogueCountFlag(dialogueId_).c_str());
+  ImGui::TextDisabled("%s = 1 si esa entrada ya salio",
+                      retro::DialogueEntryFlag(dialogueId_, "<clave>").c_str());
+  ImGui::TextDisabled("Se pueden usar en condiciones de este y de otros sitios.");
+  ImGui::End();
+}
+
+void EditorApp::MessagesToDialogue(Json& entity) {
+  Json& list = entity["interact"]["do"];
+  Json lines = Json::array();
+  for (const Json& a : list) {
+    if (a.is_object() && a.contains("message") && a.at("message").is_string())
+      lines.push_back(a.at("message"));
+  }
+  if (lines.empty())
+    return;
+
+  const std::string base = Sanitize(ReadString(&entity, "name"));
+  std::string id = base.empty() ? "dialogo" : base;
+  RefreshDialogueList();
+  for (int n = 2; std::find(dialogueList_.begin(), dialogueList_.end(), id) != dialogueList_.end();
+       ++n)
+    id = (base.empty() ? "dialogo" : base) + "_" + std::to_string(n);
+
+  std::string speaker = ReadString(&entity, "name");
+  std::replace(speaker.begin(), speaker.end(), '_', ' ');
+  if (!speaker.empty())
+    speaker[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(speaker[0])));
+  Json content = Json::object(
+      {{"speaker", speaker}, {"entries", Json::array({Json::object({{"lines", lines}})})}});
+  if (!CreateDialogue(id, std::move(content)))
+    return;
+
+  // El dialogo ocupa el sitio del primer mensaje; las demas acciones se quedan como estaban.
+  BeginChange(0);
+  Json next = Json::array();
+  bool placed = false;
+  for (Json& a : list) {
+    if (a.is_object() && a.contains("message")) {
+      if (!placed)
+        next.push_back(Json::object({{"dialogue", id}}));
+      placed = true;
+    } else {
+      next.push_back(std::move(a));
+    }
+  }
+  list = std::move(next);
+  MarkChanged(0);
+  focusDialogues_ = true;
 }
 
 } // namespace editor

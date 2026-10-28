@@ -1,0 +1,8 @@
+{
+  "speaker": "Aldeana",
+  "entries": [
+    { "once": true, "lines": ["Bienvenido a la aldea.\nDe noche se ve mas bonito."] },
+    { "once": true, "lines": ["Si te quedas hasta tarde,\nno te acerques al pozo."] },
+    { "lines": ["Que tengas buen dia, forastero."] }
+  ]
+}

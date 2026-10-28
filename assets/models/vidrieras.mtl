@@ -1,0 +1,9 @@
+# RetroEngine: vidrieras
+
+newmtl mat_roseton
+d 1.000000
+map_Kd ../textures/mat_roseton.png
+
+newmtl mat_vidriera
+d 1.000000
+map_Kd ../textures/mat_vidriera.png

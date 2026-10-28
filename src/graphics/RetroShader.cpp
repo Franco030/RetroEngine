@@ -43,6 +43,7 @@ RetroShader::Program RetroShader::MakeProgram(std::shared_ptr<ShaderResource> sh
   l.fogColor = GetShaderLocation(s, "fogColor");
   l.fogStart = GetShaderLocation(s, "fogStart");
   l.fogEnd = GetShaderLocation(s, "fogEnd");
+  l.clipY = GetShaderLocation(s, "clipY");
   l.useLighting = GetShaderLocation(s, "useLighting");
   l.lightCount = GetShaderLocation(s, "lightCount");
   l.lightPos = GetShaderLocation(s, "lightPos[0]");
@@ -74,6 +75,7 @@ void RetroShader::Upload(const Program& p) const {
   SetUniform(s, l.fogColor, &params_.fogColor, SHADER_UNIFORM_VEC3);
   SetUniform(s, l.fogStart, &fogStart, SHADER_UNIFORM_FLOAT);
   SetUniform(s, l.fogEnd, &fogEnd, SHADER_UNIFORM_FLOAT);
+  SetUniform(s, l.clipY, &params_.clipY, SHADER_UNIFORM_FLOAT);
 }
 
 void RetroShader::SetPointLights(std::span<const PointLight> lights) {

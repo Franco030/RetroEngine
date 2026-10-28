@@ -2,6 +2,7 @@
 
 #include "audio/AudioSystem.hpp"
 #include "game/GameState.hpp"
+#include "world/Dialogue.hpp"
 #include "world/Trigger.hpp"
 
 #include <vector>
@@ -16,8 +17,9 @@ class Player;
 // al jugador y al estado.
 class ActionRunner {
 public:
-  ActionRunner(SceneManager& scenes, Player& player, GameState& state, AudioSystem& audio)
-      : scenes_(scenes), player_(player), state_(state), audio_(audio) {}
+  ActionRunner(SceneManager& scenes, Player& player, GameState& state, AudioSystem& audio,
+               DialogueSystem& dialogues)
+      : scenes_(scenes), player_(player), state_(state), audio_(audio), dialogues_(dialogues) {}
 
   void Run(const std::vector<Action>& actions);
 
@@ -27,6 +29,7 @@ private:
   Player& player_;
   GameState& state_;
   AudioSystem& audio_;
+  DialogueSystem& dialogues_;
 };
 
 } // namespace retro

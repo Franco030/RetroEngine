@@ -192,25 +192,6 @@ Vector3 Snap(Vector3 v) {
   return {s(v.x), s(v.y), s(v.z)};
 }
 
-std::string Trim(const std::string& s) {
-  const auto isSpace = [](unsigned char c) { return std::isspace(c) != 0; };
-  const auto first = std::find_if_not(s.begin(), s.end(), isSpace);
-  const auto last = std::find_if_not(s.rbegin(), s.rend(), isSpace).base();
-  return first < last ? std::string(first, last) : std::string();
-}
-
-std::string Sanitize(const std::string& s) {
-  std::string out;
-  for (char c : s) {
-    const unsigned char u = static_cast<unsigned char>(c);
-    if (std::isalnum(u) || c == '_' || c == '-')
-      out += c;
-    else if (c == ' ')
-      out += '_';
-  }
-  return out;
-}
-
 } // namespace
 
 // ---------------------------------------------------------------------------
@@ -315,6 +296,7 @@ void EditorApp::ApplyViewMode() {
     p.ditherStrength = 0.0f;
   }
   p.fogEnabled = fogOn_;
+  p.clipY = cutCeiling_ ? cutHeight_ : 1.0e6f;
   engine_.Retro().SetParams(p);
 }
 
@@ -491,11 +473,17 @@ void EditorApp::UpdateTitle() {
 // en el historial. Los cambios seguidos del mismo campo (arrastrar un valor) se funden en una
 // sola entrada de deshacer.
 void EditorApp::BeginChange(ImGuiID) {
+  if (dialogueMode_)
+    return; // se esta editando un dialogo: la escena no cambia
   if (!gestureBase_)
     gestureBase_ = doc_;
 }
 
 void EditorApp::MarkChanged(ImGuiID id) {
+  if (dialogueMode_) {
+    dialogueChanged_ = true; // se guarda en SaveDialogueIfChanged
+    return;
+  }
   needRebuild_ = true;
   gestureId_ = id;
 }
@@ -780,6 +768,83 @@ void EditorApp::AddEntitySprite(const std::string& texture, Vector3 position) {
   InsertItem(SelectionKind::Entity, std::move(e));
 }
 
+bool EditorApp::EntityWorldBox(int index, BoundingBox& out) const {
+  if (!scene_ || index < 0 || static_cast<std::size_t>(index) >= scene_->Count())
+    return false;
+  retro::Entity& e = scene_->EntityAt(static_cast<std::size_t>(index));
+  const BoundingBox local = e.LocalBounds();
+  const Matrix m = EntityMatrix(e);
+  out = {{1e9f, 1e9f, 1e9f}, {-1e9f, -1e9f, -1e9f}};
+  for (int k = 0; k < 8; ++k) {   // las 8 esquinas, ya giradas y escaladas
+    const Vector3 c{(k & 1) ? local.max.x : local.min.x, (k & 2) ? local.max.y : local.min.y,
+                    (k & 4) ? local.max.z : local.min.z};
+    const Vector3 w = Vector3Transform(c, m);
+    out.min = Vector3Min(out.min, w);
+    out.max = Vector3Max(out.max, w);
+  }
+  return true;
+}
+
+void EditorApp::AddAnimatedFlame(Vector3 position) {
+  Json f = Json::object();
+  f["name"] = UniqueName("entities", "llama");
+  f["sprite"] = "textures/spr_llama.png";
+  f["size"] = Vec2Json({0.14f, 0.28f});
+  f["position"] = Vec3Json(position);
+  f["emissive"] = true;
+  f["collider"] = false;
+  f["frames"] = 4;
+  f["fps"] = 9;
+  InsertItem(SelectionKind::Entity, std::move(f));
+}
+
+void EditorApp::AddFlameOn(int index) {
+  BoundingBox wb{};
+  if (!EntityWorldBox(index, wb) || !doc_.contains("entities"))
+    return;
+  Json& host = doc_["entities"][static_cast<std::size_t>(index)];
+  const Vector3 top{(wb.min.x + wb.max.x) * 0.5f, wb.max.y, (wb.min.z + wb.max.z) * 0.5f};
+  if (!host.contains("light")) {
+    // la luz va en el modelo, justo encima de la llama (el offset no gira con la entidad: se
+    // da en coordenadas de mundo respecto a su posicion)
+    const Vector3 p = ReadVec3(&host, "position", {0.0f, 0.0f, 0.0f});
+    BeginChange(0);
+    host["light"] = Json::object({{"offset", Vec3Json({top.x - p.x, top.y + 0.2f - p.y, top.z - p.z})},
+                                  {"color", Json::array({255, 170, 90})},
+                                  {"radius", 5},
+                                  {"intensity", 1.1},
+                                  {"flicker", 0.25},
+                                  {"flickerRate", 9}});
+    MarkChanged(0);
+  }
+  const std::string base = ReadString(&host, "name");
+  AddAnimatedFlame({top.x, top.y - 0.02f, top.z});
+  Json& f = doc_["entities"].back();
+  f["name"] = UniqueName("entities", (base.empty() ? std::string("entidad") : base) + "_llama");
+}
+
+void EditorApp::AddCandleGroup(Vector3 position) {
+  // el modelo de velas y sus tres llamas (las mismas posiciones que en tools/blender/detalles.py)
+  Json v = Json::object();
+  v["name"] = UniqueName("entities", "velas");
+  v["model"] = "models/velas_grupo.obj";
+  v["position"] = Vec3Json(position);
+  v["collider"] = false;
+  v["light"] = Json::object({{"offset", Vec3Json({0.0f, 0.5f, 0.0f})},
+                             {"color", Json::array({255, 170, 90})},
+                             {"radius", 5},
+                             {"intensity", 1.1},
+                             {"flicker", 0.25},
+                             {"flickerRate", 9}});
+  InsertItem(SelectionKind::Entity, std::move(v));
+  const Vector3 llamas[] = {{-0.12f, 0.19f, 0.02f}, {0.0f, 0.28f, -0.03f}, {0.12f, 0.14f, 0.03f}};
+  for (const Vector3& l : llamas) {
+    AddAnimatedFlame(Vector3Add(position, l));
+    Json& f = doc_["entities"].back();
+    f["size"] = Vec2Json({0.06f, 0.12f});
+  }
+}
+
 void EditorApp::AddTrigger(Vector3 position) {
   Json t = Json::object();
   t["name"] = UniqueName("triggers", "trigger");
@@ -987,6 +1052,8 @@ void EditorApp::ExecuteDeferred() {
     DuplicateSelection();
   if (what == Deferred::Delete)
     DeleteSelection();
+  if (what == Deferred::AddFlame)
+    AddFlameOn(deferredIndex_);
 }
 
 // ---------------------------------------------------------------------------
@@ -1009,11 +1076,13 @@ void EditorApp::DrawUi() {
   DrawAssets();
   DrawMessages();
   DrawValidation();
+  DrawDialogues();
   DrawViewport();
   DrawModals();
   HandleShortcuts();
 
   FlushChanges();
+  SaveDialogueIfChanged();
 }
 
 void EditorApp::DrawAddItems() {
@@ -1033,6 +1102,10 @@ void EditorApp::DrawAddItems() {
     }
     ImGui::EndMenu();
   }
+  if (ImGui::MenuItem(ICON_FA_FIRE "  Llama animada"))
+    AddAnimatedFlame(PlacementPoint());
+  if (ImGui::MenuItem(ICON_FA_FIRE "  Velas con llamas"))
+    AddCandleGroup(PlacementPoint());
   if (ImGui::MenuItem("Trigger"))
     AddTrigger(PlacementPoint());
   if (ImGui::MenuItem("Luz puntual"))
@@ -1147,6 +1220,7 @@ void EditorApp::BuildDefaultLayout(ImGuiID dock) {
   // Los titulos llevan icono; lo que va tras "###" es el ID fijo de cada panel.
   ImGui::DockBuilderDockWindow("###Jerarquia", left);
   ImGui::DockBuilderDockWindow("###Inspector", right);
+  ImGui::DockBuilderDockWindow("###Dialogos", right);
   ImGui::DockBuilderDockWindow("###Visor", view);
   ImGui::DockBuilderDockWindow("###Assets", bottom);
   ImGui::DockBuilderDockWindow("###Mensajes", bottom);
@@ -1393,6 +1467,9 @@ void EditorApp::InspectEntity(Json& e) {
       FieldFile("Imagen", e, nullptr, "sprite", assets_.textures, false, true);
       FieldVec2("Tamano", e, nullptr, "size", {1.0f, 2.0f}, 0.05f, false);
       FieldBool("Emisivo", e, nullptr, "emissive", false);
+      FieldInt("Fotogramas", e, nullptr, "frames", 1, 1, 64);
+      if (ReadNumber(&e, "frames", 1.0f) > 1.0f)
+        FieldFloat("Fotogramas por segundo", e, nullptr, "fps", 8.0f, 0.1f, 0.5f, 60.0f);
     } else {
       if (e.contains("model") && e.at("model").is_object()) {
         ImGui::TextDisabled("Modelo primitivo: %s", ReadString(&e.at("model"), "type").c_str());
@@ -1406,6 +1483,21 @@ void EditorApp::InspectEntity(Json& e) {
       if (e.contains("texture")) {
         FieldChoice("Repeticion", e, nullptr, "wrap", {"repeat", "clamp", "mirror"}, "");
       }
+      FieldBool("Emisivo (sin luces)", e, nullptr, "emissive", false);
+      FieldInt("Capa (encima de lo de debajo)", e, nullptr, "layer", 0, -3, 3);
+      // Una superficie plana apoyada en otra (alfombra, sendero, charco) parpadea con ella si
+      // no tiene capa: se avisa y se arregla con un clic.
+      BoundingBox wb{};
+      if (EntityWorldBox(selection_.index, wb) && wb.max.y - wb.min.y < 0.15f &&
+          ReadNumber(&e, "layer", 0.0f) == 0.0f) {
+        ImGui::TextColored(theme::kWarning, ICON_FA_TRIANGLE_EXCLAMATION "  Es plana: si se apoya en otra "
+                                  "superficie, parpadeara");
+        if (ImGui::Button(ICON_FA_LAYER_GROUP "  Poner capa 1 (siempre encima)")) {
+          BeginChange(0);
+          e["layer"] = 1;
+          MarkChanged(0);
+        }
+      }
     }
   }
 
@@ -1415,8 +1507,77 @@ void EditorApp::InspectEntity(Json& e) {
       FieldVec3("Rotacion", e, nullptr, "rotation", {0.0f, 0.0f, 0.0f}, 0.5f);
     FieldVec3("Escala", e, nullptr, "scale", {1.0f, 1.0f, 1.0f}, 0.01f);
     FieldColor("Tinte", e, nullptr, "tint", WHITE, false);
-    if (!sprite)
-      FieldVec3("Giro (grados/s)", e, nullptr, "spin", {0.0f, 0.0f, 0.0f}, 0.5f);
+    if (ImGui::Button(ICON_FA_ARROW_DOWN "  Apoyar sobre lo de debajo")) {
+      BoundingBox wb{};
+      if (EntityWorldBox(selection_.index, wb)) {
+        // la superficie mas alta bajo el centro que no quede muy por encima de la base: el
+        // suelo (Y=0) o la parte de arriba de una caja de colision de otra entidad
+        const Vector2 c{(wb.min.x + wb.max.x) * 0.5f, (wb.min.z + wb.max.z) * 0.5f};
+        float apoyo = 0.0f;
+        for (std::size_t i = 0; i < scene_->Count(); ++i) {
+          if (static_cast<int>(i) == selection_.index)
+            continue;
+          retro::Entity& o = scene_->EntityAt(i);
+          for (const retro::BoxCollider& col : o.colliders) {
+            const retro::WorldBox b = retro::MakeWorldBox(col, o.transform);
+            if (b.top <= wb.min.y + 0.6f && b.top > apoyo && retro::OverlapsCircle(b, c, 0.05f))
+              apoyo = b.top;
+          }
+        }
+        const Vector3 p = ReadVec3(&e, "position", {0.0f, 0.0f, 0.0f});
+        BeginChange(0);
+        Store(e, nullptr, "position", Vec3Json({p.x, p.y + (apoyo - wb.min.y), p.z}), false);
+        if (wb.max.y - wb.min.y < 0.15f && !sprite && ReadNumber(&e, "layer", 0.0f) == 0.0f)
+          e["layer"] = 1; // plana sobre otra: con capa para que no parpadee
+        MarkChanged(0);
+      }
+    }
+    if (ImGui::IsItemHovered())
+      ImGui::SetTooltip("La baja (o sube) hasta el suelo o la superficie que tenga debajo.\n"
+                        "Si es plana, le pone capa 1 para que no parpadee.");
+  }
+
+  if (!sprite && theme::Section(ICON_FA_FILM "  Animacion",
+                                e.contains("spin") || e.contains("idle") || e.contains("facePlayer"))) {
+    FieldVec3("Giro (grados/s)", e, nullptr, "spin", {0.0f, 0.0f, 0.0f}, 0.5f);
+
+    bool idle = e.contains("idle");
+    if (ImGui::Checkbox("Balanceo (respira y se mece)", &idle)) {
+      BeginChange(0);
+      if (idle)
+        e["idle"] = Json::object({{"bob", 0.006}, {"sway", 0.5}, {"speed", 1.0}});
+      else
+        e.erase("idle");
+      MarkChanged(0);
+    }
+    if (idle && e.contains("idle")) {
+      FieldFloat("Sube y baja (m)", e, "idle", "bob", 0.015f, 0.001f, 0.0f, 0.2f, false);
+      FieldFloat("Se mece (grados)", e, "idle", "sway", 1.2f, 0.05f, 0.0f, 15.0f, false);
+      FieldFloat("Velocidad", e, "idle", "speed", 2.0f, 0.05f, 0.05f, 10.0f, false);
+    }
+
+    bool mira = e.contains("facePlayer");
+    if (ImGui::Checkbox("Mirar al jugador", &mira)) {
+      BeginChange(0);
+      if (mira)
+        e["facePlayer"] = Json::object({{"range", 8}, {"turnSpeed", 120}});
+      else
+        e.erase("facePlayer");
+      MarkChanged(0);
+    }
+    if (mira && e.contains("facePlayer")) {
+      FieldFloat("Distancia", e, "facePlayer", "range", 10.0f, 0.1f, 0.5f, 100.0f, false);
+      FieldFloat("Giro (grados/s)##mirar", e, "facePlayer", "turnSpeed", 240.0f, 1.0f, 1.0f, 1000.0f,
+                 false);
+    }
+
+    if (ImGui::Button(ICON_FA_FIRE "  Poner llama encima")) {
+      deferred_ = Deferred::AddFlame;   // anade otra entidad: se hace al empezar el frame
+      deferredIndex_ = selection_.index;
+    }
+    if (ImGui::IsItemHovered())
+      ImGui::SetTooltip("Llama animada en lo alto del modelo (vela, antorcha, farol...)\n"
+                        "y una luz que parpadea, si el modelo no tiene.");
   }
 
   if (theme::Section(ICON_FA_BORDER_ALL "  Colision")) {
@@ -1526,7 +1687,8 @@ void EditorApp::InspectEntity(Json& e) {
   for (auto it = e.begin(); it != e.end(); ++it) {
     if (IsOneOf(it.key(), {"name", "visible", "model", "sprite", "size", "emissive", "texture",
                            "wrap", "position", "rotation", "scale", "tint", "spin", "collider",
-                           "light", "sound", "showIf", "interact"})) {
+                           "light", "sound", "showIf", "interact", "frames", "fps", "layer",
+                           "idle", "facePlayer"})) {
       continue;
     }
     if (!header) {
@@ -1640,6 +1802,28 @@ void EditorApp::InspectScene() {
     FieldVec3("Luz: direccion", d, "light", "direction", defaults_.lightDirection, 0.01f);
     FieldFloat("Luz: ambiente", d, "light", "ambient", defaults_.ambient, 0.005f, 0.0f, 1.0f);
     FieldFloat("Luz: sol", d, "light", "sun", defaults_.sun, 0.01f, 0.0f, 1.0f);
+    // Ambientes de un clic: interior (sin sol, oscuro, niebla cerca) o volver a lo de fuera
+    if (ImGui::Button(ICON_FA_HOUSE "  Ambiente de interior")) {
+      BeginChange(0);
+      d["background"] = Json::array({6, 6, 10});
+      d["fog"] = Json::object({{"start", 3}, {"end", 18}});
+      d["light"] = Json::object({{"direction", Vec3Json({0.0f, -1.0f, 0.0f})}, {"ambient", 0.12},
+                                 {"sun", 0}});
+      MarkChanged(0);
+    }
+    if (ImGui::IsItemHovered())
+      ImGui::SetTooltip("Sin sol, poca luz ambiente, niebla cercana y fondo casi negro.\n"
+                        "La luz la ponen las velas, antorchas y luces puntuales.");
+    ImGui::SameLine();
+    if (ImGui::Button(ICON_FA_SUN "  Exterior")) {
+      BeginChange(0);
+      d.erase("background");
+      d.erase("fog");
+      d.erase("light");
+      MarkChanged(0);
+    }
+    if (ImGui::IsItemHovered())
+      ImGui::SetTooltip("Vuelve al fondo, la niebla y la luz por defecto (con sol).");
   }
 
   // Los volumenes por defecto son los de SceneAudio (src/world/Scene.hpp).
@@ -1662,6 +1846,27 @@ void EditorApp::InspectScene() {
     } else {
       FieldVec2("Minimo (X, Z)", d, "bounds", "min", {-19.0f, -19.0f}, 0.1f, false);
       FieldVec2("Maximo (X, Z)", d, "bounds", "max", {19.0f, 19.0f}, 0.1f, false);
+      if (ImGui::Button(ICON_FA_EXPAND "  Ajustar a la entidad mas grande")) {
+        // en un interior, la mas grande es la sala: los limites quedan dentro de sus muros
+        float mejor = 0.0f;
+        BoundingBox caja{};
+        for (std::size_t i = 0; i < scene_->Count(); ++i) {
+          BoundingBox b{};
+          if (!EntityWorldBox(static_cast<int>(i), b))
+            continue;
+          const float area = (b.max.x - b.min.x) * (b.max.z - b.min.z);
+          if (area > mejor) {
+            mejor = area;
+            caja = b;
+          }
+        }
+        if (mejor > 0.0f) {
+          BeginChange(0);
+          d["bounds"] = Json::object({{"min", Vec2Json({caja.min.x + 0.3f, caja.min.z + 0.3f})},
+                                      {"max", Vec2Json({caja.max.x - 0.3f, caja.max.z - 0.3f})}});
+          MarkChanged(0);
+        }
+      }
       if (ImGui::Button(ICON_FA_TRASH "  Quitar limites")) {
         BeginChange(0);
         d.erase("bounds");
@@ -2485,8 +2690,22 @@ void EditorApp::DrawViewportToolbar() {
     ApplyViewMode();
   }
   ImGui::SameLine();
-  if (theme::ToolToggle(ICON_FA_PLAY, animate_, "Animar la escena (giros, aldeanos)"))
+  if (theme::ToolToggle(ICON_FA_PLAY, animate_, "Animar la escena (giros, llamas, aldeanos)"))
     animate_ = !animate_;
+  ImGui::SameLine();
+  if (theme::ToolToggle(ICON_FA_SCISSORS, cutCeiling_,
+                        "Cortar el techo: no dibuja nada por encima de la altura (interiores)")) {
+    cutCeiling_ = !cutCeiling_;
+    ApplyViewMode();
+  }
+  if (cutCeiling_) {
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(64.0f);
+    if (ImGui::DragFloat("##altura_corte", &cutHeight_, 0.05f, -5.0f, 60.0f, "%.1f m"))
+      ApplyViewMode();
+    if (ImGui::IsItemHovered())
+      ImGui::SetTooltip("Altura del corte (arrastra)");
+  }
   theme::ToolSeparator();
 
   // Capas: cada boton enciende o apaga una ayuda visual. 'bool*' apunta al miembro que cambia.

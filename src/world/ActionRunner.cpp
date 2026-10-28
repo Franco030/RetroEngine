@@ -17,24 +17,6 @@ template <class... Ts> struct Overloaded : Ts... {
 };
 template <class... Ts> Overloaded(Ts...) -> Overloaded<Ts...>;
 
-// Reemplaza {nombre} por el valor de la bandera (0 si nunca se fijó).
-std::string Expand(const std::string& text, const GameState& state) {
-  std::string out;
-  out.reserve(text.size());
-  for (std::size_t i = 0; i < text.size(); ++i) {
-    if (text[i] == '{') {
-      const std::size_t close = text.find('}', i + 1);
-      if (close != std::string::npos) {
-        out += std::to_string(state.Get(text.substr(i + 1, close - i - 1)));
-        i = close;
-        continue;
-      }
-    }
-    out += text[i];
-  }
-  return out;
-}
-
 } // namespace
 
 void ActionRunner::Run(const std::vector<Action>& actions) {
@@ -54,7 +36,7 @@ void ActionRunner::Run(const std::vector<Action>& actions) {
             [&](const action::SetFlag& f) { state_.Set(f.name, f.value); },
             [&](const action::AddFlag& f) { state_.Set(f.name, state_.Get(f.name) + f.amount); },
             [&](const action::Message& m) {
-              state_.ShowMessage(Expand(m.text, state_), m.seconds);
+              state_.ShowMessage(ExpandFlags(m.text, state_), m.seconds);
             },
             [&](const action::PlaySound& s) {
               if (s.at) {
@@ -74,6 +56,7 @@ void ActionRunner::Run(const std::vector<Action>& actions) {
             },
             [&](const action::PlayMusic& m) { audio_.PlayMusic(m.file, m.volume, m.fade); },
             [&](const action::StopMusic& m) { audio_.StopMusic(m.fade); },
+            [&](const action::StartDialogue& d) { dialogues_.Start(d.id, state_); },
         },
         a);
   }

@@ -1,0 +1,13 @@
+# RetroEngine: flores_marchitas
+
+newmtl mat_corteza
+d 1.000000
+map_Kd ../textures/mat_corteza.png
+
+newmtl mat_flor_marchita
+d 1.000000
+map_Kd ../textures/mat_flor_marchita.png
+
+newmtl mat_lona
+d 1.000000
+map_Kd ../textures/mat_lona.png

@@ -158,6 +158,19 @@ class Instrumentos:
         s *= 0.6 + 0.4 * np.sin(2 * np.pi * 0.13 * t + self.rng.uniform(0, 6))
         return s * envolvente(n, ataque, caida) * 0.5
 
+    def organo(self, midi, dur, ataque=0.12, caida=0.7, brillo=1.0):
+        """Organo de tubos: principal con su octava y su quinta (armonicos fijos, sin caida),
+        tremolo lento y un poco de soplo. 'brillo' < 1 lo deja mas aflautado."""
+        n = int((dur + caida) * SR)
+        f = hz(midi)
+        amps = [1.0, 0.55 * brillo, 0.3 * brillo, 0.32 * brillo, 0.12 * brillo, 0.15 * brillo,
+                0.06 * brillo, 0.1 * brillo]
+        s = self._aditivo(f, n, amps) + 0.35 * self._aditivo(f * 2, n, [1.0, 0.3 * brillo])
+        t = np.arange(n) / SR
+        s *= 1 + 0.06 * np.sin(2 * np.pi * 5.4 * t)
+        s += suavizar(self.rng.standard_normal(n).astype(np.float32), 3) * 0.015
+        return (s * envolvente(n, ataque, caida) * 0.22).astype(np.float32)
+
     def dron(self, midi, dur):
         """Nota grave sostenida con un batido lento (dos senos casi iguales)."""
         n = int((dur + 3.0) * SR)
@@ -520,8 +533,51 @@ def tuneles(rng):
     return p.final(rt60=7.0, reverb=0.62, ecos=2.5, corte=4500.0)
 
 
+def iglesia(rng):
+    """Dentro de la capilla: bonita pero inquietante. Coral de organo en re menor que se tuerce
+    hacia acordes prestados (mi bemol mayor, si bemol menor), melodia de flauta de organo,
+    coro en la segunda mitad y una campana a lo lejos. Reverb de catedral."""
+    p = Pieza(50, 16, rng)
+    Dm = [38, 50, 57, 62, 65]
+    GmD = [38, 50, 55, 58, 62]
+    Bbmaj7 = [34, 46, 53, 57, 62]
+    A7b9 = [33, 45, 52, 55, 61]
+    FC = [36, 48, 53, 57, 60]
+    Ebmaj7 = [39, 51, 55, 58, 62]
+    Asus = [33, 45, 52, 57, 62]
+    Gm9 = [43, 50, 55, 58, 62]
+    DmF = [41, 50, 57, 62, 65]
+    Bbm6 = [34, 46, 53, 56, 61]
+    DmA = [33, 50, 57, 62, 65]
+    A = [Dm, GmD, Bbmaj7, A7b9, Dm, FC, Ebmaj7, Asus]
+    B = [Gm9, DmF, Ebmaj7, Bbm6, DmA, A7b9, Dm, Asus]
+    prog = A + B
+    for k, notas in enumerate(prog):        # el coral: acordes enteros, el pedal una octava abajo
+        for j, m in enumerate(notas[1:]):
+            p.pista.poner(p.i.organo(m, p.compas * 1.02, ataque=0.3, caida=1.2, brillo=0.7),
+                          p.t(k), pan=(j / 3 - 0.5) * 0.6, ganancia=0.15)
+        p.pista.poner(p.i.organo(notas[0] - 12, p.compas * 1.02, ataque=0.4, caida=1.5, brillo=0.4),
+                      p.t(k), ganancia=0.3)
+    tema = [(0, 0, 2, 69), (0, 2, 2, 74), (1, 0, 1, 72), (1, 1, 1, 70), (1, 2, 1, 69), (1, 3, 1, 67),
+            (2, 0, 3, 65), (2, 3, 1, 64), (3, 0, 2, 64), (3, 2, 2, 73),
+            (4, 0, 1.5, 74), (4, 1.5, 0.5, 76), (4, 2, 2, 77), (5, 0, 2, 76), (5, 2, 2, 72),
+            (6, 0, 2, 75), (6, 2, 1, 74), (6, 3, 1, 72), (7, 0, 4, 73)]
+    p.melodia(tema, "organo", ganancia=0.42, pan=0.2, brillo=0.25, ataque=0.08, caida=0.5)
+    segunda = [(0, 0, 2, 79), (0, 2, 2, 77), (1, 0, 4, 81), (2, 0, 1.5, 79), (2, 1.5, 0.5, 77),
+               (2, 2, 2, 75), (3, 0, 4, 73), (4, 0, 2, 74), (4, 2, 2, 77), (5, 0, 2, 76),
+               (5, 2, 2, 73), (6, 0, 4, 74), (7, 0, 4, 69)]
+    p.melodia(segunda, "organo", desde=8, ganancia=0.36, pan=-0.2, brillo=0.25, ataque=0.08,
+              caida=0.5)
+    coro = [(0, 0, 4, 62), (1, 0, 4, 62), (2, 0, 4, 63), (3, 0, 4, 61), (4, 0, 4, 62), (5, 0, 4, 61),
+            (6, 0, 4, 62), (7, 0, 4, 61)]
+    p.melodia(coro, "coro", desde=8, ganancia=0.24, vocal="a")
+    for k in (0, 4, 8, 12):
+        p.pista.poner(p.i.campana(38), p.t(k, 2), pan=0.6, ganancia=0.28)
+    return p.final(rt60=8.0, reverb=0.6, ecos=2.0, corte=6000.0)
+
+
 PIEZAS = {"aldea": aldea, "noche": noche, "cementerio": cementerio, "demo": demo,
-          "cripta": cripta, "tuneles": tuneles}
+          "cripta": cripta, "tuneles": tuneles, "iglesia": iglesia}
 
 
 def main():

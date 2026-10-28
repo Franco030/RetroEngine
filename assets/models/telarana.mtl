@@ -1,0 +1,5 @@
+# RetroEngine: telarana
+
+newmtl spr_telarana
+d 1.000000
+map_Kd ../textures/spr_telarana.png

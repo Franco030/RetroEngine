@@ -43,20 +43,16 @@
       "interact": {
         "prompt": "Leer",
         "range": 2.2,
-        "do": [
-          { "play_sound": "audio/blip.wav", "volume": 0.4 },
-          {
-            "message": "\"El molino gira aunque no haya viento.\nBajo esta cripta la tierra respira;\nquien baje, que no siga los ojos rojos.\"",
-            "seconds": 7
-          }
-        ]
+        "do": [{ "play_sound": "audio/blip.wav", "volume": 0.4 }, { "dialogue": "atril_cripta" }]
       }
     },
     {
       "name": "velas_1",
-      "sprite": "textures/spr_velas.png",
-      "size": [0.5, 0.5],
+      "model": "models/velas_grupo.obj",
       "position": [-2.75, 4.0, -2.0],
+      "rotation": [0, 53.3, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
       "emissive": true,
       "light": {
         "offset": [0, 0.45, 0],
@@ -66,12 +62,44 @@
         "flicker": 0.25,
         "flickerRate": 9
       }
+    },
+    {
+      "name": "velas_1_llama_0",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [-2.806, 4.19, -1.892],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_1_llama_1",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [-2.774, 4.28, -2.018],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_1_llama_2",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [-2.654, 4.14, -2.078],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "velas_2",
-      "sprite": "textures/spr_velas.png",
-      "size": [0.5, 0.5],
+      "model": "models/velas_grupo.obj",
       "position": [2.75, 4.0, -3.2],
+      "rotation": [0, 221.7, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
       "emissive": true,
       "light": {
         "offset": [0, 0.45, 0],
@@ -81,12 +109,44 @@
         "flicker": 0.25,
         "flickerRate": 9
       }
+    },
+    {
+      "name": "velas_2_llama_0",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [2.826, 4.19, -3.295],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_2_llama_1",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [2.77, 4.28, -3.178],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_2_llama_2",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [2.64, 4.14, -3.142],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "velas_3",
-      "sprite": "textures/spr_velas.png",
-      "size": [0.5, 0.5],
+      "model": "models/velas_grupo.obj",
       "position": [2.75, 3.0, 2.5],
+      "rotation": [0, 61.1, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
       "emissive": true,
       "light": {
         "offset": [0, 0.45, 0],
@@ -96,12 +156,44 @@
         "flicker": 0.25,
         "flickerRate": 9
       }
+    },
+    {
+      "name": "velas_3_llama_0",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [2.709, 3.19, 2.615],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_3_llama_1",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [2.724, 3.28, 2.485],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_3_llama_2",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [2.834, 3.14, 2.409],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "velas_4",
-      "sprite": "textures/spr_velas.png",
-      "size": [0.5, 0.5],
+      "model": "models/velas_grupo.obj",
       "position": [-1.15, 3.95, -1.7],
+      "rotation": [0, 256.5, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
       "emissive": true,
       "light": {
         "offset": [0, 0.45, 0],
@@ -113,18 +205,112 @@
       }
     },
     {
+      "name": "velas_4_llama_0",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [-1.141, 4.14, -1.821],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_4_llama_1",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [-1.121, 4.23, -1.693],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_4_llama_2",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [-1.207, 4.09, -1.59],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
       "name": "velas_5",
-      "sprite": "textures/spr_velas.png",
-      "size": [0.5, 0.5],
+      "model": "models/velas_grupo.obj",
       "position": [1.15, 3.95, -1.7],
+      "rotation": [0, 218.8, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
       "emissive": true
     },
     {
+      "name": "velas_5_llama_0",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [1.231, 4.14, -1.791],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_5_llama_1",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [1.169, 4.23, -1.677],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_5_llama_2",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [1.038, 4.09, -1.648],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
       "name": "velas_6",
-      "sprite": "textures/spr_velas.png",
-      "size": [0.5, 0.5],
+      "model": "models/velas_grupo.obj",
       "position": [-2.75, 4.0, 2.1],
+      "rotation": [0, 138.4, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "collider": false,
       "emissive": true
+    },
+    {
+      "name": "velas_6_llama_0",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [-2.647, 4.19, 2.165],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_6_llama_1",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [-2.77, 4.28, 2.122],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_6_llama_2",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.06, 0.12],
+      "position": [-2.82, 4.14, 1.998],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
     },
     {
       "name": "osamenta_1",
@@ -184,35 +370,39 @@
     },
     {
       "name": "telarana_1",
-      "sprite": "textures/spr_telarana.png",
-      "size": [1.1, 1.1],
-      "position": [-3.5, 5.6, 4.6],
-      "tint": [170, 170, 180, 255],
-      "collider": false
+      "model": "models/telarana.obj",
+      "position": [-3.47, 6.45, 4.47],
+      "rotation": [0, 135.0, 0],
+      "scale": [1, 1, 1],
+      "collider": false,
+      "tint": [170, 170, 180, 255]
     },
     {
       "name": "telarana_2",
-      "sprite": "textures/spr_telarana.png",
-      "size": [1.1, 1.1],
-      "position": [3.5, 5.6, -5.6],
-      "tint": [170, 170, 180, 255],
-      "collider": false
+      "model": "models/telarana.obj",
+      "position": [3.47, 6.45, -5.47],
+      "rotation": [0, -45.0, 0],
+      "scale": [1, 1, 1],
+      "collider": false,
+      "tint": [170, 170, 180, 255]
     },
     {
       "name": "telarana_3",
-      "sprite": "textures/spr_telarana.png",
-      "size": [1.1, 1.1],
-      "position": [-3.5, 5.7, -5.6],
-      "tint": [170, 170, 180, 255],
-      "collider": false
+      "model": "models/telarana.obj",
+      "position": [-3.47, 6.45, -5.47],
+      "rotation": [0, 45.0, 0],
+      "scale": [1, 1, 1],
+      "collider": false,
+      "tint": [170, 170, 180, 255]
     },
     {
       "name": "telarana_4",
-      "sprite": "textures/spr_telarana.png",
-      "size": [1.1, 1.1],
-      "position": [3.5, 5.5, 4.6],
-      "tint": [170, 170, 180, 255],
-      "collider": false
+      "model": "models/telarana.obj",
+      "position": [3.47, 6.45, 4.47],
+      "rotation": [0, -135.0, 0],
+      "scale": [1, 1, 1],
+      "collider": false,
+      "tint": [170, 170, 180, 255]
     }
   ],
   "triggers": [

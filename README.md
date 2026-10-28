@@ -40,10 +40,10 @@ nuevas). Lo que existe hoy:
 | Render PS1 | Resolución interna 320x240, temblor de vértices, color de 15 bits con *dithering* Bayer, niebla, iluminación por vértice, post-proceso (escalado nítido, viñeta, grano, tinte). |
 | Mundo | Escenas en JSON, entidades con modelo `.obj`, plano procedural o sprite *billboard*, luz y sonido propios, rotación continua, personajes que miran al jugador y se balancean. |
 | Jugador | Primera persona, cilindro que choca contra cajas orientadas, escalones, salto, gravedad, límites de escena. |
-| Lógica | Triggers (zonas) con eventos `enter`/`exit`/`stay`, banderas, condiciones anidadas (`all`/`any`/`not`), interacción con **E**, visibilidad condicional (`showIf`), cambio de escena con fundido. |
+| Lógica | Triggers (zonas) con eventos `enter`/`exit`/`stay`, banderas, condiciones anidadas (`all`/`any`/`not`), interacción con **E**, visibilidad condicional (`showIf`), cambio de escena con fundido. **Diálogos** en archivos aparte (`assets/dialogues/`): páginas, nombre de quien habla y entradas que cambian según lo hablado y las banderas (dice A, luego B y repite C). |
 | Audio | Música y ambiente con fundido cruzado, efectos (también posicionales), emisores en bucle con atenuación y paneo, pasos. |
 | Guardado | Ranuras en `%APPDATA%/RetroEngine/saves`, escritura atómica con copia `.bak`, autoguardado. |
-| Editor | Visor 3D con cámara libre, vista PS1 opcional, selección por clic, gizmo de mover, jerarquía, inspector, panel de assets con arrastrar y soltar, deshacer/rehacer, guardar/abrir/crear escenas. Editor de lógica: acciones, condiciones, interacciones y `showIf` en formularios, y un panel de validación que avisa de referencias rotas y banderas sospechosas. |
+| Editor | Visor 3D con cámara libre, vista PS1 opcional, selección por clic, gizmo de mover, jerarquía, inspector, panel de assets con arrastrar y soltar, deshacer/rehacer, guardar/abrir/crear escenas. Editor de lógica: acciones, condiciones, interacciones y `showIf` en formularios, un panel de validación que avisa de referencias rotas y banderas sospechosas, y un panel **Dialogos** para crearlos y editarlos (se guardan solos). |
 | Contenido | Modelos low-poly hechos con Blender por script (`tools/blender/`): molino con aspas que giran, casas de madera y de piedra (también de noche, con las ventanas encendidas), capilla, cripta, tumbas, verjas, faroles, fuente, pozo y otros objetos, y ocho personajes compatibles con los atlas de caras. Texturas de materiales y sprites procedurales con acabado PS1. |
 | Herramientas | `tools/texconv.py` (imagen a textura PS1), `tools/charatlas.py` (foto de cara a atlas de personaje), `tools/gen_texturas.py`, `tools/gen_sprites.py` y `tools/gen_personajes.py` (texturas, sprites y atlas de personajes procedurales), `tools/gen_musica.py` y `tools/gen_sonidos.py` (música y efectos sintetizados) y los scripts de Blender. |
 
@@ -59,6 +59,8 @@ saliendo de su propio bosque):
 - `noche.json`: plaza nocturna con fuente, faroles y un sereno.
 - `cementerio.json`: cementerio con capilla, tumbas, cuervos y un sepulturero; con su llave se
   entra en la cripta.
+- `iglesia.json`: interior de la capilla del cementerio: bancos, altar, órgano que se puede tocar,
+  lámpara de velas y vidrieras que brillan en la oscuridad.
 - `cripta.json`: interior de la cripta, con sarcófagos, nichos y una escalera que baja.
 - `tuneles.json`: túneles de tierra bajo la cripta, con un cruce, un osario, un lago, un
   santuario de cristales con un ermitaño, un derrumbe, una reja que se abre con la llave del
@@ -162,13 +164,14 @@ editor/               RetroEditor: EditorApp, EditorLogic (acciones, condiciones
                       EditorValidation (panel Validacion), EditorCamera, AssetCatalog,
                       JsonUtil, JsonFormat
 assets/
-  scenes/             demo.json, aldea.json, noche.json, cementerio.json, cripta.json, tuneles.json
+  scenes/             demo.json, aldea.json, noche.json, cementerio.json, iglesia.json, cripta.json, tuneles.json
   shaders/            retro.vs, retro.fs, retro_unlit.fs, retro_sprite.fs, post.fs
   models/ textures/ audio/ fonts/
 tools/                texconv.py, charatlas.py, gen_texturas.py, gen_sprites.py, gen_personajes.py, gen_musica.py,
                       gen_sonidos.py
   blender/            retro_comun.py (piezas y exportador), molino.py, aldea_props.py,
-                      cementerio.py, personajes.py, subterraneo.py (+ tuneles_mapa.py), bosque.py:
+                      cementerio.py, personajes.py, subterraneo.py (+ tuneles_mapa.py), bosque.py,
+                      iglesia.py, detalles.py:
                       los modelos, por script
 docs/SISTEMA.md       funcionamiento detallado de todos los sistemas
 ```
@@ -241,6 +244,7 @@ post-proceso y dibujar la interfaz encima. El detalle está en
 | **Errores con contexto** (`scenes/demo.json (entidad #3 'casa'): ...`) | Muchos fallos fueron rutas mal escritas; el mensaje dice exactamente dónde mirar. |
 | **Una entidad es modelo *o* sprite**, con componentes opcionales (`collider`, `light`, `sound`, `interact`...) | Modelo simple, sin un sistema ECS: suficiente para el tamaño de juego buscado y fácil de leer. |
 | **Lógica como datos** (acciones `std::variant`, árbol de condiciones) | Los puzles se escriben en el JSON y el editor podrá editarlos con formularios. `ActionRunner` es el único que conoce a la vez escenas, jugador, estado y audio. |
+| **Diálogos en su propio archivo**, elegidos por la primera entrada que se cumpla | El texto no queda enterrado en la escena; una lista ordenada con `once` e `if` cubre "primera vez / según lo que hiciste / se repite" sin un lenguaje de guion. Su memoria son banderas `dlg:`, así que se guarda con la partida sin código extra. |
 | **Banderas enteras en `GameState`** | Un único mecanismo para todo: llaves (0/1), contadores (monedas), `once` de triggers e interacciones. Fácil de guardar y de usar en textos (`{monedas}`). |
 | **Los `once` se guardan como banderas con la ruta de la escena** | Sobreviven al cambio de escena y a guardar/cargar sin código extra. |
 | **Una condición que falla no gasta el `once`** | Así un trigger "abrir puerta" puede fallar mientras no tengas la llave y funcionar después. |

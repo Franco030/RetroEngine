@@ -6,11 +6,33 @@
 #include <raylib.h>
 
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <cstddef>
 #include <string>
 
 namespace editor {
+
+// Sin espacios al principio ni al final.
+inline std::string Trim(const std::string& s) {
+  const auto isSpace = [](unsigned char c) { return std::isspace(c) != 0; };
+  const auto first = std::find_if_not(s.begin(), s.end(), isSpace);
+  const auto last = std::find_if_not(s.rbegin(), s.rend(), isSpace).base();
+  return first < last ? std::string(first, last) : std::string();
+}
+
+// Nombre valido para un archivo o una entidad: letras, numeros, '_' y '-' (espacio = '_').
+inline std::string Sanitize(const std::string& s) {
+  std::string out;
+  for (char c : s) {
+    const unsigned char u = static_cast<unsigned char>(c);
+    if (std::isalnum(u) || c == '_' || c == '-')
+      out += c;
+    else if (c == ' ')
+      out += '_';
+  }
+  return out;
+}
 
 // ordered_json conserva el orden de las claves del archivo: al guardar, el cambio en el
 // archivo es minimo (no se reordena todo alfabeticamente).

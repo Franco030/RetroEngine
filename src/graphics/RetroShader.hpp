@@ -22,6 +22,7 @@ struct RetroShaderParams {
   float fogStart = 10.0f;
   float fogEnd = 26.0f;
   bool fogEnabled = true;
+  float clipY = 1.0e6f; // se descarta lo que quede por encima (editor: cortar techos)
   bool pointLights = true;
 };
 
@@ -50,6 +51,7 @@ private:
     int fogColor = -1;
     int fogStart = -1;
     int fogEnd = -1;
+    int clipY = -1;
     int useLighting = -1;
     int lightCount = -1;
     int lightPos = -1;

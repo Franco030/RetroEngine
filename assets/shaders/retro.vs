@@ -8,6 +8,10 @@ in vec4 vertexColor;
 uniform mat4 mvp;
 uniform mat4 matModel;
 uniform vec2 snapResolution;
+// Desplazamiento de profundidad (en NDC) para superficies apoyadas en otras (un sendero sobre el
+// suelo, una alfombra): las acerca a la camara solo en el test de profundidad, sin moverlas en
+// pantalla, asi nunca parpadean con lo de debajo. 0 en todo lo demas.
+uniform float depthBias;
 
 // Iluminacion por vertice (Gouraud). Solo el programa de modelos la activa:
 // las lineas y los sprites comparten este vertex shader con useLighting = 0.
@@ -26,10 +30,13 @@ noperspective out vec3 fragLight;            // luz del vertice, interpolada en 
 
 // Profundidad de vista = w de clip space. Se mide ANTES del snapping.
 out float fragDepth;
+// Altura de mundo (para el corte de techos del editor: clipY en los fragment shaders).
+out float fragWorldY;
 
 void main() {
     fragTexCoord = vertexTexCoord;
     fragColor    = vertexColor;
+    fragWorldY   = (matModel * vec4(vertexPosition, 1.0)).y;
 
     vec3 light = vec3(1.0);
     if (useLighting != 0) {
@@ -62,6 +69,7 @@ void main() {
         ndc       = floor(ndc * grid + 0.5) / grid;
         pos.xy    = ndc * pos.w;
     }
+    pos.z -= depthBias * pos.w;
 
     gl_Position = pos;
 }

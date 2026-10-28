@@ -11,6 +11,8 @@ gen_sonidos: sintetiza los efectos y ambientes del subterraneo (assets/audio/).
   gemido.wav         un lamento lejano (para asustar una sola vez)
   hojas.wav          pasos entre hojas secas (al meterse en el bosque)
   buho.wav, pajaros.wav  bucles de bosque de noche y de dia (emisores)
+  organo.wav         acorde disonante del organo de la capilla
+  letra_1..3.wav     chasquido de estatica de cada letra de los subtitulos
 
 Mono, 22050 Hz, 16 bits, como el resto de efectos. Los ambientes son BUCLES PERFECTOS: se
 mezclan en un buffer circular y la reverb es circular (las funciones de gen_musica.py).
@@ -30,7 +32,7 @@ import wave
 import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gen_musica import (SR, convolucion_circular, envolvente,  # noqa: E402
+from gen_musica import (SR, Instrumentos, convolucion_circular, envolvente,  # noqa: E402
                         respuesta_sala, suavizar)
 
 
@@ -258,6 +260,32 @@ def pajaros(rng):
     return reverb(buf, rng, 1.5, 0.3)
 
 
+def letra(rng):
+    """Una letra del subtitulo: chasquido corto de estatica (ruido de radio recortado a pocos
+    niveles) con un pitido de tono al azar debajo. Tres variantes: letra_1..3."""
+    n = int(0.05 * SR)
+    t = np.arange(n) / SR
+    estatica = rng.standard_normal(n).astype(np.float32)
+    estatica = estatica - suavizar(estatica, 3)                    # solo lo agudo, como una radio
+    estatica *= (rng.random(n) < 0.5)                              # crepita: huecos al azar
+    f = rng.uniform(780, 1250)
+    pitido = np.sign(np.sin(2 * np.pi * f * t)) * 0.35            # cuadrada: suena a consola
+    s = (estatica * 0.6 + pitido) * np.exp(-t / 0.012)
+    s = np.round(s * 6) / 6                                        # pocos niveles: "bitcrush"
+    return (s * envolvente(n, 0.001, 0.01)).astype(np.float32)
+
+
+def organo(rng):
+    """Alguien toca el organo de la capilla: un acorde grave y disonante (re, mi bemol, la y
+    la bemol: un triton) que se queda sonando en la nave."""
+    inst = Instrumentos(rng)
+    s = np.zeros(int(7 * SR), np.float32)
+    for m in (38, 39, 45, 56):
+        nota = inst.organo(m, 2.6, ataque=0.05, caida=1.5, brillo=0.9)
+        s[:len(nota)] += nota
+    return reverb(s, rng, 6.0, 0.55)
+
+
 SONIDOS = {
     "cripta_amb": cripta_amb,
     "tuneles_amb": tuneles_amb,
@@ -270,6 +298,10 @@ SONIDOS = {
     "hojas": hojas,
     "buho": buho,
     "pajaros": pajaros,
+    "organo": organo,
+    "letra_1": letra,
+    "letra_2": letra,
+    "letra_3": letra,
 }
 
 

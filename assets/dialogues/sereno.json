@@ -1,0 +1,15 @@
+{
+  "speaker": "Sereno",
+  "entries": [
+    {
+      "once": true,
+      "lines": ["Buenas noches. Al este queda el cementerio.", "Si oyes la campana... no, no la oyes."]
+    },
+    {
+      "if": { "flag": "llave_cripta" },
+      "once": true,
+      "lines": ["Te dio la llave el sepulturero?\nEse hombre no duerme nunca."]
+    },
+    { "lines": ["Ve con cuidado. La noche es larga."] }
+  ]
+}

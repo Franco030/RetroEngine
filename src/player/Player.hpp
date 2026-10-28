@@ -51,6 +51,11 @@ public:
   float Pitch() const noexcept { return pitch_; }
   void SetPitch(float degrees) noexcept;
 
+  // Congelado (durante un dialogo): no lee el teclado ni el raton, pero la fisica sigue.
+  void SetFrozen(bool frozen) noexcept { frozen_ = frozen; }
+  // Gira la vista poco a poco hasta mirar al punto 'target' (los ojos, desde Eye()).
+  void TurnTowards(Vector3 target, float dt) noexcept;
+
 private:
   void Look();
   void Step(float h, std::span<const WorldBox> boxes);
@@ -63,6 +68,7 @@ private:
   float pitch_ = 0.0f;
   bool grounded_ = false;
   bool active_ = false;
+  bool frozen_ = false;
   int skipMouseFrames_ = 0;
 };
 

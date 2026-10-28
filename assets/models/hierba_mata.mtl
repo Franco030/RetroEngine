@@ -1,0 +1,5 @@
+# RetroEngine: hierba_mata
+
+newmtl mat_hierba
+d 1.000000
+map_Kd ../textures/mat_hierba.png

@@ -1,0 +1,8 @@
+{
+  "speaker": "Guardia",
+  "entries": [
+    { "once": true, "lines": ["Cuidado con el molino.\nGira solo, pero no muerde."] },
+    { "once": true, "lines": ["Yo vigilo la aldea de dia.", "De noche... que vigile otro."] },
+    { "lines": ["Sigue tu camino."] }
+  ]
+}

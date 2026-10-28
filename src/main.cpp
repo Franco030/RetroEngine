@@ -2,11 +2,13 @@
 #include <raymath.h>
 
 #include <algorithm>
+#include <cmath>
 #include <cstdint>
 #include <exception>
 #include <iostream>
 #include <optional>
 #include <string>
+#include <variant>
 #include <vector>
 
 #include "audio/AudioSystem.hpp"
@@ -17,9 +19,11 @@
 #include "graphics/DebugDraw.hpp"
 #include "graphics/RetroCamera.hpp"
 #include "graphics/ShaderScope.hpp"
+#include "physics/Collision.hpp"
 #include "player/Player.hpp"
 #include "ui/Ui.hpp"
 #include "world/ActionRunner.hpp"
+#include "world/Dialogue.hpp"
 #include "world/SceneManager.hpp"
 
 static void HandleDebugKeys(retro::RetroEngine& engine) {
@@ -74,33 +78,112 @@ static void HandleDebugKeys(retro::RetroEngine& engine) {
     engine.Post().SetParams(q);
 }
 
-static void DrawMessageBox(const retro::Ui& ui, const std::string& text) {
-  std::vector<std::string> lines;
+// Subtitulo sobre la imagen, sin cuadro: blanco con contorno negro, centrado abajo. Solo se
+// dibujan los 'visible' primeros bytes (el texto se escribe letra a letra), pero cada linea se
+// coloca segun su ancho completo, asi no se mueve mientras crece. Encima va quien habla (si hay)
+// y, con 'more', un triangulo que parpadea al final: E pasa de pagina.
+static void DrawSubtitle(const retro::Ui& ui, const std::string& text, std::size_t visible,
+                         const std::string& speaker, bool more) {
+  struct Line {
+    std::string text;
+    std::size_t start; // posicion de la linea dentro de 'text'
+  };
+  std::vector<Line> lines;
   std::size_t start = 0;
   while (true) {
     const std::size_t nl = text.find('\n', start);
-    lines.push_back(text.substr(start, nl == std::string::npos ? nl : nl - start));
+    lines.push_back({text.substr(start, nl == std::string::npos ? nl : nl - start), start});
     if (nl == std::string::npos)
       break;
     start = nl + 1;
   }
 
-  constexpr float kSize = 10.0f, kLineH = 13.0f, kPadX = 7.0f, kPadY = 5.0f;
-  float maxW = 0.0f;
-  for (const std::string& l : lines)
-    maxW = std::max(maxW, ui.TextWidth(l, kSize));
+  constexpr float kSize = 11.0f, kLineH = 13.0f, kBorde = 0.75f;
+  auto outlined = [&](const std::string& s, float x, float y, float size, Color color) {
+    for (int dx = -1; dx <= 1; ++dx) { // contorno: el mismo texto en negro alrededor
+      for (int dy = -1; dy <= 1; ++dy) {
+        if (dx != 0 || dy != 0)
+          ui.Text(s, x + dx * kBorde, y + dy * kBorde, size, BLACK, false);
+      }
+    }
+    ui.Text(s, x, y, size, color, false);
+  };
 
-  const float boxW = maxW + kPadX * 2.0f;
-  const float boxH = static_cast<float>(lines.size()) * kLineH + kPadY * 2.0f - 2.0f;
-  const float x = (ui.Width() - boxW) * 0.5f;
-  const float y = ui.Height() - boxH - 22.0f;
-
-  ui.Rect(x, y, boxW, boxH, {0, 0, 0, 190});
-  ui.RectLines(x, y, boxW, boxH, RAYWHITE);
-  for (std::size_t i = 0; i < lines.size(); ++i) {
-    ui.Text(lines[i], x + kPadX, y + kPadY + static_cast<float>(i) * kLineH - 1.0f, kSize, RAYWHITE,
-            false);
+  const float y0 = ui.Height() - 20.0f - static_cast<float>(lines.size()) * kLineH;
+  if (!speaker.empty()) {
+    constexpr float kSpeakerSize = 9.0f;
+    const float x = (ui.Width() - ui.TextWidth(speaker, kSpeakerSize)) * 0.5f;
+    outlined(speaker, x, y0 - 11.0f, kSpeakerSize, Color{214, 178, 110, 255});
   }
+  float endX = 0.0f, endY = 0.0f;
+  for (std::size_t i = 0; i < lines.size(); ++i) {
+    if (visible <= lines[i].start)
+      break;
+    const std::string shown = lines[i].text.substr(0, visible - lines[i].start);
+    const float x = (ui.Width() - ui.TextWidth(lines[i].text, kSize)) * 0.5f;
+    const float y = y0 + static_cast<float>(i) * kLineH;
+    outlined(shown, x, y, kSize, RAYWHITE);
+    endX = x + ui.TextWidth(lines[i].text, kSize);
+    endY = y;
+  }
+
+  if (more && visible >= text.size() && std::fmod(GetTime(), 0.8) < 0.5) {
+    // Triangulo hacia abajo (filas de 7, 5, 3 y 1 pixeles): primero todo el contorno negro y
+    // luego el blanco, si no el contorno de cada fila tapa la anterior.
+    const float x = endX + 4.0f, y = endY + 3.0f;
+    for (int r = 0; r < 4; ++r)
+      ui.Rect(x - 1.0f + r, y - 1.0f + r, 9.0f - 2.0f * r, 3.0f, BLACK);
+    for (int r = 0; r < 4; ++r)
+      ui.Rect(x + r, y + r, 7.0f - 2.0f * r, 1.0f, RAYWHITE);
+  }
+}
+
+// Sonido de las letras: un chasquido de estatica cada dos letras (no en espacios), alternando
+// tres variantes para que no suene a metralleta.
+class LetterSounds {
+public:
+  void Update(const retro::GameState& state, retro::AudioSystem& audio) {
+    if (!state.HasMessage())
+      return;
+    if (state.MessageId() != id_) {
+      id_ = state.MessageId();
+      shown_ = 0;
+    }
+    const std::string& text = state.MessageText();
+    const std::size_t now = state.VisibleBytes();
+    for (; shown_ < now; ++shown_) {
+      const unsigned char c = static_cast<unsigned char>(text[shown_]);
+      if (c == ' ' || c == '\n' || (c & 0xC0) == 0x80)
+        continue;
+      if (++letters_ % 2 == 0) {
+        static const char* const kFiles[] = {"audio/letra_1.wav", "audio/letra_2.wav",
+                                             "audio/letra_3.wav"};
+        audio.PlaySfx(kFiles[(letters_ / 2 + shown_) % 3], 0.32f);
+      }
+    }
+  }
+
+private:
+  unsigned id_ = 0;
+  std::size_t shown_ = 0;
+  unsigned letters_ = 0;
+};
+
+// Punto al que mirar durante un dialogo: el de la caja de interaccion de la entidad (la cara si
+// es alta como una persona; si no, su centro).
+static Vector3 DialogueFocus(const retro::Entity& e) {
+  const retro::WorldBox b = retro::MakeWorldBox(e.interact->box, e.transform);
+  const float alto = b.top - b.bottom;
+  const float y = alto > 1.4f ? b.top - 0.4f : (b.top + b.bottom) * 0.5f;
+  return {b.center.x, y, b.center.z};
+}
+
+// Si las acciones dicen algo (un mensaje o un dialogo): entonces la camara mira a quien habla.
+static bool Speaks(const std::vector<retro::Action>& actions) {
+  return std::any_of(actions.begin(), actions.end(), [](const retro::Action& a) {
+    return std::holds_alternative<retro::action::Message>(a) ||
+           std::holds_alternative<retro::action::StartDialogue>(a);
+  });
 }
 
 // RetroEngine [--scene scenes/x.json]: escena con la que empieza (por defecto la demo).
@@ -119,17 +202,23 @@ int main(int argc, char** argv) {
 
     retro::SceneManager scenes(engine, camera, {primera});
     scenes.LoadNow(0);
+    scenes.FadeInFromBlack();
 
     retro::Player player;
     retro::GameState state;
-    retro::ActionRunner runner(scenes, player, state, engine.Audio());
+    retro::DialogueSystem dialogues(engine.Assets().Root());
+    retro::ActionRunner runner(scenes, player, state, engine.Audio(), dialogues);
 
     std::vector<retro::WorldBox> colliders;
     std::vector<retro::Action> firedActions;
     std::uint64_t seenGeneration = scenes.Generation();
     bool firstPerson = true;
+    std::optional<Vector3> dialogueFocus; // a quien se mira mientras dura un dialogo
+    LetterSounds letterSounds;
+    float dialogueAge = 0.0f; // tiempo en la pagina actual
+    unsigned pageId = 0;
     bool showColliders = false;
-    bool showHelp = true;
+    bool showHelp = false;
     retro::FootstepTracker footsteps;
 
     retro::SaveManager saves(retro::SaveManager::DefaultDirectory("RetroEngine"));
@@ -219,6 +308,9 @@ int main(int argc, char** argv) {
 
           if (IsKeyPressed(KEY_F5)) {
             try {
+              if (dialogues.Active())
+                state.ClearMessage();
+              dialogues.Reload(); // tambien se releen los dialogos
               scenes.Reload();
               std::cout << "Escena recargada: " << scenes.CurrentPath() << '\n';
             } catch (const std::exception& e) {
@@ -248,6 +340,7 @@ int main(int argc, char** argv) {
           scenes.SetFocus(player.Feet());
           scenes.Update(dt);
           state.Update(dt);
+          letterSounds.Update(state, engine.Audio());
 
           if (scenes.Generation() != seenGeneration) {
             seenGeneration = scenes.Generation();
@@ -275,9 +368,25 @@ int main(int argc, char** argv) {
           if (const retro::Scene* s = scenes.Current())
             s->CollectColliders(colliders);
 
+          // Dialogo: un mensaje que salio de una interaccion, o un dialogo abierto. Mientras se
+          // lee, el jugador se queda quieto (mirando a quien habla si se sabe quien es); un
+          // anuncio suelto (trigger, sistema) no lo retiene.
+          dialogues.Update(state);
+          if (dialogueFocus && !state.HasMessage())
+            dialogueFocus.reset();
+          const bool reading = dialogueFocus.has_value() || dialogues.Active();
+          if (state.MessageId() != pageId) { // cada pagina nueva da su respiro
+            pageId = state.MessageId();
+            dialogueAge = 0.0f;
+          }
+          dialogueAge = reading ? dialogueAge + dt : 0.0f;
+          player.SetFrozen(reading);
+
           if (firstPerson) {
             if (!scenes.Transitioning())
               player.Update(dt, colliders);
+            if (dialogueFocus)
+              player.TurnTowards(*dialogueFocus, dt);
             player.ApplyToCamera(camera);
           } else {
             camera.UpdateOrbit(dt);
@@ -304,12 +413,32 @@ int main(int argc, char** argv) {
               const Vector3 origin = camera.Position();
               const Vector3 dir = Vector3Normalize(Vector3Subtract(camera.Target(), origin));
               const auto hit = s->FindInteractable(origin, dir, state);
-              if (hit.entity) {
+              if (reading) {
+                // E durante un dialogo: si aun se esta escribiendo, lo muestra entero; si no,
+                // pasa de pagina o lo cierra (con un respiro, para no saltarlo sin leer). Las
+                // acciones del final se ejecutan al cerrar (pueden abrir otro dialogo).
+                if (IsKeyPressed(KEY_E)) {
+                  if (!state.FullyShown()) {
+                    state.RevealAll();
+                  } else if (dialogueAge > 0.3f) {
+                    if (dialogues.Active()) {
+                      const std::vector<retro::Action> end = dialogues.Advance(state);
+                      runner.Run(end);
+                    } else {
+                      state.ClearMessage();
+                    }
+                    if (!state.HasMessage())
+                      dialogueFocus.reset();
+                  }
+                }
+              } else if (hit.entity) {
                 interactPrompt = "E: " + hit.entity->interact->prompt;
                 if (IsKeyPressed(KEY_E)) {
                   firedActions.clear();
                   s->Interact(*hit.entity, state, firedActions);
                   runner.Run(firedActions);
+                  if (Speaks(firedActions) && state.HasMessage())
+                    dialogueFocus = DialogueFocus(*hit.entity);
                 }
               }
             }
@@ -349,7 +478,7 @@ int main(int argc, char** argv) {
           const float w = ui.Width();
           const float h = ui.Height();
 
-          if (firstPerson) {
+          if (firstPerson && !dialogueFocus && !dialogues.Active()) {
             const Color c = interactPrompt.empty() ? RAYWHITE : YELLOW;
             ui.Rect(w * 0.5f - 1.0f, h * 0.5f - 1.0f, 2.0f, 2.0f, c); // mira
           }
@@ -366,14 +495,15 @@ int main(int argc, char** argv) {
                     4, 23, 8, RAYWHITE);
             ui.Text("F9 guardar  F10 cargar  Shift+F10 autoguardado", 4, 43, 8, RAYWHITE);
             ui.Text("Tab escena  F1 ayuda  F2 camara  F3 colisiones", 4, 33, 8, RAYWHITE);
+
+            ui.Text(TextFormat("Escena %d/%d: %s", static_cast<int>(scenes.Index()) + 1,
+                               static_cast<int>(scenes.Count()), scenes.CurrentPath().c_str()),
+                    4, h - 12.0f, 8.0f, RAYWHITE);
           }
 
-          ui.Text(TextFormat("Escena %d/%d: %s", static_cast<int>(scenes.Index()) + 1,
-                             static_cast<int>(scenes.Count()), scenes.CurrentPath().c_str()),
-                  4, h - 12.0f, 8.0f, RAYWHITE);
-
           if (state.HasMessage())
-            DrawMessageBox(ui, state.MessageText());
+            DrawSubtitle(ui, state.MessageText(), state.VisibleBytes(), state.MessageSpeaker(),
+                         dialogues.Active());
         });
 
     if (scenes.Generation() != initialGeneration || state.Flags() != initialFlags) {

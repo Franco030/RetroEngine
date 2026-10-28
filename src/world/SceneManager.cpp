@@ -5,9 +5,15 @@
 
 #include <raymath.h>
 
+#include <nlohmann/json.hpp>
+
 #include <algorithm>
+#include <chrono>
 #include <cmath>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <unordered_set>
 #include <stdexcept>
 #include <utility>
 
@@ -16,6 +22,35 @@ namespace retro {
 namespace {
 
 constexpr float kFadeSteps = 8.0f;
+constexpr double kPrefetchBudgetMs = 3.0;      // por fotograma jugando (a 60 fps hay 16.6 ms)
+constexpr double kPrefetchDarkBudgetMs = 40.0; // mientras la pantalla sigue casi negra al llegar
+
+using Clock = std::chrono::steady_clock;
+
+double MsSince(Clock::time_point start) {
+  return std::chrono::duration<double, std::milli>(Clock::now() - start).count();
+}
+
+// Escenas a las que se puede ir desde 'j': cualquier "goto_scene" (triggers, interacciones).
+void CollectGotos(const nlohmann::json& j, std::vector<std::string>& out) {
+  if (j.is_object()) {
+    if (const auto it = j.find("goto_scene"); it != j.end() && it->is_string())
+      out.push_back(it->get<std::string>());
+    for (const auto& v : j)
+      CollectGotos(v, out);
+  } else if (j.is_array()) {
+    for (const auto& v : j)
+      CollectGotos(v, out);
+  }
+}
+
+// Lee un JSON de escena; vacio si no se puede (la precarga es una ayuda: nunca falla).
+nlohmann::json ReadSceneJson(const std::string& fullPath) {
+  std::ifstream file(fullPath);
+  if (!file)
+    return {};
+  return nlohmann::json::parse(file, nullptr, false); // sin excepciones: discarded si esta mal
+}
 constexpr float kMaxDt = 0.05f;
 
 } // namespace
@@ -68,6 +103,9 @@ void SceneManager::LoadNow(std::size_t index) {
   if (index >= paths_.size())
     throw std::out_of_range("SceneManager: indice de escena invalido");
 
+  const auto start = std::chrono::steady_clock::now();
+  engine_.Assets().ResetStats();
+
   // Copias para deshacer si el JSON falla a medias.
   const RetroCamera savedCamera = camera_;
   const RetroShaderParams savedParams = engine_.Retro().Params();
@@ -98,8 +136,25 @@ void SceneManager::LoadNow(std::size_t index) {
 
   ApplyAudio(scene_->audio);
 
-  // Libera modelos y texturas que solo usaba la escena anterior.
+  // Retiene lo de las escenas vecinas que ya estaba cargado (por ejemplo, la escena de la que se
+  // viene) y libera lo demas que solo usaba la escena anterior.
+  PlanPrefetch();
   engine_.Assets().PurgeUnused();
+
+  // Cuanto ha costado: es el tiron que queda tapado por el fundido en negro.
+  const double total =
+      std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - start).count();
+  const AssetManager::LoadStats& st = engine_.Assets().Stats();
+  std::cout << "[carga] " << paths_[index] << ": " << static_cast<int>(total) << " ms | modelos "
+            << st.models << " (" << static_cast<int>(st.modelMs) << " ms) | texturas "
+            << st.textures << " (" << static_cast<int>(st.textureMs) << " ms) | sonidos "
+            << st.sounds << " (" << static_cast<int>(st.soundMs) << " ms) | resto "
+            << static_cast<int>(total - st.modelMs - st.textureMs - st.soundMs) << " ms\n";
+}
+
+void SceneManager::FadeInFromBlack() {
+  phase_ = Phase::FadingIn;
+  fade_ = 1.0f;
 }
 
 void SceneManager::GoTo(std::size_t index) {
@@ -184,8 +239,107 @@ void SceneManager::Update(float dt) {
     break;
   }
 
+  if (phase_ != Phase::FadingOut) // jugando o llegando (al irse, la carga ya va a ocurrir)
+    StepPrefetch();
+
   if (scene_)
     scene_->Update(dt, focus_);
+}
+
+void SceneManager::PlanPrefetch() {
+  AssetManager& assets = engine_.Assets();
+  const nlohmann::json actual = ReadSceneJson(assets.Root() + paths_[index_]);
+  std::vector<std::string> vecinas;
+  if (!actual.is_discarded())
+    CollectGotos(actual, vecinas);
+  std::sort(vecinas.begin(), vecinas.end());
+  vecinas.erase(std::unique(vecinas.begin(), vecinas.end()), vecinas.end());
+  std::erase(vecinas, paths_[index_]);
+
+  std::vector<std::shared_ptr<ModelResource>> models;
+  std::vector<std::shared_ptr<TextureResource>> textures;
+  std::unordered_set<std::string> vistos; // cada recurso una vez (muchos arboles comparten modelo)
+  prefetch_.clear();
+  int enMemoria = 0;
+  for (const std::string& v : vecinas) {
+    const nlohmann::json escena = ReadSceneJson(assets.Root() + v);
+    if (escena.is_discarded() || !escena.contains("entities"))
+      continue;
+    for (const nlohmann::json& e : escena.at("entities")) {
+      auto pedir = [&](const char* key, bool model) {
+        const auto it = e.find(key);
+        if (it == e.end() || !it->is_string())
+          return;
+        const std::string path = it->get<std::string>();
+        if (!vistos.insert((model ? "m:" : "t:") + path).second)
+          return;
+        if (model ? assets.HasModel(path) : assets.HasTexture(path)) {
+          ++enMemoria; // ya esta: basta con retenerlo
+          if (model)
+            models.push_back(assets.GetModel(path));
+          else
+            textures.push_back(assets.GetTexture(path));
+        } else {
+          prefetch_.push_back({model, path});
+        }
+      };
+      pedir("model", true);
+      pedir("texture", false);
+      pedir("sprite", false);
+    }
+  }
+  // lo mas pesado primero: se carga mientras la pantalla sigue negra (ver StepPrefetch)
+  auto peso = [&](const PrefetchItem& item) {
+    std::error_code ec;
+    const auto bytes = std::filesystem::file_size(assets.Root() + item.path, ec);
+    return ec ? std::uintmax_t{0} : bytes;
+  };
+  std::stable_sort(prefetch_.begin(), prefetch_.end(),
+                   [&](const PrefetchItem& a, const PrefetchItem& b) { return peso(a) > peso(b); });
+
+  keepModels_ = std::move(models); // lo retenido antes y no repetido se suelta aqui
+  keepTextures_ = std::move(textures);
+  prefetchMs_ = prefetchMaxMs_ = 0.0;
+  prefetchFrames_ = prefetchCount_ = 0;
+
+  std::cout << "[precarga] vecinas:";
+  for (const std::string& v : vecinas)
+    std::cout << ' ' << v;
+  std::cout << " | ya en memoria " << enMemoria << " | por cargar " << prefetch_.size() << '\n';
+}
+
+void SceneManager::StepPrefetch() {
+  if (prefetch_.empty())
+    return;
+  AssetManager& assets = engine_.Assets();
+  // Con la pantalla aun casi negra (llegando a la escena) el tiron no se ve: se aprovecha para
+  // lo pesado. Jugando, solo un poco por fotograma.
+  const double budget = fade_ > 0.5f ? kPrefetchDarkBudgetMs : kPrefetchBudgetMs;
+  const auto start = Clock::now();
+  while (!prefetch_.empty() && MsSince(start) < budget) {
+    const PrefetchItem item = std::move(prefetch_.front());
+    prefetch_.pop_front();
+    try {
+      if (item.model)
+        keepModels_.push_back(assets.GetModel(item.path));
+      else
+        keepTextures_.push_back(assets.GetTexture(item.path));
+      ++prefetchCount_;
+    } catch (const std::exception& e) {
+      std::cerr << "[precarga] no se pudo cargar " << item.path << ": " << e.what() << '\n';
+    }
+  }
+  const double ms = MsSince(start);
+  prefetchMs_ += ms;
+  if (budget == kPrefetchBudgetMs) // el tiron que se nota: jugando, no con la pantalla negra
+    prefetchMaxMs_ = std::max(prefetchMaxMs_, ms);
+  ++prefetchFrames_;
+  if (prefetch_.empty()) {
+    std::cout << "[precarga] terminada: " << prefetchCount_ << " recursos en "
+              << static_cast<int>(prefetchMs_) << " ms repartidos en " << prefetchFrames_
+              << " fotogramas (el peor jugando: " << static_cast<int>(prefetchMaxMs_)
+              << " ms)\n";
+  }
 }
 
 void SceneManager::Draw() {

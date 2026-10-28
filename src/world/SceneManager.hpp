@@ -8,6 +8,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <deque>
 #include <memory>
 #include <optional>
 #include <string>
@@ -27,6 +28,9 @@ public:
   SceneManager& operator=(const SceneManager&) = delete;
 
   void LoadNow(std::size_t index);
+  // Empieza con la pantalla en negro y la aclara (al arrancar el juego): mientras esta oscura,
+  // la precarga de las escenas vecinas carga lo pesado sin que se note.
+  void FadeInFromBlack();
 
   // Cambia a la escena 'relativePath' con fundido. Si no está en la lista y el
   // archivo existe, se añade. spawnPosition/spawnYaw reemplazan el spawn del
@@ -74,6 +78,12 @@ private:
   void ApplyEnvironment(const Environment& env);
   void ApplyAudio(const SceneAudio& audio);
 
+  // Precarga de las escenas vecinas (a las que lleva algun goto_scene de la actual): lo que ya
+  // esta en memoria se retiene para que la purga no lo borre, y lo que falta se carga poco a
+  // poco (StepPrefetch, con un presupuesto por fotograma) mientras se juega.
+  void PlanPrefetch();
+  void StepPrefetch();
+
   RetroEngine& engine_;
   RetroCamera& camera_;
   std::vector<std::string> paths_;
@@ -92,6 +102,18 @@ private:
   std::uint64_t generation_ = 0;
   Phase phase_ = Phase::Idle;
   float fade_ = 0.0f; // 0 = transparente, 1 = negro total
+
+  struct PrefetchItem {
+    bool model; // si no, textura
+    std::string path;
+  };
+  std::deque<PrefetchItem> prefetch_;
+  std::vector<std::shared_ptr<ModelResource>> keepModels_;    // de las escenas vecinas
+  std::vector<std::shared_ptr<TextureResource>> keepTextures_;
+  double prefetchMs_ = 0.0;     // tiempo de la precarga en curso (para el informe)
+  double prefetchMaxMs_ = 0.0;  // el fotograma que mas le dedico
+  int prefetchFrames_ = 0;
+  int prefetchCount_ = 0;
 };
 
 } // namespace retro

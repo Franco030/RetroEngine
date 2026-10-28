@@ -1,0 +1,33 @@
+# RetroEngine: capilla_interior
+
+newmtl mat_losa
+d 1.000000
+map_Kd ../textures/mat_losa.png
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_madera_gris
+d 1.000000
+map_Kd ../textures/mat_madera_gris.png
+
+newmtl mat_marmol_viejo
+d 1.000000
+map_Kd ../textures/mat_marmol_viejo.png
+
+newmtl mat_metal
+d 1.000000
+map_Kd ../textures/mat_metal.png
+
+newmtl mat_piedra_musgo
+d 1.000000
+map_Kd ../textures/mat_piedra_musgo.png
+
+newmtl mat_puerta
+d 1.000000
+map_Kd ../textures/mat_puerta.png
+
+newmtl mat_tela_roja
+d 1.000000
+map_Kd ../textures/mat_tela_roja.png

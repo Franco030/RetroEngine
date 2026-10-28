@@ -79,7 +79,7 @@ private:
     PendingKind kind = PendingKind::None;
     std::string path;
   };
-  enum class Deferred { None, Delete, Duplicate };
+  enum class Deferred { None, Delete, Duplicate, AddFlame };
 
   // ------------------------------------------------------------------ escena y archivo
   void RefreshSceneList();
@@ -119,6 +119,12 @@ private:
   void ApplyTextureToEntity(int index, const std::string& texture);
   void HandleAssetDrop(const std::string& path, Vector2 mouse);
   Vector3 PlacementPoint() const;
+  // Caja de la entidad 'index' en el mundo (alineada a los ejes: abarca el modelo girado).
+  bool EntityWorldBox(int index, BoundingBox& out) const;
+  // Pone una llama animada (sprite) en lo alto del modelo 'index' y, si no tiene, una luz.
+  void AddFlameOn(int index);
+  void AddAnimatedFlame(Vector3 position);
+  void AddCandleGroup(Vector3 position);
   static Vector3 GroundPoint(const Ray& ray);
   bool SelectionCenter(Vector3& center, float& radius) const;
 
@@ -213,6 +219,23 @@ private:
   // "interact" de la entidad 'entityIndex' (texto, alcance, una vez, caja, condiciones y acciones).
   void EditInteraction(Json& entity, int entityIndex);
 
+  // ------------------------------------------------------------------ dialogos (EditorLogic.cpp)
+  // Cada dialogo es un archivo aparte (assets/dialogues/<id>.json) que se edita en su panel y se
+  // guarda solo. Mientras se dibuja ese panel (dialogueMode_), BeginChange/MarkChanged marcan el
+  // dialogo y no la escena; los dialogos no tienen deshacer.
+  void RefreshDialogueList();
+  void OpenDialogue(const std::string& id);
+  bool CreateDialogue(const std::string& id, Json content);
+  void SaveDialogueIfChanged();
+  void CheckDialogue(); // lo carga como el juego, para avisar de errores
+  void DrawDialogues();
+  void EditDialogueEntry(Json& entry, std::size_t index);
+  // El editor de texto de una pagina (un string dentro de "lines").
+  bool EditLine(const char* label, Json& value);
+  // Mueve los mensajes del "do" de la interaccion a un dialogo nuevo con el nombre de la entidad.
+  void MessagesToDialogue(Json& entity);
+  std::string DialoguePath(const std::string& id) const;
+
   // ------------------------------------------------------------------ visor
   void EnsureTargets(int w, int h);
   void RenderViewport(int w, int h);
@@ -269,6 +292,7 @@ private:
   bool gestureEnded_ = false;
 
   Deferred deferred_ = Deferred::None;
+  int deferredIndex_ = -1; // entidad sobre la que actua el diferido (AddFlame)
   Pending pending_;
   bool openUnsavedPopup_ = false;
   bool openNewScenePopup_ = false;
@@ -279,7 +303,7 @@ private:
 
   // campo de texto en edicion (se confirma al terminar de escribir)
   std::string textId_;
-  char textBuf_[256] = "";
+  char textBuf_[512] = "";
 
   // miniaturas y archivos que no se pudieron cargar
   std::unordered_map<std::string, std::shared_ptr<retro::TextureResource>> thumbs_;
@@ -304,6 +328,8 @@ private:
   bool ps1View_ = false;
   bool fogOn_ = true;
   bool animate_ = false;
+  bool cutCeiling_ = false;   // cortar lo que este por encima de cutHeight_ (ver interiores)
+  float cutHeight_ = 3.0f;
   bool showGrid_ = true;
   bool showColliders_ = false;
   bool showTriggers_ = true;
@@ -311,6 +337,17 @@ private:
   bool showEmitters_ = true;
   bool showBounds_ = true;
   bool showSpawn_ = true;
+
+  // dialogos
+  std::vector<std::string> dialogueList_; // ids: la ruta dentro de dialogues/, sin ".json"
+  std::string dialogueId_;                // el abierto en el panel (vacio = ninguno)
+  Json dialogueDoc_;
+  std::string pendingDialogue_;           // abrir al empezar el panel (no a mitad de dibujarlo)
+  std::string dialogueError_;
+  bool dialogueMode_ = false;
+  bool dialogueChanged_ = false;
+  bool focusDialogues_ = false;
+  char newDialogueName_[64] = "";
 };
 
 } // namespace editor

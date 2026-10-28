@@ -466,6 +466,25 @@ def calavera_vela(col_):
     return m.objeto("calavera_vela", col_)
 
 
+# Llama de la antorcha de pared, relativa al origen del modelo (para el sprite de la escena)
+LLAMA_ANTORCHA = (0.0, 1.78, 0.24)
+
+
+def antorcha_pared(col_):
+    """Antorcha clavada en la pared: la pared queda hacia -Z y la antorcha asoma hacia +Z.
+    El brazo de hierro es largo (llega a z=-0.9) para que se meta en la pared aunque la tierra
+    deformada quede mas cerca o mas lejos; la llama es un sprite (LLAMA_ANTORCHA)."""
+    m = rc.Malla()
+    caja(m, (-0.12, 1.0, -0.95), (0.12, 1.3, -0.85), "mat_metal")         # placa (dentro del muro)
+    caja(m, (-0.025, 1.12, -0.9), (0.025, 1.17, 0.06), "mat_metal")        # brazo
+    m.anillos(B(0, 1.1, 0.06), [(0.0, 0.055, 0.055), (0.08, 0.06, 0.06)], 6, "mat_metal",
+              tapa_abajo=False, tapa_arriba=False)                          # argolla
+    m.segmento(B(0, 0.85, 0.0), B(0, 1.6, 0.2), 0.03, 0.035, 6, "mat_madera")  # palo inclinado
+    m.segmento(B(0, 1.5, 0.17), B(0, 1.66, 0.215), 0.06, 0.055, 6, "mat_corteza")  # trapo quemado
+    caja(m, (-0.04, 1.62, 0.18), (0.04, 1.68, 0.25), "mat_oscuro")          # brasa
+    return m.objeto("antorcha_pared", col_)
+
+
 def trampilla(col_):
     """Trampilla de madera en el suelo de la plaza (se pisa: sin colision)."""
     m = rc.Malla()
@@ -674,6 +693,7 @@ PIEZAS = [
     (cuerda_pozo, "Cuerda del pozo de la aldea y cubo (origen bajo el centro del tiro)."),
     (escalera_mano, "Escalera de mano hasta la trampilla de la plaza."),
     (trampilla, "Trampilla de madera en el suelo (plaza de noche); sin colision."),
+    (antorcha_pared, "Antorcha de pared: la pared hacia -Z; llama en " + str(LLAMA_ANTORCHA) + "."),
     (osamenta, "Calavera y huesos para los nichos (largo en X, la calavera mira a +Z)."),
     (calavera_vela, "Calavera con vela; la llama va encima, a 0.58 m (sprite spr_llama)."),
     (tuneles, "Red de tuneles (mapa en tools/blender/tuneles_mapa.py). Origen: centro de la\n"

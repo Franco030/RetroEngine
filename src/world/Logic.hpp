@@ -59,11 +59,17 @@ struct StopMusic {
   float fade = 1.0f;
 };
 
+// Abre el dialogo assets/dialogues/<id>.json (ver DialogueSystem).
+struct StartDialogue {
+  std::string id;
+};
+
 } // namespace action
 
 using Action =
     std::variant<action::GotoScene, action::Teleport, action::SetFlag, action::AddFlag,
-                 action::Message, action::PlaySound, action::PlayMusic, action::StopMusic>;
+                 action::Message, action::PlaySound, action::PlayMusic, action::StopMusic,
+                 action::StartDialogue>;
 
 enum class CompareOp { Eq, Ne, Lt, Le, Gt, Ge };
 
@@ -85,6 +91,9 @@ bool Evaluate(const Condition& condition, const GameState& state);
 
 // Lista vacia = se cumple. Tdoas deben cumplirse
 bool AllHold(const std::vector<Condition>& conditions, const GameState& state);
+
+// Reemplaza {nombre} por el valor de la bandera (0 si nunca se fijo).
+std::string ExpandFlags(const std::string& text, const GameState& state);
 
 // Lo que ocurre al pulsar E sobre una entidad
 struct Interaction {

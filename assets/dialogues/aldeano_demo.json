@@ -1,0 +1,18 @@
+{
+  "speaker": "Aldeano",
+  "entries": [
+    {
+      "once": true,
+      "lines": ["Buenas.", "Si buscas la puerta, esta al este.\nNecesitaras una llave y 3 monedas."]
+    },
+    {
+      "if": { "all": [{ "flag": "tiene_llave" }, { "flag": "monedas", "op": ">=", "value": 3 }] },
+      "lines": ["Ya lo tienes todo.\nLa puerta del este te espera."]
+    },
+    {
+      "if": { "not": { "flag": "tiene_llave" } },
+      "lines": ["Aun te falta la llave.\nLlevas {monedas}/3 monedas."]
+    },
+    { "lines": ["Te faltan monedas: llevas {monedas}/3."] }
+  ]
+}

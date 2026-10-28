@@ -7,6 +7,9 @@ Pixel art procedural y determinista: mismo resultado con la misma semilla. Fondo
 con alfa duro (el motor recorta por alfa) y el mismo acabado que las texturas: 32 niveles por
 canal y trama Bayer (quantize_ordered de texconv.py).
 
+Los ANIMADOS (llama, velas) devuelven una lista de fotogramas y se guardan como una tira
+horizontal: en la escena se usan con "frames": 4 (y "fps", por defecto 8).
+
 Uso:
   python tools/gen_sprites.py                       # escribe en assets/textures/spr_*.png
   python tools/gen_sprites.py --out carpeta --preview
@@ -161,20 +164,52 @@ def cuervo(rng):
     return L
 
 
+def llama_en(L, cx, base, alto, ancho, inclina, nucleo=0.45, chispa=None):
+    """Llama de pixel art con la base en (cx, base): fila a fila se estrecha hacia arriba y la
+    punta se va hacia un lado ('inclina', en pixeles). Rojo fuera, naranja y nucleo claro."""
+    for k in range(int(alto) + 1):
+        t = k / max(alto, 1)                       # 0 abajo .. 1 punta
+        w = ancho * (1 - t) ** 0.7 * (0.75 + 0.6 * math.sin(math.pi * min(t * 1.6, 1.0)))
+        x = cx + inclina * t * t
+        y = base - k
+        centro = int(math.floor(x + 0.5))       # columna entera: sin huecos por redondeo
+        for px in range(centro - int(w + 0.5), centro + int(w + 0.5) + 1):
+            borde = abs(px - x) / max(w, 0.5)
+            if borde > 1 and px != centro:
+                continue
+            if t < nucleo and borde < 0.45:
+                color = (255, 240, 170)
+            elif borde < 0.75 and t < 0.8:
+                color = (255, 160, 40)
+            else:
+                color = (226, 70, 20)
+            L.punto(px, y, color)
+    if chispa:
+        L.punto(*chispa, (255, 200, 90))
+
+
+# Variacion de cada fotograma: (escala de alto, inclinacion, tamano del nucleo)
+FASES_LLAMA = [(1.0, 0.0, 0.45), (0.82, -1.4, 0.35), (1.12, 0.9, 0.5), (0.9, 1.6, 0.4)]
+
+
 def velas(rng):
-    """Grupo de tres velas con llama: para usar con "emissive": true y una luz."""
-    L = Lienzo(32, 32)
-    L.elipse(16, 29, 12, 2.5, (40, 36, 34))  # platillo
-    for cx, alto in ((9, 10), (16, 16), (23, 7)):
-        cera = (222, 210, 168)
-        L.rect(cx - 2, 28 - alto, cx + 3, 28, cera)
-        L.rect(cx + 1, 28 - alto, cx + 3, 28, (186, 172, 132))   # sombra
-        L.punto(cx - 2, 28 - alto + 2, cera)
-        L.punto(cx - 3, 28 - alto + 3, cera)                       # goteo
-        L.punto(cx, 27 - alto, (30, 26, 22))                        # mecha
-        L.elipse(cx, 24 - alto, 1.6, 3.0, (255, 150, 40))
-        L.elipse(cx, 25 - alto, 0.8, 1.6, (255, 236, 160))
-    return L
+    """Grupo de tres velas con llama animada (4 fotogramas): con "emissive": true y una luz."""
+    fotogramas = []
+    desfase = [0, 2, 1]                            # cada vela va a su ritmo
+    for f in range(len(FASES_LLAMA)):
+        L = Lienzo(32, 32)
+        L.elipse(16, 29, 12, 2.5, (40, 36, 34))   # platillo
+        for v, (cx, alto) in enumerate(((9, 10), (16, 16), (23, 7))):
+            cera = (222, 210, 168)
+            L.rect(cx - 2, 28 - alto, cx + 3, 28, cera)
+            L.rect(cx + 1, 28 - alto, cx + 3, 28, (186, 172, 132))   # sombra
+            L.punto(cx - 2, 28 - alto + 2, cera)
+            L.punto(cx - 3, 28 - alto + 3, cera)                       # goteo
+            L.punto(cx, 27 - alto, (30, 26, 22))                        # mecha
+            esc, inc, nuc = FASES_LLAMA[(f + desfase[v]) % len(FASES_LLAMA)]
+            llama_en(L, cx, 26 - alto, 6 * esc, 1.6, inc * 0.6, nuc)
+        fotogramas.append(L)
+    return fotogramas
 
 
 def hierba_alta(rng):
@@ -243,22 +278,26 @@ def cristales(rng):
 
 
 def telarana(rng):
-    """Telarana en una esquina (arriba a la izquierda): radios y espiral, gris palido."""
-    L = Lienzo(48, 48)
+    """Media telarana (textura de un modelo tendido en una esquina): radios que salen del centro
+    de arriba y una espiral que cuelga entre ellos, gris palido sobre transparente."""
+    L = Lienzo(64, 32)
     color = (196, 196, 200)
-    angulos = [i * (math.pi / 2) / 6 for i in range(7)]
+    cx = 31.5
+    angulos = [math.pi * i / 8 for i in range(9)]           # de 0 (derecha) a pi (izquierda)
     for a in angulos:
-        L.linea(0, 0, 47 * math.cos(a), 47 * math.sin(a), 1, color)
-    for r in range(8, 46, 6):
+        L.linea(cx, 0, cx + 34 * math.cos(a), 34 * math.sin(a), 1, color)
+    for r in range(5, 33, 5):
         prev = None
         for a in angulos:
-            # la espiral cuelga un poco entre radio y radio
-            p = (r * math.cos(a), r * math.sin(a))
+            p = (cx + r * math.cos(a), r * math.sin(a))
             if prev:
-                medio = ((prev[0] + p[0]) / 2 * 0.92, (prev[1] + p[1]) / 2 * 0.92)
+                medio = ((prev[0] + p[0]) / 2, (prev[1] + p[1]) / 2 * 0.9 + r * 0.1)
                 L.linea(*prev, *medio, 1, color)
                 L.linea(*medio, *p, 1, color)
             prev = p
+    for _ in range(3):                                      # hilos rotos que cuelgan
+        x = rng.uniform(8, 56)
+        L.linea(x, rng.uniform(4, 20), x + rng.uniform(-2, 2), 31, 1, color)
     return L
 
 
@@ -333,12 +372,15 @@ def ojos(rng):
 
 
 def llama(rng):
-    """Llama de vela sola (emissive): para poner encima de una vela de un modelo."""
-    L = Lienzo(8, 16)
-    L.elipse(4, 9, 2.6, 6, (230, 90, 20))
-    L.elipse(4, 10, 1.7, 4, (255, 170, 50))
-    L.elipse(4, 11, 0.9, 2.2, (255, 244, 180))
-    return L
+    """Llama sola (emissive), 4 fotogramas de 8x16: encima de una vela o una antorcha de modelo.
+    Cambia de alto, se inclina a un lado y al otro, y a veces suelta una chispa."""
+    fotogramas = []
+    for f, (esc, inc, nuc) in enumerate(FASES_LLAMA):
+        L = Lienzo(8, 16)
+        chispa = (4 + int(rng.integers(-2, 3)), int(rng.integers(0, 3))) if f % 2 == 1 else None
+        llama_en(L, 3.5, 15, 12 * esc, 2.6, inc, nuc, chispa)
+        fotogramas.append(L)
+    return fotogramas
 
 
 def flores_marchitas(rng):
@@ -395,7 +437,14 @@ def main():
     os.makedirs(args.out, exist_ok=True)
     for i, (nombre, fn) in enumerate(SPRITES.items()):
         rng = np.random.default_rng(args.seed * 1000 + i)
-        img = fn(rng).imagen()
+        hecho = fn(rng)
+        if isinstance(hecho, list):          # animado: fotogramas en una tira horizontal
+            cuadros = [c.imagen() for c in hecho]
+            img = Image.new("RGBA", (sum(c.width for c in cuadros), cuadros[0].height))
+            for k, c in enumerate(cuadros):
+                img.paste(c, (k * c.width, 0))
+        else:
+            img = hecho.imagen()
         ruta = os.path.join(args.out, nombre + ".png")
         img.save(ruta)
         if args.preview:

@@ -8,6 +8,7 @@
 #include <cmath>
 #include <stdexcept>
 #include <utility>
+#include <vector>
 
 namespace retro {
 
@@ -52,6 +53,8 @@ BoundingBox Entity::LocalBounds() {
 void Entity::Update(float dt, Vector3 focus) {
   if (updateFn_)
     updateFn_(*this, dt);
+  if (frames_ > 1)
+    animTime_ += dt;
 
   if (facePlayer) {
     const float dx = focus.x - transform.position.x;
@@ -74,7 +77,21 @@ void Entity::Update(float dt, Vector3 focus) {
   }
 }
 
-void Entity::Draw() {
+namespace {
+
+// Paso de cada capa en profundidad NDC: crece con la distancia como el error de profundidad,
+// y de cerca equivale a pocos centimetros (no se ve "a traves" de nada).
+constexpr float kLayerStep = 3.0e-5f;
+
+void SetDepthBias(const Shader& shader, float bias) {
+  const int loc = GetShaderLocation(shader, "depthBias");
+  if (loc >= 0)
+    SetShaderValue(shader, loc, &bias, SHADER_UNIFORM_FLOAT);
+}
+
+} // namespace
+
+void Entity::Draw(const Shader& fullbright) {
   if (!visible || IsSprite())
     return;
 
@@ -93,7 +110,26 @@ void Entity::Draw() {
   visual.position = Vector3Add(visual.position, drawOffset_);
   visual.rotation.z += drawRoll_;
   model.transform = visual.ToMatrix();
+  if (layer != 0)
+    SetDepthBias(emissive ? fullbright : model.materials[0].shader, layer * kLayerStep);
+  if (!emissive) {
+    DrawModel(model, {0.0f, 0.0f, 0.0f}, 1.0f, tint);
+    if (layer != 0)
+      SetDepthBias(model.materials[0].shader, 0.0f);
+    return;
+  }
+  // Emisivo (una vidriera, algo que brilla): se dibuja con el shader de los sprites, que usa la
+  // textura tal cual, sin luces. El modelo es compartido: se devuelve su shader al terminar.
+  std::vector<Shader> lit(static_cast<std::size_t>(model.materialCount));
+  for (int m = 0; m < model.materialCount; ++m) {
+    lit[static_cast<std::size_t>(m)] = model.materials[m].shader;
+    model.materials[m].shader = fullbright;
+  }
   DrawModel(model, {0.0f, 0.0f, 0.0f}, 1.0f, tint);
+  for (int m = 0; m < model.materialCount; ++m)
+    model.materials[m].shader = lit[static_cast<std::size_t>(m)];
+  if (layer != 0)
+    SetDepthBias(fullbright, 0.0f);
 }
 
 void Entity::DrawSprite(const Camera3D& camera, Vector3 shade) {
@@ -109,7 +145,11 @@ void Entity::DrawSprite(const Camera3D& camera, Vector3 shade) {
   };
   const Color c{channel(tint.r, k.x), channel(tint.g, k.y), channel(tint.b, k.z), tint.a};
 
-  DrawUprightBillboard(camera, texture_->Get(), transform.position, size, c);
+  // fotograma actual de la tira (sin mezclar: salta de uno a otro, como en la PS1)
+  const int frame = static_cast<int>(animTime_ * fps_) % frames_;
+  const float u0 = static_cast<float>(frame) / static_cast<float>(frames_);
+  const float u1 = static_cast<float>(frame + 1) / static_cast<float>(frames_);
+  DrawUprightBillboard(camera, texture_->Get(), transform.position, size, c, u0, u1);
 }
 
 } // namespace retro

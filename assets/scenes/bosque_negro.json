@@ -1856,14 +1856,21 @@
       "idle": { "bob": 0.0, "sway": 8.12, "speed": 0.33 }
     },
     {
-      "name": "hombre_cerca",
+      "name": "hombre_detras",
       "model": "models/hombre_alto.obj",
-      "position": [-1.94, 0, -12.0],
+      "position": [-1.17, 0, 3.0],
+      "rotation": [0, 180, 0],
       "collider": false,
       "showIf": {
-        "all": [{ "flag": "bn_cerca" }, { "not": { "flag": "bn_cerca_fin" } }]
+        "all": [{ "flag": "bn_pasos" }, { "not": { "flag": "bn_detras_fin" } }]
       },
-      "light": { "offset": [0, 2.0, 1.2], "color": [150, 160, 200], "radius": 4.5, "intensity": 1.4 }
+      "light": { "offset": [0, 2.0, -1.2], "color": [150, 160, 200], "radius": 4.5, "intensity": 1.4 },
+      "seen": {
+        "range": 12,
+        "angle": 22,
+        "do": [{ "play_sound": "audio/susto_espalda.wav", "volume": 1.0 }],
+        "away": [{ "set_flag": "bn_detras_fin" }]
+      }
     },
     {
       "name": "cabana",
@@ -1948,7 +1955,16 @@
       "name": "arbol_caido",
       "model": "models/arbol_caido.obj",
       "position": [1.88, 0, -44],
-      "rotation": [0, 8, 0]
+      "rotation": [0, 8, 0],
+      "interact": {
+        "prompt": "Pasar por debajo",
+        "range": 2.6,
+        "box": { "min": [-1.5, 0, -0.7], "max": [1.5, 1.6, 0.7] },
+        "do": [
+          { "play_sound": "audio/hojas.wav", "volume": 0.8 },
+          { "goto_scene": "scenes/campamento.json", "position": [-2.39, 0, 40.0], "yaw": 0 }
+        ]
+      }
     },
     {
       "name": "borde_1",
@@ -5229,22 +5245,7 @@
       "once": true,
       "do": [
         { "set_flag": "bn_pasos" },
-        { "play_sound": "audio/pasos_detras.wav", "at": [-1.17, 0.5, 3], "radius": 20, "volume": 1.0 },
-        { "look_at": [-0.56, 1.5, 6], "speed": 1.8 },
-        { "message": "...", "seconds": 3.5 }
-      ]
-    },
-    {
-      "name": "susto_bosque",
-      "position": [-2.18, 0, -8.5],
-      "size": [14, 3, 1.0],
-      "once": true,
-      "if": { "flag": "bn_pasos" },
-      "do": [
-        { "set_flag": "bn_cerca" },
-        { "play_sound": "audio/susto.wav", "volume": 1.0 },
-        { "scare": "hombre_cerca", "speed": 26, "fov": 26 },
-        { "dialogue": "hombre_alto" }
+        { "play_sound": "audio/pasos_detras.wav", "at": [-1.17, 0.5, 3.0], "radius": 20, "volume": 1.0 }
       ]
     },
     {
@@ -5252,7 +5253,12 @@
       "position": [2.13, 0, -41],
       "size": [14, 3, 1.0],
       "once": true,
-      "do": [{ "message": "Un arbol caido corta el sendero.\nAlgo lo ha arrastrado hasta aqui.", "seconds": 4 }]
+      "do": [
+        {
+          "message": "Un arbol caido corta el sendero.\nPor debajo queda un hueco, justo para una persona.",
+          "seconds": 4
+        }
+      ]
     },
     {
       "name": "volver_lago",

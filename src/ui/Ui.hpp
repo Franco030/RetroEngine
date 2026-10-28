@@ -9,9 +9,10 @@
 
 namespace retro {
 
-// Capa de interfaz dibujada a la resolución de la VENTANA, encima de la imagen.
-// Las coordenadas y tamaños se dan en una cuadrícula de referencia de 320 de
-// ancho, así el diseño no cambia si subes la resolución interna del motor.
+// Capa de interfaz. El juego la dibuja en la imagen interna (baja resolución), antes del
+// post-proceso: se ve a píxeles y con el mismo grano, viñeta y tinte que el resto. Las
+// coordenadas y tamaños se dan en una cuadrícula de referencia de 320 de ancho, así el diseño
+// no cambia si subes la resolución interna del motor.
 class Ui {
 public:
   static constexpr float kRefWidth = 320.0f;

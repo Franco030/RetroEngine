@@ -1,0 +1,6 @@
+{
+  "entries": [
+    { "once": true, "lines": ["Dentro solo hay un saco de dormir.", "Esta tibio."] },
+    { "lines": ["El saco sigue tibio."] }
+  ]
+}

@@ -118,7 +118,14 @@ public:
   // Marca el "once" y añade las acciones de la interacción a 'fired'.
   void Interact(Entity& entity, GameState& state, std::vector<Action>& fired);
 
+  // Entidades con "seen": añade a 'fired' las acciones de las que se acaban de ver (o de dejar de
+  // mirar) desde 'eye' mirando hacia 'forward' (unitaria).
+  void UpdateSight(Vector3 eye, Vector3 forward, std::vector<Action>& fired);
+
 private:
+  // Si alguna entidad solida (que no sea 'self') corta el rayo antes de 'distance'.
+  bool Occluded(Vector3 origin, Vector3 dir, float distance, const Entity* self) const;
+
   std::vector<std::unique_ptr<Entity>> entities_;
   bool triggersPrimed_ = false;
 };

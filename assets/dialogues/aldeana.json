@@ -1,6 +1,12 @@
 {
   "speaker": "Aldeana",
   "entries": [
+    {
+      "key": "capitulo1",
+      "if": { "flag": "capitulo1_fin" },
+      "once": true,
+      "lines": ["No me mires asi.", "No fue cosa mia. Nunca es cosa de nadie."]
+    },
     { "once": true, "lines": ["Bienvenido a la aldea.\nDe noche se ve mas bonito."] },
     { "once": true, "lines": ["Si te quedas hasta tarde,\nno te acerques al pozo."] },
     { "lines": ["Que tengas buen dia, forastero."] }

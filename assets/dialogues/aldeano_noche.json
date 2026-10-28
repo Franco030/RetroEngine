@@ -1,6 +1,12 @@
 {
   "speaker": "Aldeano",
   "entries": [
+    {
+      "key": "capitulo1",
+      "if": { "flag": "capitulo1_fin" },
+      "once": true,
+      "lines": ["Las velas son para que no entren.", "Pero tu ya has estado dentro."]
+    },
     { "once": true, "lines": ["Bienvenido a la aldea.\nDe noche se ve mas bonito."] },
     { "once": true, "lines": ["Mira las velas de las ventanas.\nLas encendemos para que no entren."] },
     { "lines": ["Para que no entren... ya sabes quienes."] }

@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <chrono>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
@@ -41,6 +42,9 @@ RetroEngine::WindowGuard::WindowGuard(const EngineConfig& config) {
   if (config.resizable)
     flags |= FLAG_WINDOW_RESIZABLE;
   SetConfigFlags(flags);
+  // Raylib escribe un INFO por cada textura, malla y shader que carga o suelta: tapa los avisos
+  // de verdad y los del propio motor ([carga], [tiron]...). Solo avisos y errores.
+  SetTraceLogLevel(LOG_WARNING);
 
   InitWindow(config.windowWidth, config.windowHeight, config.title.c_str());
   if (!IsWindowReady()) {
@@ -90,25 +94,46 @@ void RetroEngine::Run(const UpdateFn& update, const DrawFn& draw, const OverlayF
     if (IsKeyPressed(KEY_F11))
       ToggleBorderlessWindowed();
 
+    // Medidor de tirones: un fotograma de mas de kSpikeMs se apunta en la consola con lo que
+    // costo cada parte (la presentacion incluye esperar a la GPU).
+    using Clock = std::chrono::steady_clock;
+    const auto ms = [](Clock::time_point a, Clock::time_point b) {
+      return std::chrono::duration<double, std::milli>(b - a).count();
+    };
+    const auto t0 = Clock::now();
     audio_.Update(GetFrameTime());
+    const auto t1 = Clock::now();
 
     if (update)
       update(GetFrameTime());
+    const auto t2 = Clock::now();
 
     BeginTextureMode(target_.Get());
     ClearBackground(config_.clearColor);
     if (draw)
       draw();
+    // La interfaz (subtitulos, mira, textos) va en la misma imagen de baja resolucion, ANTES del
+    // post-proceso: se escala a pixeles y recibe el grano, la vineta y el tinte como el resto.
+    if (overlay) {
+      ui_.Begin({0.0f, 0.0f, static_cast<float>(config_.internalWidth),
+                 static_cast<float>(config_.internalHeight)});
+      overlay(ui_);
+    }
     EndTextureMode();
+    const auto t3 = Clock::now();
 
     BeginDrawing();
     ClearBackground(BLACK); // barras del letterbox
     Present();
-    if (overlay) {
-      ui_.Begin(PresentationRect());
-      overlay(ui_);
-    }
     EndDrawing();
+    const auto t4 = Clock::now();
+    constexpr double kSpikeMs = 25.0;
+    if (ms(t0, t4) > kSpikeMs) {
+      std::cout << "[tiron] " << static_cast<int>(ms(t0, t4)) << " ms | audio "
+                << static_cast<int>(ms(t0, t1)) << " | logica " << static_cast<int>(ms(t1, t2))
+                << " | dibujo " << static_cast<int>(ms(t2, t3)) << " | presentar "
+                << static_cast<int>(ms(t3, t4)) << std::endl;
+    }
   }
 }
 

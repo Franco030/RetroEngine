@@ -6,18 +6,29 @@
 
 #include <raylib.h>
 
+#include <nlohmann/json_fwd.hpp>
+
 #include <cstddef>
 #include <cstdint>
-#include <deque>
+#include <filesystem>
+#include <future>
 #include <memory>
 #include <optional>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace retro {
 
 class RetroEngine;
 class RetroCamera;
+
+// Un modelo o una textura que usa una escena (para la precarga).
+struct AssetRef {
+  enum class Kind { Model, Texture, Sound };
+  Kind kind;
+  std::string path;
+};
 
 class SceneManager {
 public:
@@ -81,11 +92,23 @@ private:
   void ApplyEnvironment(const Environment& env);
   void ApplyAudio(const SceneAudio& audio);
 
-  // Precarga de las escenas vecinas (a las que lleva algun goto_scene de la actual): lo que ya
-  // esta en memoria se retiene para que la purga no lo borre, y lo que falta se carga poco a
-  // poco (StepPrefetch, con un presupuesto por fotograma) mientras se juega.
-  void PlanPrefetch();
+  // Precarga de las escenas vecinas (a las que lleva algun goto_scene de la actual). Un hilo de
+  // trabajo lee y parsea sus JSON (PlanPrefetch); cuando termina, StepPrefetch retiene lo que ya
+  // esta en memoria, pide lo que falta a los hilos y sube a la GPU poco a poco, con un
+  // presupuesto por fotograma. Los JSON parseados se guardan: al ir a una vecina no se parsea.
+  struct SceneDoc {
+    std::shared_ptr<const nlohmann::json> json;
+    std::filesystem::file_time_type stamp; // si el archivo cambia (F5), se vuelve a leer
+  };
+  struct PrefetchPlan {
+    std::vector<std::string> neighbors;
+    std::unordered_map<std::string, SceneDoc> docs;
+    std::vector<AssetRef> items;
+  };
+  void PlanPrefetch(std::shared_ptr<const nlohmann::json> current);
   void StepPrefetch();
+  // El JSON de 'path': el guardado si sigue al dia, si no lo lee ahora.
+  std::shared_ptr<const nlohmann::json> SceneJson(const std::string& path);
 
   RetroEngine& engine_;
   RetroCamera& camera_;
@@ -106,13 +129,13 @@ private:
   Phase phase_ = Phase::Idle;
   float fade_ = 0.0f; // 0 = transparente, 1 = negro total
 
-  struct PrefetchItem {
-    bool model; // si no, textura
-    std::string path;
-  };
-  std::deque<PrefetchItem> prefetch_;
+  std::future<PrefetchPlan> plan_;
+  bool purgePending_ = false;  // la purga espera al plan (para no soltar lo que usan las vecinas)
+  std::unordered_map<std::string, SceneDoc> docs_; // JSON de las vecinas, ya parseados
+  std::vector<AssetRef> prefetch_;             // pedidos a los hilos, por retener al subirse
   std::vector<std::shared_ptr<ModelResource>> keepModels_;    // de las escenas vecinas
   std::vector<std::shared_ptr<TextureResource>> keepTextures_;
+  std::vector<std::shared_ptr<SoundResource>> keepSounds_;
   double prefetchMs_ = 0.0;     // tiempo de la precarga en curso (para el informe)
   double prefetchMaxMs_ = 0.0;  // el fotograma que mas le dedico
   int prefetchFrames_ = 0;

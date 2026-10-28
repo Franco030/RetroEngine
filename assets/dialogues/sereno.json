@@ -2,6 +2,12 @@
   "speaker": "Sereno",
   "entries": [
     {
+      "key": "capitulo1",
+      "if": { "flag": "capitulo1_fin" },
+      "once": true,
+      "lines": ["Tu...", "Esta noche no voy a encender las velas.\nYa no hace falta."]
+    },
+    {
       "once": true,
       "lines": ["Buenas noches. Al este queda el cementerio.", "Si oyes la campana... no, no la oyes."]
     },

@@ -594,9 +594,28 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
   if (je.contains("interact"))
     interact = ReadInteraction(je.at("interact"), autoBox, colliders);
 
+  // "seen": { "range": 15, "angle": 20, "do": [ ... ], "away": [ ... ] }
+  std::optional<Sight> sight;
+  if (je.contains("seen")) {
+    const json& js = je.at("seen");
+    Sight s;
+    s.range = js.value("range", s.range);
+    s.angle = js.value("angle", s.angle);
+    if (s.range <= 0.0f || s.angle <= 0.0f || s.angle >= 90.0f)
+      throw std::runtime_error("'seen': 'range' positivo y 'angle' entre 0 y 90");
+    for (const char* key : {"do", "away"}) {
+      if (!js.contains(key))
+        continue;
+      for (const json& ja : js.at(key))
+        (std::string(key) == "do" ? s.onSeen : s.onLookAway).push_back(ParseAction(ja));
+    }
+    sight = std::move(s);
+  }
+
   Entity& e = scene.Add(std::move(entity));
   e.colliders = std::move(colliders);
   e.interact = std::move(interact);
+  e.sight = std::move(sight);
   e.transform.position = ReadVec3(je, "position", {0.0f, 0.0f, 0.0f});
   e.transform.rotation = ReadVec3(je, "rotation", {0.0f, 0.0f, 0.0f});
   e.transform.scale = ReadVec3(je, "scale", {1.0f, 1.0f, 1.0f});

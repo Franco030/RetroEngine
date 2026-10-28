@@ -625,6 +625,38 @@ def ventana(rng, size=32, lit=False):
     return np.clip(img, 0, 1)
 
 
+def cartel_busca(rng, size=64):
+    """Cartel de "SE BUSCA" mojado y viejo: papel amarillento con manchas, una foto (cara de nina
+    en sombra, pelo oscuro), renglones de texto ilegible a esta resolucion y un tachon rojo con
+    algo escrito encima. Se lee con E (el dialogo dice lo que pone)."""
+    v = fbm(rng, (size, size), base=(4, 4), octaves=3)
+    rgb = tint(0.55 + 0.45 * v, (150, 138, 104), (214, 204, 168))
+    yy, xx = np.mgrid[0:size, 0:size]
+    # titular: dos bloques oscuros arriba
+    rgb[5:10, 10:54] = tint(np.full((5, 44), 0.2), (30, 26, 22), (60, 50, 40))
+    # foto
+    rgb[13:37, 18:46] = tint(np.full((24, 28), 0.5), (70, 64, 56), (120, 110, 96))
+    cara = ((xx - 32) / 7.0) ** 2 + ((yy - 26) / 9.0) ** 2 < 1.0
+    pelo = (((xx - 32) / 9.5) ** 2 + ((yy - 24) / 10.5) ** 2 < 1.0) & ~cara
+    rgb[cara & (yy > 13) & (yy < 37)] = np.array([168, 150, 128]) / 255.0
+    rgb[pelo & (yy > 13) & (yy < 37)] = np.array([40, 30, 24]) / 255.0
+    for ox in (29, 35):                                   # ojos
+        rgb[25:27, ox - 1:ox + 1] = np.array([30, 24, 20]) / 255.0
+    # renglones
+    for y in range(41, 58, 4):
+        largo = int(rng.integers(28, 44))
+        rgb[y:y + 2, 10:10 + largo] = np.array([60, 52, 44]) / 255.0
+    # tachon rojo en diagonal sobre el titular y otra linea roja escrita encima
+    for i in range(46):
+        x, y = 9 + i, 11 - i // 9
+        rgb[y:y + 2, x:x + 1] = np.array([150, 20, 18]) / 255.0
+    rgb[38:40, 14:50] = np.array([140, 18, 16]) / 255.0
+    # manchas de humedad
+    hum = fbm(rng, (size, size), base=(3, 3), octaves=2) > 0.68
+    rgb[hum] *= 0.82
+    return np.clip(rgb, 0, 1)
+
+
 TEXTURAS = {
     # nombre del archivo: (funcion, argumentos)
     "mat_madera": (madera, {}),
@@ -682,6 +714,9 @@ TEXTURAS = {
     "mat_agua_ocaso": (agua, {"dark": (112, 66, 92), "light": (252, 176, 138)}),
     "mat_piel_palida": (liso, {"oscuro": (150, 148, 142), "claro": (218, 214, 206)}),
     "mat_tela_negra": (liso, {"oscuro": (8, 8, 10), "claro": (34, 32, 38)}),
+    # el campamento de la partida de busqueda
+    "mat_cartel_busca": (cartel_busca, {}),
+    "mat_lona_naranja": (lona, {"base": (168, 78, 30), "dirt": (90, 60, 40)}),
 }
 
 

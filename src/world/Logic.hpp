@@ -113,6 +113,19 @@ bool AllHold(const std::vector<Condition>& conditions, const GameState& state);
 // Reemplaza {nombre} por el valor de la bandera (0 si nunca se fijo).
 std::string ExpandFlags(const std::string& text, const GameState& state);
 
+// Lo que pasa cuando el jugador MIRA una entidad: esta en el centro de la vista (a menos de
+// 'angle' grados), a menos de 'range' metros y sin nada solido en medio. 'onSeen' ("do") se
+// ejecuta al verla y 'onLookAway' ("away") cuando deja de mirarla despues de haberla visto. Cada
+// uno una sola vez por visita a la escena (lo que deba durar, con banderas y "showIf").
+struct Sight {
+  float range = 15.0f;
+  float angle = 20.0f;
+  std::vector<Action> onSeen;
+  std::vector<Action> onLookAway;
+  bool seen = false;    // ya la vio (se ejecuto onSeen)
+  bool away = false;    // ya aparto la vista (se ejecuto onLookAway)
+};
+
 // Lo que ocurre al pulsar E sobre una entidad
 struct Interaction {
   std::string prompt = "Interactuar";

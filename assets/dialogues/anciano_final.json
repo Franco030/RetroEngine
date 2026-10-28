@@ -1,0 +1,18 @@
+{
+  "speaker": "Anciano",
+  "entries": [
+    {
+      "lines": [
+        "Lo siento, forastero.",
+        "El molino tiene que seguir girando.",
+        "Y el viento... alguien tiene que pagarlo."
+      ],
+      "do": [
+        { "set_flag": "capitulo1_fin" },
+        { "play_sound": "audio/portazo.wav", "volume": 1.0 },
+        { "stop_music": true, "fade": 0.5 },
+        { "goto_scene": "scenes/aldea.json", "position": [3.2, 0, 6.4], "yaw": -37 }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+# RetroEngine: tumba_abierta
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_metal
+d 1.000000
+map_Kd ../textures/mat_metal.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png
+
+newmtl mat_tierra_suelo
+d 1.000000
+map_Kd ../textures/mat_tierra_suelo.png

@@ -14,6 +14,15 @@ gen_sonidos: sintetiza los efectos y ambientes del subterraneo (assets/audio/).
   organo.wav         acorde disonante del organo de la capilla
   letra_1..3.wav     chasquido de estatica de cada letra de los subtitulos
   susto.wav          golpe de susto (cuerdas que chirrian y un golpe grave)
+  susto_espalda.wav  chillido que se derrumba, aire y un golpe sordo (corto y seco)
+  susto_golpe.wav    barrido al reves que corta en un golpe grave con cuerdas tensas
+  susto_piano.wav    racimo grave de piano aporreado con un raspado metalico
+  radio_estatica.wav bucle de radio mal sintonizada (con trozos de voz)
+  radio_voz.wav      una frase rota por la radio
+  campana_rota.wav   bucle de viento y una campana rajada que suena sola
+  tarareo.wav        bucle de una nina tarareando la nana del lago
+  pala.wav           bucle de alguien cavando
+  nana_rota.wav      bucle de la nana del lago en una caja de musica estropeada
   portazo.wav        puerta pesada que se cierra de golpe
   latido.wav         bucle de latido lento
   susurros.wav       voces que susurran sin palabras
@@ -422,6 +431,183 @@ def zumbido(rng):
     return reverb(buf, rng, 4.0, 0.5)
 
 
+def susto_espalda(rng):
+    """Variante corta para "te das la vuelta y esta ahi": cuerdas agudas que CAEN de tono (un
+    chillido que se derrumba), un soplo de aire que se corta y un golpe sordo debajo. Mas seco
+    que susto.wav, casi sin cola."""
+    n = int(1.6 * SR)
+    t = np.arange(n) / SR
+    s = np.zeros(n, np.float32)
+    for f0 in (1760, 1865, 2489):
+        f = f0 * (1.0 - 0.45 * (1 - np.exp(-t * 2.5)))          # cae
+        s += diente_sierra(f, n) * 0.35
+    s = s - suavizar(s, 5) * 0.6
+    s *= envolvente(n, 0.003, 0.9) * np.exp(-t * 0.8).astype(np.float32)
+    aire = ruido_filtrado(rng, n, 3) * np.exp(-t * 7).astype(np.float32) * 0.45
+    sordo = np.sin(2 * np.pi * np.cumsum(70 * np.exp(-t * 5) + 30) / SR).astype(np.float32)
+    sordo *= np.exp(-t * 9).astype(np.float32) * 0.9
+    out = np.concatenate([s + aire + sordo, np.zeros(int(1.0 * SR), np.float32)])
+    return reverb(out, rng, 1.6, 0.3)
+
+
+def susto_golpe(rng):
+    """Barrido al reves que crece (ruido y un acorde disonante que se acercan) y corta en seco en
+    un golpe grave con un acorde de cuerdas tenso; cola de sala."""
+    sube = int(0.8 * SR)
+    t = np.arange(sube) / SR
+    crece = (t / t[-1]) ** 3
+    barrido = ruido_filtrado(rng, sube, 4) * crece.astype(np.float32) * 0.8
+    for f in (220, 233, 330):
+        barrido += np.sin(2 * np.pi * f * t).astype(np.float32) * crece.astype(np.float32) * 0.18
+    n = int(2.4 * SR)
+    t2 = np.arange(n) / SR
+    golpe = np.sin(2 * np.pi * np.cumsum(60 * np.exp(-t2 * 4) + 32) / SR).astype(np.float32)
+    golpe *= np.exp(-t2 * 3.5).astype(np.float32) * 1.6
+    cuerdas = np.zeros(n, np.float32)
+    for f0 in (440, 466, 622, 932):
+        cuerdas += diente_sierra(f0 * (1 + 0.006 * np.sin(2 * np.pi * 6 * t2)), n) * 0.12
+    cuerdas *= envolvente(n, 0.002, 1.8)
+    out = np.concatenate([barrido, golpe + cuerdas, np.zeros(int(1.5 * SR), np.float32)])
+    return reverb(out, rng, 3.0, 0.4)
+
+
+def susto_piano(rng):
+    """Alguien aporrea las teclas graves de un piano (un racimo de notas juntas) y algo metalico
+    raspa encima; mucho eco."""
+    inst = Instrumentos(rng)
+    s = np.zeros(int(4.5 * SR), np.float32)
+    for m in (28, 29, 30, 31, 34, 35, 40, 41):                    # racimo grave
+        nota = inst.piano(m, 1.8, fuerza=1.6)
+        s[:len(nota)] += nota
+    m = int(1.2 * SR)
+    t = np.arange(m) / SR
+    raspa = ruido_filtrado(rng, m, 1) * np.sin(2 * np.pi * 9 * t).astype(np.float32) ** 2
+    raspa = (raspa - suavizar(raspa, 3)) * np.exp(-t * 2.2).astype(np.float32) * 0.5
+    s[:m] += raspa
+    return reverb(s, rng, 4.0, 0.5)
+
+
+# ---------------------------------------------------------------------------
+# El capitulo del bosque: campamento, aldea vieja y arbol hueco
+# ---------------------------------------------------------------------------
+# La nana del lago (gen_musica.py, lago): la misma melodia vuelve rota en el bosque.
+NANA = [(0, 2, 71), (2, 1, 73), (3, 1, 75), (4, 3, 76), (7, 1, 75), (8, 1.5, 73), (9.5, 0.5, 71),
+        (10, 2, 68), (12, 4, 71)]                          # (tiempo, duracion, nota) en negras
+
+
+def radio_estatica(rng):
+    """Bucle de una radio mal sintonizada: ruido de banda con chasquidos y, de vez en cuando,
+    un trozo de voz que se pierde."""
+    seg = 12.0
+    n = int(seg * SR)
+    t = np.arange(n) / SR
+    ruido = rng.standard_normal(n).astype(np.float32)
+    banda = ruido - suavizar(ruido, 3)
+    banda = suavizar(banda, 2) * (0.6 + 0.4 * np.sin(2 * np.pi * 0.23 * t).astype(np.float32) ** 2)
+    for _ in range(25):                                       # chasquidos
+        i = int(rng.uniform(0, n - 200))
+        banda[i:i + 120] += rng.standard_normal(120).astype(np.float32) * 2.0
+    for t0 in (3.1, 8.4):                                     # voz que asoma
+        voz = _voz_rota(rng, 0.9)
+        poner(banda, voz * 0.8, t0)
+    return banda
+
+
+def _voz_rota(rng, dur):
+    """Algo parecido a una voz por radio: pulsos de voz filtrados a banda de telefono."""
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    f0 = 140 * (1 + 0.15 * np.sin(2 * np.pi * 3.0 * t))
+    fase = 2 * np.pi * np.cumsum(f0) / SR
+    v = np.zeros(n, np.float32)
+    for k in range(1, 20):
+        fk = f0 * k
+        a = np.exp(-((fk - 650) / 220) ** 2) + 0.6 * np.exp(-((fk - 1500) / 300) ** 2)
+        v += (a * np.sin(k * fase)).astype(np.float32)
+    silabas = (np.sin(2 * np.pi * 4.5 * t) > -0.2).astype(np.float32)
+    v *= suavizar(silabas, 200) * envolvente(n, 0.05, 0.2)
+    v = v - suavizar(v, 6)                                    # sin graves: banda de radio
+    return v + rng.standard_normal(n).astype(np.float32) * 0.15
+
+
+def radio_voz(rng):
+    """Una frase por la radio, cortada por la estatica (para cuando la radio "habla" de golpe)."""
+    n = int(2.6 * SR)
+    s = (rng.standard_normal(n).astype(np.float32) * 0.25)
+    s = s - suavizar(s, 3)
+    poner(s, _voz_rota(rng, 1.6) * 1.2, 0.3)
+    s[int(2.2 * SR):] *= np.linspace(1, 0, n - int(2.2 * SR), dtype=np.float32)
+    return reverb(s, rng, 0.6, 0.15)
+
+
+def campana_rota(rng):
+    """Bucle: viento y una campana rajada que suena sola, sorda, cada nueve segundos (no tiene
+    badajo: la mueve el viento contra la piedra)."""
+    seg = 18.0
+    buf = ruido_filtrado(rng, int(seg * SR), 30) * 0.35
+    inst = Instrumentos(rng)
+    for t0 in (2.0, 11.0):
+        c = inst.campana(45)
+        n = len(c)
+        c = c * (1 + 0.35 * np.sin(2 * np.pi * 7 * np.arange(n) / SR)).astype(np.float32)  # rajada
+        poner(buf, c * 0.9, t0)
+    return reverb(buf, rng, 4.0, 0.5)
+
+
+def tarareo(rng):
+    """Bucle: una nina tararea la nana del lago con la boca cerrada ("mmm"), muy bajito y con
+    eco, y se calla a mitad."""
+    seg = 14.0
+    buf = np.zeros(int(seg * SR), np.float32)
+    negra = 0.62
+    for t0, dur, nota in NANA[:7]:                            # se calla antes de terminar
+        n = int(dur * negra * SR)
+        t = np.arange(n) / SR
+        f = 440.0 * 2 ** ((nota - 69) / 12) * (1 + 0.006 * np.sin(2 * np.pi * 5.5 * t))
+        fase = 2 * np.pi * np.cumsum(f) / SR
+        v = (np.sin(fase) + 0.25 * np.sin(2 * fase) + 0.08 * np.sin(3 * fase)).astype(np.float32)
+        poner(buf, v * envolvente(n, 0.06, min(0.25, dur * negra * 0.5)) * 0.4, 1.0 + t0 * negra)
+    buf += ruido_filtrado(rng, len(buf), 50) * 0.08
+    return reverb(buf, rng, 2.5, 0.5)
+
+
+def pala(rng):
+    """Bucle: alguien cava: la pala entra en la tierra, un gruñido de esfuerzo apagado y la tierra
+    cae a un lado. Lento, cada dos segundos y pico."""
+    seg = 10.0
+    buf = np.zeros(int(seg * SR), np.float32)
+    t0 = 0.4
+    while t0 < seg - 1.0:
+        n = int(0.18 * SR)
+        tt = np.arange(n) / SR
+        golpe = (np.sin(2 * np.pi * 180 * tt) * np.exp(-tt * 40) + ruido_filtrado(rng, n, 2) * np.exp(-tt * 30))
+        poner(buf, golpe.astype(np.float32) * 0.8, t0)
+        m = int(0.6 * SR)
+        caida = ruido_filtrado(rng, m, 6) * np.sin(np.pi * np.arange(m) / m).astype(np.float32) ** 2
+        poner(buf, caida * 0.6, t0 + 0.9)
+        t0 += rng.uniform(2.2, 2.8)
+    return reverb(buf, rng, 1.5, 0.35)
+
+
+def nana_rota(rng):
+    """Bucle: la nana del lago en una caja de musica estropeada: algunas notas desafinadas, el
+    mecanismo que se atasca (pausas) y se ralentiza al final de cada vuelta."""
+    inst = Instrumentos(rng)
+    seg = 22.0
+    buf = np.zeros(int(seg * SR), np.float32)
+    t = 0.5
+    for vuelta in range(2):
+        negra = 0.5 + 0.12 * vuelta                           # cada vuelta mas lenta
+        for t0, dur, nota in NANA:
+            desafine = rng.choice([0, 0, 0, -1, 1]) * 0.5     # medio tono de mas o de menos
+            c = inst.caja_musica(nota + 12 + desafine)
+            poner(buf, c * 0.55, t + t0 * negra)
+            if rng.random() < 0.15:
+                t += 0.35                                     # se atasca
+        t += 16 * negra + 1.0                                 # la vuelta entera y un respiro
+    return reverb(buf, rng, 3.0, 0.45)
+
+
 SONIDOS = {
     "cripta_amb": cripta_amb,
     "tuneles_amb": tuneles_amb,
@@ -447,6 +633,15 @@ SONIDOS = {
     "pasos_detras": pasos_detras,
     "campanillas": campanillas,
     "zumbido": zumbido,
+    "susto_espalda": susto_espalda,
+    "susto_golpe": susto_golpe,
+    "susto_piano": susto_piano,
+    "radio_estatica": radio_estatica,
+    "radio_voz": radio_voz,
+    "campana_rota": campana_rota,
+    "tarareo": tarareo,
+    "pala": pala,
+    "nana_rota": nana_rota,
 }
 
 
@@ -462,7 +657,7 @@ def main():
         rng = np.random.default_rng(args.seed * 100 + list(SONIDOS).index(nombre))
         x = SONIDOS[nombre](rng)
         ruta = os.path.join(args.out, nombre + ".wav")
-        escribir_mono(ruta, x, 0.8 if nombre.endswith("_amb") or nombre in ("buho", "pajaros", "campanillas", "zumbido", "latido") else 0.9)
+        escribir_mono(ruta, x, 0.8 if nombre.endswith("_amb") or nombre in ("buho", "pajaros", "campanillas", "zumbido", "latido", "radio_estatica", "campana_rota", "tarareo", "pala", "nana_rota") else 0.9)
         print(f"{ruta}  {len(x) / SR:.2f} s")
 
 

@@ -69,9 +69,15 @@ saliendo de su propio bosque):
   columpio, luciérnagas, montañas en la bruma rosada y un pescador. La calma antes de la
   tormenta.
 - `bosque_negro.json`: al este del lago. Un sendero por un bosque muerto y con niebla donde pasan
-  cosas: una figura alta que se ve al fondo y desaparece, figuras de ramas colgadas, pasos detrás,
-  la figura delante de ti, una cabaña donde alguien responde a tu llamada y un círculo de piedras
-  con velas recién encendidas. Un árbol caído corta el sendero: el capítulo sigue más adelante.
+  cosas: una figura alta que se ve al fondo y desaparece, figuras de ramas colgadas, pasos detrás
+  (y algo a tu espalda si te das la vuelta), una cabaña donde alguien responde a tu llamada y un círculo de piedras
+  con velas recién encendidas. Por debajo de un árbol caído se sigue hacia:
+- `campamento.json`: el campamento de la partida de búsqueda que vino a por Clara, la niña
+  desaparecida: su cartel tachado, el diario, la radio, seis pares de botas en fila.
+- `aldea_vieja.json`: Valdemora, el primer pueblo del pacto, en ruinas: puertas con una X roja, el
+  cementerio de niños, una fosa recién cavada sin nombre.
+- `arbol_hueco.json`: el final del capítulo. El guion completo está en
+  [docs/HISTORIA.md](docs/HISTORIA.md).
 
 En la capilla, tocar el órgano tiene consecuencias.
 
@@ -113,6 +119,9 @@ Los ejecutables quedan en `build/bin/`:
   `RetroEditor.exe --assets <carpeta>`.
 - Los dos aceptan `--scene scenes/<escena>.json` para empezar en esa escena (el juego empieza
   por defecto en la demo).
+- El juego apunta en la consola los fotogramas de más de 25 ms (`[tiron]`, con lo que costó
+  cada parte) y cada carga de escena (`[carga]`, `[precarga]`). Los `INFO` de raylib están
+  apagados: escribir miles de líneas en la consola de Windows bloquea el juego.
 
 > Importante: como el juego lee la copia, después de guardar una escena en el editor hay que
 > **volver a compilar** (o al menos ejecutar el destino `CopyAssets`) para verla en el juego.
@@ -178,7 +187,7 @@ editor/               RetroEditor: EditorApp, EditorLogic (acciones, condiciones
                       JsonUtil, JsonFormat
 assets/
   scenes/             demo.json, aldea.json, noche.json, cementerio.json, iglesia.json, cripta.json, tuneles.json,
-                      lago.json, bosque_negro.json
+                      lago.json, bosque_negro.json, campamento.json, aldea_vieja.json, arbol_hueco.json
   dialogues/          un .json por diálogo
   shaders/            retro.vs, retro.fs, retro_unlit.fs, retro_sprite.fs, post.fs
   models/ textures/ audio/ fonts/
@@ -186,9 +195,11 @@ tools/                texconv.py, charatlas.py, gen_texturas.py, gen_sprites.py,
                       gen_sonidos.py
   blender/            retro_comun.py (piezas y exportador), molino.py, aldea_props.py,
                       cementerio.py, personajes.py, subterraneo.py (+ tuneles_mapa.py), bosque.py,
-                      iglesia.py, detalles.py, estatuas.py, lago.py, bosque_negro.py:
+                      iglesia.py, detalles.py, estatuas.py, lago.py, bosque_negro.py, bosque_historia.py,
+                      panorama.py:
                       los modelos, por script
 docs/SISTEMA.md       funcionamiento detallado de todos los sistemas
+docs/HISTORIA.md      el guion: la trama, las pistas, las escenas del bosque y sus banderas
 ```
 
 ---

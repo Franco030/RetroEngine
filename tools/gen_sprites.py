@@ -447,20 +447,36 @@ def sol(rng):
 
 
 def luna(rng):
-    """Luna llena (va en el panorama de las escenas de noche, sin niebla), 64x64: disco palido
-    con mares grises y un halo azulado tramado."""
+    """Luna llena (va en el panorama de las escenas de noche, sin niebla), 64x64 como el sol:
+    disco palido algo mas oscuro en el borde, mares grises difuminados donde estan en la luna de
+    verdad y un crater brillante abajo; el borde se deshace en una trama suave (desenfocada) y un
+    halo azulado muy tenue alrededor."""
     L = Lienzo(64, 64)
-    mares = [(rng.uniform(22, 42), rng.uniform(22, 42), rng.uniform(3, 6)) for _ in range(6)]
+    c0 = 31.5
+    R = 17.0
+    # posiciones en unidades del radio (-1..1), como en la luna de verdad
+    mares = [(-0.38, -0.38, 0.27, 0.85), (0.2, -0.45, 0.2, 0.7), (0.38, -0.12, 0.21, 0.75),
+             (-0.5, 0.1, 0.3, 0.8), (-0.15, -0.05, 0.19, 0.55), (0.17, 0.27, 0.15, 0.45),
+             (-0.65, -0.25, 0.18, 0.6)]
+    tycho = (-0.1, 0.62)
+    claro, gris = (226, 224, 210), (142, 146, 146)
     for y in range(64):
         for x in range(64):
-            d = math.hypot(x - 31.5, y - 31.5)
-            if d < 15:
-                c = (232, 232, 218)
-                if any(math.hypot(x - mx, y - my) < mr for mx, my, mr in mares):
-                    c = (178, 182, 176)
-                L.punto(x, y, c)
-            elif d < 26 and (x + y) % 2 == 0 and rng.random() < 0.8 * (1 - (d - 15) / 11):
-                L.punto(x, y, (150, 170, 210))
+            u, v = (x - c0) / R, (y - c0) / R
+            d = math.hypot(u, v)
+            if d <= 1.0:
+                mar = sum(k * math.exp(-((u - mx) ** 2 + (v - my) ** 2) / (2 * mr * mr))
+                          for mx, my, mr, k in mares)
+                c = mezcla(claro, gris, min(mar, 1.0) * 0.9)
+                luz = 1.0 - 0.25 * d ** 3                         # oscurece hacia el limbo
+                t = math.hypot(u - tycho[0], v - tycho[1])
+                if t < 0.08:
+                    luz *= 1.1
+                if d > 0.9 and rng.random() < (d - 0.9) / 0.1 * 0.6:
+                    continue                                       # borde que se deshace
+                L.punto(x, y, tuple(min(255, int(k * luz)) for k in c))
+            elif d < 1.3 and (x + y) % 2 == 0 and rng.random() < 0.9 * (1 - (d - 1.0) / 0.3) ** 1.5:
+                L.punto(x, y, mezcla((150, 156, 160), (70, 80, 110), (d - 1.0) / 0.3))  # halo
     return L
 
 

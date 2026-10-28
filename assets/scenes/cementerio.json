@@ -4671,6 +4671,6 @@
     "model": "models/panorama_bosque.obj",
     "tint": [80, 90, 115],
     "haze": 0.5,
-    "sun": { "texture": "textures/spr_luna.png", "yaw": -30, "pitch": 20, "size": 85 }
+    "sun": { "texture": "textures/spr_luna.png", "yaw": -30, "pitch": 20, "size": 50 }
   }
 }

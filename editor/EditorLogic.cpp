@@ -682,6 +682,50 @@ void EditorApp::EditInteraction(Json& e, int entityIndex) {
 }
 
 // ---------------------------------------------------------------------------
+// Al mirarla ("seen")
+// ---------------------------------------------------------------------------
+void EditorApp::EditSight(Json& e) {
+  if (!e.contains("seen") || !e.at("seen").is_object()) {
+    if (ImGui::Button("Anadir \"al mirarla\"")) {
+      BeginChange(0);
+      e["seen"] = Json::object({{"range", 12}, {"angle", 20}, {"do", Json::array()}});
+      MarkChanged(0);
+    }
+    ImGui::TextDisabled("Acciones cuando el jugador la ve (sin pulsar nada)");
+    return;
+  }
+  Json& s = e["seen"];
+  ImGui::PushID("seen");
+  FieldFloat("Distancia", s, nullptr, "range", 15.0f, 0.1f, 0.5f, 100.0f);
+  FieldFloat("Angulo", s, nullptr, "angle", 20.0f, 0.2f, 1.0f, 89.0f);
+  ImGui::TextDisabled("Cuenta como vista si esta a menos de ese angulo del centro de la\n"
+                      "vista y no hay nada solido en medio. Una vez por visita a la escena.");
+  for (const char* key : {"do", "away"}) {
+    if (!s.contains(key))
+      s[key] = Json::array(); // para editarla; vacia no se guarda (ver abajo)
+  }
+  ImGui::SeparatorText("Al verla");
+  ImGui::PushID("do");
+  EditActionList(s, "do");
+  ImGui::PopID();
+  ImGui::SeparatorText("Al dejar de mirarla");
+  ImGui::PushID("away");
+  EditActionList(s, "away");
+  ImGui::PopID();
+  for (const char* key : {"do", "away"}) {
+    if (s.contains(key) && s.at(key).is_array() && s.at(key).empty())
+      s.erase(key);
+  }
+  const bool remove = ImGui::Button("Quitar \"al mirarla\"");
+  ImGui::PopID();
+  if (remove) {
+    BeginChange(0);
+    e.erase("seen");
+    MarkChanged(0);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Dialogos (panel aparte: cada uno es un archivo de assets/dialogues/)
 // ---------------------------------------------------------------------------
 namespace {

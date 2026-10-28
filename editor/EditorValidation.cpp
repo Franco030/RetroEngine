@@ -111,6 +111,13 @@ void ForEachLogic(const Json& doc, ActionsFn&& actions, CondFn&& conditions) {
         if (it.contains("do"))
           actions(it.at("do"), place);
       }
+      if (e.contains("seen") && e.at("seen").is_object()) {
+        const Place place{SelectionKind::Entity, static_cast<int>(i), label + " (al mirarla)"};
+        for (const char* key : {"do", "away"}) {
+          if (e.at("seen").contains(key))
+            actions(e.at("seen").at(key), place);
+        }
+      }
     }
   }
 }

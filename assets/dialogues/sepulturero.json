@@ -2,6 +2,12 @@
   "speaker": "Sepulturero",
   "entries": [
     {
+      "key": "capitulo1",
+      "if": { "flag": "capitulo1_fin" },
+      "once": true,
+      "lines": ["Asi que el bosque te ha devuelto.", "La fosa sigue abierta.\nNo la voy a tapar todavia."]
+    },
+    {
       "once": true,
       "lines": ["Otra alma perdida...", "Toma la llave de la cripta.\nA mi ya no me sirve."],
       "do": [{ "play_sound": "audio/llave.wav", "volume": 0.8 }, { "set_flag": "llave_cripta" }]

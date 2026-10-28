@@ -1,6 +1,12 @@
 {
   "speaker": "Nino",
   "entries": [
+    {
+      "key": "capitulo1",
+      "if": { "flag": "capitulo1_fin" },
+      "once": true,
+      "lines": ["Viste a Clara?", "Le dije que no fuera al lago.\nQue el lago es donde empiezan a elegir."]
+    },
     { "once": true, "lines": ["Mi papa dice que el molino\ngira aunque no haya viento."] },
     { "once": true, "lines": ["Una vez vi unos ojos rojos\nen el fondo del pozo."] },
     { "lines": ["No se lo digas a mi papa."] }

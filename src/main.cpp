@@ -197,8 +197,8 @@ static bool Speaks(const std::vector<retro::Action>& actions) {
 // RetroEngine [--scene scenes/x.json]: escena con la que empieza (por defecto la demo).
 int main(int argc, char** argv) {
   std::string primera = "scenes/demo.json";
-  for (int i = 1; i + 1 < argc; ++i) {
-    if (std::string(argv[i]) == "--scene")
+  for (int i = 1; i < argc; ++i) {
+    if (std::string(argv[i]) == "--scene" && i + 1 < argc)
       primera = argv[i + 1];
   }
 
@@ -417,6 +417,10 @@ int main(int argc, char** argv) {
               const retro::PlayerSettings& cfg = player.Settings();
               firedActions.clear();
               s->UpdateTriggers(player.Feet(), cfg.radius, cfg.height, state, firedActions);
+              // lo que se ve: entidades con "seen" en el centro de la vista
+              const Vector3 eye = camera.Position();
+              s->UpdateSight(eye, Vector3Normalize(Vector3Subtract(camera.Target(), eye)),
+                             firedActions);
               runner.Run(firedActions);
             }
           }

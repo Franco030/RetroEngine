@@ -750,6 +750,17 @@ Formatos: wav, ogg, mp3, flac (lo que soporte Raylib).
 
 ### 12.1 Música y ambiente
 
+Los *streams* (música, ambiente y emisores) los rellena un **hilo propio** (`FeedLoop`, cada
+5 ms): un fotograma largo (una carga) ya no deja el buffer vacío ni corta la música. Todo lo que
+toca los streams va bajo un `std::mutex` que también toman los métodos públicos; abrir un
+archivo nuevo se hace fuera del candado, así lo que suena sigue sonando. El hilo principal solo
+aplica los fundidos (`Update`).
+
+Sin chasquidos al cambiar de escena: una pista o un emisor nuevo recibe su volumen inicial (0 si
+entra con fundido) **antes** de `PlayMusicStream` (raylib arranca a volumen 1 y, hasta el
+siguiente fotograma, eso se oía como un golpe), y los emisores de la escena anterior no se
+destruyen de golpe: `ClearEmitters` los renombra y se apagan con su fundido.
+
 Dos canales de *streaming* independientes (`music_` y `ambient_`), cada uno con una pista
 actual y una saliente:
 
@@ -903,34 +914,61 @@ recolocar al jugador y autoguardar.
 
 Al arrancar el juego también se entra con un fundido desde negro (`FadeInFromBlack`).
 
-### 14.5 Precarga de las escenas vecinas y medición
+### 14.5 Carga sin tirones: hilos, precarga y medición
 
-Cada carga escribe en la consola cuánto ha costado y en qué:
+Un cambio de escena no debe notarse: ni un tirón ni la música cortada. Las técnicas, de más a
+menos importante:
+
+1. **Audio en su propio hilo** (§12.1): la música no depende de los fotogramas.
+2. **Carga en dos fases** (§16.2): leer y parsear archivos (OBJ, PNG, WAV, JSON) va en hilos de
+   trabajo (`AsyncLoader`); el hilo principal solo sube a la GPU, que es rápido, con un
+   presupuesto de milisegundos por fotograma.
+3. **Precarga de las vecinas**: al llegar a una escena, `PlanPrefetch` manda a un hilo leer y
+   parsear los JSON de las escenas a las que lleva algún `goto_scene` y listar sus modelos,
+   texturas y sonidos. Cuando termina, `StepPrefetch`:
+   - **retiene** lo que ya está en memoria (por ejemplo, la escena de la que se viene:
+     `keepModels_`, `keepTextures_`, `keepSounds_`);
+   - pide lo que falta a los hilos y, cada fotograma, sube lo que ya esté leído
+     (`PumpUploads`): hasta 12 ms con la pantalla aún casi negra y 3 ms jugando;
+   - y solo entonces **purga** lo que nadie usa (antes no sabría qué necesitarán las vecinas).
+   Los JSON parseados se guardan (`docs_`, con la fecha del archivo): al ir a una vecina no se
+   vuelve a leer ni a parsear.
+4. **Una escena que no estaba precargada** pide todos sus modelos a los hilos de una vez antes
+   de crear las entidades: se leen en paralelo y cada `GetModel` solo espera al suyo.
+5. **Texturas compartidas**: las texturas de los `.mtl` van a la caché común (la madera de una
+   casa y la de un banco son la misma), no una copia por modelo.
+
+Medición: cada carga escribe sus fases y el motor apunta todo fotograma de más de 25 ms con lo
+que costó cada parte:
 
 ```
-[carga] scenes/aldea.json: 57 ms | modelos 0 (0 ms) | texturas 0 (0 ms) | sonidos 3 (15 ms) | resto 42 ms
+[carga] fases: escena 5 | soltar la anterior 0 | audio 0 | planear precarga 0 ms
+[carga] scenes/lago.json: 7 ms | modelos 0 (0 ms) | texturas 0 (0 ms) | sonidos 0 (0 ms) | resto 7 ms
+[precarga] terminada: 37 recursos, 27 ms del hilo principal en 4 fotogramas (el peor: 12 ms)
+[tiron] 83 ms | audio 0 | logica 0 | dibujo 81 | presentar 1
 ```
 
-(`AssetManager::Stats` cuenta solo lo que no estaba en caché.) Sin precarga, cada cambio costaba
-70-220 ms, casi todo en modelos.
+Resultados medidos caminando de la aldea al lago y del lago al bosque negro:
 
-Para que eso no se pague al cruzar, tras cargar una escena `PlanPrefetch` busca sus **vecinas**
-(todas las rutas de `goto_scene` de su JSON) y los modelos y texturas de sus entidades:
+| | Antes | Debug ahora | Release |
+|---|---|---|---|
+| Cambio de escena (precargada) | 200-450 ms | 29-31 ms | 6-7 ms |
+| Peor fotograma de la precarga | 50-90 ms | 9-16 ms | 12-20 ms (con la pantalla negra) |
+| Primera carga del juego | 450 ms | 160 ms | 56 ms |
 
-- Lo que ya está en memoria (por ejemplo, la escena de la que se viene) se **retiene**
-  (`keepModels_`, `keepTextures_`), así `PurgeUnused` no lo libera.
-- Lo que falta va a una cola, sin repetidos y **lo más pesado primero**. `StepPrefetch` la carga
-  poco a poco: con la pantalla aún casi negra (fundido de entrada) hasta 40 ms por fotograma, y
-  jugando solo 3 ms por fotograma. Un modelo no se puede partir, por eso lo grande va mientras
-  está oscuro.
+Los `INFO` de raylib están apagados (`SetTraceLogLevel(LOG_WARNING)`): escribía una línea por
+cada textura y malla, y la consola de Windows es lenta; con cientos de líneas en un cambio de
+escena, escribirlas era el tirón que se notaba.
 
-Resultado medido: los cambios de escena bajan a 22-65 ms (los modelos ya están: 0 ms) y el peor
-fotograma de la precarga mientras se juega es de 0-14 ms. Al terminar escribe
-`[precarga] terminada: N recursos en X ms repartidos en F fotogramas (el peor jugando: M ms)`.
-Lo que queda en cada carga ("resto") es leer el JSON, crear las entidades y las mallas
-procedurales (suelos) y los sonidos de pasos.
+Queda un único tirón: el **primer dibujo** al arrancar (80-120 ms, `dibujo` en `[tiron]`), cuando
+el driver prepara texturas y shaders la primera vez; ocurre con la pantalla en negro.
 
-F5 (`Reload`) recarga la escena actual al instante desde el disco, sin fundido.
+El build de `build/` es **Debug** (para depurar); para jugar y medir de verdad hay que usar uno
+**Release** (`cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release`): leer JSON y OBJ es de
+4 a 6 veces más rápido.
+
+F5 (`Reload`) recarga la escena actual al instante desde el disco (sin JSON guardados), sin
+fundido.
 
 ---
 
@@ -1000,20 +1038,28 @@ el archivo falta o no es válido, se prueba el `.bak` (y se avisa por consola).
 ruta si falla) y libera en su destructor. No se copian; se pueden mover.
 
 - Las **texturas** usan filtro de punto (texeles nítidos).
-- Los **modelos** `.obj` se cargan con Raylib; las texturas que traiga su `.mtl` (rutas
-  relativas a la carpeta del `.obj`, como `../textures/mat_madera.png`) pasan a ser del modelo y
-  también usan filtro de punto. `OpenMaterials()` lista los materiales sin textura propia, los
-  que reciben la `"texture"` de la entidad. A cada modelo se le asigna el shader Lit.
-- Antes de cargar un `.obj` se comprueba que ninguna cara tenga más de 5 vértices: el lector de
-  raylib (tinyobj) abortaría el programa entero. Así es un error normal con la línea del
-  archivo.
+- Los **modelos** `.obj` los lee un lector propio (`src/assets/ObjLoader.cpp`, sin OpenGL:
+  vale en cualquier hilo) que entiende `v`, `vt`, `vn`, caras de cualquier número de lados (en
+  abanico), `usemtl`/`mtllib` (`map_Kd`, `Kd`) y las cajas `# retro:col`, en una sola pasada.
+  `ModelResource` sube después las mallas (una por material) en el hilo principal. Las texturas
+  del `.mtl` (rutas relativas a la carpeta del `.obj`, como `../textures/mat_madera.png`) son las
+  de la caché de texturas, **compartidas** entre modelos. `OpenMaterials()` lista los materiales
+  sin textura propia, los que reciben la `"texture"` de la entidad. A cada modelo se le asigna el
+  shader Lit.
 - Los **sonidos** (`Sound`) se cargan enteros; la **música** y los emisores (`Music`) se leen
   por *streaming*.
 
 ### 16.2 `AssetManager`
 
 Cachés por ruta relativa con `shared_ptr`: pedir dos veces la misma textura devuelve el mismo
-objeto. `PurgeUnused` libera lo que solo la caché tiene (se llama tras cada cambio de escena) y
+objeto.
+
+**Carga en dos fases**: `RequestModel`/`RequestTexture`/`RequestSound` mandan la parte de CPU
+(leer el `.obj` y decodificar sus PNG, un PNG, un WAV) a los hilos de `AsyncLoader` (los núcleos
+menos uno, de 1 a 4) y guardan su `std::future`. `PumpUploads(ms)` recoge en el hilo principal lo
+que ya esté listo y lo sube a la GPU hasta gastar el presupuesto. `GetModel` y compañía, si lo
+pedido aún está en un hilo, esperan a ese futuro; si no se había pedido, lo leen ahí mismo. Las
+tareas nunca llaman a OpenGL (solo el hilo principal tiene el contexto). `PurgeUnused` libera lo que solo la caché tiene (se llama tras cada cambio de escena) y
 `Clear` lo vacía todo.
 
 Consecuencia: el `wrap` de una textura se aplica al objeto compartido, así que si dos entidades
@@ -1030,8 +1076,9 @@ fuerzan `clamp`.
 
 ## 17. Interfaz en pantalla
 
-`Ui` dibuja texto y rectángulos **a la resolución de la ventana**, después del post-proceso (el
-texto queda nítido, sin temblor ni cuantización). Las coordenadas se dan en una rejilla de
+`Ui` dibuja texto y rectángulos **en la imagen interna** (320x240), después de la escena y
+**antes del post-proceso**: el texto se escala a píxeles como todo lo demás y recibe el grano,
+la viñeta y el tinte (no flota "por encima" de la estética). Las coordenadas se dan en una rejilla de
 referencia de **320 de ancho** (la altura sale de la proporción), así el diseño no cambia si se
 cambia la resolución interna. La fuente es `fonts/roboto_medium.ttf` (Roboto Medium, licencia Apache 2.0) cargada a 48 px; si no existe, se usa
 la de Raylib.
@@ -1067,10 +1114,11 @@ Hay dos clases de mensaje, según de dónde salen:
   0 suavemente al soltar; al cambiar de escena se pone a 0 (la escena nueva ya puso el suyo).
 
   Así están hechos los sustos: el órgano de la capilla (al cerrar su página, `scare` al
-  sepulturero que aparece en la puerta con `speed` 16 y `fov` 34, el golpe `susto.wav` y su
+  sepulturero que aparece en la puerta con `speed` 16 y `fov` 34, el golpe `susto_golpe.wav` y su
   diálogo), y en el bosque negro la figura que se ve al fondo (`scare` con `speed` 2.5: la vista
-  se va sola), los pasos detrás (`look_at` a un punto a tu espalda: te giras, sin acercar) y la
-  figura que aparece delante (`scare` con `speed` 26).
+  se va sola) y los pasos detrás: la figura aparece a tu espalda sin que nada gire la cámara; el
+  golpe (`susto_espalda.wav`) suena solo cuando tú te das la vuelta y la ves, y desaparece en cuanto apartas la vista
+  (`seen` en la entidad, §18.2).
 
 ---
 
@@ -1106,6 +1154,7 @@ Todos los campos, con su valor por defecto. Solo `entities` es obligatorio en la
 | `wrap` | el de Raylib | `"repeat"`, `"clamp"` o `"mirror"`. |
 | `sprite` | — | Ruta de la textura del sprite. |
 | `size` | — | Obligatorio en sprites: `[ancho, alto]`, positivos. |
+| `seen` | ninguno | Acciones cuando el jugador **la mira**, sin pulsar nada: `{ "range": 15, "angle": 20, "do": [...], "away": [...] }`. Cuenta como vista si su centro está a menos de `angle` grados del centro de la vista **en horizontal** (hacia donde se gira la cabeza), dentro de la pantalla en vertical (35°: quien mira algo alto o bajo también lo ve), a menos de `range` metros y sin nada sólido en medio (la misma oclusión que la interacción). Encadenando `away` con banderas y `showIf` se hacen cosas que se acercan cuando no las miras (el final del capítulo, `docs/HISTORIA.md`). `do` se ejecuta al verla y `away` al dejar de mirarla después; cada uno una vez por visita a la escena (lo que tenga que durar, con banderas y `showIf`). `Scene::UpdateSight`, cada fotograma tras los triggers. El editor lo edita en "Al mirarla". |
 | `fog` | `true` | `false`: la niebla no la apaga (`fogFixed` 0 al dibujarla), para algo que tiene que verse de lejos aunque haya niebla. |
 | `emissive` | `false` | Ignora la luz y se ve a pleno color. En un modelo, se dibuja con el shader de los sprites (textura sin luces, con niebla y trama): para vidrieras y cosas que brillan. |
 | `layer` | `0` | Solo modelos: capa para superficies apoyadas en otras (un sendero sobre el suelo, una alfombra). `1` siempre gana a lo de debajo y `-1` pierde, sin parpadeo (*z-fighting*): el vertex shader resta `layer * 3e-5` a la profundidad (`depthBias`, en NDC), sin mover la superficie en pantalla. El paso crece con la distancia igual que el error de profundidad y de cerca equivale a pocos centímetros. Los senderos usan `1`, la hojarasca bajo el bosque `-1` y la alfombra de la iglesia (modelo aparte) `1`. |
@@ -1504,6 +1553,7 @@ exec(open(ruta).read(), {"__file__": ruta, "__name__": "__main__"})
 | `iglesia.py` | `capilla_interior` (nave de 6.4 x 10.4 m a juego con el exterior), `vidrieras` (emisivas), `banco_iglesia`, `altar`, `candelabro`, `lampara`, `organo`. |
 | `bosque.py` | `sendero`, `tronco`, árboles 3D `arbol_pino`, `arbol_pino_alto`, `arbol_roble`, `arbol_roble_2`, `arbol_abedul`, `arbol_muerto` y arbustos `arbusto_hojas`, `arbusto_bayas` (low-poly, copas de icosferas deformadas; se mezclan con los sprites de árbol: en los bosques de las salidas, la mitad son 3D, con giro y tamaño al azar y el mismo tinte que el sprite). |
 | `subterraneo.py` | `cripta_interior`, `tuneles`, `sarcofago`, `atril`, `puerta_cripta`, `estatua` (mármol, cementerio), `reja`, `cuerda_pozo`, `escalera_mano`, `trampilla`, `antorcha_pared` (antorcha con un brazo de hierro largo que siempre se mete en la pared deformada; la llama es un sprite), `osamenta` (calavera y huesos para los nichos), `calavera_vela` (vela que sale por la coronilla y ojos encendidos; la llama es el sprite `spr_llama`). |
+| `bosque_historia.py` | Los modelos que cuentan el capítulo del bosque: el campamento (`tienda`, `tienda_caida`, `fogata`, `mochila`, `farol_suelo`, `radio`, `botas`, `cartel_busca` con su textura `mat_cartel_busca`), la aldea vieja (`casa_ruina` con la X roja, `campanario`, `pozo_tapado`, `cruz_pequena`, `tumba_abierta` con su pala) y el final (`arbol_hueco` con un hueco de verdad y su pared interior oscura, `zapatitos`, `farol_mano`). |
 | `panorama.py` | `panorama_montes` (cordillera con nieve de 155-205 m: la nieve es la punta del mismo cono, con los mismos lados y giro, así no parece cortada; colinas delante) y `panorama_bosque` (línea de pinos y árboles secos a 90-115 m, colinas y montes bajos). Bajan hasta y -12 para que nunca se vea la base. |
 | `estatuas.py` | `estatua_dolorosa` (iglesia: mujer de mármol con velo, halo de metal, corazón atravesado y lágrimas rojas) y `estatua_orante` (túneles: figura encapuchada arrodillada de piedra gastada con un rosario de hueso). |
 | `lago.py` | `lago` (óvalo de 26 x 14 m con orilla; sus cajas de colisión cierran el agua salvo el pasillo del muelle), `muelle` (se pisa, con farol), `barca`, `sauce` (con columpio), `montes` (montañas de fondo en un anillo de 48 m) y `rocas_orilla`. |
@@ -1583,8 +1633,14 @@ vuelta.
 
 Efectos y ambientes del subterráneo, mono a 22050 Hz: `cripta_amb` y `tuneles_amb` (bucles
 perfectos: buffer circular y la reverb de `gen_musica.py`), `paso_tierra_1..3`, `reja`,
-`derrumbe` y `gemido`. Para los sustos: `susto` (cuerdas que chirrían y un golpe grave),
-`portazo`, `susurros`, `golpes` (tres golpes en una puerta, desde dentro), `pasos_detras`, y los
+`derrumbe` y `gemido`. Para los sustos, varios de la misma familia pero distintos (repetir el
+mismo cada vez lo abarata): `susto` (cuerdas que chirrían y un golpe grave), `susto_espalda`
+(un chillido que se derrumba y un golpe sordo, corto), `susto_golpe` (un barrido al revés que
+corta en un golpe grave con cuerdas tensas), `susto_piano` (un racimo grave de piano aporreado),
+`portazo`, `susurros`, `golpes` (tres golpes en una puerta, desde dentro), `pasos_detras`; para el
+capítulo del bosque `radio_estatica` y `radio_voz`, `campana_rota` (una campana rajada que suena
+sola), `tarareo` y `nana_rota` (la nana del lago tarareada y en una caja de música estropeada:
+la misma melodía, que vuelve) y `pala`; y los
 bucles `latido`, `zumbido` (dron grave del bosque negro) y `campanillas` (la calma del lago). Los
 nuevos van al final de la lista: la semilla de cada sonido depende de su posición.
 
@@ -1593,7 +1649,9 @@ nuevos van al final de la lista: la semilla de cada sonido depende de su posici�
 Sprites con transparencia (`spr_*.png`): árbol seco, cuervo, velas, hierba alta, flores y setas
 luminosas; para el subterráneo cristales, telaraña, huesos, raíces que cuelgan, antorcha, unos ojos
 rojos y la llama de vela; flores marchitas para las tumbas; y para el lago un enjambre de
-luciérnagas animado (`spr_luciernagas`, emisivo) y el sol bajo (`spr_sol`). La llama y las velas son ANIMADAS:
+luciérnagas animado (`spr_luciernagas`, emisivo), el sol bajo (`spr_sol`) y la luna llena de las
+noches (`spr_luna`, 64x64 como el sol: mares grises difuminados donde la luna de verdad, un
+cráter brillante abajo y el borde deshecho en una trama suave con un halo tenue). La llama y las velas son ANIMADAS:
 cuatro fotogramas en una tira (la llama cambia de alto, se inclina y suelta chispas) y se
 usan con `"frames": 4`. Pixel art procedural con contorno oscuro y alfa duro. Las velas y las setas se usan
 con `"emissive": true` y una `"light"` en la entidad.

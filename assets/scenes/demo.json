@@ -3158,6 +3158,6 @@
     "model": "models/panorama_montes.obj",
     "tint": [130, 125, 160],
     "haze": 0.5,
-    "sun": { "texture": "textures/spr_luna.png", "yaw": 150, "pitch": 28, "size": 85 }
+    "sun": { "texture": "textures/spr_luna.png", "yaw": 150, "pitch": 28, "size": 50 }
   }
 }

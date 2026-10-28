@@ -1,0 +1,25 @@
+# RetroEngine: casa_ruina
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_madera_gris
+d 1.000000
+map_Kd ../textures/mat_madera_gris.png
+
+newmtl mat_puerta
+d 1.000000
+map_Kd ../textures/mat_puerta.png
+
+newmtl mat_sangre
+d 1.000000
+map_Kd ../textures/mat_sangre.png
+
+newmtl mat_sillar_viejo
+d 1.000000
+map_Kd ../textures/mat_sillar_viejo.png
+
+newmtl mat_tejas
+d 1.000000
+map_Kd ../textures/mat_tejas.png

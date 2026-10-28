@@ -1,0 +1,9 @@
+# RetroEngine: cartel_busca
+
+newmtl mat_cartel_busca
+d 1.000000
+map_Kd ../textures/mat_cartel_busca.png
+
+newmtl mat_metal
+d 1.000000
+map_Kd ../textures/mat_metal.png

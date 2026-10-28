@@ -6,6 +6,7 @@
 #include <raymath.h>
 
 #include <algorithm>
+#include <cmath>
 #include <cfloat>
 #include <stdexcept>
 #include <utility>
@@ -258,6 +259,63 @@ void Scene::UpdateTriggers(Vector3 feet, float radius, float height, GameState& 
   triggersPrimed_ = true;
 }
 
+bool Scene::Occluded(Vector3 origin, Vector3 dir, float distance, const Entity* self) const {
+  for (const auto& o : entities_) {
+    if (o.get() == self || !o->visible)
+      continue;
+    for (const BoxCollider& c : o->colliders) {
+      float to = 0.0f;
+      if (RayIntersectsBox(MakeWorldBox(c, o->transform), origin, dir, to) && to < distance - 1e-3f)
+        return true;
+    }
+  }
+  return false;
+}
+
+// Mitad de la altura de la vista (60 grados de campo vertical), con algo de margen.
+constexpr float kSightVertical = 35.0f * DEG2RAD;
+
+void Scene::UpdateSight(Vector3 eye, Vector3 forward, std::vector<Action>& fired) {
+  for (auto& e : entities_) {
+    if (!e->sight || !e->visible)
+      continue;
+    Sight& s = *e->sight;
+    if (s.seen && s.away)
+      continue;
+
+    // Se mira al centro de su caja (no a los pies): el cuerpo, la cara.
+    const BoundingBox lb = e->LocalBounds();
+    BoxCollider box;
+    box.min = lb.min;
+    box.max = lb.max;
+    const WorldBox wb = MakeWorldBox(box, e->transform);
+    const Vector3 center{wb.center.x, (wb.bottom + wb.top) * 0.5f, wb.center.z};
+    const Vector3 to = Vector3Subtract(center, eye);
+    const float dist = Vector3Length(to);
+    // Vista: el angulo se mide en horizontal (hacia donde se gira la cabeza) y en vertical basta
+    // con que quepa en pantalla: quien mira algo bajo o alto, tambien lo ve.
+    bool inView = false;
+    if (dist > 1e-3f && dist <= s.range) {
+      const float flat = std::hypot(to.x, to.z);
+      const float fflat = std::hypot(forward.x, forward.z);
+      if (flat > 1e-3f && fflat > 1e-3f) {
+        const float cosYaw = (to.x * forward.x + to.z * forward.z) / (flat * fflat);
+        const float vertical = std::fabs(std::atan2(to.y, flat) - std::atan2(forward.y, fflat));
+        inView = cosYaw >= std::cos(s.angle * DEG2RAD) && vertical <= kSightVertical &&
+                 !Occluded(eye, Vector3Scale(to, 1.0f / dist), dist, e.get());
+      }
+    }
+
+    if (!s.seen && inView) {
+      s.seen = true;
+      fired.insert(fired.end(), s.onSeen.begin(), s.onSeen.end());
+    } else if (s.seen && !s.away && !inView) {
+      s.away = true;
+      fired.insert(fired.end(), s.onLookAway.begin(), s.onLookAway.end());
+    }
+  }
+}
+
 Scene::InteractHit Scene::FindInteractable(Vector3 origin, Vector3 dir, const GameState& state) {
   InteractHit best;
   float bestT = FLT_MAX;
@@ -280,21 +338,7 @@ Scene::InteractHit Scene::FindInteractable(Vector3 origin, Vector3 dir, const Ga
 
     // Oclusión: cualquier OTRA entidad sólida más cerca bloquea el rayo.
     // La propia se excluye para que su collider no se tape a sí mismo.
-    bool blocked = false;
-    for (const auto& o : entities_) {
-      if (o.get() == e.get() || !o->visible)
-        continue;
-      for (const BoxCollider& c : o->colliders) {
-        float to = 0.0f;
-        if (RayIntersectsBox(MakeWorldBox(c, o->transform), origin, dir, to) && to < t - 1e-3f) {
-          blocked = true;
-          break;
-        }
-      }
-      if (blocked)
-        break;
-    }
-    if (blocked)
+    if (Occluded(origin, dir, t, e.get()))
       continue;
 
     best.entity = e.get();

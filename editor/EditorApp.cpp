@@ -1685,12 +1685,14 @@ void EditorApp::InspectEntity(Json& e) {
 
   if (theme::Section(ICON_FA_HAND_POINTER "  Interaccion (tecla E)", e.contains("interact")))
     EditInteraction(e, selection_.index);
+  if (theme::Section(ICON_FA_EYE "  Al mirarla", e.contains("seen")))
+    EditSight(e);
 
   bool header = false;
   for (auto it = e.begin(); it != e.end(); ++it) {
     if (IsOneOf(it.key(), {"name", "visible", "model", "sprite", "size", "emissive", "texture",
                            "wrap", "position", "rotation", "scale", "tint", "spin", "collider",
-                           "light", "sound", "showIf", "interact", "frames", "fps", "layer",
+                           "light", "sound", "showIf", "interact", "seen", "frames", "fps", "layer",
                            "idle", "facePlayer"})) {
       continue;
     }

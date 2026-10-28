@@ -230,6 +230,14 @@ std::vector<Issue> ValidateDocument(const Json& doc, const fs::path& root, const
             issues.push_back(MakeIssue(Severity::Error, place,
                                        "abre el dialogo '" + dialogue + "', que no existe"));
           }
+          for (const char* key : {"look_at", "scare"}) {
+            if (a.contains(key) && a.at(key).is_string() &&
+                entityNames.count(a.at(key).get<std::string>()) == 0) {
+              issues.push_back(MakeIssue(Severity::Error, place,
+                                         "mira hacia la entidad '" +
+                                             a.at(key).get<std::string>() + "', que no existe"));
+            }
+          }
           if (a.contains("play_sound") && a.contains("at") && a.at("at").is_string()) {
             const std::string target = a.at("at").get<std::string>();
             if (entityNames.count(target) == 0) {

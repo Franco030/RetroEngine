@@ -1,0 +1,9 @@
+# RetroEngine: montes
+
+newmtl mat_roca
+d 1.000000
+map_Kd ../textures/mat_roca.png
+
+newmtl mat_yeso
+d 1.000000
+map_Kd ../textures/mat_yeso.png

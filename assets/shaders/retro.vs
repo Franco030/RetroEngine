@@ -32,11 +32,14 @@ noperspective out vec3 fragLight;            // luz del vertice, interpolada en 
 out float fragDepth;
 // Altura de mundo (para el corte de techos del editor: clipY en los fragment shaders).
 out float fragWorldY;
+out vec2 fragWorldXZ; // para los bancos de la neblina baja
 
 void main() {
     fragTexCoord = vertexTexCoord;
     fragColor    = vertexColor;
-    fragWorldY   = (matModel * vec4(vertexPosition, 1.0)).y;
+    vec4 world   = matModel * vec4(vertexPosition, 1.0);
+    fragWorldY   = world.y;
+    fragWorldXZ  = world.xz;
 
     vec3 light = vec3(1.0);
     if (useLighting != 0) {

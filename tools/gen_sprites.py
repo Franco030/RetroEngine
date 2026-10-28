@@ -8,7 +8,8 @@ con alfa duro (el motor recorta por alfa) y el mismo acabado que las texturas: 3
 canal y trama Bayer (quantize_ordered de texconv.py).
 
 Los ANIMADOS (llama, velas) devuelven una lista de fotogramas y se guardan como una tira
-horizontal: en la escena se usan con "frames": 4 (y "fps", por defecto 8).
+horizontal: en la escena se usan con "frames": 4 (y "fps", por defecto 8). spr_luciernagas
+es un enjambre de luciernagas (emissive) para el lago.
 
 Uso:
   python tools/gen_sprites.py                       # escribe en assets/textures/spr_*.png
@@ -408,6 +409,61 @@ def flores_marchitas(rng):
     return L
 
 
+def luciernagas(rng):
+    """Enjambre de luciernagas (emissive), 4 fotogramas de 32x32: cinco o seis puntos de luz
+    verde amarillenta que derivan despacio y se encienden y apagan cada uno a su ritmo."""
+    bichos = [(rng.uniform(4, 28), rng.uniform(4, 28), rng.uniform(0, 2 * math.pi),
+               rng.uniform(0.6, 1.6)) for _ in range(6)]
+    fotogramas = []
+    for f in range(4):
+        L = Lienzo(32, 32)
+        for x0, y0, fase, vel in bichos:
+            a = fase + f * vel * math.pi / 2
+            x, y = x0 + 1.5 * math.cos(a), y0 + 1.2 * math.sin(a * 1.3)
+            brillo = 0.5 + 0.5 * math.sin(a)
+            if brillo < 0.2:
+                continue                                  # apagada en este fotograma
+            L.punto(x, y, (int(200 + 55 * brillo), 255, int(110 * brillo)))
+            if brillo > 0.6:                              # halo de las mas encendidas
+                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    L.punto(x + dx, y + dy, (120, 170, 40))
+        fotogramas.append(L)
+    return fotogramas
+
+
+def sol(rng):
+    """Sol de atardecer (emissive), 64x64: disco anaranjado, mas claro en el centro, y un halo
+    tramado alrededor. Va en el panorama de la escena ("sun"), sin niebla."""
+    L = Lienzo(64, 64)
+    for y in range(64):
+        for x in range(64):
+            d = math.hypot(x - 31.5, y - 31.5)
+            if d < 17:
+                t = d / 17
+                L.punto(x, y, (255, int(232 - 70 * t), int(150 - 90 * t)))
+            elif d < 30 and (x + y) % 2 == 0 and rng.random() < 0.9 * (1 - (d - 17) / 13):
+                L.punto(x, y, (255, 168, 110))                 # halo tramado
+    return L
+
+
+def luna(rng):
+    """Luna llena (va en el panorama de las escenas de noche, sin niebla), 64x64: disco palido
+    con mares grises y un halo azulado tramado."""
+    L = Lienzo(64, 64)
+    mares = [(rng.uniform(22, 42), rng.uniform(22, 42), rng.uniform(3, 6)) for _ in range(6)]
+    for y in range(64):
+        for x in range(64):
+            d = math.hypot(x - 31.5, y - 31.5)
+            if d < 15:
+                c = (232, 232, 218)
+                if any(math.hypot(x - mx, y - my) < mr for mx, my, mr in mares):
+                    c = (178, 182, 176)
+                L.punto(x, y, c)
+            elif d < 26 and (x + y) % 2 == 0 and rng.random() < 0.8 * (1 - (d - 15) / 11):
+                L.punto(x, y, (150, 170, 210))
+    return L
+
+
 SPRITES = {
     "spr_arbol_seco": arbol_seco,
     "spr_cuervo": cuervo,
@@ -424,6 +480,9 @@ SPRITES = {
     "spr_ojos": ojos,
     "spr_llama": llama,
     "spr_flores_marchitas": flores_marchitas,
+    "spr_luciernagas": luciernagas,
+    "spr_sol": sol,
+    "spr_luna": luna,
 }
 
 

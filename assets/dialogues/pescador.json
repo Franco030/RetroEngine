@@ -1,0 +1,27 @@
+{
+  "speaker": "Pescador",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Shh... no espantes a los peces.",
+        "Bah, da igual. Hace anos que no pica nada.",
+        "Pero mira que tarde.\nLas mejores son siempre las ultimas."
+      ]
+    },
+    {
+      "once": true,
+      "lines": [
+        "Al este el bosque se vuelve negro.",
+        "Los arboles alli no tienen hojas\nni en verano.",
+        "Si vas, vuelve antes de que oscurezca.\nO no vuelvas, que es lo mismo."
+      ]
+    },
+    {
+      "if": { "flag": "dlg:bosque_cartel", "op": ">=", "value": 1 },
+      "once": true,
+      "lines": ["Fuiste, verdad? Lo noto en tu cara.", "No me cuentes nada.\nPrefiero seguir pescando."]
+    },
+    { "lines": ["Mira el agua. Tan quieta.\nComo si estuviera esperando algo."] }
+  ]
+}

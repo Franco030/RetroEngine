@@ -11,6 +11,7 @@ public:
   void SetPosition(Vector3 position);
   void LookAt(Vector3 target);
   void SetFov(float degrees);
+  float Fov() const noexcept { return camera_.fovy; }
 
   void UpdateOrbit(float dt);
 

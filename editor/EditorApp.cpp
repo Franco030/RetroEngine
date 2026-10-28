@@ -216,7 +216,7 @@ EditorApp::EditorApp(retro::RetroEngine& engine, const std::string& initialScene
 
   const retro::RetroShaderParams& p = engine_.Retro().Params();
   defaults_ = {engine_.Config().clearColor, p.fogStart, p.fogEnd, p.lightDirection, p.ambient,
-               p.sun};
+               p.sun, p.mistDensity, p.mistHeight, p.mistColor};
 
   Log(false, "Assets: " + engine_.Assets().Root());
   assets_.Scan(engine_.Assets().Root());
@@ -280,6 +280,9 @@ void EditorApp::ResetEnvironment() {
   p.lightDirection = defaults_.lightDirection;
   p.ambient = defaults_.ambient;
   p.sun = defaults_.sun;
+  p.mistDensity = defaults_.mistDensity;
+  p.mistHeight = defaults_.mistHeight;
+  p.mistColor = defaults_.mistColor;
   engine_.Retro().SetParams(p);
 }
 
@@ -1799,6 +1802,16 @@ void EditorApp::InspectScene() {
     FieldColor("Fondo", d, nullptr, "background", defaults_.background, false);
     FieldFloat("Niebla: inicio", d, "fog", "start", defaults_.fogStart, 0.1f, 0.0f, 500.0f);
     FieldFloat("Niebla: fin", d, "fog", "end", defaults_.fogEnd, 0.1f, 0.1f, 500.0f);
+    FieldFloat("Neblina baja", d, "fog", "mist", 0.0f, 0.005f, 0.0f, 1.0f);
+    ImGui::SetItemTooltip("Niebla pegada al suelo, en bancos (0 = sin ella)");
+    if (ReadNumber(Src(d, "fog"), "mist", 0.0f) > 0.0f) {
+      FieldFloat("Neblina: altura", d, "fog", "mistHeight", 1.5f, 0.02f, 0.1f, 20.0f);
+      const Vector3 mc = defaults_.mistColor;
+      FieldColor("Neblina: color", d, "fog", "mistColor",
+                 Color{static_cast<unsigned char>(mc.x * 255.0f), static_cast<unsigned char>(mc.y * 255.0f),
+                       static_cast<unsigned char>(mc.z * 255.0f), 255},
+                 false);
+    }
     FieldVec3("Luz: direccion", d, "light", "direction", defaults_.lightDirection, 0.01f);
     FieldFloat("Luz: ambiente", d, "light", "ambient", defaults_.ambient, 0.005f, 0.0f, 1.0f);
     FieldFloat("Luz: sol", d, "light", "sun", defaults_.sun, 0.01f, 0.0f, 1.0f);

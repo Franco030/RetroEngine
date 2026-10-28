@@ -641,6 +641,8 @@ ejecuta `ActionRunner` en orden.
 | `{ "play_sound": "audio/x.wav" }` | `volume` (1), `at`, `radius` (14), `minDistance` (1) | Efecto de sonido. Sin `at`, suena "en la cabeza" (sin posición). Con `at: [x,y,z]` o `at: "nombre_de_entidad"`, suena en ese punto con atenuación y paneo (§12.3). |
 | `{ "play_music": "audio/x.wav" }` | `volume` (0.6), `fade` (1) | Cambia la música con fundido cruzado. |
 | `{ "stop_music": true }` | `fade` (1) | Apaga la música con fundido (el valor de la clave no importa). |
+| `{ "look_at": "entidad" }` o `{ "look_at": [x, y, z] }` | `speed` (6) | **Mirar**: gira la vista del jugador hacia la entidad (a la altura de la cara si es alta como una persona) o el punto, **suave y sin acercar**, mientras dure el mensaje o diálogo que se esté leyendo; si no hay nada que leer, no hace nada. Para enseñar un objeto o a alguien. `speed`: fracción de lo que falta que se recorre por segundo. Va antes del `message` o `dialogue`. |
+| `{ "scare": "entidad" }` o `{ "scare": [x, y, z] }` | `speed` (20), `fov` (30) | **Susto de cámara**: como `look_at`, pero de golpe y **acercando** (la vista se estrecha hasta `fov` grados y al terminar vuelve). Con `speed` 2-3 la vista "se va sola" hacia algo inquietante; con 20 o más es un susto. |
 | `{ "dialogue": "sepulturero" }` | — | Abre el diálogo `assets/dialogues/sepulturero.json` (§11.1). Si ninguna de sus entradas se cumple, no dice nada; si el archivo falla, se avisa por consola. |
 
 No existe una acción `set_visible`: la visibilidad se controla con banderas y `showIf` (por
@@ -1055,6 +1057,20 @@ Hay dos clases de mensaje, según de dónde salen:
   mira se oculta y E cierra el mensaje antes de tiempo (pasado 0.3 s).
 - **Anuncio**: el mensaje sale de un trigger o del sistema (guardar, cargar...). La cámara sigue
   libre.
+- **Mirada forzada** (`look_at` y `scare`, §10): cualquier lista de acciones (un trigger, el
+  final de un diálogo) puede decidir a dónde se mira mientras se lee. Son dos acciones a
+  propósito: `look_at` gira suave y nunca acerca (lo mismo que al hablar con alguien) y `scare`
+  gira de golpe y acerca, solo para los sustos. Las dos dejan en `ActionRunner` la misma
+  petición (`CameraShot`, con `fov` 0 en `look_at`) y `main` la resuelve al final del fotograma
+  (busca la entidad en la escena) porque es quien lleva la cámara. El acercamiento se
+  guarda como los grados que se han quitado al campo de visión de la escena (`zoom`) y vuelve a
+  0 suavemente al soltar; al cambiar de escena se pone a 0 (la escena nueva ya puso el suyo).
+
+  Así están hechos los sustos: el órgano de la capilla (al cerrar su página, `scare` al
+  sepulturero que aparece en la puerta con `speed` 16 y `fov` 34, el golpe `susto.wav` y su
+  diálogo), y en el bosque negro la figura que se ve al fondo (`scare` con `speed` 2.5: la vista
+  se va sola), los pasos detrás (`look_at` a un punto a tu espalda: te giras, sin acercar) y la
+  figura que aparece delante (`scare` con `speed` 26).
 
 ---
 
@@ -1070,8 +1086,9 @@ Todos los campos, con su valor por defecto. Solo `entities` es obligatorio en la
 | `player` | `position` [0, 0, 9], `yaw` 0 | Punto de inicio (los pies). |
 | `autoCollide` | `false` | §6.2. |
 | `bounds` | ninguno | `{ "min": [x, z], "max": [x, z] }`. §6.4. |
+| `panorama` | ninguno | El horizonte lejano de los exteriores: `{ "model", "tint": [r,g,b], "haze": 0.4, "y": -6, "sun": { "texture", "yaw", "pitch", "size": 40 } }`. El modelo (`panorama_montes` o `panorama_bosque`, de `tools/blender/panorama.py`, entre 90 y 210 m) se dibuja primero y **centrado en la cámara**: nunca se llega a él ni corta la escena, y siempre hay "algo lejos". En vez de la niebla por distancia lleva una bruma fija `haze` hacia el color de la niebla (uniform `fogFixed` de los fragment shaders). El `sun` (el sol del lago, la luna de las noches) es un sprite a 320 m, más lejos que el modelo, así que las montañas lo tapan por profundidad, y **no** lo apaga la niebla. `yaw`/`pitch` como la vista del jugador (`yaw` 0 = hacia -Z, `pitch` en grados sobre el horizonte). |
 | `background` | `[24, 20, 32]` | También es el color de la niebla. |
-| `fog` | `start` 10, `end` 26 | |
+| `fog` | `start` 10, `end` 26 | Niebla por distancia, del color de `background`. **Neblina baja** (opcional): `mist` (densidad 0-1, 0 = sin ella), `mistHeight` (1.5 m) y `mistColor` [r, g, b]: niebla pegada al suelo que se desvanece hacia arriba, en bancos que cambian por el terreno y nunca pegada a la cámara (`MistAmount` en `retro.fs` y `retro_sprite.fs`). El cementerio la usa leve (0.6, 1.4 m, gris azulado), el lago rosada y el bosque negro densa. |
 | `light` | `direction` [-0.5, -1, -0.3], `ambient` 0.35, `sun` 1 | Luz direccional (`sun` entre 0 y 1). |
 | `audio` | ninguno | `music` y `ambient`: ruta o `{ "file", "volume" }` (volumen por defecto 0.6 y 0.5). `footsteps`: `{ "files": [...], "volume": 0.6 }`. `fade`: 1.5. |
 | `lights` | `[]` | Luces puntuales (§18.4). |
@@ -1089,6 +1106,7 @@ Todos los campos, con su valor por defecto. Solo `entities` es obligatorio en la
 | `wrap` | el de Raylib | `"repeat"`, `"clamp"` o `"mirror"`. |
 | `sprite` | — | Ruta de la textura del sprite. |
 | `size` | — | Obligatorio en sprites: `[ancho, alto]`, positivos. |
+| `fog` | `true` | `false`: la niebla no la apaga (`fogFixed` 0 al dibujarla), para algo que tiene que verse de lejos aunque haya niebla. |
 | `emissive` | `false` | Ignora la luz y se ve a pleno color. En un modelo, se dibuja con el shader de los sprites (textura sin luces, con niebla y trama): para vidrieras y cosas que brillan. |
 | `layer` | `0` | Solo modelos: capa para superficies apoyadas en otras (un sendero sobre el suelo, una alfombra). `1` siempre gana a lo de debajo y `-1` pierde, sin parpadeo (*z-fighting*): el vertex shader resta `layer * 3e-5` a la profundidad (`depthBias`, en NDC), sin mover la superficie en pantalla. El paso crece con la distancia igual que el error de profundidad y de cerca equivale a pocos centímetros. Los senderos usan `1`, la hojarasca bajo el bosque `-1` y la alfombra de la iglesia (modelo aparte) `1`. |
 | `frames` | `1` | Solo sprites: la imagen es una tira horizontal de N fotogramas iguales que se pasan en bucle, sin mezclar (como en la PS1). Cada copia empieza en un punto distinto según su posición, así dos llamas no parpadean a la vez. |
@@ -1379,6 +1397,8 @@ valores de partida. Cada tipo muestra sus campos:
 | Tipo | Campos |
 |---|---|
 | Dialogo | desplegable con los de `dialogues/` y "Editar dialogo", que lo abre en su panel (§19.14) |
+| Mirar hacia | una entidad (desplegable) o un punto y la rapidez (no acerca) |
+| Susto de camara | una entidad o un punto, rapidez y acercar (fov) |
 | Mensaje | texto de varias líneas (con `{bandera}`), segundos |
 | Fijar / Sumar a bandera | nombre, valor o cantidad |
 | Cambiar de escena | escena (desplegable de `scenes/`), punto de llegada opcional (posición y giro) |
@@ -1421,7 +1441,7 @@ a mitad de construir una escena es normal tener cosas a medias.
 
 | Gravedad | Qué detecta |
 |---|---|
-| Error | `goto_scene` a una escena que no existe; `dialogue` con un diálogo que no existe; `play_sound` en una entidad (`"at": "nombre"`) que no existe. |
+| Error | `goto_scene` a una escena que no existe; `dialogue` con un diálogo que no existe; `look_at` o `scare` a una entidad que no existe; `play_sound` en una entidad (`"at": "nombre"`) que no existe. |
 | Aviso | `play_sound` o `play_music` con un archivo que no existe; una bandera que se **consulta** (en condiciones o en `{bandera}` de un mensaje) pero que **ninguna escena** cambia, así que siempre vale 0. |
 | Info | Un trigger sin acciones; una bandera que se cambia pero que ninguna escena consulta. |
 
@@ -1483,7 +1503,11 @@ exec(open(ruta).read(), {"__file__": ruta, "__name__": "__main__"})
 | `detalles.py` | Los detalles pequeños en 3D que sustituyen a los sprites billboard: `velas_grupo` (las llamas siguen siendo el sprite animado), `cuervo`, `setas_grupo`, `hierba_mata`, `flores_campo`, `flores_marchitas`, `huesos_pila`, `ojos` (emisivos y con `facePlayer`: te siguen), `raices` (cuelgan del techo) y `telarana` (quad de dos caras con textura transparente, tendido cruzando una esquina). En las escenas ya no hay sprites billboard salvo las llamas animadas. |
 | `iglesia.py` | `capilla_interior` (nave de 6.4 x 10.4 m a juego con el exterior), `vidrieras` (emisivas), `banco_iglesia`, `altar`, `candelabro`, `lampara`, `organo`. |
 | `bosque.py` | `sendero`, `tronco`, árboles 3D `arbol_pino`, `arbol_pino_alto`, `arbol_roble`, `arbol_roble_2`, `arbol_abedul`, `arbol_muerto` y arbustos `arbusto_hojas`, `arbusto_bayas` (low-poly, copas de icosferas deformadas; se mezclan con los sprites de árbol: en los bosques de las salidas, la mitad son 3D, con giro y tamaño al azar y el mismo tinte que el sprite). |
-| `subterraneo.py` | `cripta_interior`, `tuneles`, `sarcofago`, `atril`, `puerta_cripta`, `estatua` (mármol, cementerio), `estatua_gastada` (piedra, catacumbas), `reja`, `cuerda_pozo`, `escalera_mano`, `trampilla`, `antorcha_pared` (antorcha con un brazo de hierro largo que siempre se mete en la pared deformada; la llama es un sprite), `osamenta` (calavera y huesos para los nichos), `calavera_vela` (vela que sale por la coronilla y ojos encendidos; la llama es el sprite `spr_llama`). |
+| `subterraneo.py` | `cripta_interior`, `tuneles`, `sarcofago`, `atril`, `puerta_cripta`, `estatua` (mármol, cementerio), `reja`, `cuerda_pozo`, `escalera_mano`, `trampilla`, `antorcha_pared` (antorcha con un brazo de hierro largo que siempre se mete en la pared deformada; la llama es un sprite), `osamenta` (calavera y huesos para los nichos), `calavera_vela` (vela que sale por la coronilla y ojos encendidos; la llama es el sprite `spr_llama`). |
+| `panorama.py` | `panorama_montes` (cordillera con nieve de 155-205 m: la nieve es la punta del mismo cono, con los mismos lados y giro, así no parece cortada; colinas delante) y `panorama_bosque` (línea de pinos y árboles secos a 90-115 m, colinas y montes bajos). Bajan hasta y -12 para que nunca se vea la base. |
+| `estatuas.py` | `estatua_dolorosa` (iglesia: mujer de mármol con velo, halo de metal, corazón atravesado y lágrimas rojas) y `estatua_orante` (túneles: figura encapuchada arrodillada de piedra gastada con un rosario de hueso). |
+| `lago.py` | `lago` (óvalo de 26 x 14 m con orilla; sus cajas de colisión cierran el agua salvo el pasillo del muelle), `muelle` (se pisa, con farol), `barca`, `sauce` (con columpio), `montes` (montañas de fondo en un anillo de 48 m) y `rocas_orilla`. |
+| `bosque_negro.py` | `hombre_alto` (la figura de 2.7 m de túnica negra y cara pálida sin ojos), `figura_ramas` (se cuelga: el origen es el punto de arriba), `cartel`, `cabana`, `circulo_piedras` y `arbol_caido`. |
 | `personajes.py` | `granjero`, `aldeana`, `anciano`, `nino`, `hombre`, `mujer`, `sepulturero`, `sereno`, `encapuchado` (el ermitaño de los túneles: capucha de sudadera hasta los hombros y gabardina larga abierta por delante, ambas en la región del pantalón del atlas). |
 
 `retro_comun.py` tiene las piezas comunes:
@@ -1518,7 +1542,10 @@ ampliaciones.
 ### `tools/gen_musica.py`
 
 Compone y sintetiza la música de las escenas (`musica_<escena>_v2.wav`: aldea, noche,
-cementerio, demo, cripta, tuneles e iglesia). La de la iglesia usa un instrumento de órgano
+cementerio, demo, cripta, tuneles, iglesia y lago). La del lago es la calma antes de la
+tormenta: una nana en mi mayor con arpa de caja de música, flauta y coro cuyos cuatro últimos
+compases se nublan (acordes menores prestados y un dron que casi no se oye) antes de volver a
+empezar. La de la iglesia usa un instrumento de órgano
 (principal con octava y quinta, trémolo y soplo). Piezas originales lentas y melancólicas, con instrumentos de síntesis
 aditiva hechos con numpy: pad de cuerdas, coro con formantes ("a" u "o"), caja de música,
 flauta con soplo, piano, campana de iglesia, bajo y dron. Reverb de sala grande y eco de ida y
@@ -1556,13 +1583,17 @@ vuelta.
 
 Efectos y ambientes del subterráneo, mono a 22050 Hz: `cripta_amb` y `tuneles_amb` (bucles
 perfectos: buffer circular y la reverb de `gen_musica.py`), `paso_tierra_1..3`, `reja`,
-`derrumbe` y `gemido`.
+`derrumbe` y `gemido`. Para los sustos: `susto` (cuerdas que chirrían y un golpe grave),
+`portazo`, `susurros`, `golpes` (tres golpes en una puerta, desde dentro), `pasos_detras`, y los
+bucles `latido`, `zumbido` (dron grave del bosque negro) y `campanillas` (la calma del lago). Los
+nuevos van al final de la lista: la semilla de cada sonido depende de su posición.
 
 ### `tools/gen_sprites.py`
 
 Sprites con transparencia (`spr_*.png`): árbol seco, cuervo, velas, hierba alta, flores y setas
 luminosas; para el subterráneo cristales, telaraña, huesos, raíces que cuelgan, antorcha, unos ojos
-rojos y la llama de vela; y flores marchitas para las tumbas. La llama y las velas son ANIMADAS:
+rojos y la llama de vela; flores marchitas para las tumbas; y para el lago un enjambre de
+luciérnagas animado (`spr_luciernagas`, emisivo) y el sol bajo (`spr_sol`). La llama y las velas son ANIMADAS:
 cuatro fotogramas en una tira (la llama cambia de alto, se inclina y suelta chispas) y se
 usan con `"frames": 4`. Pixel art procedural con contorno oscuro y alfa duro. Las velas y las setas se usan
 con `"emissive": true` y una `"light"` en la entidad.

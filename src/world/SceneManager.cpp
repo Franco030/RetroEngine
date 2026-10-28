@@ -64,7 +64,7 @@ SceneManager::SceneManager(RetroEngine& engine, RetroCamera& camera,
 
   const RetroShaderParams& p = engine_.Retro().Params();
   defaults_ = {engine_.Config().clearColor, p.fogStart, p.fogEnd, p.lightDirection, p.ambient,
-               p.sun};
+               p.sun, p.mistDensity, p.mistHeight, p.mistColor};
 }
 
 void SceneManager::ApplyEnvironment(const Environment& env) {
@@ -76,6 +76,9 @@ void SceneManager::ApplyEnvironment(const Environment& env) {
   p.lightDirection = env.lightDirection;
   p.ambient = env.ambient;
   p.sun = env.sun;
+  p.mistDensity = env.mistDensity;
+  p.mistHeight = env.mistHeight;
+  p.mistColor = env.mistColor;
   engine_.Retro().SetParams(p);
 }
 

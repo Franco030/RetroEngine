@@ -32,6 +32,10 @@ struct EntitySound {
 
 // Objeto del mundo: un Transform propio y, según el tipo, un modelo 3D
 // compartido o un sprite billboard (textura + tamaño en el mundo).
+// Bruma fija del shader (uniform fogFixed): >= 0 sustituye a la niebla por distancia (0 = sin
+// niebla); -1 la devuelve. Para el panorama y las entidades con "fog": false.
+void SetFogFixed(const Shader& shader, float fog);
+
 class Entity {
 public:
   using UpdateFn = std::function<void(Entity&, float dt)>;
@@ -77,6 +81,8 @@ public:
   // Capa de dibujo para superficies apoyadas en otras (modelos): 1 gana siempre a lo que tiene
   // debajo, -1 pierde. Ver depthBias en retro.vs.
   int layer = 0;
+  // false: la niebla no la apaga (el sol, una luz que se ve de lejos).
+  bool fog = true;
   bool facePlayer = false;
   float lookRange = 10.0f;
   float turnSpeed = 240.0f;

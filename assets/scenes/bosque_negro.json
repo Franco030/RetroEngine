@@ -1,0 +1,5279 @@
+{
+  "camera": { "position": [0, 8, 46], "target": [0, 1, 20], "fov": 60 },
+  "player": { "position": [0.44, 0, 38], "yaw": 0 },
+  "autoCollide": true,
+  "bounds": { "min": [-16, -49], "max": [16, 46] },
+  "background": [34, 36, 42],
+  "fog": { "start": 2, "end": 22, "mist": 0.55, "mistHeight": 1.0, "mistColor": [62, 64, 72] },
+  "light": { "direction": [0.2, -1.0, 0.1], "ambient": 0.15, "sun": 0.2 },
+  "audio": {
+    "ambient": { "file": "audio/zumbido.wav", "volume": 0.32 },
+    "footsteps": {
+      "files": ["audio/paso_tierra_1.wav", "audio/paso_tierra_2.wav", "audio/paso_tierra_3.wav"],
+      "volume": 0.3
+    },
+    "fade": 2.5
+  },
+  "entities": [
+    {
+      "name": "suelo",
+      "model": { "type": "plane", "size": 128, "subdivisions": 64, "tiles": 46 },
+      "texture": "textures/mat_hojarasca.png",
+      "wrap": "repeat",
+      "tint": [92, 86, 82, 255]
+    },
+    {
+      "name": "sendero_0",
+      "model": "models/sendero.obj",
+      "position": [-1.42, 0, 47.0],
+      "rotation": [0, -11.45, 0],
+      "collider": false,
+      "layer": 1,
+      "tint": [150, 140, 135, 255]
+    },
+    {
+      "name": "sendero_1",
+      "model": "models/sendero.obj",
+      "position": [1.42, 0, 33.0],
+      "rotation": [0, -1.97, 0],
+      "collider": false,
+      "layer": 1,
+      "tint": [150, 140, 135, 255]
+    },
+    {
+      "name": "sendero_2",
+      "model": "models/sendero.obj",
+      "position": [1.9, 0, 19.0],
+      "rotation": [0, 10.8, 0],
+      "collider": false,
+      "layer": 1,
+      "tint": [150, 140, 135, 255]
+    },
+    {
+      "name": "sendero_3",
+      "model": "models/sendero.obj",
+      "position": [-0.77, 0, 5.0],
+      "rotation": [0, 5.67, 0],
+      "collider": false,
+      "layer": 1,
+      "tint": [150, 140, 135, 255]
+    },
+    {
+      "name": "sendero_4",
+      "model": "models/sendero.obj",
+      "position": [-2.16, 0, -9.0],
+      "rotation": [0, -8.92, 0],
+      "collider": false,
+      "layer": 1,
+      "tint": [150, 140, 135, 255]
+    },
+    {
+      "name": "sendero_5",
+      "model": "models/sendero.obj",
+      "position": [0.04, 0, -23.0],
+      "rotation": [0, -8.68, 0],
+      "collider": false,
+      "layer": 1,
+      "tint": [150, 140, 135, 255]
+    },
+    {
+      "name": "sendero_6",
+      "model": "models/sendero.obj",
+      "position": [2.17, 0, -37.0],
+      "rotation": [0, 6.0, 0],
+      "collider": false,
+      "layer": 1,
+      "tint": [150, 140, 135, 255]
+    },
+    {
+      "name": "arbol_1",
+      "model": "models/arbol_muerto.obj",
+      "position": [-7.26, 0, 45.48],
+      "rotation": [0, 292.09, 0],
+      "scale": [1.23, 1.23, 1.23],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_2",
+      "model": "models/arbol_pino.obj",
+      "position": [-9.28, 0, 44.55],
+      "rotation": [0, 351.86, 0],
+      "scale": [1.18, 1.18, 1.18],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_3",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-5.52, 0, 43.76],
+      "rotation": [0, 252.91, 0],
+      "scale": [1.21, 1.21, 1.21],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_4",
+      "model": "models/arbol_muerto.obj",
+      "position": [-4.06, 0, 44.15],
+      "rotation": [0, 46.88, 0],
+      "scale": [1.4, 1.4, 1.4],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_5",
+      "model": "models/arbol_muerto.obj",
+      "position": [6.0, 0, 43.06],
+      "rotation": [0, 64.89, 0],
+      "scale": [1.14, 1.14, 1.14],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_6",
+      "model": "models/arbol_pino.obj",
+      "position": [3.3, 0, 43.99],
+      "rotation": [0, 12.39, 0],
+      "scale": [1.16, 1.16, 1.16],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_7",
+      "model": "models/arbol_pino.obj",
+      "position": [-7.04, 0, 42.72],
+      "rotation": [0, 286.03, 0],
+      "scale": [1.22, 1.22, 1.22],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_8",
+      "model": "models/arbol_muerto.obj",
+      "position": [-6.39, 0, 42.71],
+      "rotation": [0, 154.74, 0],
+      "scale": [1.29, 1.29, 1.29],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_9",
+      "model": "models/arbol_pino.obj",
+      "position": [6.44, 0, 41.79],
+      "rotation": [0, 169.22, 0],
+      "scale": [1.18, 1.18, 1.18],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_10",
+      "model": "models/arbol_muerto.obj",
+      "position": [6.11, 0, 42.14],
+      "rotation": [0, 115.12, 0],
+      "scale": [1.22, 1.22, 1.22],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_11",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.51, 0, 40.35],
+      "rotation": [0, 212.24, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_12",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [6.15, 0, 40.85],
+      "rotation": [0, 283.97, 0],
+      "scale": [1.34, 1.34, 1.34],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_13",
+      "model": "models/arbol_muerto.obj",
+      "position": [10.25, 0, 41.31],
+      "rotation": [0, 37.17, 0],
+      "scale": [1.16, 1.16, 1.16],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_14",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-5.79, 0, 39.24],
+      "rotation": [0, 239.19, 0],
+      "scale": [0.97, 0.97, 0.97],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_15",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-9.54, 0, 39.24],
+      "rotation": [0, 160.72, 0],
+      "scale": [1.18, 1.18, 1.18],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_16",
+      "model": "models/arbol_muerto.obj",
+      "position": [2.91, 0, 38.91],
+      "rotation": [0, 64.23, 0],
+      "scale": [1.44, 1.44, 1.44],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_17",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [6.41, 0, 39.78],
+      "rotation": [0, 238.98, 0],
+      "scale": [1.1, 1.1, 1.1],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_18",
+      "model": "models/arbol_pino.obj",
+      "position": [-8.89, 0, 38.54],
+      "rotation": [0, 250.73, 0],
+      "scale": [1.15, 1.15, 1.15],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_19",
+      "model": "models/arbol_muerto.obj",
+      "position": [-8.82, 0, 37.18],
+      "rotation": [0, 337.15, 0],
+      "scale": [0.96, 0.96, 0.96],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_20",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-7.48, 0, 36.36],
+      "rotation": [0, 319.63, 0],
+      "scale": [1.08, 1.08, 1.08],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_21",
+      "model": "models/arbol_pino.obj",
+      "position": [3.54, 0, 36.43],
+      "rotation": [0, 149.55, 0],
+      "scale": [1.13, 1.13, 1.13],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_22",
+      "model": "models/arbol_pino.obj",
+      "position": [4.45, 0, 37.07],
+      "rotation": [0, 77.71, 0],
+      "scale": [1.03, 1.03, 1.03],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_23",
+      "model": "models/arbol_muerto.obj",
+      "position": [-7.59, 0, 35.04],
+      "rotation": [0, 68.26, 0],
+      "scale": [1.31, 1.31, 1.31],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_24",
+      "model": "models/arbol_muerto.obj",
+      "position": [4.31, 0, 35.18],
+      "rotation": [0, 155.2, 0],
+      "scale": [1.04, 1.04, 1.04],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_25",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [9.48, 0, 35.19],
+      "rotation": [0, 313.73, 0],
+      "scale": [1.27, 1.27, 1.27],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_26",
+      "model": "models/arbol_muerto.obj",
+      "position": [-3.08, 0, 33.35],
+      "rotation": [0, 134.45, 0],
+      "scale": [1.14, 1.14, 1.14],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_27",
+      "model": "models/arbol_pino.obj",
+      "position": [-2.07, 0, 33.6],
+      "rotation": [0, 353.84, 0],
+      "scale": [1.17, 1.17, 1.17],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_28",
+      "model": "models/arbol_pino.obj",
+      "position": [4.11, 0, 33.73],
+      "rotation": [0, 260.29, 0],
+      "scale": [1.24, 1.24, 1.24],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_29",
+      "model": "models/arbol_muerto.obj",
+      "position": [10.62, 0, 33.78],
+      "rotation": [0, 89.26, 0],
+      "scale": [1.23, 1.23, 1.23],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_30",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-7.87, 0, 32.67],
+      "rotation": [0, 132.02, 0],
+      "scale": [1.42, 1.42, 1.42],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_31",
+      "model": "models/arbol_pino.obj",
+      "position": [-8.22, 0, 32.83],
+      "rotation": [0, 326.93, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_32",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [10.18, 0, 32.65],
+      "rotation": [0, 256.83, 0],
+      "scale": [1.36, 1.36, 1.36],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_33",
+      "model": "models/arbol_muerto.obj",
+      "position": [8.83, 0, 32.53],
+      "rotation": [0, 163.7, 0],
+      "scale": [1.4, 1.4, 1.4],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_34",
+      "model": "models/arbol_muerto.obj",
+      "position": [-4.27, 0, 31.49],
+      "rotation": [0, 241.49, 0],
+      "scale": [1.36, 1.36, 1.36],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_35",
+      "model": "models/arbol_muerto.obj",
+      "position": [-3.07, 0, 30.9],
+      "rotation": [0, 85.48, 0],
+      "scale": [1.04, 1.04, 1.04],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_36",
+      "model": "models/arbol_pino.obj",
+      "position": [7.63, 0, 31.26],
+      "rotation": [0, 106.61, 0],
+      "scale": [1.3, 1.3, 1.3],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_37",
+      "model": "models/arbol_muerto.obj",
+      "position": [12.09, 0, 31.36],
+      "rotation": [0, 216.08, 0],
+      "scale": [1.4, 1.4, 1.4],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_38",
+      "model": "models/arbol_muerto.obj",
+      "position": [-4.98, 0, 29.65],
+      "rotation": [0, 30.58, 0],
+      "scale": [1.04, 1.04, 1.04],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_39",
+      "model": "models/arbol_pino.obj",
+      "position": [10.53, 0, 29.89],
+      "rotation": [0, 327.51, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_40",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-4.7, 0, 27.65],
+      "rotation": [0, 252.65, 0],
+      "scale": [1.44, 1.44, 1.44],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_41",
+      "model": "models/arbol_pino.obj",
+      "position": [-1.29, 0, 28.08],
+      "rotation": [0, 217.87, 0],
+      "scale": [1.22, 1.22, 1.22],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_42",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [11.85, 0, 28.67],
+      "rotation": [0, 83.62, 0],
+      "scale": [0.97, 0.97, 0.97],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_43",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [8.36, 0, 28.18],
+      "rotation": [0, 308.48, 0],
+      "scale": [1.15, 1.15, 1.15],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_44",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.84, 0, 27.13],
+      "rotation": [0, 216.26, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_45",
+      "model": "models/arbol_pino.obj",
+      "position": [7.07, 0, 26.77],
+      "rotation": [0, 7.09, 0],
+      "scale": [1.01, 1.01, 1.01],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_46",
+      "model": "models/arbol_muerto.obj",
+      "position": [7.47, 0, 27.39],
+      "rotation": [0, 267.82, 0],
+      "scale": [1.06, 1.06, 1.06],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_47",
+      "model": "models/arbol_pino.obj",
+      "position": [-6.59, 0, 25.47],
+      "rotation": [0, 44.51, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_48",
+      "model": "models/arbol_muerto.obj",
+      "position": [-6.36, 0, 25.16],
+      "rotation": [0, 287.83, 0],
+      "scale": [1.07, 1.07, 1.07],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_49",
+      "model": "models/arbol_muerto.obj",
+      "position": [10.33, 0, 25.32],
+      "rotation": [0, 56.88, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_50",
+      "model": "models/arbol_muerto.obj",
+      "position": [-3.54, 0, 24.39],
+      "rotation": [0, 3.65, 0],
+      "scale": [1.13, 1.13, 1.13],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_51",
+      "model": "models/arbol_pino.obj",
+      "position": [-0.64, 0, 24.5],
+      "rotation": [0, 357.74, 0],
+      "scale": [1.31, 1.31, 1.31],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_52",
+      "model": "models/arbol_muerto.obj",
+      "position": [9.45, 0, 23.53],
+      "rotation": [0, 52.45, 0],
+      "scale": [1.13, 1.13, 1.13],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_53",
+      "model": "models/arbol_muerto.obj",
+      "position": [7.38, 0, 24.25],
+      "rotation": [0, 330.11, 0],
+      "scale": [1.05, 1.05, 1.05],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_54",
+      "model": "models/arbol_pino.obj",
+      "position": [-0.69, 0, 22.84],
+      "rotation": [0, 359.74, 0],
+      "scale": [1.3, 1.3, 1.3],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_55",
+      "model": "models/arbol_muerto.obj",
+      "position": [11.44, 0, 22.57],
+      "rotation": [0, 311.88, 0],
+      "scale": [1.43, 1.43, 1.43],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_56",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.45, 0, 20.89],
+      "rotation": [0, 317.11, 0],
+      "scale": [1.14, 1.14, 1.14],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_57",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-7.6, 0, 21.1],
+      "rotation": [0, 300.66, 0],
+      "scale": [1.02, 1.02, 1.02],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_58",
+      "model": "models/arbol_muerto.obj",
+      "position": [9.26, 0, 21.53],
+      "rotation": [0, 113.94, 0],
+      "scale": [0.98, 0.98, 0.98],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_59",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-5.69, 0, 19.88],
+      "rotation": [0, 205.75, 0],
+      "scale": [1.09, 1.09, 1.09],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_60",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-7.22, 0, 19.43],
+      "rotation": [0, 71.55, 0],
+      "scale": [1.05, 1.05, 1.05],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_61",
+      "model": "models/arbol_pino.obj",
+      "position": [-6.27, 0, 18.76],
+      "rotation": [0, 261.42, 0],
+      "scale": [1.32, 1.32, 1.32],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_62",
+      "model": "models/arbol_muerto.obj",
+      "position": [-2.58, 0, 18.98],
+      "rotation": [0, 100.62, 0],
+      "scale": [1.14, 1.14, 1.14],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_63",
+      "model": "models/arbol_muerto.obj",
+      "position": [11.66, 0, 18.24],
+      "rotation": [0, 115.97, 0],
+      "scale": [1.18, 1.18, 1.18],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_64",
+      "model": "models/arbol_muerto.obj",
+      "position": [12.26, 0, 18.67],
+      "rotation": [0, 99.77, 0],
+      "scale": [1.37, 1.37, 1.37],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_65",
+      "model": "models/arbol_muerto.obj",
+      "position": [-2.7, 0, 17.43],
+      "rotation": [0, 229.26, 0],
+      "scale": [1.43, 1.43, 1.43],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_66",
+      "model": "models/arbol_pino.obj",
+      "position": [8.12, 0, 16.85],
+      "rotation": [0, 219.13, 0],
+      "scale": [1.17, 1.17, 1.17],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_67",
+      "model": "models/arbol_muerto.obj",
+      "position": [10.5, 0, 16.41],
+      "rotation": [0, 226.98, 0],
+      "scale": [1.23, 1.23, 1.23],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_68",
+      "model": "models/arbol_muerto.obj",
+      "position": [-6.77, 0, 15.96],
+      "rotation": [0, 197.56, 0],
+      "scale": [1.21, 1.21, 1.21],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_69",
+      "model": "models/arbol_pino.obj",
+      "position": [6.02, 0, 16.0],
+      "rotation": [0, 140.7, 0],
+      "scale": [1.06, 1.06, 1.06],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_70",
+      "model": "models/arbol_pino.obj",
+      "position": [-7.75, 0, 14.64],
+      "rotation": [0, 264.28, 0],
+      "scale": [1.21, 1.21, 1.21],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_71",
+      "model": "models/arbol_pino.obj",
+      "position": [-5.81, 0, 13.72],
+      "rotation": [0, 200.39, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_72",
+      "model": "models/arbol_muerto.obj",
+      "position": [5.1, 0, 14.07],
+      "rotation": [0, 6.41, 0],
+      "scale": [1.07, 1.07, 1.07],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_73",
+      "model": "models/arbol_pino.obj",
+      "position": [-2.0, 0, 13.08],
+      "rotation": [0, 55.45, 0],
+      "scale": [1.24, 1.24, 1.24],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_74",
+      "model": "models/arbol_pino.obj",
+      "position": [-9.4, 0, 12.31],
+      "rotation": [0, 242.05, 0],
+      "scale": [1.09, 1.09, 1.09],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_75",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [8.33, 0, 12.86],
+      "rotation": [0, 191.56, 0],
+      "scale": [1.22, 1.22, 1.22],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_76",
+      "model": "models/arbol_pino.obj",
+      "position": [-5.84, 0, 11.47],
+      "rotation": [0, 345.36, 0],
+      "scale": [1.35, 1.35, 1.35],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_77",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.3, 0, 10.95],
+      "rotation": [0, 256.69, 0],
+      "scale": [1.23, 1.23, 1.23],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_78",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [3.85, 0, 11.73],
+      "rotation": [0, 123.82, 0],
+      "scale": [1.4, 1.4, 1.4],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_79",
+      "model": "models/arbol_pino.obj",
+      "position": [-7.85, 0, 9.53],
+      "rotation": [0, 131.18, 0],
+      "scale": [1.06, 1.06, 1.06],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_80",
+      "model": "models/arbol_muerto.obj",
+      "position": [9.16, 0, 10.03],
+      "rotation": [0, 112.36, 0],
+      "scale": [1.12, 1.12, 1.12],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_81",
+      "model": "models/arbol_muerto.obj",
+      "position": [-9.45, 0, 8.02],
+      "rotation": [0, 17.61, 0],
+      "scale": [0.96, 0.96, 0.96],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_82",
+      "model": "models/arbol_pino.obj",
+      "position": [6.29, 0, 8.76],
+      "rotation": [0, 110.26, 0],
+      "scale": [1.44, 1.44, 1.44],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_83",
+      "model": "models/arbol_muerto.obj",
+      "position": [-4.19, 0, 6.93],
+      "rotation": [0, 207.59, 0],
+      "scale": [1.22, 1.22, 1.22],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_84",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.78, 0, 7.42],
+      "rotation": [0, 284.26, 0],
+      "scale": [1.23, 1.23, 1.23],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_85",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [8.44, 0, 7.32],
+      "rotation": [0, 301.62, 0],
+      "scale": [1.24, 1.24, 1.24],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_86",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.06, 0, 6.13],
+      "rotation": [0, 88.74, 0],
+      "scale": [1.4, 1.4, 1.4],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_87",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-10.66, 0, 5.84],
+      "rotation": [0, 104.52, 0],
+      "scale": [1.37, 1.37, 1.37],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_88",
+      "model": "models/arbol_muerto.obj",
+      "position": [6.2, 0, 6.26],
+      "rotation": [0, 203.44, 0],
+      "scale": [1.04, 1.04, 1.04],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_89",
+      "model": "models/arbol_muerto.obj",
+      "position": [8.34, 0, 6.06],
+      "rotation": [0, 207.41, 0],
+      "scale": [1.01, 1.01, 1.01],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_90",
+      "model": "models/arbol_pino.obj",
+      "position": [-7.83, 0, 4.86],
+      "rotation": [0, 186.05, 0],
+      "scale": [1.22, 1.22, 1.22],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_91",
+      "model": "models/arbol_muerto.obj",
+      "position": [-9.13, 0, 4.9],
+      "rotation": [0, 69.16, 0],
+      "scale": [1.12, 1.12, 1.12],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_92",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [8.06, 0, 4.92],
+      "rotation": [0, 122.55, 0],
+      "scale": [1.33, 1.33, 1.33],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_93",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-5.62, 0, 3.45],
+      "rotation": [0, 223.38, 0],
+      "scale": [1.03, 1.03, 1.03],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_94",
+      "model": "models/arbol_muerto.obj",
+      "position": [-4.13, 0, 2.91],
+      "rotation": [0, 87.43, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_95",
+      "model": "models/arbol_pino.obj",
+      "position": [3.82, 0, 3.09],
+      "rotation": [0, 313.7, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_96",
+      "model": "models/arbol_pino.obj",
+      "position": [-8.94, 0, 1.59],
+      "rotation": [0, 338.91, 0],
+      "scale": [0.96, 0.96, 0.96],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_97",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.25, 0, 2.18],
+      "rotation": [0, 354.24, 0],
+      "scale": [1.04, 1.04, 1.04],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_98",
+      "model": "models/arbol_pino.obj",
+      "position": [1.85, 0, 1.98],
+      "rotation": [0, 169.55, 0],
+      "scale": [1.06, 1.06, 1.06],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_99",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [9.01, 0, 1.64],
+      "rotation": [0, 54.43, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_100",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-10.02, 0, 0.69],
+      "rotation": [0, 331.8, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_101",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-10.09, 0, -0.04],
+      "rotation": [0, 113.43, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_102",
+      "model": "models/arbol_muerto.obj",
+      "position": [7.7, 0, -0.04],
+      "rotation": [0, 277.86, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_103",
+      "model": "models/arbol_muerto.obj",
+      "position": [6.35, 0, 0.07],
+      "rotation": [0, 286.28, 0],
+      "scale": [1.1, 1.1, 1.1],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_104",
+      "model": "models/arbol_muerto.obj",
+      "position": [0.91, 0, -1.37],
+      "rotation": [0, 99.65, 0],
+      "scale": [1.19, 1.19, 1.19],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_105",
+      "model": "models/arbol_pino.obj",
+      "position": [8.32, 0, -1.05],
+      "rotation": [0, 14.62, 0],
+      "scale": [1.22, 1.22, 1.22],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_106",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.15, 0, -2.6],
+      "rotation": [0, 345.3, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_107",
+      "model": "models/arbol_pino.obj",
+      "position": [6.69, 0, -2.49],
+      "rotation": [0, 263.3, 0],
+      "scale": [1.32, 1.32, 1.32],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_108",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [6.74, 0, -2.63],
+      "rotation": [0, 131.07, 0],
+      "scale": [1.19, 1.19, 1.19],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_109",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-5.5, 0, -3.87],
+      "rotation": [0, 75.31, 0],
+      "scale": [0.98, 0.98, 0.98],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_110",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-7.64, 0, -4.01],
+      "rotation": [0, 132.98, 0],
+      "scale": [1.05, 1.05, 1.05],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_111",
+      "model": "models/arbol_muerto.obj",
+      "position": [2.46, 0, -4.48],
+      "rotation": [0, 200.89, 0],
+      "scale": [1.45, 1.45, 1.45],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_112",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [5.25, 0, -3.42],
+      "rotation": [0, 202.1, 0],
+      "scale": [1.34, 1.34, 1.34],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_113",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.34, 0, -5.39],
+      "rotation": [0, 269.54, 0],
+      "scale": [1.43, 1.43, 1.43],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_114",
+      "model": "models/arbol_pino.obj",
+      "position": [6.92, 0, -4.99],
+      "rotation": [0, 292.08, 0],
+      "scale": [0.97, 0.97, 0.97],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_115",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [2.52, 0, -7.14],
+      "rotation": [0, 162.2, 0],
+      "scale": [1.03, 1.03, 1.03],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_116",
+      "model": "models/arbol_muerto.obj",
+      "position": [5.69, 0, -7.07],
+      "rotation": [0, 210.12, 0],
+      "scale": [1.07, 1.07, 1.07],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_117",
+      "model": "models/arbol_pino.obj",
+      "position": [-8.93, 0, -7.72],
+      "rotation": [0, 245.96, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_118",
+      "model": "models/arbol_pino.obj",
+      "position": [-12.33, 0, -7.88],
+      "rotation": [0, 346.11, 0],
+      "scale": [1.12, 1.12, 1.12],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_119",
+      "model": "models/arbol_pino.obj",
+      "position": [5.12, 0, -8.09],
+      "rotation": [0, 205.82, 0],
+      "scale": [1.1, 1.1, 1.1],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_120",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-6.2, 0, -10.14],
+      "rotation": [0, 89.94, 0],
+      "scale": [1.31, 1.31, 1.31],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_121",
+      "model": "models/arbol_muerto.obj",
+      "position": [-10.35, 0, -10.11],
+      "rotation": [0, 261.55, 0],
+      "scale": [1.07, 1.07, 1.07],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_122",
+      "model": "models/arbol_muerto.obj",
+      "position": [0.62, 0, -9.12],
+      "rotation": [0, 45.57, 0],
+      "scale": [1.29, 1.29, 1.29],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_123",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-8.32, 0, -11.24],
+      "rotation": [0, 7.7, 0],
+      "scale": [1.37, 1.37, 1.37],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_124",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-12.2, 0, -10.95],
+      "rotation": [0, 90.68, 0],
+      "scale": [1.13, 1.13, 1.13],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_125",
+      "model": "models/arbol_muerto.obj",
+      "position": [1.65, 0, -11.26],
+      "rotation": [0, 168.11, 0],
+      "scale": [1.01, 1.01, 1.01],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_126",
+      "model": "models/arbol_muerto.obj",
+      "position": [2.29, 0, -11.54],
+      "rotation": [0, 63.39, 0],
+      "scale": [1.41, 1.41, 1.41],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_127",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-9.13, 0, -12.99],
+      "rotation": [0, 150.47, 0],
+      "scale": [1.06, 1.06, 1.06],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_128",
+      "model": "models/arbol_muerto.obj",
+      "position": [-6.7, 0, -12.73],
+      "rotation": [0, 240.75, 0],
+      "scale": [1.33, 1.33, 1.33],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_129",
+      "model": "models/arbol_muerto.obj",
+      "position": [2.86, 0, -12.73],
+      "rotation": [0, 295.34, 0],
+      "scale": [1.31, 1.31, 1.31],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_130",
+      "model": "models/arbol_muerto.obj",
+      "position": [-4.81, 0, -14.17],
+      "rotation": [0, 323.78, 0],
+      "scale": [1.07, 1.07, 1.07],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_131",
+      "model": "models/arbol_muerto.obj",
+      "position": [-9.47, 0, -13.9],
+      "rotation": [0, 253.48, 0],
+      "scale": [1.21, 1.21, 1.21],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_132",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [5.18, 0, -14.27],
+      "rotation": [0, 187.02, 0],
+      "scale": [1.43, 1.43, 1.43],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_133",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [2.93, 0, -13.45],
+      "rotation": [0, 90.61, 0],
+      "scale": [1.41, 1.41, 1.41],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_134",
+      "model": "models/arbol_muerto.obj",
+      "position": [-6.42, 0, -15.39],
+      "rotation": [0, 354.87, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_135",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-10.12, 0, -15.49],
+      "rotation": [0, 158.82, 0],
+      "scale": [1.04, 1.04, 1.04],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_136",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [4.18, 0, -15.55],
+      "rotation": [0, 16.95, 0],
+      "scale": [1.07, 1.07, 1.07],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_137",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [8.94, 0, -14.88],
+      "rotation": [0, 247.9, 0],
+      "scale": [1.36, 1.36, 1.36],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_138",
+      "model": "models/arbol_muerto.obj",
+      "position": [-7.4, 0, -16.24],
+      "rotation": [0, 175.74, 0],
+      "scale": [1.33, 1.33, 1.33],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_139",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.57, 0, -16.59],
+      "rotation": [0, 298.09, 0],
+      "scale": [1.42, 1.42, 1.42],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_140",
+      "model": "models/arbol_muerto.obj",
+      "position": [2.43, 0, -16.34],
+      "rotation": [0, 256.74, 0],
+      "scale": [1.35, 1.35, 1.35],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_141",
+      "model": "models/arbol_muerto.obj",
+      "position": [3.04, 0, -16.37],
+      "rotation": [0, 296.91, 0],
+      "scale": [1.19, 1.19, 1.19],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_142",
+      "model": "models/arbol_muerto.obj",
+      "position": [2.97, 0, -17.66],
+      "rotation": [0, 27.35, 0],
+      "scale": [0.97, 0.97, 0.97],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_143",
+      "model": "models/arbol_muerto.obj",
+      "position": [8.64, 0, -19.07],
+      "rotation": [0, 233.39, 0],
+      "scale": [1.35, 1.35, 1.35],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_144",
+      "model": "models/arbol_pino.obj",
+      "position": [7.49, 0, -20.31],
+      "rotation": [0, 299.32, 0],
+      "scale": [1.34, 1.34, 1.34],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_145",
+      "model": "models/arbol_pino.obj",
+      "position": [6.17, 0, -20.27],
+      "rotation": [0, 215.85, 0],
+      "scale": [1.19, 1.19, 1.19],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_146",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [4.83, 0, -22.55],
+      "rotation": [0, 285.92, 0],
+      "scale": [1.02, 1.02, 1.02],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_147",
+      "model": "models/arbol_pino.obj",
+      "position": [6.92, 0, -24.18],
+      "rotation": [0, 157.32, 0],
+      "scale": [1.12, 1.12, 1.12],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_148",
+      "model": "models/arbol_muerto.obj",
+      "position": [7.79, 0, -23.63],
+      "rotation": [0, 336.34, 0],
+      "scale": [1.36, 1.36, 1.36],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_149",
+      "model": "models/arbol_pino.obj",
+      "position": [10.15, 0, -24.67],
+      "rotation": [0, 248.3, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_150",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.55, 0, -26.9],
+      "rotation": [0, 199.52, 0],
+      "scale": [0.99, 0.99, 0.99],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_151",
+      "model": "models/arbol_pino.obj",
+      "position": [3.76, 0, -26.42],
+      "rotation": [0, 347.06, 0],
+      "scale": [1.08, 1.08, 1.08],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_152",
+      "model": "models/arbol_pino.obj",
+      "position": [3.44, 0, -26.78],
+      "rotation": [0, 178.31, 0],
+      "scale": [1.15, 1.15, 1.15],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_153",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.74, 0, -28.14],
+      "rotation": [0, 35.75, 0],
+      "scale": [0.97, 0.97, 0.97],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_154",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-4.54, 0, -28.2],
+      "rotation": [0, 236.11, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_155",
+      "model": "models/arbol_muerto.obj",
+      "position": [5.06, 0, -27.8],
+      "rotation": [0, 95.08, 0],
+      "scale": [1.31, 1.31, 1.31],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_156",
+      "model": "models/arbol_pino.obj",
+      "position": [10.41, 0, -27.52],
+      "rotation": [0, 348.22, 0],
+      "scale": [1.35, 1.35, 1.35],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_157",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-4.25, 0, -29.48],
+      "rotation": [0, 164.05, 0],
+      "scale": [1.42, 1.42, 1.42],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_158",
+      "model": "models/arbol_pino.obj",
+      "position": [-8.8, 0, -29.34],
+      "rotation": [0, 217.22, 0],
+      "scale": [1.03, 1.03, 1.03],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_159",
+      "model": "models/arbol_muerto.obj",
+      "position": [6.68, 0, -29.47],
+      "rotation": [0, 2.06, 0],
+      "scale": [1.09, 1.09, 1.09],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_160",
+      "model": "models/arbol_muerto.obj",
+      "position": [-4.07, 0, -30.01],
+      "rotation": [0, 312.31, 0],
+      "scale": [1.44, 1.44, 1.44],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_161",
+      "model": "models/arbol_muerto.obj",
+      "position": [-4.92, 0, -32.19],
+      "rotation": [0, 82.18, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_162",
+      "model": "models/arbol_muerto.obj",
+      "position": [7.75, 0, -32.42],
+      "rotation": [0, 10.13, 0],
+      "scale": [1.03, 1.03, 1.03],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_163",
+      "model": "models/arbol_pino.obj",
+      "position": [-7.87, 0, -32.96],
+      "rotation": [0, 252.08, 0],
+      "scale": [1.22, 1.22, 1.22],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_164",
+      "model": "models/arbol_pino.obj",
+      "position": [-6.36, 0, -33.53],
+      "rotation": [0, 189.71, 0],
+      "scale": [1.32, 1.32, 1.32],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_165",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [11.98, 0, -33.95],
+      "rotation": [0, 196.5, 0],
+      "scale": [1.38, 1.38, 1.38],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_166",
+      "model": "models/arbol_pino.obj",
+      "position": [11.59, 0, -33.35],
+      "rotation": [0, 343.08, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_167",
+      "model": "models/arbol_muerto.obj",
+      "position": [-3.58, 0, -34.46],
+      "rotation": [0, 93.03, 0],
+      "scale": [1.02, 1.02, 1.02],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_168",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [7.54, 0, -35.1],
+      "rotation": [0, 53.29, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_169",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [11.45, 0, -35.13],
+      "rotation": [0, 142.55, 0],
+      "scale": [1.34, 1.34, 1.34],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_170",
+      "model": "models/arbol_muerto.obj",
+      "position": [11.49, 0, -36.57],
+      "rotation": [0, 35.47, 0],
+      "scale": [1.18, 1.18, 1.18],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_171",
+      "model": "models/arbol_muerto.obj",
+      "position": [-4.6, 0, -37.74],
+      "rotation": [0, 184.23, 0],
+      "scale": [1.45, 1.45, 1.45],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_172",
+      "model": "models/arbol_muerto.obj",
+      "position": [-3.32, 0, -37.14],
+      "rotation": [0, 318.01, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_173",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [9.82, 0, -37.05],
+      "rotation": [0, 40.41, 0],
+      "scale": [1.21, 1.21, 1.21],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_174",
+      "model": "models/arbol_muerto.obj",
+      "position": [-8.3, 0, -38.63],
+      "rotation": [0, 297.72, 0],
+      "scale": [1.18, 1.18, 1.18],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_175",
+      "model": "models/arbol_muerto.obj",
+      "position": [10.49, 0, -38.94],
+      "rotation": [0, 235.25, 0],
+      "scale": [1.37, 1.37, 1.37],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_176",
+      "model": "models/arbol_muerto.obj",
+      "position": [8.9, 0, -39.13],
+      "rotation": [0, 132.1, 0],
+      "scale": [1.44, 1.44, 1.44],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_177",
+      "model": "models/arbol_pino.obj",
+      "position": [-1.71, 0, -40.44],
+      "rotation": [0, 208.03, 0],
+      "scale": [1.37, 1.37, 1.37],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_178",
+      "model": "models/arbol_muerto.obj",
+      "position": [7.49, 0, -40.66],
+      "rotation": [0, 295.91, 0],
+      "scale": [1.31, 1.31, 1.31],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_179",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.97, 0, -41.68],
+      "rotation": [0, 70.38, 0],
+      "scale": [1.37, 1.37, 1.37],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_180",
+      "model": "models/arbol_pino.obj",
+      "position": [-1.12, 0, -41.32],
+      "rotation": [0, 283.27, 0],
+      "scale": [1.01, 1.01, 1.01],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_181",
+      "model": "models/arbol_pino.obj",
+      "position": [9.83, 0, -42.29],
+      "rotation": [0, 164.9, 0],
+      "scale": [0.99, 0.99, 0.99],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_182",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.45, 0, -43.37],
+      "rotation": [0, 101.28, 0],
+      "scale": [1.16, 1.16, 1.16],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_183",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-4.28, 0, -42.69],
+      "rotation": [0, 107.74, 0],
+      "scale": [1.44, 1.44, 1.44],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_184",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-8.3, 0, -45.1],
+      "rotation": [0, 26.92, 0],
+      "scale": [1.45, 1.45, 1.45],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_185",
+      "model": "models/arbol_pino.obj",
+      "position": [-6.25, 0, -44.89],
+      "rotation": [0, 147.29, 0],
+      "scale": [1.24, 1.24, 1.24],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_186",
+      "model": "models/arbol_muerto.obj",
+      "position": [7.45, 0, -44.76],
+      "rotation": [0, 11.17, 0],
+      "scale": [1.09, 1.09, 1.09],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_187",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.74, 0, -45.92],
+      "rotation": [0, 98.62, 0],
+      "scale": [1.26, 1.26, 1.26],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_188",
+      "model": "models/arbol_muerto.obj",
+      "position": [6.27, 0, -45.61],
+      "rotation": [0, 81.79, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_189",
+      "model": "models/arbol_muerto.obj",
+      "position": [11.49, 0, -46.0],
+      "rotation": [0, 62.12, 0],
+      "scale": [0.99, 0.99, 0.99],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_190",
+      "model": "models/arbol_pino.obj",
+      "position": [-2.62, 0, -46.92],
+      "rotation": [0, 70.26, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_191",
+      "model": "models/arbol_muerto.obj",
+      "position": [10.84, 0, -47.71],
+      "rotation": [0, 241.14, 0],
+      "scale": [1.14, 1.14, 1.14],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_192",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-4.23, 0, -49.06],
+      "rotation": [0, 322.58, 0],
+      "scale": [0.99, 0.99, 0.99],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_193",
+      "model": "models/arbol_pino.obj",
+      "position": [-8.5, 0, -48.41],
+      "rotation": [0, 127.16, 0],
+      "scale": [1.12, 1.12, 1.12],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_194",
+      "model": "models/arbol_pino.obj",
+      "position": [11.11, 0, -48.9],
+      "rotation": [0, 258.52, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "arbol_195",
+      "model": "models/arbol_muerto.obj",
+      "position": [7.81, 0, -48.88],
+      "rotation": [0, 231.73, 0],
+      "scale": [0.98, 0.98, 0.98],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "cartel",
+      "model": "models/cartel.obj",
+      "position": [3.32, 0, 33],
+      "rotation": [0, -15, 0],
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "bosque_cartel" }] }
+    },
+    {
+      "name": "hombre_lejos",
+      "model": "models/hombre_alto.obj",
+      "position": [-0.56, 0, 6.0],
+      "collider": false,
+      "showIf": { "not": { "flag": "bn_lejos" } },
+      "idle": { "bob": 0.0, "sway": 0.6, "speed": 0.3 }
+    },
+    {
+      "name": "figura_ramas_1",
+      "model": "models/figura_ramas.obj",
+      "position": [-1.48, 2.49, 10.5],
+      "rotation": [0, 213.86, 0],
+      "collider": false,
+      "tint": [150, 140, 130, 255],
+      "idle": { "bob": 0.0, "sway": 4.34, "speed": 0.46 }
+    },
+    {
+      "name": "figura_ramas_2",
+      "model": "models/figura_ramas.obj",
+      "position": [2.01, 2.45, 8.9],
+      "rotation": [0, 51.19, 0],
+      "collider": false,
+      "tint": [150, 140, 130, 255],
+      "idle": { "bob": 0.0, "sway": 7.9, "speed": 0.56 }
+    },
+    {
+      "name": "figura_ramas_3",
+      "model": "models/figura_ramas.obj",
+      "position": [-2.28, 2.33, 7.3],
+      "rotation": [0, 87.57, 0],
+      "collider": false,
+      "tint": [150, 140, 130, 255],
+      "idle": { "bob": 0.0, "sway": 8.89, "speed": 0.31 }
+    },
+    {
+      "name": "figura_ramas_4",
+      "model": "models/figura_ramas.obj",
+      "position": [1.66, 2.34, 5.7],
+      "rotation": [0, 129.34, 0],
+      "collider": false,
+      "tint": [150, 140, 130, 255],
+      "idle": { "bob": 0.0, "sway": 8.67, "speed": 0.35 },
+      "interact": {
+        "prompt": "Mirar",
+        "range": 3.0,
+        "box": { "min": [-0.5, -1.0, -0.4], "max": [0.5, 0.0, 0.4] },
+        "do": [{ "dialogue": "figuras_ramas" }]
+      }
+    },
+    {
+      "name": "figura_ramas_5",
+      "model": "models/figura_ramas.obj",
+      "position": [-3.2, 2.26, 4.1],
+      "rotation": [0, 201.66, 0],
+      "collider": false,
+      "tint": [150, 140, 130, 255],
+      "idle": { "bob": 0.0, "sway": 6.93, "speed": 0.34 }
+    },
+    {
+      "name": "figura_ramas_6",
+      "model": "models/figura_ramas.obj",
+      "position": [0.66, 2.59, 2.5],
+      "rotation": [0, 1.58, 0],
+      "collider": false,
+      "tint": [150, 140, 130, 255],
+      "idle": { "bob": 0.0, "sway": 4.32, "speed": 0.37 }
+    },
+    {
+      "name": "figura_ramas_7",
+      "model": "models/figura_ramas.obj",
+      "position": [-3.83, 2.45, 0.9],
+      "rotation": [0, 340.1, 0],
+      "collider": false,
+      "tint": [150, 140, 130, 255],
+      "idle": { "bob": 0.0, "sway": 6.91, "speed": 0.51 }
+    },
+    {
+      "name": "figura_ramas_8",
+      "model": "models/figura_ramas.obj",
+      "position": [0.16, 2.65, -0.7],
+      "rotation": [0, 153.01, 0],
+      "collider": false,
+      "tint": [150, 140, 130, 255],
+      "idle": { "bob": 0.0, "sway": 8.12, "speed": 0.33 }
+    },
+    {
+      "name": "hombre_cerca",
+      "model": "models/hombre_alto.obj",
+      "position": [-1.94, 0, -12.0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "bn_cerca" }, { "not": { "flag": "bn_cerca_fin" } }]
+      },
+      "light": { "offset": [0, 2.0, 1.2], "color": [150, 160, 200], "radius": 4.5, "intensity": 1.4 }
+    },
+    {
+      "name": "cabana",
+      "model": "models/cabana.obj",
+      "position": [-6.68, 0, -22.0],
+      "rotation": [0, 90, 0],
+      "light": {
+        "offset": [1.0, 1.4, -1.25],
+        "color": [230, 150, 80],
+        "radius": 4,
+        "intensity": 0.9,
+        "flicker": 0.5,
+        "flickerRate": 3
+      },
+      "interact": {
+        "prompt": "Llamar a la puerta",
+        "range": 2.2,
+        "box": { "min": [-0.6, 0, 1.5], "max": [0.6, 2.1, 2.2] },
+        "do": [{ "dialogue": "cabana_puerta" }]
+      }
+    },
+    {
+      "name": "circulo_piedras",
+      "model": "models/circulo_piedras.obj",
+      "position": [1.98, 0, -34.0],
+      "rotation": [0, 10, 0],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "box": { "min": [-0.8, 0, -0.6], "max": [0.8, 0.6, 0.6] },
+        "do": [{ "dialogue": "altar_piedras" }]
+      }
+    },
+    {
+      "name": "velas_altar",
+      "model": "models/velas_grupo.obj",
+      "position": [1.73, 0.42, -33.9],
+      "rotation": [0, 255.8, 0],
+      "scale": [0.9, 0.9, 0.9],
+      "collider": false,
+      "emissive": true,
+      "light": {
+        "offset": [0, 0.4, 0],
+        "color": [255, 160, 80],
+        "radius": 6,
+        "intensity": 1.2,
+        "flicker": 0.3,
+        "flickerRate": 8
+      }
+    },
+    {
+      "name": "velas_altar_llama_0",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.054, 0.108],
+      "position": [1.74, 0.59, -34.01],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_altar_llama_1",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.054, 0.108],
+      "position": [1.75, 0.67, -33.89],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "velas_altar_llama_2",
+      "sprite": "textures/spr_llama.png",
+      "size": [0.054, 0.108],
+      "position": [1.67, 0.55, -33.8],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 9.0
+    },
+    {
+      "name": "arbol_caido",
+      "model": "models/arbol_caido.obj",
+      "position": [1.88, 0, -44],
+      "rotation": [0, 8, 0]
+    },
+    {
+      "name": "borde_1",
+      "model": "models/arbol_muerto.obj",
+      "position": [-22.97, 0, -55.96],
+      "rotation": [0, 51.47, 0],
+      "scale": [1.16, 1.16, 1.16],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_2",
+      "model": "models/arbol_muerto.obj",
+      "position": [-22.35, 0, -53.67],
+      "rotation": [0, 178.63, 0],
+      "scale": [1.16, 1.16, 1.16],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_3",
+      "model": "models/arbol_muerto.obj",
+      "position": [-22.74, 0, -44.52],
+      "rotation": [0, 64.12, 0],
+      "scale": [1.15, 1.15, 1.15],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_4",
+      "model": "models/arbol_muerto.obj",
+      "position": [-22.72, 0, -26.08],
+      "rotation": [0, 286.36, 0],
+      "scale": [1.34, 1.34, 1.34],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_5",
+      "model": "models/arbol_muerto.obj",
+      "position": [-22.8, 0, -8.03],
+      "rotation": [0, 236.91, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_6",
+      "model": "models/arbol_pino.obj",
+      "position": [-22.69, 0, -2.63],
+      "rotation": [0, 150.16, 0],
+      "scale": [1.38, 1.38, 1.38],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_7",
+      "model": "models/arbol_muerto.obj",
+      "position": [-22.79, 0, 3.25],
+      "rotation": [0, 80.17, 0],
+      "scale": [1.01, 1.01, 1.01],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_8",
+      "model": "models/arbol_pino.obj",
+      "position": [-22.73, 0, 12.9],
+      "rotation": [0, 295.75, 0],
+      "scale": [1.08, 1.08, 1.08],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_9",
+      "model": "models/arbol_pino.obj",
+      "position": [-22.21, 0, 20.71],
+      "rotation": [0, 60.12, 0],
+      "scale": [1.32, 1.32, 1.32],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_10",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-22.42, 0, 35.94],
+      "rotation": [0, 140.06, 0],
+      "scale": [1.08, 1.08, 1.08],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_11",
+      "model": "models/arbol_pino.obj",
+      "position": [-22.32, 0, 44.74],
+      "rotation": [0, 114.13, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_12",
+      "model": "models/arbol_muerto.obj",
+      "position": [-20.58, 0, -55.43],
+      "rotation": [0, 63.82, 0],
+      "scale": [0.96, 0.96, 0.96],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_13",
+      "model": "models/arbol_muerto.obj",
+      "position": [-21.14, 0, -53.1],
+      "rotation": [0, 96.76, 0],
+      "scale": [1.3, 1.3, 1.3],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_14",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-20.69, 0, -51.0],
+      "rotation": [0, 10.56, 0],
+      "scale": [1.02, 1.02, 1.02],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_15",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-20.62, 0, -48.84],
+      "rotation": [0, 335.18, 0],
+      "scale": [1.07, 1.07, 1.07],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_16",
+      "model": "models/arbol_muerto.obj",
+      "position": [-20.57, 0, -45.97],
+      "rotation": [0, 72.19, 0],
+      "scale": [1.23, 1.23, 1.23],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_17",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-21.57, 0, -44.05],
+      "rotation": [0, 104.28, 0],
+      "scale": [0.96, 0.96, 0.96],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_18",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-20.13, 0, -41.51],
+      "rotation": [0, 353.68, 0],
+      "scale": [1.21, 1.21, 1.21],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_19",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-20.93, 0, -39.19],
+      "rotation": [0, 257.95, 0],
+      "scale": [1.14, 1.14, 1.14],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_20",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-21.59, 0, -38.47],
+      "rotation": [0, 249.19, 0],
+      "scale": [1.24, 1.24, 1.24],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_21",
+      "model": "models/arbol_muerto.obj",
+      "position": [-19.99, 0, -35.77],
+      "rotation": [0, 358.78, 0],
+      "scale": [1.1, 1.1, 1.1],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_22",
+      "model": "models/arbol_muerto.obj",
+      "position": [-20.47, 0, -33.57],
+      "rotation": [0, 311.07, 0],
+      "scale": [0.96, 0.96, 0.96],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_23",
+      "model": "models/arbol_pino.obj",
+      "position": [-20.39, 0, -29.93],
+      "rotation": [0, 189.66, 0],
+      "scale": [1.33, 1.33, 1.33],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_24",
+      "model": "models/arbol_muerto.obj",
+      "position": [-20.56, 0, -28.9],
+      "rotation": [0, 155.63, 0],
+      "scale": [1.31, 1.31, 1.31],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_25",
+      "model": "models/arbol_pino.obj",
+      "position": [-20.95, 0, -26.24],
+      "rotation": [0, 197.19, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_26",
+      "model": "models/arbol_pino.obj",
+      "position": [-20.13, 0, -24.04],
+      "rotation": [0, 99.97, 0],
+      "scale": [1.14, 1.14, 1.14],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_27",
+      "model": "models/arbol_muerto.obj",
+      "position": [-20.74, 0, -21.75],
+      "rotation": [0, 105.93, 0],
+      "scale": [1.21, 1.21, 1.21],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_28",
+      "model": "models/arbol_pino.obj",
+      "position": [-20.0, 0, -17.57],
+      "rotation": [0, 133.72, 0],
+      "scale": [1.1, 1.1, 1.1],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_29",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-21.42, 0, -14.93],
+      "rotation": [0, 234.15, 0],
+      "scale": [1.16, 1.16, 1.16],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_30",
+      "model": "models/arbol_muerto.obj",
+      "position": [-21.18, 0, -12.11],
+      "rotation": [0, 27.29, 0],
+      "scale": [1.22, 1.22, 1.22],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_31",
+      "model": "models/arbol_muerto.obj",
+      "position": [-20.04, 0, -10.21],
+      "rotation": [0, 149.28, 0],
+      "scale": [1.06, 1.06, 1.06],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_32",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-20.26, 0, -7.81],
+      "rotation": [0, 282.79, 0],
+      "scale": [0.98, 0.98, 0.98],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_33",
+      "model": "models/arbol_muerto.obj",
+      "position": [-20.37, 0, -5.23],
+      "rotation": [0, 276.78, 0],
+      "scale": [1.02, 1.02, 1.02],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_34",
+      "model": "models/arbol_muerto.obj",
+      "position": [-20.06, 0, -2.54],
+      "rotation": [0, 46.98, 0],
+      "scale": [1.29, 1.29, 1.29],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_35",
+      "model": "models/arbol_muerto.obj",
+      "position": [-20.54, 0, -1.68],
+      "rotation": [0, 251.28, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_36",
+      "model": "models/arbol_pino.obj",
+      "position": [-20.35, 0, 2.29],
+      "rotation": [0, 87.78, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_37",
+      "model": "models/arbol_muerto.obj",
+      "position": [-21.01, 0, 4.3],
+      "rotation": [0, 66.75, 0],
+      "scale": [1.24, 1.24, 1.24],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_38",
+      "model": "models/arbol_pino.obj",
+      "position": [-20.25, 0, 5.91],
+      "rotation": [0, 246.41, 0],
+      "scale": [1.19, 1.19, 1.19],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_39",
+      "model": "models/arbol_muerto.obj",
+      "position": [-20.05, 0, 7.75],
+      "rotation": [0, 30.87, 0],
+      "scale": [0.96, 0.96, 0.96],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_40",
+      "model": "models/arbol_pino.obj",
+      "position": [-21.03, 0, 10.89],
+      "rotation": [0, 284.76, 0],
+      "scale": [0.97, 0.97, 0.97],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_41",
+      "model": "models/arbol_muerto.obj",
+      "position": [-21.17, 0, 14.98],
+      "rotation": [0, 264.72, 0],
+      "scale": [1.06, 1.06, 1.06],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_42",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-20.08, 0, 17.89],
+      "rotation": [0, 228.55, 0],
+      "scale": [1.3, 1.3, 1.3],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_43",
+      "model": "models/arbol_muerto.obj",
+      "position": [-20.88, 0, 19.07],
+      "rotation": [0, 153.13, 0],
+      "scale": [0.98, 0.98, 0.98],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_44",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-19.83, 0, 22.38],
+      "rotation": [0, 148.9, 0],
+      "scale": [1.35, 1.35, 1.35],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_45",
+      "model": "models/arbol_muerto.obj",
+      "position": [-21.22, 0, 24.43],
+      "rotation": [0, 286.34, 0],
+      "scale": [1.32, 1.32, 1.32],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_46",
+      "model": "models/arbol_pino.obj",
+      "position": [-21.08, 0, 27.63],
+      "rotation": [0, 325.26, 0],
+      "scale": [1.21, 1.21, 1.21],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_47",
+      "model": "models/arbol_pino.obj",
+      "position": [-20.05, 0, 28.94],
+      "rotation": [0, 149.53, 0],
+      "scale": [1.14, 1.14, 1.14],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_48",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-20.39, 0, 31.78],
+      "rotation": [0, 315.57, 0],
+      "scale": [0.95, 0.95, 0.95],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_49",
+      "model": "models/arbol_pino.obj",
+      "position": [-20.73, 0, 34.52],
+      "rotation": [0, 350.22, 0],
+      "scale": [1.37, 1.37, 1.37],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_50",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-20.48, 0, 35.24],
+      "rotation": [0, 173.86, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_51",
+      "model": "models/arbol_muerto.obj",
+      "position": [-20.75, 0, 37.49],
+      "rotation": [0, 297.75, 0],
+      "scale": [1.01, 1.01, 1.01],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_52",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-19.81, 0, 41.02],
+      "rotation": [0, 7.41, 0],
+      "scale": [1.35, 1.35, 1.35],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_53",
+      "model": "models/arbol_muerto.obj",
+      "position": [-21.01, 0, 42.27],
+      "rotation": [0, 71.48, 0],
+      "scale": [1.19, 1.19, 1.19],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_54",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-21.6, 0, 45.25],
+      "rotation": [0, 60.23, 0],
+      "scale": [1.35, 1.35, 1.35],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_55",
+      "model": "models/arbol_muerto.obj",
+      "position": [-20.14, 0, 46.72],
+      "rotation": [0, 112.37, 0],
+      "scale": [1.17, 1.17, 1.17],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_56",
+      "model": "models/arbol_pino.obj",
+      "position": [-20.44, 0, 49.76],
+      "rotation": [0, 92.98, 0],
+      "scale": [1.1, 1.1, 1.1],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_57",
+      "model": "models/arbol_muerto.obj",
+      "position": [-20.06, 0, 52.56],
+      "rotation": [0, 259.73, 0],
+      "scale": [1.06, 1.06, 1.06],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_58",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-17.76, 0, -55.2],
+      "rotation": [0, 338.89, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_59",
+      "model": "models/arbol_pino.obj",
+      "position": [-17.89, 0, -53.89],
+      "rotation": [0, 293.76, 0],
+      "scale": [1.2, 1.2, 1.2],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_60",
+      "model": "models/arbol_muerto.obj",
+      "position": [-17.67, 0, -51.65],
+      "rotation": [0, 151.7, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_61",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-18.94, 0, -49.32],
+      "rotation": [0, 314.1, 0],
+      "scale": [1.05, 1.05, 1.05],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_62",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-17.77, 0, -47.51],
+      "rotation": [0, 117.84, 0],
+      "scale": [1.09, 1.09, 1.09],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_63",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-18.23, 0, -44.79],
+      "rotation": [0, 276.79, 0],
+      "scale": [1.1, 1.1, 1.1],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_64",
+      "model": "models/arbol_pino.obj",
+      "position": [-17.95, 0, -41.96],
+      "rotation": [0, 325.7, 0],
+      "scale": [1.07, 1.07, 1.07],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_65",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-17.95, 0, -40.69],
+      "rotation": [0, 43.91, 0],
+      "scale": [1.38, 1.38, 1.38],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_66",
+      "model": "models/arbol_muerto.obj",
+      "position": [-18.66, 0, -37.85],
+      "rotation": [0, 10.25, 0],
+      "scale": [1.02, 1.02, 1.02],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_67",
+      "model": "models/arbol_pino.obj",
+      "position": [-18.15, 0, -35.19],
+      "rotation": [0, 307.19, 0],
+      "scale": [1.17, 1.17, 1.17],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_68",
+      "model": "models/arbol_muerto.obj",
+      "position": [-17.58, 0, -30.98],
+      "rotation": [0, 277.78, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_69",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-18.01, 0, -27.57],
+      "rotation": [0, 183.21, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_70",
+      "model": "models/arbol_muerto.obj",
+      "position": [-18.27, 0, -26.28],
+      "rotation": [0, 232.17, 0],
+      "scale": [1.14, 1.14, 1.14],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_71",
+      "model": "models/arbol_muerto.obj",
+      "position": [-19.18, 0, -24.62],
+      "rotation": [0, 195.64, 0],
+      "scale": [1.08, 1.08, 1.08],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_72",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-19.18, 0, -21.6],
+      "rotation": [0, 297.03, 0],
+      "scale": [1.26, 1.26, 1.26],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_73",
+      "model": "models/arbol_muerto.obj",
+      "position": [-18.61, 0, -18.51],
+      "rotation": [0, 231.43, 0],
+      "scale": [1.08, 1.08, 1.08],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_74",
+      "model": "models/arbol_muerto.obj",
+      "position": [-18.61, 0, -16.66],
+      "rotation": [0, 74.69, 0],
+      "scale": [1.02, 1.02, 1.02],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_75",
+      "model": "models/arbol_muerto.obj",
+      "position": [-18.47, 0, -15.28],
+      "rotation": [0, 31.03, 0],
+      "scale": [1.04, 1.04, 1.04],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_76",
+      "model": "models/arbol_pino.obj",
+      "position": [-18.96, 0, -12.82],
+      "rotation": [0, 134.86, 0],
+      "scale": [1.33, 1.33, 1.33],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_77",
+      "model": "models/arbol_muerto.obj",
+      "position": [-17.66, 0, -10.34],
+      "rotation": [0, 164.93, 0],
+      "scale": [1.33, 1.33, 1.33],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_78",
+      "model": "models/arbol_muerto.obj",
+      "position": [-17.84, 0, -6.8],
+      "rotation": [0, 106.39, 0],
+      "scale": [0.98, 0.98, 0.98],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_79",
+      "model": "models/arbol_muerto.obj",
+      "position": [-17.67, 0, -6.17],
+      "rotation": [0, 213.07, 0],
+      "scale": [1.2, 1.2, 1.2],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_80",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-18.29, 0, -2.69],
+      "rotation": [0, 105.53, 0],
+      "scale": [0.96, 0.96, 0.96],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_81",
+      "model": "models/arbol_muerto.obj",
+      "position": [-18.26, 0, -0.67],
+      "rotation": [0, 205.46, 0],
+      "scale": [1.16, 1.16, 1.16],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_82",
+      "model": "models/arbol_muerto.obj",
+      "position": [-18.91, 0, 1.32],
+      "rotation": [0, 22.19, 0],
+      "scale": [1.04, 1.04, 1.04],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_83",
+      "model": "models/arbol_muerto.obj",
+      "position": [-17.96, 0, 4.42],
+      "rotation": [0, 203.07, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_84",
+      "model": "models/arbol_muerto.obj",
+      "position": [-18.43, 0, 6.71],
+      "rotation": [0, 3.07, 0],
+      "scale": [1.29, 1.29, 1.29],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_85",
+      "model": "models/arbol_muerto.obj",
+      "position": [-18.53, 0, 8.68],
+      "rotation": [0, 75.89, 0],
+      "scale": [1.37, 1.37, 1.37],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_86",
+      "model": "models/arbol_muerto.obj",
+      "position": [-17.61, 0, 11.2],
+      "rotation": [0, 293.45, 0],
+      "scale": [1.37, 1.37, 1.37],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_87",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-19.03, 0, 12.86],
+      "rotation": [0, 23.24, 0],
+      "scale": [1.1, 1.1, 1.1],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_88",
+      "model": "models/arbol_muerto.obj",
+      "position": [-19.06, 0, 17.83],
+      "rotation": [0, 319.37, 0],
+      "scale": [1.03, 1.03, 1.03],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_89",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-18.27, 0, 20.76],
+      "rotation": [0, 7.91, 0],
+      "scale": [0.98, 0.98, 0.98],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_90",
+      "model": "models/arbol_muerto.obj",
+      "position": [-18.14, 0, 24.81],
+      "rotation": [0, 266.85, 0],
+      "scale": [1.33, 1.33, 1.33],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_91",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-19.19, 0, 27.4],
+      "rotation": [0, 44.92, 0],
+      "scale": [1.09, 1.09, 1.09],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_92",
+      "model": "models/arbol_pino.obj",
+      "position": [-19.0, 0, 29.31],
+      "rotation": [0, 341.85, 0],
+      "scale": [1.13, 1.13, 1.13],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_93",
+      "model": "models/arbol_pino.obj",
+      "position": [-19.19, 0, 30.92],
+      "rotation": [0, 234.31, 0],
+      "scale": [1.2, 1.2, 1.2],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_94",
+      "model": "models/arbol_muerto.obj",
+      "position": [-18.26, 0, 34.3],
+      "rotation": [0, 352.82, 0],
+      "scale": [1.26, 1.26, 1.26],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_95",
+      "model": "models/arbol_muerto.obj",
+      "position": [-18.86, 0, 38.96],
+      "rotation": [0, 242.27, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_96",
+      "model": "models/arbol_muerto.obj",
+      "position": [-18.72, 0, 40.86],
+      "rotation": [0, 73.04, 0],
+      "scale": [1.27, 1.27, 1.27],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_97",
+      "model": "models/arbol_muerto.obj",
+      "position": [-19.15, 0, 42.49],
+      "rotation": [0, 66.8, 0],
+      "scale": [1.2, 1.2, 1.2],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_98",
+      "model": "models/arbol_pino.obj",
+      "position": [-17.76, 0, 45.4],
+      "rotation": [0, 197.37, 0],
+      "scale": [1.17, 1.17, 1.17],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_99",
+      "model": "models/arbol_muerto.obj",
+      "position": [-18.84, 0, 47.21],
+      "rotation": [0, 319.79, 0],
+      "scale": [1.33, 1.33, 1.33],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_100",
+      "model": "models/arbol_pino.obj",
+      "position": [-18.18, 0, 52.37],
+      "rotation": [0, 254.6, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_101",
+      "model": "models/arbol_muerto.obj",
+      "position": [-15.71, 0, -53.26],
+      "rotation": [0, 166.46, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_102",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-16.68, 0, -50.8],
+      "rotation": [0, 116.12, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_103",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-16.7, 0, -48.35],
+      "rotation": [0, 17.28, 0],
+      "scale": [1.19, 1.19, 1.19],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_104",
+      "model": "models/arbol_muerto.obj",
+      "position": [-16.65, 0, -46.72],
+      "rotation": [0, 288.52, 0],
+      "scale": [1.37, 1.37, 1.37],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_105",
+      "model": "models/arbol_pino.obj",
+      "position": [-16.61, 0, -44.88],
+      "rotation": [0, 90.03, 0],
+      "scale": [1.12, 1.12, 1.12],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_106",
+      "model": "models/arbol_muerto.obj",
+      "position": [-15.75, 0, -39.21],
+      "rotation": [0, 288.92, 0],
+      "scale": [1.16, 1.16, 1.16],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_107",
+      "model": "models/arbol_pino.obj",
+      "position": [-15.21, 0, -36.98],
+      "rotation": [0, 102.4, 0],
+      "scale": [1.14, 1.14, 1.14],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_108",
+      "model": "models/arbol_muerto.obj",
+      "position": [-15.61, 0, -36.09],
+      "rotation": [0, 259.7, 0],
+      "scale": [1.2, 1.2, 1.2],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_109",
+      "model": "models/arbol_pino.obj",
+      "position": [-15.51, 0, -30.48],
+      "rotation": [0, 304.03, 0],
+      "scale": [1.21, 1.21, 1.21],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_110",
+      "model": "models/arbol_muerto.obj",
+      "position": [-16.31, 0, -27.71],
+      "rotation": [0, 171.15, 0],
+      "scale": [1.38, 1.38, 1.38],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_111",
+      "model": "models/arbol_muerto.obj",
+      "position": [-15.75, 0, -25.76],
+      "rotation": [0, 108.07, 0],
+      "scale": [1.35, 1.35, 1.35],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_112",
+      "model": "models/arbol_muerto.obj",
+      "position": [-16.36, 0, -21.47],
+      "rotation": [0, 180.27, 0],
+      "scale": [1.31, 1.31, 1.31],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_113",
+      "model": "models/arbol_muerto.obj",
+      "position": [-15.28, 0, -19.08],
+      "rotation": [0, 51.22, 0],
+      "scale": [1.31, 1.31, 1.31],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_114",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-15.8, 0, -14.29],
+      "rotation": [0, 94.28, 0],
+      "scale": [0.98, 0.98, 0.98],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_115",
+      "model": "models/arbol_muerto.obj",
+      "position": [-16.75, 0, -12.24],
+      "rotation": [0, 200.85, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_116",
+      "model": "models/arbol_muerto.obj",
+      "position": [-16.8, 0, -10.59],
+      "rotation": [0, 124.38, 0],
+      "scale": [1.08, 1.08, 1.08],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_117",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-15.34, 0, -4.91],
+      "rotation": [0, 306.37, 0],
+      "scale": [0.97, 0.97, 0.97],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_118",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-16.76, 0, -3.18],
+      "rotation": [0, 247.1, 0],
+      "scale": [1.1, 1.1, 1.1],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_119",
+      "model": "models/arbol_pino.obj",
+      "position": [-16.47, 0, 1.53],
+      "rotation": [0, 181.47, 0],
+      "scale": [1.32, 1.32, 1.32],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_120",
+      "model": "models/arbol_muerto.obj",
+      "position": [-16.07, 0, 4.1],
+      "rotation": [0, 132.86, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_121",
+      "model": "models/arbol_pino.obj",
+      "position": [-15.46, 0, 6.63],
+      "rotation": [0, 34.0, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_122",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-15.28, 0, 8.06],
+      "rotation": [0, 172.59, 0],
+      "scale": [1.21, 1.21, 1.21],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_123",
+      "model": "models/arbol_muerto.obj",
+      "position": [-16.6, 0, 9.93],
+      "rotation": [0, 153.98, 0],
+      "scale": [1.26, 1.26, 1.26],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_124",
+      "model": "models/arbol_muerto.obj",
+      "position": [-16.23, 0, 12.84],
+      "rotation": [0, 221.33, 0],
+      "scale": [1.19, 1.19, 1.19],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_125",
+      "model": "models/arbol_pino.obj",
+      "position": [-15.23, 0, 17.33],
+      "rotation": [0, 331.01, 0],
+      "scale": [1.29, 1.29, 1.29],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_126",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-15.97, 0, 19.98],
+      "rotation": [0, 126.88, 0],
+      "scale": [1.22, 1.22, 1.22],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_127",
+      "model": "models/arbol_muerto.obj",
+      "position": [-16.15, 0, 23.04],
+      "rotation": [0, 196.59, 0],
+      "scale": [1.27, 1.27, 1.27],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_128",
+      "model": "models/arbol_muerto.obj",
+      "position": [-16.37, 0, 24.23],
+      "rotation": [0, 314.84, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_129",
+      "model": "models/arbol_muerto.obj",
+      "position": [-16.66, 0, 26.97],
+      "rotation": [0, 236.46, 0],
+      "scale": [1.02, 1.02, 1.02],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_130",
+      "model": "models/arbol_pino.obj",
+      "position": [-16.34, 0, 31.72],
+      "rotation": [0, 37.12, 0],
+      "scale": [1.03, 1.03, 1.03],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_131",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-16.34, 0, 38.97],
+      "rotation": [0, 56.01, 0],
+      "scale": [1.09, 1.09, 1.09],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_132",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-16.22, 0, 39.71],
+      "rotation": [0, 100.6, 0],
+      "scale": [1.06, 1.06, 1.06],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_133",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-16.04, 0, 42.42],
+      "rotation": [0, 271.65, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_134",
+      "model": "models/arbol_pino.obj",
+      "position": [-15.77, 0, 45.49],
+      "rotation": [0, 255.86, 0],
+      "scale": [1.26, 1.26, 1.26],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_135",
+      "model": "models/arbol_pino.obj",
+      "position": [-16.64, 0, 49.03],
+      "rotation": [0, 273.11, 0],
+      "scale": [1.14, 1.14, 1.14],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_136",
+      "model": "models/arbol_pino.obj",
+      "position": [-13.47, 0, -53.54],
+      "rotation": [0, 177.92, 0],
+      "scale": [1.26, 1.26, 1.26],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_137",
+      "model": "models/arbol_muerto.obj",
+      "position": [-13.65, 0, -51.41],
+      "rotation": [0, 300.82, 0],
+      "scale": [1.35, 1.35, 1.35],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_138",
+      "model": "models/arbol_muerto.obj",
+      "position": [-13.4, 0, -48.98],
+      "rotation": [0, 306.01, 0],
+      "scale": [0.98, 0.98, 0.98],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_139",
+      "model": "models/arbol_muerto.obj",
+      "position": [-13.77, 0, -47.06],
+      "rotation": [0, 179.58, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_140",
+      "model": "models/arbol_muerto.obj",
+      "position": [-14.66, 0, -42.46],
+      "rotation": [0, 152.68, 0],
+      "scale": [1.19, 1.19, 1.19],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_141",
+      "model": "models/arbol_muerto.obj",
+      "position": [-13.83, 0, -39.26],
+      "rotation": [0, 224.09, 0],
+      "scale": [0.99, 0.99, 0.99],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_142",
+      "model": "models/arbol_muerto.obj",
+      "position": [-13.59, 0, -38.38],
+      "rotation": [0, 166.07, 0],
+      "scale": [1.18, 1.18, 1.18],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_143",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-14.25, 0, -35.97],
+      "rotation": [0, 136.38, 0],
+      "scale": [1.3, 1.3, 1.3],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_144",
+      "model": "models/arbol_muerto.obj",
+      "position": [-14.35, 0, -33.65],
+      "rotation": [0, 10.33, 0],
+      "scale": [1.03, 1.03, 1.03],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_145",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-13.03, 0, -31.09],
+      "rotation": [0, 126.37, 0],
+      "scale": [0.97, 0.97, 0.97],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_146",
+      "model": "models/arbol_muerto.obj",
+      "position": [-13.39, 0, -29.08],
+      "rotation": [0, 11.0, 0],
+      "scale": [1.01, 1.01, 1.01],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_147",
+      "model": "models/arbol_muerto.obj",
+      "position": [-14.21, 0, -18.98],
+      "rotation": [0, 174.15, 0],
+      "scale": [1.08, 1.08, 1.08],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_148",
+      "model": "models/arbol_pino.obj",
+      "position": [-14.45, 0, -16.24],
+      "rotation": [0, 154.18, 0],
+      "scale": [0.96, 0.96, 0.96],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_149",
+      "model": "models/arbol_muerto.obj",
+      "position": [-13.54, 0, -9.6],
+      "rotation": [0, 180.54, 0],
+      "scale": [1.08, 1.08, 1.08],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_150",
+      "model": "models/arbol_muerto.obj",
+      "position": [-14.13, 0, -6.84],
+      "rotation": [0, 81.78, 0],
+      "scale": [1.05, 1.05, 1.05],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_151",
+      "model": "models/arbol_muerto.obj",
+      "position": [-14.54, 0, -5.12],
+      "rotation": [0, 87.13, 0],
+      "scale": [1.21, 1.21, 1.21],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_152",
+      "model": "models/arbol_muerto.obj",
+      "position": [-13.32, 0, -0.76],
+      "rotation": [0, 215.88, 0],
+      "scale": [1.33, 1.33, 1.33],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_153",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-13.06, 0, 1.97],
+      "rotation": [0, 290.9, 0],
+      "scale": [1.29, 1.29, 1.29],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_154",
+      "model": "models/arbol_pino.obj",
+      "position": [-13.11, 0, 4.51],
+      "rotation": [0, 159.15, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_155",
+      "model": "models/arbol_muerto.obj",
+      "position": [-14.47, 0, 5.74],
+      "rotation": [0, 166.25, 0],
+      "scale": [1.06, 1.06, 1.06],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_156",
+      "model": "models/arbol_muerto.obj",
+      "position": [-13.12, 0, 8.67],
+      "rotation": [0, 264.23, 0],
+      "scale": [1.26, 1.26, 1.26],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_157",
+      "model": "models/arbol_pino.obj",
+      "position": [-13.12, 0, 10.08],
+      "rotation": [0, 204.89, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_158",
+      "model": "models/arbol_pino.obj",
+      "position": [-13.94, 0, 15.17],
+      "rotation": [0, 203.65, 0],
+      "scale": [1.06, 1.06, 1.06],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_159",
+      "model": "models/arbol_muerto.obj",
+      "position": [-13.1, 0, 18.36],
+      "rotation": [0, 233.96, 0],
+      "scale": [1.19, 1.19, 1.19],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_160",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-13.62, 0, 19.43],
+      "rotation": [0, 280.5, 0],
+      "scale": [1.36, 1.36, 1.36],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_161",
+      "model": "models/arbol_pino.obj",
+      "position": [-13.11, 0, 22.12],
+      "rotation": [0, 86.05, 0],
+      "scale": [1.22, 1.22, 1.22],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_162",
+      "model": "models/arbol_muerto.obj",
+      "position": [-14.65, 0, 24.19],
+      "rotation": [0, 346.03, 0],
+      "scale": [1.14, 1.14, 1.14],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_163",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-14.25, 0, 26.38],
+      "rotation": [0, 147.44, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_164",
+      "model": "models/arbol_pino.obj",
+      "position": [-14.37, 0, 29.04],
+      "rotation": [0, 347.19, 0],
+      "scale": [1.06, 1.06, 1.06],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_165",
+      "model": "models/arbol_muerto.obj",
+      "position": [-14.37, 0, 36.59],
+      "rotation": [0, 16.7, 0],
+      "scale": [1.15, 1.15, 1.15],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_166",
+      "model": "models/arbol_pino.obj",
+      "position": [-14.43, 0, 39.91],
+      "rotation": [0, 229.57, 0],
+      "scale": [1.23, 1.23, 1.23],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_167",
+      "model": "models/arbol_pino.obj",
+      "position": [-14.35, 0, 44.41],
+      "rotation": [0, 305.12, 0],
+      "scale": [1.31, 1.31, 1.31],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_168",
+      "model": "models/arbol_muerto.obj",
+      "position": [-12.91, 0, 46.73],
+      "rotation": [0, 323.85, 0],
+      "scale": [1.34, 1.34, 1.34],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_169",
+      "model": "models/arbol_pino.obj",
+      "position": [-13.48, 0, 50.16],
+      "rotation": [0, 233.65, 0],
+      "scale": [1.15, 1.15, 1.15],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_170",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-14.34, 0, 52.21],
+      "rotation": [0, 191.06, 0],
+      "scale": [0.96, 0.96, 0.96],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_171",
+      "model": "models/arbol_muerto.obj",
+      "position": [-12.32, 0, -54.34],
+      "rotation": [0, 353.16, 0],
+      "scale": [1.27, 1.27, 1.27],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_172",
+      "model": "models/arbol_muerto.obj",
+      "position": [-11.79, 0, -51.33],
+      "rotation": [0, 44.61, 0],
+      "scale": [0.97, 0.97, 0.97],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_173",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-12.37, 0, -47.25],
+      "rotation": [0, 161.64, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_174",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-11.95, 0, 43.22],
+      "rotation": [0, 332.68, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_175",
+      "model": "models/arbol_pino.obj",
+      "position": [-10.89, 0, 45.84],
+      "rotation": [0, 153.89, 0],
+      "scale": [1.36, 1.36, 1.36],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_176",
+      "model": "models/arbol_muerto.obj",
+      "position": [-10.75, 0, 46.74],
+      "rotation": [0, 356.47, 0],
+      "scale": [1.21, 1.21, 1.21],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_177",
+      "model": "models/arbol_pino.obj",
+      "position": [-10.61, 0, 50.46],
+      "rotation": [0, 145.05, 0],
+      "scale": [1.38, 1.38, 1.38],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_178",
+      "model": "models/arbol_pino.obj",
+      "position": [-11.94, 0, 52.11],
+      "rotation": [0, 107.17, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_179",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-8.58, 0, -54.25],
+      "rotation": [0, 311.47, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_180",
+      "model": "models/arbol_pino.obj",
+      "position": [-8.54, 0, -50.74],
+      "rotation": [0, 246.12, 0],
+      "scale": [1.22, 1.22, 1.22],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_181",
+      "model": "models/arbol_pino.obj",
+      "position": [-8.57, 0, -48.75],
+      "rotation": [0, 299.23, 0],
+      "scale": [1.14, 1.14, 1.14],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_182",
+      "model": "models/arbol_muerto.obj",
+      "position": [-9.93, 0, -46.07],
+      "rotation": [0, 146.7, 0],
+      "scale": [1.31, 1.31, 1.31],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_183",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-9.48, 0, 52.06],
+      "rotation": [0, 104.16, 0],
+      "scale": [1.09, 1.09, 1.09],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_184",
+      "model": "models/arbol_pino.obj",
+      "position": [-6.19, 0, -54.55],
+      "rotation": [0, 217.09, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_185",
+      "model": "models/arbol_pino.obj",
+      "position": [-7.01, 0, -51.69],
+      "rotation": [0, 179.1, 0],
+      "scale": [1.38, 1.38, 1.38],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_186",
+      "model": "models/arbol_muerto.obj",
+      "position": [-6.74, 0, -48.86],
+      "rotation": [0, 79.61, 0],
+      "scale": [1.03, 1.03, 1.03],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_187",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-6.5, 0, -46.43],
+      "rotation": [0, 221.5, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_188",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.18, 0, -55.37],
+      "rotation": [0, 358.44, 0],
+      "scale": [0.99, 0.99, 0.99],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_189",
+      "model": "models/arbol_pino.obj",
+      "position": [-4.04, 0, -54.17],
+      "rotation": [0, 190.22, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_190",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.0, 0, -50.0],
+      "rotation": [0, 314.65, 0],
+      "scale": [1.26, 1.26, 1.26],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_191",
+      "model": "models/arbol_muerto.obj",
+      "position": [-4.29, 0, -47.05],
+      "rotation": [0, 87.91, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_192",
+      "model": "models/arbol_muerto.obj",
+      "position": [-1.95, 0, -55.45],
+      "rotation": [0, 266.58, 0],
+      "scale": [1.1, 1.1, 1.1],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_193",
+      "model": "models/arbol_pino.obj",
+      "position": [-2.24, 0, -52.81],
+      "rotation": [0, 240.18, 0],
+      "scale": [1.35, 1.35, 1.35],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_194",
+      "model": "models/arbol_muerto.obj",
+      "position": [-2.64, 0, -52.13],
+      "rotation": [0, 53.5, 0],
+      "scale": [1.37, 1.37, 1.37],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_195",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-2.66, 0, -48.59],
+      "rotation": [0, 240.79, 0],
+      "scale": [1.17, 1.17, 1.17],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_196",
+      "model": "models/arbol_muerto.obj",
+      "position": [-1.72, 0, -46.4],
+      "rotation": [0, 93.25, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_197",
+      "model": "models/arbol_muerto.obj",
+      "position": [-0.3, 0, -55.38],
+      "rotation": [0, 97.48, 0],
+      "scale": [1.37, 1.37, 1.37],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_198",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [0.46, 0, -53.32],
+      "rotation": [0, 276.2, 0],
+      "scale": [1.26, 1.26, 1.26],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_199",
+      "model": "models/arbol_muerto.obj",
+      "position": [-0.06, 0, -51.4],
+      "rotation": [0, 122.29, 0],
+      "scale": [1.22, 1.22, 1.22],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_200",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-0.67, 0, -48.78],
+      "rotation": [0, 175.31, 0],
+      "scale": [0.99, 0.99, 0.99],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_201",
+      "model": "models/arbol_muerto.obj",
+      "position": [-0.5, 0, -46.33],
+      "rotation": [0, 155.48, 0],
+      "scale": [1.15, 1.15, 1.15],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_202",
+      "model": "models/arbol_muerto.obj",
+      "position": [2.52, 0, -53.77],
+      "rotation": [0, 87.96, 0],
+      "scale": [0.99, 0.99, 0.99],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_203",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [2.9, 0, -50.62],
+      "rotation": [0, 189.36, 0],
+      "scale": [0.95, 0.95, 0.95],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_204",
+      "model": "models/arbol_pino.obj",
+      "position": [2.14, 0, -49.34],
+      "rotation": [0, 164.28, 0],
+      "scale": [1.34, 1.34, 1.34],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_205",
+      "model": "models/arbol_muerto.obj",
+      "position": [3.0, 0, -46.32],
+      "rotation": [0, 238.9, 0],
+      "scale": [1.12, 1.12, 1.12],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_206",
+      "model": "models/arbol_muerto.obj",
+      "position": [5.48, 0, -54.04],
+      "rotation": [0, 143.77, 0],
+      "scale": [1.02, 1.02, 1.02],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_207",
+      "model": "models/arbol_pino.obj",
+      "position": [5.42, 0, -51.51],
+      "rotation": [0, 123.85, 0],
+      "scale": [1.02, 1.02, 1.02],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_208",
+      "model": "models/arbol_muerto.obj",
+      "position": [4.39, 0, -48.3],
+      "rotation": [0, 41.16, 0],
+      "scale": [1.06, 1.06, 1.06],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_209",
+      "model": "models/arbol_muerto.obj",
+      "position": [4.55, 0, -47.42],
+      "rotation": [0, 348.55, 0],
+      "scale": [1.34, 1.34, 1.34],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_210",
+      "model": "models/arbol_muerto.obj",
+      "position": [6.11, 0, -55.58],
+      "rotation": [0, 342.25, 0],
+      "scale": [1.36, 1.36, 1.36],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_211",
+      "model": "models/arbol_pino.obj",
+      "position": [6.79, 0, -53.22],
+      "rotation": [0, 224.37, 0],
+      "scale": [1.37, 1.37, 1.37],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_212",
+      "model": "models/arbol_muerto.obj",
+      "position": [6.32, 0, -51.54],
+      "rotation": [0, 164.66, 0],
+      "scale": [1.18, 1.18, 1.18],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_213",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [6.54, 0, -48.2],
+      "rotation": [0, 243.53, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_214",
+      "model": "models/arbol_pino.obj",
+      "position": [7.35, 0, -46.5],
+      "rotation": [0, 45.24, 0],
+      "scale": [0.95, 0.95, 0.95],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_215",
+      "model": "models/arbol_muerto.obj",
+      "position": [7.76, 0, 49.98],
+      "rotation": [0, 164.98, 0],
+      "scale": [1.27, 1.27, 1.27],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_216",
+      "model": "models/arbol_muerto.obj",
+      "position": [9.46, 0, -53.95],
+      "rotation": [0, 158.29, 0],
+      "scale": [1.27, 1.27, 1.27],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_217",
+      "model": "models/arbol_muerto.obj",
+      "position": [8.64, 0, -51.73],
+      "rotation": [0, 64.43, 0],
+      "scale": [1.33, 1.33, 1.33],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_218",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [9.03, 0, -48.92],
+      "rotation": [0, 108.31, 0],
+      "scale": [1.05, 1.05, 1.05],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_219",
+      "model": "models/arbol_pino.obj",
+      "position": [8.94, 0, 46.71],
+      "rotation": [0, 131.94, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_220",
+      "model": "models/arbol_muerto.obj",
+      "position": [9.88, 0, 50.39],
+      "rotation": [0, 7.2, 0],
+      "scale": [1.07, 1.07, 1.07],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_221",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [8.73, 0, 52.6],
+      "rotation": [0, 13.79, 0],
+      "scale": [0.99, 0.99, 0.99],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_222",
+      "model": "models/arbol_muerto.obj",
+      "position": [11.05, 0, -51.14],
+      "rotation": [0, 234.26, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_223",
+      "model": "models/arbol_muerto.obj",
+      "position": [10.7, 0, -48.7],
+      "rotation": [0, 11.98, 0],
+      "scale": [1.07, 1.07, 1.07],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_224",
+      "model": "models/arbol_muerto.obj",
+      "position": [11.86, 0, 43.62],
+      "rotation": [0, 143.04, 0],
+      "scale": [1.16, 1.16, 1.16],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_225",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [11.46, 0, 44.98],
+      "rotation": [0, 231.42, 0],
+      "scale": [1.02, 1.02, 1.02],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_226",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [12.35, 0, 47.29],
+      "rotation": [0, 47.5, 0],
+      "scale": [1.38, 1.38, 1.38],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_227",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [12.22, 0, 49.72],
+      "rotation": [0, 131.65, 0],
+      "scale": [1.05, 1.05, 1.05],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_228",
+      "model": "models/arbol_pino.obj",
+      "position": [10.83, 0, 52.87],
+      "rotation": [0, 163.69, 0],
+      "scale": [1.04, 1.04, 1.04],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_229",
+      "model": "models/arbol_pino.obj",
+      "position": [13.64, 0, -55.67],
+      "rotation": [0, 244.96, 0],
+      "scale": [1.07, 1.07, 1.07],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_230",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [13.09, 0, -53.71],
+      "rotation": [0, 246.65, 0],
+      "scale": [1.23, 1.23, 1.23],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_231",
+      "model": "models/arbol_muerto.obj",
+      "position": [14.07, 0, -51.35],
+      "rotation": [0, 43.65, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_232",
+      "model": "models/arbol_pino.obj",
+      "position": [13.09, 0, -49.28],
+      "rotation": [0, 134.07, 0],
+      "scale": [1.13, 1.13, 1.13],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_233",
+      "model": "models/arbol_muerto.obj",
+      "position": [14.31, 0, -46.88],
+      "rotation": [0, 309.97, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_234",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [13.41, 0, -44.26],
+      "rotation": [0, 84.31, 0],
+      "scale": [1.08, 1.08, 1.08],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_235",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [13.59, 0, -41.5],
+      "rotation": [0, 300.81, 0],
+      "scale": [1.36, 1.36, 1.36],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_236",
+      "model": "models/arbol_pino.obj",
+      "position": [13.74, 0, -29.2],
+      "rotation": [0, 276.76, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_237",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [13.89, 0, -26.65],
+      "rotation": [0, 241.13, 0],
+      "scale": [0.99, 0.99, 0.99],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_238",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [14.39, 0, -23.62],
+      "rotation": [0, 42.67, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_239",
+      "model": "models/arbol_muerto.obj",
+      "position": [14.61, 0, -21.06],
+      "rotation": [0, 319.45, 0],
+      "scale": [1.12, 1.12, 1.12],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_240",
+      "model": "models/arbol_muerto.obj",
+      "position": [14.37, 0, -19.35],
+      "rotation": [0, 176.71, 0],
+      "scale": [0.97, 0.97, 0.97],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_241",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [13.52, 0, -17.56],
+      "rotation": [0, 165.09, 0],
+      "scale": [1.2, 1.2, 1.2],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_242",
+      "model": "models/arbol_muerto.obj",
+      "position": [14.66, 0, -14.77],
+      "rotation": [0, 182.5, 0],
+      "scale": [1.06, 1.06, 1.06],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_243",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [13.08, 0, -11.7],
+      "rotation": [0, 59.64, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_244",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [13.96, 0, -10.12],
+      "rotation": [0, 228.7, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_245",
+      "model": "models/arbol_muerto.obj",
+      "position": [14.0, 0, -4.75],
+      "rotation": [0, 172.84, 0],
+      "scale": [1.31, 1.31, 1.31],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_246",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [14.0, 0, -3.24],
+      "rotation": [0, 357.49, 0],
+      "scale": [1.38, 1.38, 1.38],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_247",
+      "model": "models/arbol_pino.obj",
+      "position": [13.24, 0, 1.04],
+      "rotation": [0, 147.92, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_248",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [14.28, 0, 7.7],
+      "rotation": [0, 335.3, 0],
+      "scale": [1.09, 1.09, 1.09],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_249",
+      "model": "models/arbol_pino.obj",
+      "position": [14.61, 0, 10.68],
+      "rotation": [0, 286.65, 0],
+      "scale": [1.1, 1.1, 1.1],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_250",
+      "model": "models/arbol_muerto.obj",
+      "position": [13.04, 0, 12.82],
+      "rotation": [0, 56.6, 0],
+      "scale": [1.07, 1.07, 1.07],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_251",
+      "model": "models/arbol_muerto.obj",
+      "position": [13.57, 0, 15.75],
+      "rotation": [0, 151.07, 0],
+      "scale": [1.05, 1.05, 1.05],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_252",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [14.18, 0, 19.49],
+      "rotation": [0, 360.0, 0],
+      "scale": [1.04, 1.04, 1.04],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_253",
+      "model": "models/arbol_muerto.obj",
+      "position": [13.55, 0, 21.73],
+      "rotation": [0, 316.35, 0],
+      "scale": [1.13, 1.13, 1.13],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_254",
+      "model": "models/arbol_muerto.obj",
+      "position": [14.0, 0, 23.95],
+      "rotation": [0, 78.13, 0],
+      "scale": [1.15, 1.15, 1.15],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_255",
+      "model": "models/arbol_muerto.obj",
+      "position": [14.33, 0, 25.98],
+      "rotation": [0, 228.53, 0],
+      "scale": [1.31, 1.31, 1.31],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_256",
+      "model": "models/arbol_pino.obj",
+      "position": [13.66, 0, 28.65],
+      "rotation": [0, 294.3, 0],
+      "scale": [1.31, 1.31, 1.31],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_257",
+      "model": "models/arbol_muerto.obj",
+      "position": [14.47, 0, 31.87],
+      "rotation": [0, 324.25, 0],
+      "scale": [1.13, 1.13, 1.13],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_258",
+      "model": "models/arbol_muerto.obj",
+      "position": [13.17, 0, 33.81],
+      "rotation": [0, 337.02, 0],
+      "scale": [1.4, 1.4, 1.4],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_259",
+      "model": "models/arbol_pino.obj",
+      "position": [14.34, 0, 36.77],
+      "rotation": [0, 153.65, 0],
+      "scale": [1.08, 1.08, 1.08],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_260",
+      "model": "models/arbol_muerto.obj",
+      "position": [14.08, 0, 38.3],
+      "rotation": [0, 162.95, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_261",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [13.52, 0, 41.26],
+      "rotation": [0, 266.44, 0],
+      "scale": [0.96, 0.96, 0.96],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_262",
+      "model": "models/arbol_pino.obj",
+      "position": [12.96, 0, 43.34],
+      "rotation": [0, 55.76, 0],
+      "scale": [1.05, 1.05, 1.05],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_263",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [13.77, 0, 48.22],
+      "rotation": [0, 109.46, 0],
+      "scale": [1.19, 1.19, 1.19],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_264",
+      "model": "models/arbol_pino.obj",
+      "position": [14.42, 0, 50.2],
+      "rotation": [0, 252.78, 0],
+      "scale": [1.12, 1.12, 1.12],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_265",
+      "model": "models/arbol_muerto.obj",
+      "position": [13.55, 0, 51.66],
+      "rotation": [0, 209.92, 0],
+      "scale": [1.32, 1.32, 1.32],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_266",
+      "model": "models/arbol_pino.obj",
+      "position": [16.36, 0, -55.43],
+      "rotation": [0, 241.2, 0],
+      "scale": [1.23, 1.23, 1.23],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_267",
+      "model": "models/arbol_muerto.obj",
+      "position": [16.79, 0, -53.38],
+      "rotation": [0, 44.22, 0],
+      "scale": [1.18, 1.18, 1.18],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_268",
+      "model": "models/arbol_pino.obj",
+      "position": [15.32, 0, -50.57],
+      "rotation": [0, 217.7, 0],
+      "scale": [1.07, 1.07, 1.07],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_269",
+      "model": "models/arbol_muerto.obj",
+      "position": [15.51, 0, -49.72],
+      "rotation": [0, 145.36, 0],
+      "scale": [1.15, 1.15, 1.15],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_270",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [15.28, 0, -47.04],
+      "rotation": [0, 79.73, 0],
+      "scale": [1.1, 1.1, 1.1],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_271",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [16.03, 0, -42.57],
+      "rotation": [0, 52.95, 0],
+      "scale": [1.22, 1.22, 1.22],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_272",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [15.46, 0, -39.55],
+      "rotation": [0, 310.25, 0],
+      "scale": [1.13, 1.13, 1.13],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_273",
+      "model": "models/arbol_muerto.obj",
+      "position": [15.42, 0, -36.91],
+      "rotation": [0, 348.95, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_274",
+      "model": "models/arbol_muerto.obj",
+      "position": [15.63, 0, -33.65],
+      "rotation": [0, 345.57, 0],
+      "scale": [1.01, 1.01, 1.01],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_275",
+      "model": "models/arbol_pino.obj",
+      "position": [16.27, 0, -31.5],
+      "rotation": [0, 5.23, 0],
+      "scale": [1.19, 1.19, 1.19],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_276",
+      "model": "models/arbol_muerto.obj",
+      "position": [16.78, 0, -28.56],
+      "rotation": [0, 49.42, 0],
+      "scale": [1.1, 1.1, 1.1],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_277",
+      "model": "models/arbol_muerto.obj",
+      "position": [15.23, 0, -26.65],
+      "rotation": [0, 242.96, 0],
+      "scale": [1.23, 1.23, 1.23],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_278",
+      "model": "models/arbol_muerto.obj",
+      "position": [15.49, 0, -19.79],
+      "rotation": [0, 321.58, 0],
+      "scale": [1.03, 1.03, 1.03],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_279",
+      "model": "models/arbol_muerto.obj",
+      "position": [15.85, 0, -16.07],
+      "rotation": [0, 224.54, 0],
+      "scale": [1.22, 1.22, 1.22],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_280",
+      "model": "models/arbol_muerto.obj",
+      "position": [15.47, 0, -10.73],
+      "rotation": [0, 317.68, 0],
+      "scale": [1.08, 1.08, 1.08],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_281",
+      "model": "models/arbol_muerto.obj",
+      "position": [16.66, 0, -7.98],
+      "rotation": [0, 40.21, 0],
+      "scale": [1.13, 1.13, 1.13],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_282",
+      "model": "models/arbol_muerto.obj",
+      "position": [15.52, 0, -5.61],
+      "rotation": [0, 80.27, 0],
+      "scale": [1.2, 1.2, 1.2],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_283",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [16.05, 0, -2.36],
+      "rotation": [0, 132.71, 0],
+      "scale": [1.09, 1.09, 1.09],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_284",
+      "model": "models/arbol_muerto.obj",
+      "position": [16.4, 0, 0.74],
+      "rotation": [0, 241.34, 0],
+      "scale": [1.06, 1.06, 1.06],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_285",
+      "model": "models/arbol_muerto.obj",
+      "position": [16.14, 0, 3.29],
+      "rotation": [0, 275.59, 0],
+      "scale": [1.16, 1.16, 1.16],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_286",
+      "model": "models/arbol_muerto.obj",
+      "position": [16.81, 0, 6.28],
+      "rotation": [0, 221.46, 0],
+      "scale": [1.07, 1.07, 1.07],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_287",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [16.38, 0, 8.39],
+      "rotation": [0, 100.27, 0],
+      "scale": [1.09, 1.09, 1.09],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_288",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [16.32, 0, 13.76],
+      "rotation": [0, 232.04, 0],
+      "scale": [0.95, 0.95, 0.95],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_289",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [16.5, 0, 14.84],
+      "rotation": [0, 105.53, 0],
+      "scale": [1.05, 1.05, 1.05],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_290",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [15.33, 0, 17.29],
+      "rotation": [0, 136.91, 0],
+      "scale": [1.09, 1.09, 1.09],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_291",
+      "model": "models/arbol_muerto.obj",
+      "position": [15.53, 0, 19.24],
+      "rotation": [0, 36.82, 0],
+      "scale": [1.08, 1.08, 1.08],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_292",
+      "model": "models/arbol_pino.obj",
+      "position": [15.32, 0, 24.45],
+      "rotation": [0, 120.53, 0],
+      "scale": [1.12, 1.12, 1.12],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_293",
+      "model": "models/arbol_muerto.obj",
+      "position": [16.95, 0, 27.51],
+      "rotation": [0, 226.01, 0],
+      "scale": [1.12, 1.12, 1.12],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_294",
+      "model": "models/arbol_muerto.obj",
+      "position": [16.69, 0, 31.15],
+      "rotation": [0, 242.49, 0],
+      "scale": [1.24, 1.24, 1.24],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_295",
+      "model": "models/arbol_pino.obj",
+      "position": [16.46, 0, 33.39],
+      "rotation": [0, 293.59, 0],
+      "scale": [1.26, 1.26, 1.26],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_296",
+      "model": "models/arbol_muerto.obj",
+      "position": [15.71, 0, 36.64],
+      "rotation": [0, 327.04, 0],
+      "scale": [1.23, 1.23, 1.23],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_297",
+      "model": "models/arbol_muerto.obj",
+      "position": [16.51, 0, 39.18],
+      "rotation": [0, 339.77, 0],
+      "scale": [1.23, 1.23, 1.23],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_298",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [16.0, 0, 40.02],
+      "rotation": [0, 210.61, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_299",
+      "model": "models/arbol_pino.obj",
+      "position": [15.82, 0, 42.06],
+      "rotation": [0, 202.31, 0],
+      "scale": [1.09, 1.09, 1.09],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_300",
+      "model": "models/arbol_pino.obj",
+      "position": [15.44, 0, 44.42],
+      "rotation": [0, 149.6, 0],
+      "scale": [1.29, 1.29, 1.29],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "borde_301",
+      "model": "models/arbol_pino.obj",
+      "position": [16.53, 0, 47.54],
+      "rotation": [0, 214.38, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_302",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [16.87, 0, 49.84],
+      "rotation": [0, 135.94, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_303",
+      "model": "models/arbol_muerto.obj",
+      "position": [15.98, 0, 52.06],
+      "rotation": [0, 293.61, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_304",
+      "model": "models/arbol_pino.obj",
+      "position": [18.66, 0, -53.78],
+      "rotation": [0, 309.83, 0],
+      "scale": [1.17, 1.17, 1.17],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_305",
+      "model": "models/arbol_muerto.obj",
+      "position": [18.54, 0, -50.88],
+      "rotation": [0, 186.66, 0],
+      "scale": [1.08, 1.08, 1.08],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_306",
+      "model": "models/arbol_pino.obj",
+      "position": [19.19, 0, -49.65],
+      "rotation": [0, 145.21, 0],
+      "scale": [1.04, 1.04, 1.04],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_307",
+      "model": "models/arbol_muerto.obj",
+      "position": [17.83, 0, -47.52],
+      "rotation": [0, 2.65, 0],
+      "scale": [1.07, 1.07, 1.07],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_308",
+      "model": "models/arbol_muerto.obj",
+      "position": [19.19, 0, -40.42],
+      "rotation": [0, 88.97, 0],
+      "scale": [1.12, 1.12, 1.12],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_309",
+      "model": "models/arbol_muerto.obj",
+      "position": [18.09, 0, -35.11],
+      "rotation": [0, 16.8, 0],
+      "scale": [1.27, 1.27, 1.27],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_310",
+      "model": "models/arbol_muerto.obj",
+      "position": [18.19, 0, -32.33],
+      "rotation": [0, 107.6, 0],
+      "scale": [1.17, 1.17, 1.17],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_311",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [19.07, 0, -28.07],
+      "rotation": [0, 106.09, 0],
+      "scale": [1.32, 1.32, 1.32],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_312",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [18.58, 0, -26.94],
+      "rotation": [0, 112.23, 0],
+      "scale": [1.18, 1.18, 1.18],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_313",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [18.26, 0, -24.21],
+      "rotation": [0, 175.69, 0],
+      "scale": [0.97, 0.97, 0.97],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_314",
+      "model": "models/arbol_muerto.obj",
+      "position": [18.4, 0, -22.01],
+      "rotation": [0, 5.81, 0],
+      "scale": [1.15, 1.15, 1.15],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_315",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [18.12, 0, -19.39],
+      "rotation": [0, 162.57, 0],
+      "scale": [1.35, 1.35, 1.35],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_316",
+      "model": "models/arbol_pino.obj",
+      "position": [18.25, 0, -12.26],
+      "rotation": [0, 280.9, 0],
+      "scale": [1.38, 1.38, 1.38],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_317",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [18.75, 0, -7.35],
+      "rotation": [0, 251.65, 0],
+      "scale": [1.34, 1.34, 1.34],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_318",
+      "model": "models/arbol_pino.obj",
+      "position": [18.09, 0, -6.22],
+      "rotation": [0, 173.95, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_319",
+      "model": "models/arbol_muerto.obj",
+      "position": [19.17, 0, -3.01],
+      "rotation": [0, 286.13, 0],
+      "scale": [1.02, 1.02, 1.02],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_320",
+      "model": "models/arbol_pino.obj",
+      "position": [18.91, 0, -0.06],
+      "rotation": [0, 183.73, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_321",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [18.49, 0, 1.7],
+      "rotation": [0, 343.77, 0],
+      "scale": [1.24, 1.24, 1.24],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_322",
+      "model": "models/arbol_muerto.obj",
+      "position": [18.2, 0, 3.23],
+      "rotation": [0, 67.09, 0],
+      "scale": [0.99, 0.99, 0.99],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_323",
+      "model": "models/arbol_muerto.obj",
+      "position": [18.65, 0, 7.57],
+      "rotation": [0, 280.37, 0],
+      "scale": [1.12, 1.12, 1.12],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_324",
+      "model": "models/arbol_muerto.obj",
+      "position": [18.29, 0, 10.44],
+      "rotation": [0, 4.43, 0],
+      "scale": [1.29, 1.29, 1.29],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_325",
+      "model": "models/arbol_muerto.obj",
+      "position": [18.58, 0, 13.32],
+      "rotation": [0, 61.31, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_326",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [19.2, 0, 15.28],
+      "rotation": [0, 308.18, 0],
+      "scale": [1.02, 1.02, 1.02],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_327",
+      "model": "models/arbol_muerto.obj",
+      "position": [18.8, 0, 16.78],
+      "rotation": [0, 216.6, 0],
+      "scale": [1.3, 1.3, 1.3],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_328",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [17.56, 0, 20.56],
+      "rotation": [0, 207.73, 0],
+      "scale": [1.34, 1.34, 1.34],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_329",
+      "model": "models/arbol_muerto.obj",
+      "position": [18.31, 0, 21.89],
+      "rotation": [0, 5.29, 0],
+      "scale": [1.27, 1.27, 1.27],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_330",
+      "model": "models/arbol_muerto.obj",
+      "position": [18.31, 0, 24.96],
+      "rotation": [0, 255.95, 0],
+      "scale": [1.39, 1.39, 1.39],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_331",
+      "model": "models/arbol_muerto.obj",
+      "position": [18.62, 0, 26.66],
+      "rotation": [0, 44.35, 0],
+      "scale": [1.15, 1.15, 1.15],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_332",
+      "model": "models/arbol_muerto.obj",
+      "position": [18.87, 0, 29.28],
+      "rotation": [0, 10.55, 0],
+      "scale": [1.18, 1.18, 1.18],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_333",
+      "model": "models/arbol_pino.obj",
+      "position": [18.93, 0, 31.66],
+      "rotation": [0, 337.55, 0],
+      "scale": [0.97, 0.97, 0.97],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_334",
+      "model": "models/arbol_muerto.obj",
+      "position": [18.23, 0, 34.49],
+      "rotation": [0, 235.8, 0],
+      "scale": [1.33, 1.33, 1.33],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_335",
+      "model": "models/arbol_muerto.obj",
+      "position": [19.06, 0, 36.66],
+      "rotation": [0, 239.65, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_336",
+      "model": "models/arbol_pino.obj",
+      "position": [18.03, 0, 38.29],
+      "rotation": [0, 126.04, 0],
+      "scale": [1.17, 1.17, 1.17],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_337",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [18.91, 0, 40.54],
+      "rotation": [0, 277.3, 0],
+      "scale": [1.03, 1.03, 1.03],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_338",
+      "model": "models/arbol_pino.obj",
+      "position": [17.96, 0, 42.49],
+      "rotation": [0, 358.23, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_339",
+      "model": "models/arbol_muerto.obj",
+      "position": [18.46, 0, 48.13],
+      "rotation": [0, 99.34, 0],
+      "scale": [1.01, 1.01, 1.01],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_340",
+      "model": "models/arbol_muerto.obj",
+      "position": [18.07, 0, 50.55],
+      "rotation": [0, 227.25, 0],
+      "scale": [1.38, 1.38, 1.38],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_341",
+      "model": "models/arbol_muerto.obj",
+      "position": [20.68, 0, -54.06],
+      "rotation": [0, 6.56, 0],
+      "scale": [1.29, 1.29, 1.29],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_342",
+      "model": "models/arbol_muerto.obj",
+      "position": [21.33, 0, -51.94],
+      "rotation": [0, 244.13, 0],
+      "scale": [0.99, 0.99, 0.99],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_343",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [21.51, 0, -49.32],
+      "rotation": [0, 8.34, 0],
+      "scale": [1.03, 1.03, 1.03],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_344",
+      "model": "models/arbol_muerto.obj",
+      "position": [21.39, 0, -46.39],
+      "rotation": [0, 97.99, 0],
+      "scale": [1.11, 1.11, 1.11],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_345",
+      "model": "models/arbol_pino.obj",
+      "position": [20.11, 0, -45.07],
+      "rotation": [0, 331.25, 0],
+      "scale": [1.08, 1.08, 1.08],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_346",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [20.83, 0, -42.3],
+      "rotation": [0, 209.9, 0],
+      "scale": [1.34, 1.34, 1.34],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_347",
+      "model": "models/arbol_muerto.obj",
+      "position": [20.09, 0, -40.7],
+      "rotation": [0, 194.56, 0],
+      "scale": [1.26, 1.26, 1.26],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_348",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [21.11, 0, -32.28],
+      "rotation": [0, 203.66, 0],
+      "scale": [1.15, 1.15, 1.15],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_349",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [21.43, 0, -28.28],
+      "rotation": [0, 311.91, 0],
+      "scale": [0.99, 0.99, 0.99],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_350",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [21.47, 0, -25.78],
+      "rotation": [0, 31.67, 0],
+      "scale": [1.06, 1.06, 1.06],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_351",
+      "model": "models/arbol_muerto.obj",
+      "position": [21.41, 0, -23.81],
+      "rotation": [0, 76.12, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_352",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [20.83, 0, -20.67],
+      "rotation": [0, 123.7, 0],
+      "scale": [1.12, 1.12, 1.12],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_353",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [20.82, 0, -16.15],
+      "rotation": [0, 116.62, 0],
+      "scale": [1.09, 1.09, 1.09],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_354",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [21.58, 0, -11.41],
+      "rotation": [0, 165.23, 0],
+      "scale": [1.15, 1.15, 1.15],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_355",
+      "model": "models/arbol_muerto.obj",
+      "position": [21.5, 0, -9.91],
+      "rotation": [0, 74.92, 0],
+      "scale": [1.03, 1.03, 1.03],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_356",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [21.05, 0, -6.02],
+      "rotation": [0, 353.32, 0],
+      "scale": [0.99, 0.99, 0.99],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_357",
+      "model": "models/arbol_muerto.obj",
+      "position": [20.23, 0, -3.73],
+      "rotation": [0, 173.57, 0],
+      "scale": [1.25, 1.25, 1.25],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_358",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [19.96, 0, -1.51],
+      "rotation": [0, 207.28, 0],
+      "scale": [1.21, 1.21, 1.21],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_359",
+      "model": "models/arbol_muerto.obj",
+      "position": [20.55, 0, 2.18],
+      "rotation": [0, 125.11, 0],
+      "scale": [0.97, 0.97, 0.97],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_360",
+      "model": "models/arbol_pino.obj",
+      "position": [19.95, 0, 4.68],
+      "rotation": [0, 35.39, 0],
+      "scale": [1.28, 1.28, 1.28],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_361",
+      "model": "models/arbol_muerto.obj",
+      "position": [20.52, 0, 12.85],
+      "rotation": [0, 306.77, 0],
+      "scale": [0.96, 0.96, 0.96],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_362",
+      "model": "models/arbol_muerto.obj",
+      "position": [20.57, 0, 17.32],
+      "rotation": [0, 168.36, 0],
+      "scale": [0.98, 0.98, 0.98],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_363",
+      "model": "models/arbol_muerto.obj",
+      "position": [19.92, 0, 21.37],
+      "rotation": [0, 93.35, 0],
+      "scale": [1.18, 1.18, 1.18],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_364",
+      "model": "models/arbol_muerto.obj",
+      "position": [20.7, 0, 24.25],
+      "rotation": [0, 127.09, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_365",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [21.18, 0, 26.55],
+      "rotation": [0, 254.2, 0],
+      "scale": [1.19, 1.19, 1.19],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_366",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [20.24, 0, 28.26],
+      "rotation": [0, 90.2, 0],
+      "scale": [1.01, 1.01, 1.01],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_367",
+      "model": "models/arbol_muerto.obj",
+      "position": [20.12, 0, 30.95],
+      "rotation": [0, 113.6, 0],
+      "scale": [1.04, 1.04, 1.04],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_368",
+      "model": "models/arbol_muerto.obj",
+      "position": [21.13, 0, 34.38],
+      "rotation": [0, 185.82, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_369",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [21.2, 0, 35.26],
+      "rotation": [0, 300.74, 0],
+      "scale": [1.32, 1.32, 1.32],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_370",
+      "model": "models/arbol_muerto.obj",
+      "position": [20.45, 0, 37.83],
+      "rotation": [0, 258.68, 0],
+      "scale": [0.98, 0.98, 0.98],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_371",
+      "model": "models/arbol_pino.obj",
+      "position": [20.04, 0, 40.82],
+      "rotation": [0, 63.59, 0],
+      "scale": [1.33, 1.33, 1.33],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_372",
+      "model": "models/arbol_muerto.obj",
+      "position": [20.05, 0, 43.04],
+      "rotation": [0, 291.64, 0],
+      "scale": [1.12, 1.12, 1.12],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_373",
+      "model": "models/arbol_muerto.obj",
+      "position": [20.25, 0, 45.79],
+      "rotation": [0, 48.05, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_374",
+      "model": "models/arbol_muerto.obj",
+      "position": [21.15, 0, 48.3],
+      "rotation": [0, 175.87, 0],
+      "scale": [1.17, 1.17, 1.17],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_375",
+      "model": "models/arbol_muerto.obj",
+      "position": [20.85, 0, 49.58],
+      "rotation": [0, 28.41, 0],
+      "scale": [1.37, 1.37, 1.37],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    },
+    {
+      "name": "borde_376",
+      "model": "models/arbol_pino.obj",
+      "position": [21.27, 0, 51.61],
+      "rotation": [0, 40.88, 0],
+      "scale": [1.27, 1.27, 1.27],
+      "tint": [118, 116, 128, 255],
+      "collider": false
+    }
+  ],
+  "triggers": [
+    {
+      "name": "ver_hombre",
+      "position": [1.9, 0, 19],
+      "size": [12, 3, 1.0],
+      "once": true,
+      "do": [
+        { "play_sound": "audio/susurros.wav", "at": [-0.56, 1.6, 6.0], "radius": 30, "volume": 0.9 },
+        { "scare": "hombre_lejos", "speed": 2.5, "fov": 26 },
+        { "message": "...", "seconds": 3.0 }
+      ]
+    },
+    {
+      "name": "pierde_hombre",
+      "position": [1.23, 0, 14.5],
+      "size": [14, 3, 1.0],
+      "once": true,
+      "do": [{ "set_flag": "bn_lejos" }]
+    },
+    {
+      "name": "pasos",
+      "position": [-1.8, 0, -1],
+      "size": [14, 3, 1.0],
+      "once": true,
+      "do": [
+        { "set_flag": "bn_pasos" },
+        { "play_sound": "audio/pasos_detras.wav", "at": [-1.17, 0.5, 3], "radius": 20, "volume": 1.0 },
+        { "look_at": [-0.56, 1.5, 6], "speed": 1.8 },
+        { "message": "...", "seconds": 3.5 }
+      ]
+    },
+    {
+      "name": "susto_bosque",
+      "position": [-2.18, 0, -8.5],
+      "size": [14, 3, 1.0],
+      "once": true,
+      "if": { "flag": "bn_pasos" },
+      "do": [
+        { "set_flag": "bn_cerca" },
+        { "play_sound": "audio/susto.wav", "volume": 1.0 },
+        { "scare": "hombre_cerca", "speed": 26, "fov": 26 },
+        { "dialogue": "hombre_alto" }
+      ]
+    },
+    {
+      "name": "fin_sendero",
+      "position": [2.13, 0, -41],
+      "size": [14, 3, 1.0],
+      "once": true,
+      "do": [{ "message": "Un arbol caido corta el sendero.\nAlgo lo ha arrastrado hasta aqui.", "seconds": 4 }]
+    },
+    {
+      "name": "volver_lago",
+      "position": [-0.96, 0, 44.5],
+      "size": [14, 3, 1.0],
+      "do": [
+        { "play_sound": "audio/hojas.wav", "volume": 0.7 },
+        { "goto_scene": "scenes/lago.json", "position": [17.0, 0, -1.0], "yaw": 90 }
+      ]
+    }
+  ],
+  "emitters": [
+    { "file": "audio/buho.wav", "position": [-8, 6, 20], "volume": 0.35, "radius": 22 },
+    {
+      "file": "audio/latido.wav",
+      "position": [1.98, 1.0, -34.0],
+      "volume": 0.9,
+      "radius": 12,
+      "minDistance": 2
+    },
+    { "file": "audio/viento.wav", "position": [6, 5, -20], "volume": 0.4, "radius": 30 }
+  ],
+  "panorama": { "model": "models/panorama_bosque.obj", "tint": [40, 40, 50], "haze": 0.62 }
+}

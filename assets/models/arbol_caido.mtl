@@ -1,0 +1,9 @@
+# RetroEngine: arbol_caido
+
+newmtl mat_corteza
+d 1.000000
+map_Kd ../textures/mat_corteza.png
+
+newmtl mat_tierra_suelo
+d 1.000000
+map_Kd ../textures/mat_tierra_suelo.png

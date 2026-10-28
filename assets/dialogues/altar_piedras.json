@@ -1,0 +1,12 @@
+{
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Sobre la losa hay un corazon.\nTodavia esta tibio.",
+        "Alguien encendio las velas hace nada.\nNo puede estar lejos."
+      ]
+    },
+    { "lines": ["La sangre aun no se ha secado."] }
+  ]
+}

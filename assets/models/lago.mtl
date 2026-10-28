@@ -1,0 +1,13 @@
+# RetroEngine: lago
+
+newmtl mat_agua_ocaso
+d 1.000000
+map_Kd ../textures/mat_agua_ocaso.png
+
+newmtl mat_roca
+d 1.000000
+map_Kd ../textures/mat_roca.png
+
+newmtl mat_tierra_suelo
+d 1.000000
+map_Kd ../textures/mat_tierra_suelo.png

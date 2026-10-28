@@ -54,7 +54,8 @@ public:
   // Congelado (durante un dialogo): no lee el teclado ni el raton, pero la fisica sigue.
   void SetFrozen(bool frozen) noexcept { frozen_ = frozen; }
   // Gira la vista poco a poco hasta mirar al punto 'target' (los ojos, desde Eye()).
-  void TurnTowards(Vector3 target, float dt) noexcept;
+  // 'rate': fraccion de lo que falta que se recorre por segundo (6 = suave, 20+ = de golpe).
+  void TurnTowards(Vector3 target, float dt, float rate = 6.0f) noexcept;
 
 private:
   void Look();

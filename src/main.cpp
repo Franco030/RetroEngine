@@ -169,10 +169,18 @@ private:
   unsigned letters_ = 0;
 };
 
-// Punto al que mirar durante un dialogo: el de la caja de interaccion de la entidad (la cara si
-// es alta como una persona; si no, su centro).
-static Vector3 DialogueFocus(const retro::Entity& e) {
-  const retro::WorldBox b = retro::MakeWorldBox(e.interact->box, e.transform);
+// Punto al que mirar durante un dialogo: el de la caja de interaccion de la entidad (o, si no
+// tiene, la del modelo): la cara si es alta como una persona; si no, su centro.
+static Vector3 DialogueFocus(retro::Entity& e) {
+  retro::BoxCollider box;
+  if (e.interact) {
+    box = e.interact->box;
+  } else {
+    const BoundingBox local = e.LocalBounds();
+    box.min = local.min;
+    box.max = local.max;
+  }
+  const retro::WorldBox b = retro::MakeWorldBox(box, e.transform);
   const float alto = b.top - b.bottom;
   const float y = alto > 1.4f ? b.top - 0.4f : (b.top + b.bottom) * 0.5f;
   return {b.center.x, y, b.center.z};
@@ -214,6 +222,9 @@ int main(int argc, char** argv) {
     std::uint64_t seenGeneration = scenes.Generation();
     bool firstPerson = true;
     std::optional<Vector3> dialogueFocus; // a quien se mira mientras dura un dialogo
+    float focusRate = 6.0f;               // lo rapido que se gira hacia el ("speed")
+    float focusFov = 0.0f;                // vista estrecha mientras se mira (solo scare: "fov")
+    float zoom = 0.0f;                    // grados que se ha estrechado la vista ahora
     LetterSounds letterSounds;
     float dialogueAge = 0.0f; // tiempo en la pagina actual
     unsigned pageId = 0;
@@ -344,6 +355,7 @@ int main(int argc, char** argv) {
 
           if (scenes.Generation() != seenGeneration) {
             seenGeneration = scenes.Generation();
+            zoom = 0.0f; // la escena nueva ya puso su campo de vision
             spawnPlayer();
 
             if (pendingLoad) {
@@ -372,8 +384,11 @@ int main(int argc, char** argv) {
           // lee, el jugador se queda quieto (mirando a quien habla si se sabe quien es); un
           // anuncio suelto (trigger, sistema) no lo retiene.
           dialogues.Update(state);
-          if (dialogueFocus && !state.HasMessage())
+          if (dialogueFocus && !state.HasMessage()) {
             dialogueFocus.reset();
+            focusRate = 6.0f;
+            focusFov = 0.0f;
+          }
           const bool reading = dialogueFocus.has_value() || dialogues.Active();
           if (state.MessageId() != pageId) { // cada pagina nueva da su respiro
             pageId = state.MessageId();
@@ -386,7 +401,7 @@ int main(int argc, char** argv) {
             if (!scenes.Transitioning())
               player.Update(dt, colliders);
             if (dialogueFocus)
-              player.TurnTowards(*dialogueFocus, dt);
+              player.TurnTowards(*dialogueFocus, dt, focusRate);
             player.ApplyToCamera(camera);
           } else {
             camera.UpdateOrbit(dt);
@@ -442,6 +457,32 @@ int main(int argc, char** argv) {
                 }
               }
             }
+          }
+
+          // look_at o scare (de un trigger, una interaccion o el final de un dialogo): a donde
+          // mirar mientras dure lo que se esta leyendo. Si no hay nada que leer, no retiene al
+          // jugador.
+          if (auto look = runner.TakeShot(); look && state.HasMessage()) {
+            retro::Scene* s = scenes.CurrentMut();
+            retro::Entity* target = s && !look->entity.empty() ? s->Find(look->entity) : nullptr;
+            if (target)
+              dialogueFocus = DialogueFocus(*target);
+            else if (look->point)
+              dialogueFocus = *look->point;
+            else
+              std::cerr << "look_at/scare: entidad inexistente '" << look->entity << "'\n";
+            focusRate = look->speed;
+            focusFov = look->fov;
+          }
+
+          // Acercamiento de scare: la vista se estrecha hacia focusFov y vuelve al soltar.
+          {
+            const float sceneFov = camera.Fov() + zoom;
+            const float want =
+                dialogueFocus && focusFov > 0.0f ? std::max(0.0f, sceneFov - focusFov) : 0.0f;
+            const float rate = dialogueFocus ? focusRate : 4.0f;
+            zoom += (want - zoom) * std::min(1.0f, dt * rate);
+            camera.SetFov(sceneFov - zoom);
           }
 
           if (retro::Scene* s = scenes.CurrentMut())

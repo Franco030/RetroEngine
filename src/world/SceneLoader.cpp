@@ -289,6 +289,8 @@ std::vector<Condition> ParseConditions(const json& j, const char* key) {
 //   { "set_flag": "nombre", "value": 1 }
 //   { "message": "texto\notra linea", "seconds": 3 }
 //   { "dialogue": "sepulturero" }                      (assets/dialogues/sepulturero.json)
+//   { "look_at": "entidad" | [x,y,z], "speed": 6 }              (mirar, sin acercar)
+//   { "scare": "entidad" | [x,y,z], "speed": 20, "fov": 30 }    (susto: de golpe y acercando)
 Action ParseAction(const json& ja) {
   if (!ja.is_object())
     throw std::runtime_error("cada accion debe ser un objeto");
@@ -368,6 +370,34 @@ Action ParseAction(const json& ja) {
     result = a;
     ++found;
   }
+  // Destino de look_at y scare: el nombre de una entidad o un punto.
+  auto readTarget = [&](const char* key, std::string& entity, std::optional<Vector3>& point) {
+    if (ja.at(key).is_string())
+      entity = ja.at(key).get<std::string>();
+    else
+      point = ReadVec3(ja, key, {0.0f, 0.0f, 0.0f});
+  };
+  if (ja.contains("look_at")) {
+    if (ja.contains("fov"))
+      throw std::runtime_error("'look_at' no acerca la vista: para eso esta 'scare'");
+    action::LookAt a;
+    readTarget("look_at", a.entity, a.point);
+    a.speed = ja.value("speed", a.speed);
+    if (a.speed <= 0.0f)
+      throw std::runtime_error("'look_at': 'speed' debe ser positivo");
+    result = a;
+    ++found;
+  }
+  if (ja.contains("scare")) {
+    action::Scare a;
+    readTarget("scare", a.entity, a.point);
+    a.speed = ja.value("speed", a.speed);
+    a.fov = ja.value("fov", a.fov);
+    if (a.speed <= 0.0f || a.fov < 1.0f || a.fov > 120.0f)
+      throw std::runtime_error("'scare': 'speed' debe ser positivo y 'fov' de 1 a 120");
+    result = a;
+    ++found;
+  }
   if (ja.contains("dialogue")) {
     action::StartDialogue a;
     a.id = ja.at("dialogue").get<std::string>();
@@ -380,7 +410,7 @@ Action ParseAction(const json& ja) {
   if (found != 1) {
     throw std::runtime_error("cada accion debe tener exactamente una de: goto_scene, teleport, "
                              "set_flag, add_flag, message, play_sound, play_music, stop_music, "
-                             "dialogue");
+                             "dialogue, look_at, scare");
   }
   return result;
 }
@@ -557,6 +587,7 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
     entity = std::make_unique<Entity>(name, std::move(model), std::move(texture));
   }
   entity->emissive = je.value("emissive", false);
+  entity->fog = je.value("fog", true);
 
   std::vector<BoxCollider> colliders = ReadCollider(je, autoBoxes, isMeshFile, autoCollide);
   std::optional<Interaction> interact;
@@ -677,6 +708,16 @@ void LoadSceneFromJson(const nlohmann::json& root, const std::string& relativePa
         context = "niebla";
         p.fogStart = root.at("fog").value("start", p.fogStart);
         p.fogEnd = root.at("fog").value("end", p.fogEnd);
+        // neblina baja: "mist" (densidad 0-1), "mistHeight" (m) y "mistColor" [r,g,b]
+        const json& jf = root.at("fog");
+        p.mistDensity = jf.value("mist", p.mistDensity);
+        p.mistHeight = jf.value("mistHeight", p.mistHeight);
+        if (jf.contains("mistColor")) {
+          const Color c = ReadColor(jf, "mistColor", WHITE);
+          p.mistColor = {c.r / 255.0f, c.g / 255.0f, c.b / 255.0f};
+        }
+        if (p.mistDensity < 0.0f || p.mistDensity > 1.0f || p.mistHeight <= 0.0f)
+          throw std::runtime_error("'mist' debe estar entre 0 y 1 y 'mistHeight' ser positivo");
       }
       if (root.contains("light")) {
         context = "luz";
@@ -695,6 +736,33 @@ void LoadSceneFromJson(const nlohmann::json& root, const std::string& relativePa
       const json& p = root.at("player");
       scene.spawn.position = ReadVec3(p, "position", scene.spawn.position);
       scene.spawn.yaw = p.value("yaw", scene.spawn.yaw);
+    }
+
+    // "panorama": { "model": "models/x.obj", "tint": [r,g,b], "haze": 0.4, "y": -6,
+    //               "sun": { "texture": "textures/spr_sol.png", "yaw": 0, "pitch": 8, "size": 40 } }
+    // yaw/pitch del sol: como la vista del jugador (yaw 0 = hacia -Z; pitch, grados sobre el
+    // horizonte).
+    if (root.contains("panorama")) {
+      context = "panorama";
+      const json& jp = root.at("panorama");
+      Scene::Panorama pano;
+      pano.model = engine.Assets().GetModel(jp.at("model").get<std::string>());
+      pano.model->SetShader(engine.Retro().Lit());
+      pano.tint = ReadColor(jp, "tint", WHITE);
+      pano.haze = jp.value("haze", pano.haze);
+      pano.y = jp.value("y", pano.y);
+      if (pano.haze < 0.0f || pano.haze > 1.0f)
+        throw std::runtime_error("'haze' debe estar entre 0 y 1");
+      if (jp.contains("sun")) {
+        const json& js = jp.at("sun");
+        pano.sun = engine.Assets().GetTexture(js.at("texture").get<std::string>());
+        const float yaw = js.value("yaw", 0.0f) * DEG2RAD;
+        const float pitch = js.value("pitch", 8.0f) * DEG2RAD;
+        pano.sunDirection = {-std::sin(yaw) * std::cos(pitch), std::sin(pitch),
+                             -std::cos(yaw) * std::cos(pitch)};
+        pano.sunSize = js.value("size", pano.sunSize);
+      }
+      scene.panorama = std::move(pano);
     }
 
     if (root.contains("bounds")) {

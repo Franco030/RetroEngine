@@ -108,7 +108,7 @@ void Player::SetPitch(float degrees) noexcept {
   pitch_ = std::clamp(degrees, -kMaxPitch, kMaxPitch);
 }
 
-void Player::TurnTowards(Vector3 target, float dt) noexcept {
+void Player::TurnTowards(Vector3 target, float dt, float rate) noexcept {
   const Vector3 eye = Eye();
   const float dx = target.x - eye.x;
   const float dy = target.y - eye.y;
@@ -120,7 +120,7 @@ void Player::TurnTowards(Vector3 target, float dt) noexcept {
   // Mismo convenio que SetView: adelante = (-sin(yaw), sin(pitch), -cos(yaw)).
   const float wantYaw = std::atan2(-dx, -dz) * RAD2DEG;
   const float wantPitch = std::clamp(std::atan2(dy, flat) * RAD2DEG, -kMaxPitch, kMaxPitch);
-  const float k = std::min(1.0f, dt * 6.0f); // se acerca un 6x por segundo de lo que falta
+  const float k = std::min(1.0f, dt * rate); // recorre 'rate' veces por segundo lo que falta
   yaw_ += std::remainder(wantYaw - yaw_, 360.0f) * k;
   pitch_ += (wantPitch - pitch_) * k;
 }

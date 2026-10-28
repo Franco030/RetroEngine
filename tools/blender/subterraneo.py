@@ -331,8 +331,8 @@ def puerta_cripta(col_):
 
 def estatua(col_, nombre="estatua", M="mat_marmol"):
     """Figura encapuchada que reza, con una estola roja y lagrimas de sangre, sobre un pedestal
-    de piedra con musgo. La del cementerio es de marmol blanco sospechosamente limpio (todo lo
-    demas tiene musgo); la de las catacumbas, de piedra gastada (estatua_gastada)."""
+    de piedra con musgo: la del cementerio, de marmol blanco sospechosamente limpio (todo lo
+    demas tiene musgo). La iglesia y los tuneles tienen las suyas (estatuas.py)."""
     m = rc.Malla()
     caja(m, (-0.7, 0, -0.7), (0.7, 0.2, 0.7), "mat_piedra_musgo")
     caja(m, (-0.55, 0.2, -0.55), (0.55, 0.75, 0.55), "mat_piedra_musgo")
@@ -357,10 +357,6 @@ def estatua(col_, nombre="estatua", M="mat_marmol"):
                    "mat_tela_roja", ovalo=(1.0, 0.25))
     col(m, (-0.7, 0, -0.7), (0.7, 2.8, 0.7))
     return m.objeto(nombre, col_)
-
-
-def estatua_gastada(col_):
-    return estatua(col_, "estatua_gastada", "mat_piedra_gastada")
 
 
 def reja(col_):
@@ -688,7 +684,6 @@ PIEZAS = [
     (atril, "Atril con libro abierto."),
     (puerta_cripta, "Puerta de hierro de la cripta vista desde dentro (frente +Z)."),
     (estatua, "Figura encapuchada sobre pedestal (marmol blanco, cementerio)."),
-    (estatua_gastada, "Figura encapuchada sobre pedestal (piedra gastada, catacumbas)."),
     (reja, "Reja de hierro para un tunel de 3 m (plano XY)."),
     (cuerda_pozo, "Cuerda del pozo de la aldea y cubo (origen bajo el centro del tiro)."),
     (escalera_mano, "Escalera de mano hasta la trampilla de la plaza."),

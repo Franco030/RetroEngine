@@ -11,6 +11,15 @@
       "once": true,
       "lines": ["Asi que bajaste.\nYo tambien bajaba, hace anos."]
     },
+    {
+      "key": "organo",
+      "if": { "flag": "organo_susto_fin" },
+      "once": true,
+      "lines": [
+        "Te veo palido. Has estado en la capilla?",
+        "Que raro. Yo no me he movido de aqui\nen toda la noche."
+      ]
+    },
     { "lines": ["La cripta no se va a mover.\nVe, si tanto te interesa."] }
   ]
 }

@@ -1,0 +1,12 @@
+{
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Hay algo escrito con pintura roja.",
+        "\"NO CAMINES DE NOCHE.\nNO MIRES ATRAS.\nNO RESPONDAS SI TE LLAMAN.\""
+      ]
+    },
+    { "lines": ["\"NO MIRES ATRAS.\"\nLa pintura todavia gotea."] }
+  ]
+}

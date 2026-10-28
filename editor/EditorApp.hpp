@@ -67,6 +67,9 @@ private:
     Vector3 lightDirection{};
     float ambient = 0.0f;
     float sun = 1.0f;
+    float mistDensity = 0.0f;
+    float mistHeight = 1.5f;
+    Vector3 mistColor{};
   };
   struct Hit {
     SelectionKind kind;

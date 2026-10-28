@@ -65,6 +65,19 @@ saliendo de su propio bosque):
 - `tuneles.json`: túneles de tierra bajo la cripta, con un cruce, un osario, un lago, un
   santuario de cristales con un ermitaño, un derrumbe, una reja que se abre con la llave del
   osario, y salidas al pozo de la aldea y a una trampilla de la plaza de noche.
+- `lago.json`: al norte de la aldea. Un lago al atardecer con muelle, barca, un sauce con
+  columpio, luciérnagas, montañas en la bruma rosada y un pescador. La calma antes de la
+  tormenta.
+- `bosque_negro.json`: al este del lago. Un sendero por un bosque muerto y con niebla donde pasan
+  cosas: una figura alta que se ve al fondo y desaparece, figuras de ramas colgadas, pasos detrás,
+  la figura delante de ti, una cabaña donde alguien responde a tu llamada y un círculo de piedras
+  con velas recién encendidas. Un árbol caído corta el sendero: el capítulo sigue más adelante.
+
+En la capilla, tocar el órgano tiene consecuencias.
+
+Las escenas de exterior tienen un **panorama**: montañas o bosque lejanos que siguen a la cámara
+(nunca se llega a ellos), con el sol o la luna detrás, para que la escena no acabe en el vacío.
+Están rodeadas de un borde de bosque que solo se abre por los senderos.
 
 ---
 
@@ -164,14 +177,16 @@ editor/               RetroEditor: EditorApp, EditorLogic (acciones, condiciones
                       EditorValidation (panel Validacion), EditorCamera, AssetCatalog,
                       JsonUtil, JsonFormat
 assets/
-  scenes/             demo.json, aldea.json, noche.json, cementerio.json, iglesia.json, cripta.json, tuneles.json
+  scenes/             demo.json, aldea.json, noche.json, cementerio.json, iglesia.json, cripta.json, tuneles.json,
+                      lago.json, bosque_negro.json
+  dialogues/          un .json por diálogo
   shaders/            retro.vs, retro.fs, retro_unlit.fs, retro_sprite.fs, post.fs
   models/ textures/ audio/ fonts/
 tools/                texconv.py, charatlas.py, gen_texturas.py, gen_sprites.py, gen_personajes.py, gen_musica.py,
                       gen_sonidos.py
   blender/            retro_comun.py (piezas y exportador), molino.py, aldea_props.py,
                       cementerio.py, personajes.py, subterraneo.py (+ tuneles_mapa.py), bosque.py,
-                      iglesia.py, detalles.py:
+                      iglesia.py, detalles.py, estatuas.py, lago.py, bosque_negro.py:
                       los modelos, por script
 docs/SISTEMA.md       funcionamiento detallado de todos los sistemas
 ```

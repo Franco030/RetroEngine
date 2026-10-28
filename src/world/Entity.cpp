@@ -91,6 +91,12 @@ void SetDepthBias(const Shader& shader, float bias) {
 
 } // namespace
 
+void SetFogFixed(const Shader& shader, float fog) {
+  const int loc = GetShaderLocation(shader, "fogFixed");
+  if (loc >= 0)
+    SetShaderValue(shader, loc, &fog, SHADER_UNIFORM_FLOAT);
+}
+
 void Entity::Draw(const Shader& fullbright) {
   if (!visible || IsSprite())
     return;
@@ -112,10 +118,14 @@ void Entity::Draw(const Shader& fullbright) {
   model.transform = visual.ToMatrix();
   if (layer != 0)
     SetDepthBias(emissive ? fullbright : model.materials[0].shader, layer * kLayerStep);
+  if (!fog)
+    SetFogFixed(emissive ? fullbright : model.materials[0].shader, 0.0f);
   if (!emissive) {
     DrawModel(model, {0.0f, 0.0f, 0.0f}, 1.0f, tint);
     if (layer != 0)
       SetDepthBias(model.materials[0].shader, 0.0f);
+    if (!fog)
+      SetFogFixed(model.materials[0].shader, -1.0f);
     return;
   }
   // Emisivo (una vidriera, algo que brilla): se dibuja con el shader de los sprites, que usa la
@@ -130,6 +140,8 @@ void Entity::Draw(const Shader& fullbright) {
     model.materials[m].shader = lit[static_cast<std::size_t>(m)];
   if (layer != 0)
     SetDepthBias(fullbright, 0.0f);
+  if (!fog)
+    SetFogFixed(fullbright, -1.0f);
 }
 
 void Entity::DrawSprite(const Camera3D& camera, Vector3 shade) {

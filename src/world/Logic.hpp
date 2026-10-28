@@ -64,12 +64,30 @@ struct StartDialogue {
   std::string id;
 };
 
+// Las dos giran la vista del jugador hacia una entidad (o un punto) mientras dure el mensaje o
+// dialogo que se este leyendo; 'speed' es lo rapido que gira.
+//
+// Mirar: suave y sin acercar (un objeto, alguien que habla).
+struct LookAt {
+  std::string entity;
+  std::optional<Vector3> point;
+  float speed = 6.0f;
+};
+
+// Susto de camara: giro de golpe y acercamiento (la vista se estrecha hasta 'fov' grados).
+struct Scare {
+  std::string entity;
+  std::optional<Vector3> point;
+  float speed = 20.0f;
+  float fov = 30.0f;
+};
+
 } // namespace action
 
 using Action =
     std::variant<action::GotoScene, action::Teleport, action::SetFlag, action::AddFlag,
                  action::Message, action::PlaySound, action::PlayMusic, action::StopMusic,
-                 action::StartDialogue>;
+                 action::StartDialogue, action::LookAt, action::Scare>;
 
 enum class CompareOp { Eq, Ne, Lt, Le, Gt, Ge };
 

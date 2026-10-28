@@ -22,6 +22,10 @@ struct RetroShaderParams {
   float fogStart = 10.0f;
   float fogEnd = 26.0f;
   bool fogEnabled = true;
+  // Neblina baja (retro.fs): densidad 0 = sin ella.
+  float mistDensity = 0.0f;
+  float mistHeight = 1.5f;
+  Vector3 mistColor{0.5f, 0.52f, 0.58f};
   float clipY = 1.0e6f; // se descarta lo que quede por encima (editor: cortar techos)
   bool pointLights = true;
 };
@@ -51,6 +55,10 @@ private:
     int fogColor = -1;
     int fogStart = -1;
     int fogEnd = -1;
+    int mistDensity = -1;
+    int mistHeight = -1;
+    int mistColor = -1;
+    int fogFixed = -1;
     int clipY = -1;
     int useLighting = -1;
     int lightCount = -1;

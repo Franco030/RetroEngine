@@ -576,8 +576,56 @@ def iglesia(rng):
     return p.final(rt60=8.0, reverb=0.6, ecos=2.0, corte=6000.0)
 
 
+def lago(rng):
+    """El lago al atardecer: la calma antes de la tormenta. Mi mayor lento y luminoso, arpa de
+    caja de musica, pads calidos y una flauta que canta una nana; en la segunda vuelta entra el
+    coro. Los cuatro ultimos compases se nublan (acordes menores prestados y un dron grave que
+    apenas se oye) antes de volver a empezar: algo se acerca, pero aun no."""
+    p = Pieza(62, 24, rng)
+    Emaj9 = [40, 52, 56, 59, 63, 66]
+    Csm9 = [37, 49, 52, 56, 59, 63]
+    Amaj7 = [33, 45, 52, 56, 61, 64]
+    Bsus = [35, 47, 54, 57, 61, 64]
+    Gsm7 = [32, 44, 51, 54, 59, 63]
+    Fsm9 = [30, 42, 49, 52, 56, 61]
+    Am6 = [33, 45, 52, 54, 60, 64]      # cuarto grado menor: la primera nube
+    Cmaj7 = [36, 48, 52, 55, 59, 64]    # sexto rebajado: la luz cambia
+    B7sus = [35, 47, 52, 57, 61, 66]
+    A1 = [Emaj9, Csm9, Amaj7, Bsus, Emaj9, Gsm7, Amaj7, Bsus]
+    B = [Fsm9, Gsm7, Amaj7, Bsus, Csm9, Gsm7, Fsm9, Bsus]
+    C = [Amaj7, Am6, Emaj9, Csm9, Amaj7, Am6, Cmaj7, B7sus]
+    prog = A1 + B + C
+    p.acordes(prog, "pad", 0.12, brillo=4.0)
+    p.bajos(prog, ganancia=0.36, quinta=False)
+    p.arpegio(prog, [0, 2, 4, 3, 1, 3, 2, 4], inst="caja_musica", ganancia=0.15, octava=12)
+    p.arpegio(prog, [0, 1, 2, 3], inst="piano", ganancia=0.08, subdivision=1.0, octava=0,
+              pan_vaiven=0.6)
+    nana = [(0, 0, 2, 71), (0, 2, 1, 73), (0, 3, 1, 75),
+            (1, 0, 3, 76), (1, 3, 1, 75),
+            (2, 0, 1.5, 73), (2, 1.5, 0.5, 71), (2, 2, 2, 68),
+            (3, 0, 4, 71),
+            (4, 0, 2, 71), (4, 2, 1, 75), (4, 3, 1, 78),
+            (5, 0, 3, 80), (5, 3, 1, 78),
+            (6, 0, 1, 76), (6, 1, 1, 75), (6, 2, 2, 73),
+            (7, 0, 4, 71)]
+    p.melodia(nana, "flauta", desde=0, ganancia=0.38, pan=0.12)
+    p.melodia(nana, "flauta", desde=8, ganancia=0.3, pan=-0.12, transp=-12)
+    coro = [(0, 0, 4, 66), (1, 0, 4, 68), (2, 0, 4, 69), (3, 0, 4, 66),
+            (4, 0, 4, 68), (5, 0, 4, 66), (6, 0, 4, 66), (7, 0, 4, 66)]
+    p.melodia(coro, "coro", desde=8, ganancia=0.24, vocal="a")
+    # la nube: la nana en piano grave, mas lenta, y un dron que casi no se oye
+    nube = [(0, 0, 2, 64), (0, 2, 2, 69), (1, 0, 4, 64), (2, 0, 2, 68), (2, 2, 2, 71),
+            (3, 0, 4, 68), (4, 0, 2, 64), (4, 2, 2, 69), (5, 0, 4, 64), (6, 0, 2, 67),
+            (6, 2, 2, 64), (7, 0, 4, 66)]
+    p.melodia(nube, "piano", desde=16, ganancia=0.34, pan=-0.2)
+    p.pista.poner(p.i.dron(28, p.compas * 4), p.t(20), ganancia=0.12)
+    for k in (0, 8):
+        p.pista.poner(p.i.campana(76), p.t(k, 0), pan=0.5, ganancia=0.1)
+    return p.final(rt60=4.2, reverb=0.45, ecos=1.5)
+
+
 PIEZAS = {"aldea": aldea, "noche": noche, "cementerio": cementerio, "demo": demo,
-          "cripta": cripta, "tuneles": tuneles, "iglesia": iglesia}
+          "cripta": cripta, "tuneles": tuneles, "iglesia": iglesia, "lago": lago}
 
 
 def main():

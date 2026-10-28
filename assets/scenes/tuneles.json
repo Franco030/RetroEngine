@@ -399,7 +399,7 @@
     },
     {
       "name": "estatua",
-      "model": "models/estatua_gastada.obj",
+      "model": "models/estatua_orante.obj",
       "position": [-3.0, 0, -22.5],
       "interact": { "prompt": "Mirar", "range": 2.6, "do": [{ "dialogue": "estatua_tuneles" }] }
     },

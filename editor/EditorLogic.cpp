@@ -30,8 +30,10 @@ struct ActionInfo {
   const char* title;
 };
 
-constexpr std::array<ActionInfo, 9> kActions{{
+constexpr std::array<ActionInfo, 11> kActions{{
     {"dialogue", "Dialogo"},
+    {"look_at", "Mirar hacia"},
+    {"scare", "Susto de camara"},
     {"message", "Mensaje"},
     {"set_flag", "Fijar bandera"},
     {"add_flag", "Sumar a bandera"},
@@ -80,6 +82,10 @@ Json NewAction(const std::string& key, const std::vector<std::string>& scenes,
 
   if (key == "dialogue")
     return Json::object({{"dialogue", dialogues.empty() ? std::string() : dialogues.front()}});
+  if (key == "look_at")
+    return Json::object({{"look_at", Vec3Json({0.0f, 1.6f, 0.0f})}});
+  if (key == "scare")
+    return Json::object({{"scare", Vec3Json({0.0f, 1.6f, 0.0f})}});
   if (key == "message")
     return Json::object({{"message", "Texto"}});
   if (key == "set_flag")
@@ -234,6 +240,37 @@ void EditorApp::EditAction(Json& a) {
       }
     } else {
       ImGui::TextDisabled("Elige uno, o crealo en el panel Dialogos");
+    }
+
+  } else if (key == "look_at" || key == "scare") {
+    // A donde: una entidad por su nombre ("look_at": "nombre") o un punto ([x,y,z]).
+    const char* k = info->key;
+    const char* modes[] = {"Una entidad", "Un punto"};
+    const int mode = a.at(k).is_string() ? 0 : 1;
+    int next = mode;
+    if (ImGui::Combo("Hacia", &next, modes, 2) && next != mode) {
+      BeginChange(0);
+      if (next == 0) {
+        const std::vector<std::string> names = EntityNames();
+        a[k] = names.empty() ? std::string() : names.front();
+      } else {
+        a[k] = Vec3Json({0.0f, 1.6f, 0.0f});
+      }
+      MarkChanged(0);
+    }
+    if (a.at(k).is_string())
+      FieldFile("Entidad", a, nullptr, k, EntityNames(), false, false);
+    else
+      FieldVec3("Punto", a, nullptr, k, {0.0f, 1.6f, 0.0f}, 0.05f, false);
+    if (key == "look_at") {
+      FieldFloat("Rapidez", a, nullptr, "speed", 6.0f, 0.1f, 0.5f, 60.0f);
+      ImGui::TextDisabled("Gira suave, sin acercar, mientras dure el mensaje o dialogo.\n"
+                          "Ponla antes del mensaje o el dialogo.");
+    } else {
+      FieldFloat("Rapidez", a, nullptr, "speed", 20.0f, 0.1f, 0.5f, 60.0f);
+      FieldFloat("Acercar (fov)", a, nullptr, "fov", 30.0f, 0.5f, 1.0f, 120.0f);
+      ImGui::TextDisabled("Giro de golpe y acercamiento mientras dure el mensaje o dialogo.\n"
+                          "Rapidez 2-3: la vista se va sola; 20+: susto.");
     }
 
   } else if (key == "message") {

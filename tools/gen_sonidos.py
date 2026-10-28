@@ -13,6 +13,14 @@ gen_sonidos: sintetiza los efectos y ambientes del subterraneo (assets/audio/).
   buho.wav, pajaros.wav  bucles de bosque de noche y de dia (emisores)
   organo.wav         acorde disonante del organo de la capilla
   letra_1..3.wav     chasquido de estatica de cada letra de los subtitulos
+  susto.wav          golpe de susto (cuerdas que chirrian y un golpe grave)
+  portazo.wav        puerta pesada que se cierra de golpe
+  latido.wav         bucle de latido lento
+  susurros.wav       voces que susurran sin palabras
+  golpes.wav         tres golpes en la madera, desde dentro
+  pasos_detras.wav   pasos que se acercan por detras
+  campanillas.wav    bucle de campanillas de viento y brisa (la calma)
+  zumbido.wav        bucle de dron grave y pitido (la escena de terror)
 
 Mono, 22050 Hz, 16 bits, como el resto de efectos. Los ambientes son BUCLES PERFECTOS: se
 mezclan en un buffer circular y la reverb es circular (las funciones de gen_musica.py).
@@ -286,6 +294,134 @@ def organo(rng):
     return reverb(s, rng, 6.0, 0.55)
 
 
+# ---------------------------------------------------------------------------
+# Sustos y la escena de terror
+# ---------------------------------------------------------------------------
+def diente_sierra(f, n):
+    """Onda de diente de sierra con frecuencia 'f' (escalar o array por muestra)."""
+    fase = np.cumsum(np.broadcast_to(f, (n,)).astype(np.float64)) / SR
+    return (2.0 * (fase % 1.0) - 1.0).astype(np.float32)
+
+
+def susto(rng):
+    """Golpe de susto: cuerdas agudas disonantes que chirrian (cluster que sube) sobre un golpe
+    grave de bombo y metal, ataque instantaneo y cola larga de sala."""
+    n = int(2.6 * SR)
+    t = np.arange(n) / SR
+    s = np.zeros(n, np.float32)
+    for f0 in (1318, 1396, 1480, 1975, 2093):              # cluster de semitonos, muy agudo
+        f = f0 * (1 + 0.035 * t) * (1 + 0.01 * np.sin(2 * np.pi * rng.uniform(5, 8) * t))
+        s += diente_sierra(f, n) * 0.22
+    s = s - suavizar(s, 6) * 0.6                             # mas aspero
+    golpe = np.sin(2 * np.pi * np.cumsum(55 * np.exp(-t * 3)) / SR).astype(np.float32)
+    golpe *= np.exp(-t * 4).astype(np.float32)
+    metal = ruido_filtrado(rng, n, 2) * np.exp(-t * 9).astype(np.float32)
+    s = s * envolvente(n, 0.004, 1.6) + golpe * 1.4 + metal * 0.8
+    out = np.concatenate([s, np.zeros(int(2.5 * SR), np.float32)])
+    return reverb(out, rng, 3.5, 0.45)
+
+
+def portazo(rng):
+    """Una puerta pesada que se cierra de golpe: crujido corto de madera y un retumbo grave."""
+    n = int(1.2 * SR)
+    t = np.arange(n) / SR
+    golpe = np.sin(2 * np.pi * np.cumsum(80 * np.exp(-t * 6) + 40) / SR).astype(np.float32)
+    golpe *= np.exp(-t * 7).astype(np.float32)
+    madera = ruido_filtrado(rng, n, 4) * np.exp(-t * 25).astype(np.float32)
+    s = golpe * 1.2 + madera * 0.9
+    s[:int(0.08 * SR)] = (crujido(rng)[:int(0.08 * SR)] * 0.4 + s[:int(0.08 * SR)])
+    out = np.concatenate([s, np.zeros(int(2.0 * SR), np.float32)])
+    return reverb(out, rng, 3.0, 0.5)
+
+
+def latido(rng):
+    """Bucle de un latido lento y grave (lub-dub cada 0.9 s), para cuando algo acecha."""
+    seg = 7.2
+    buf = np.zeros(int(seg * SR), np.float32)
+    def pulso(f0, dur, amp):
+        n = int(dur * SR)
+        t = np.arange(n) / SR
+        return (np.sin(2 * np.pi * f0 * t) * np.exp(-t * 18) * amp).astype(np.float32)
+    k = 0.0
+    while k < seg - 0.01:
+        poner(buf, pulso(48, 0.25, 1.0), k)
+        poner(buf, pulso(42, 0.25, 0.7), k + 0.22)
+        k += 0.9
+    return reverb(buf, rng, 0.8, 0.2)
+
+
+def susurros(rng):
+    """Voces que susurran sin palabras: rafagas de ruido con formantes de vocal que cambian,
+    de un lado a otro, con mucho eco. Para disparar al pasar por un sitio."""
+    n = int(5.5 * SR)
+    s = np.zeros(n, np.float32)
+    for _ in range(14):
+        dur = rng.uniform(0.18, 0.5)
+        m = int(dur * SR)
+        r = rng.standard_normal(m).astype(np.float32)
+        tt = np.arange(m) / SR
+        f1 = rng.choice([300, 500, 700, 400])
+        f2 = rng.choice([900, 1200, 1800, 2300])
+        voz = np.zeros(m, np.float32)
+        for f in (f1, f2, 2800):                               # filtro tosco por formantes
+            voz += np.convolve(r, np.sin(2 * np.pi * f * np.arange(64) / SR) *
+                               np.hanning(64), mode="same").astype(np.float32)
+        voz *= np.sin(np.pi * tt / dur) ** 2
+        poner(s, voz * 0.06, rng.uniform(0.1, 4.6))
+    return reverb(np.concatenate([s, np.zeros(int(2 * SR), np.float32)]), rng, 3.0, 0.6)
+
+
+def golpes(rng):
+    """Tres golpes secos contra madera, lentos, como alguien que llama desde dentro."""
+    n = int(4.5 * SR)
+    s = np.zeros(n, np.float32)
+    for t0 in (0.2, 1.1, 2.3):
+        m = int(0.25 * SR)
+        tt = np.arange(m) / SR
+        g = np.sin(2 * np.pi * 120 * tt) * np.exp(-tt * 30) + ruido_filtrado(rng, m, 3) * np.exp(-tt * 60)
+        poner(s, g.astype(np.float32), t0)
+    return reverb(s, rng, 1.8, 0.4)
+
+
+def pasos_detras(rng):
+    """Cuatro pasos lentos sobre hojas y tierra que se acercan por detras (cada vez mas fuertes)."""
+    n = int(4.0 * SR)
+    s = np.zeros(n, np.float32)
+    for k, t0 in enumerate((0.2, 0.95, 1.7, 2.4)):
+        poner(s, paso_tierra(rng) * (0.4 + 0.2 * k), t0)
+        poner(s, ruido_filtrado(rng, int(0.12 * SR), 2) * 0.15 * (1 + k), t0 + 0.02)
+    return reverb(s, rng, 1.2, 0.3)
+
+
+def campanillas(rng):
+    """Bucle de la calma: campanillas de viento que suenan de vez en cuando con la brisa."""
+    seg = 16.0
+    buf = ruido_filtrado(rng, int(seg * SR), 14) * 0.18          # brisa
+    notas = (1568, 1760, 2093, 2349, 2637)                      # pentatonica, muy clara
+    for _ in range(12):
+        f = notas[int(rng.integers(len(notas)))]
+        m = int(2.5 * SR)
+        tt = np.arange(m) / SR
+        c = (np.sin(2 * np.pi * f * tt) + 0.3 * np.sin(2 * np.pi * f * 2.76 * tt) * np.exp(-tt * 3))
+        poner(buf, (c * np.exp(-tt * 1.6)).astype(np.float32) * 0.18, rng.uniform(0, seg))
+    return reverb(buf, rng, 2.0, 0.35)
+
+
+def zumbido(rng):
+    """Bucle de la escena de terror: un dron grave que late, un pitido de oido muy agudo y ruido
+    de aire. Nada que se pueda nombrar; solo incomodidad."""
+    seg = 20.0
+    n = int(seg * SR)
+    t = np.arange(n) / SR
+    lento = 0.5 + 0.5 * np.sin(2 * np.pi * t / seg)
+    dron = (np.sin(2 * np.pi * 41 * t) + 0.6 * np.sin(2 * np.pi * 43.5 * t)
+            + 0.3 * np.sin(2 * np.pi * 61.7 * t)).astype(np.float32)
+    pitido = np.sin(2 * np.pi * 7040 * t).astype(np.float32) * (0.5 + 0.5 * np.sin(2 * np.pi * 3 * t / seg)) ** 4
+    aire = ruido_filtrado(rng, n, 40)
+    buf = dron * (0.4 + 0.6 * lento).astype(np.float32) * 0.5 + pitido * 0.02 + aire * 0.6
+    return reverb(buf, rng, 4.0, 0.5)
+
+
 SONIDOS = {
     "cripta_amb": cripta_amb,
     "tuneles_amb": tuneles_amb,
@@ -302,6 +438,15 @@ SONIDOS = {
     "letra_1": letra,
     "letra_2": letra,
     "letra_3": letra,
+    # al final: los de arriba conservan su semilla (depende de la posicion en esta lista)
+    "susto": susto,
+    "portazo": portazo,
+    "latido": latido,
+    "susurros": susurros,
+    "golpes": golpes,
+    "pasos_detras": pasos_detras,
+    "campanillas": campanillas,
+    "zumbido": zumbido,
 }
 
 
@@ -317,7 +462,7 @@ def main():
         rng = np.random.default_rng(args.seed * 100 + list(SONIDOS).index(nombre))
         x = SONIDOS[nombre](rng)
         ruta = os.path.join(args.out, nombre + ".wav")
-        escribir_mono(ruta, x, 0.8 if nombre.endswith("_amb") or nombre in ("buho", "pajaros") else 0.9)
+        escribir_mono(ruta, x, 0.8 if nombre.endswith("_amb") or nombre in ("buho", "pajaros", "campanillas", "zumbido", "latido") else 0.9)
         print(f"{ruta}  {len(x) / SR:.2f} s")
 
 

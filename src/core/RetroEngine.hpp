@@ -38,7 +38,7 @@ struct EngineConfig {
   bool resizable = true;
   bool integerScaling = false;
   Color clearColor = {24, 20, 32, 255};
-  std::string uiFont = "fonts/roboto_medium.ttf";
+  std::string uiFont = "fonts/dpcomic.ttf";
   std::string assetRoot;
 };
 

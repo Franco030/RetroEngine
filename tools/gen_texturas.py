@@ -678,6 +678,10 @@ TEXTURAS = {
     "mat_flor_morada": (liso, {"oscuro": (80, 40, 120), "claro": (170, 110, 210)}),
     "mat_flor_marchita": (liso, {"oscuro": (60, 24, 24), "claro": (130, 84, 64)}),
     "mat_ojo": (liso, {"oscuro": (170, 20, 16), "claro": (255, 120, 80)}),
+    # el lago al atardecer y el bosque negro
+    "mat_agua_ocaso": (agua, {"dark": (112, 66, 92), "light": (252, 176, 138)}),
+    "mat_piel_palida": (liso, {"oscuro": (150, 148, 142), "claro": (218, 214, 206)}),
+    "mat_tela_negra": (liso, {"oscuro": (8, 8, 10), "claro": (34, 32, 38)}),
 }
 
 

@@ -1,6 +1,8 @@
 #include "world/Scene.hpp"
 #include "graphics/ShaderScope.hpp"
 
+#include <rlgl.h>
+
 #include <raymath.h>
 
 #include <algorithm>
@@ -123,8 +125,37 @@ void Scene::CollectEmitters(std::vector<Emitter>& out) const {
   }
 }
 
+void Scene::DrawPanorama(const Camera3D& camera, const Shader& spriteShader) const {
+  const Panorama& p = *panorama;
+  Model& model = p.model->Get();
+  const Shader lit = model.materials[0].shader;
+
+  SetFogFixed(lit, p.haze);
+  model.transform = MatrixTranslate(camera.position.x, p.y, camera.position.z);
+  DrawModel(model, {0.0f, 0.0f, 0.0f}, 1.0f, p.tint);
+  SetFogFixed(lit, -1.0f);
+
+  if (!p.sun)
+    return;
+  // Mas lejos que el modelo (que acaba a ~200 m): las montanas lo tapan por profundidad.
+  constexpr float kSunDistance = 320.0f;
+  const Vector3 pos{camera.position.x + p.sunDirection.x * kSunDistance,
+                    camera.position.y + p.sunDirection.y * kSunDistance,
+                    camera.position.z + p.sunDirection.z * kSunDistance};
+  ShaderScope scope(spriteShader);
+  if (const int loc = GetShaderLocation(spriteShader, "matModel"); loc >= 0)
+    SetShaderValueMatrix(spriteShader, loc, MatrixIdentity());
+  SetFogFixed(spriteShader, 0.0f); // el sol no se apaga con la niebla
+  DrawBillboard(camera, p.sun->Get(), pos, p.sunSize, WHITE);
+  rlDrawRenderBatchActive(); // que se dibuje antes de devolver el uniform
+  SetFogFixed(spriteShader, -1.0f);
+}
+
 void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float ambient, float sun,
                  std::span<const PointLight> lights) {
+  if (panorama)
+    DrawPanorama(camera, spriteShader);
+
   bool anySprite = false;
   for (auto& e : entities_) {
     if (e->IsSprite()) {
@@ -156,7 +187,15 @@ void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float ambie
       const float k = t * t * 0.6f;
       shade = {shade.x + l.color.x * k, shade.y + l.color.y * k, shade.z + l.color.z * k};
     }
+    if (!e->fog) { // los sprites van en lote: se vacia antes y despues de cambiar el uniform
+      rlDrawRenderBatchActive();
+      SetFogFixed(spriteShader, 0.0f);
+    }
     e->DrawSprite(camera, shade);
+    if (!e->fog) {
+      rlDrawRenderBatchActive();
+      SetFogFixed(spriteShader, -1.0f);
+    }
   }
 }
 

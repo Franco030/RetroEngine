@@ -68,7 +68,7 @@
     { "name": "banco_9", "model": "models/banco_iglesia.obj", "position": [1.75, 0, -1.4] },
     {
       "name": "estatua",
-      "model": "models/estatua.obj",
+      "model": "models/estatua_dolorosa.obj",
       "position": [0, 0.3, -4.55],
       "scale": [0.85, 0.85, 0.85],
       "interact": { "prompt": "Mirar", "range": 2.2, "do": [{ "dialogue": "estatua_iglesia" }] }
@@ -512,6 +512,19 @@
       "rotation": [0, 322.3, 0],
       "scale": [1.0, 1.0, 1.0],
       "collider": false
+    },
+    {
+      "name": "enterrador_puerta",
+      "model": "models/sepulturero.obj",
+      "texture": "textures/pj_sepulturero.png",
+      "position": [0, 0, 4.7],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "facePlayer": { "range": 12, "turnSpeed": 400 },
+      "showIf": {
+        "all": [{ "flag": "organo_susto" }, { "not": { "flag": "organo_susto_fin" } }]
+      },
+      "light": { "offset": [0, 2.4, 0], "color": [150, 170, 230], "radius": 4.5, "intensity": 1.6 }
     }
   ]
 }

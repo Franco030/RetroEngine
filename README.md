@@ -159,6 +159,7 @@ Los ejecutables quedan en `build/bin/`:
 | 1 2 3 4 6 | Temblor, color de 15 bits, *dithering*, niebla, luces puntuales |
 | M | Silenciar |
 | F11 | Ventana sin bordes |
+| F12 | Foto: se guarda en Imagenes/Festum Venti (tal como se ve, sin las barras negras) |
 | Esc | Pausa (seguir, configuración, salir al menú o del juego) / volver en un menú |
 
 ### Editor

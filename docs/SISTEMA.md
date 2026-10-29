@@ -92,6 +92,15 @@ sin bordes, se actualiza el audio, se llama a la función `update` del juego, se
 en la textura interna con la función `draw`, se presenta escalada con el post-proceso, y por
 último se dibuja la interfaz (`overlay`) encima.
 
+**Fotos** (`RequestScreenshot`): el juego pide una foto (F12) y el motor la saca al final de
+ese fotograma, después de presentar y antes de cambiar de búfer: la imagen tal como se ve (con el
+post-proceso, a la resolución de la ventana) recortada a `PresentationRect` (sin las barras
+negras), en PNG. `TakeScreenshotResult` dice luego si se guardó. Va por el propio motor porque a
+pantalla completa (ventana sin bordes que tapa el monitor) Windows la manda directa a la
+pantalla sin pasar por el compositor, y muchas capturas del sistema salen negras. Las fotos van a
+`Imagenes/Festum Venti` (`%USERPROFILE%/Pictures`; si no existe, `fotos/` junto a las partidas),
+con la fecha y la hora en el nombre.
+
 ---
 
 ## 2. El fotograma del juego, paso a paso
@@ -1747,6 +1756,7 @@ línea de los ojos para ajustar el `--box`.
 | F7 | Modo de escalado |
 | F8 | Acabado del post-proceso sí / no |
 | M | Silencio |
+| F12 | Foto (en `Imagenes/Festum Venti`) |
 
 ### Dónde mirar cuando algo falla
 

@@ -1,0 +1,9 @@
+# RetroEngine: anciana
+
+newmtl atlas
+Kd 1.000000 1.000000 1.000000
+d 1.000000
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png

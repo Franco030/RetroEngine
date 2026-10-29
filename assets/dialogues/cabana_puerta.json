@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "once": true,
+      "lines": ["Llamas tres veces."],
+      "do": [
+        { "play_sound": "audio/golpes.wav", "at": [-6.68, 1.2, -22.0], "radius": 14, "volume": 1.0 },
+        { "message": "Desde dentro, alguien llama tres veces.", "seconds": 3.5 }
+      ]
+    },
+    { "lines": ["La puerta no se abre.\nAlgo respira al otro lado."] }
+  ]
+}

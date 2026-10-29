@@ -2,7 +2,14 @@
   "entries": [
     {
       "once": true,
-      "lines": ["Una nota grave retumba en toda la capilla...", "...y algo, muy abajo, responde."]
+      "lines": ["Una nota grave retumba en toda la capilla..."],
+      "do": [
+        { "stop_music": true, "fade": 0.2 },
+        { "set_flag": "organo_susto" },
+        { "play_sound": "audio/susto.wav", "volume": 1.0 },
+        { "scare": "enterrador_puerta", "speed": 16, "fov": 34 },
+        { "dialogue": "enterrador_susto" }
+      ]
     },
     { "lines": ["La nota se apaga despacio.\nAbajo, algo sigue escuchando."] }
   ]

@@ -1,0 +1,19 @@
+{
+  "speaker": "Rosa",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Algodon de azucar, forastero? Recien hecho.",
+        "Tienes cara de no haber dormido.\nLa fiesta es para eso: para olvidarlo todo."
+      ]
+    },
+    {
+      "if": { "flag": "fe_zapato" },
+      "once": true,
+      "key": "zapato",
+      "lines": ["Un zapato en el tiovivo? Ay, hijo.\nEn la fiesta siempre se pierde algo."]
+    },
+    { "lines": ["El viento trae el olor del trigo.\nHuele a pan, verdad?"] }
+  ]
+}

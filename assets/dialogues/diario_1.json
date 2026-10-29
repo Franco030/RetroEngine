@@ -1,0 +1,14 @@
+{
+  "speaker": "Diario de la partida",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "\"Dia 1. Somos seis. El alcalde no quiso dar hombres.\"",
+        "\"Dijo que el bosque ya habia elegido,\nque no lo hicieramos mas dificil.\"",
+        "\"Clara tiene siete anos. Yo no elijo nada.\""
+      ]
+    },
+    { "lines": ["La tienda esta vacia. Huele a humo frio."] }
+  ]
+}

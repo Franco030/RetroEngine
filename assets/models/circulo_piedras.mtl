@@ -1,0 +1,13 @@
+# RetroEngine: circulo_piedras
+
+newmtl mat_granito
+d 1.000000
+map_Kd ../textures/mat_granito.png
+
+newmtl mat_sangre
+d 1.000000
+map_Kd ../textures/mat_sangre.png
+
+newmtl mat_tela_roja
+d 1.000000
+map_Kd ../textures/mat_tela_roja.png

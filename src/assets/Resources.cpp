@@ -1,6 +1,7 @@
 #include "assets/Resources.hpp"
 
 #include <raylib.h>
+#include <raymath.h>
 #include <rlgl.h>
 
 #include <algorithm>
@@ -16,70 +17,13 @@ namespace retro {
 
 namespace {
 
-constexpr int MAX_MATERIAL_MAPS = 12;
 const char* ToCStr(const std::string& s) { return s.empty() ? nullptr : s.c_str(); }
 
-// El lector de OBJ de raylib (tinyobj) ABORTA el programa con caras de mas de 5 vertices (un
-// assert, no un error). Se comprueba antes, para que sea una excepcion normal con su mensaje.
-constexpr int kMaxObjFaceVerts = 5;
-
-void CheckObjFaces(const std::string& path) {
-  std::string ext = path.size() >= 4 ? path.substr(path.size() - 4) : std::string();
-  std::transform(ext.begin(), ext.end(), ext.begin(),
-                 [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-  if (ext != ".obj")
-    return;
-
-  std::ifstream in(path);
-  std::string line;
-  int number = 0;
-  while (std::getline(in, line)) {
-    ++number;
-    if (line.size() < 2 || line[0] != 'f' || (line[1] != ' ' && line[1] != '\t'))
-      continue;
-    int verts = 0;
-    bool inToken = false;
-    for (std::size_t i = 1; i < line.size(); ++i) {
-      const bool space = std::isspace(static_cast<unsigned char>(line[i])) != 0;
-      if (!space && !inToken)
-        ++verts;
-      inToken = !space;
-    }
-    if (verts > kMaxObjFaceVerts) {
-      throw std::runtime_error(path + ":" + std::to_string(number) + ": cara de " +
-                               std::to_string(verts) + " vertices (maximo " +
-                               std::to_string(kMaxObjFaceVerts) +
-                               "); exporta el modelo triangulado");
-    }
-  }
-}
-
-// Lee las lineas "# retro:col ..." del .obj (ver ModelBox en Resources.hpp).
-std::vector<ModelBox> ReadObjBoxes(const std::string& path) {
-  std::vector<ModelBox> boxes;
-  std::ifstream in(path);
-  std::string line;
-  int number = 0;
-  const std::string tag = "# retro:col ";
-  while (std::getline(in, line)) {
-    ++number;
-    if (line.rfind(tag, 0) != 0)
-      continue;
-    std::istringstream ss(line.substr(tag.size()));
-    ModelBox b;
-    if (!(ss >> b.min.x >> b.min.y >> b.min.z >> b.max.x >> b.max.y >> b.max.z >> b.yaw) ||
-        b.min.x >= b.max.x || b.min.y >= b.max.y || b.min.z >= b.max.z) {
-      throw std::runtime_error(path + ":" + std::to_string(number) +
-                               ": caja de colision mal escrita (min x y z, max x y z, yaw)");
-    }
-    boxes.push_back(b);
-  }
-  return boxes;
-}
-
-Model LoadCheckedModel(const std::string& path) {
-  CheckObjFaces(path);
-  return ::LoadModel(path.c_str());
+// Copia un vector a memoria de raylib (UnloadMesh la libera con RL_FREE).
+template <class T> T* RaylibCopy(const std::vector<T>& v) {
+  T* out = static_cast<T*>(MemAlloc(static_cast<unsigned int>(v.size() * sizeof(T))));
+  std::copy(v.begin(), v.end(), out);
+  return out;
 }
 
 } // namespace
@@ -92,6 +36,13 @@ TextureResource::TextureResource(const std::string& path) : texture_(::LoadTextu
     throw std::runtime_error("No se pudo cargar la textura: " + path);
   }
 
+  SetTextureFilter(texture_, TEXTURE_FILTER_POINT);
+}
+
+TextureResource::TextureResource(Image image) : texture_(::LoadTextureFromImage(image)) {
+  UnloadImage(image);
+  if (!IsTextureValid(texture_))
+    throw std::runtime_error("No se pudo subir la textura");
   SetTextureFilter(texture_, TEXTURE_FILTER_POINT);
 }
 
@@ -121,27 +72,38 @@ void TextureResource::Release() noexcept {
 // ---------------------------------------------------------------------------
 // ModelResource
 // ---------------------------------------------------------------------------
-ModelResource::ModelResource(const std::string& path) : model_(LoadCheckedModel(path)) {
-  CollectOwnedTextures();
-  try {
-    collisionBoxes_ = ReadObjBoxes(path);
-  } catch (...) {
-    Release();
-    throw;
-  }
+ModelResource::ModelResource(const ObjData& data,
+                             std::vector<std::shared_ptr<TextureResource>> textures)
+    : textures_(std::move(textures)), collisionBoxes_(data.boxes) {
+  const int n = static_cast<int>(data.parts.size());
+  model_.transform = MatrixIdentity();
+  model_.meshCount = n;
+  model_.materialCount = n;
+  model_.meshes = static_cast<Mesh*>(MemAlloc(sizeof(Mesh) * static_cast<unsigned int>(n)));
+  model_.materials = static_cast<Material*>(MemAlloc(sizeof(Material) * static_cast<unsigned int>(n)));
+  model_.meshMaterial = static_cast<int*>(MemAlloc(sizeof(int) * static_cast<unsigned int>(n)));
+  for (int i = 0; i < n; ++i) {
+    const ObjData::Part& part = data.parts[static_cast<std::size_t>(i)];
+    Mesh& mesh = model_.meshes[i];
+    mesh.vertexCount = static_cast<int>(part.positions.size() / 3);
+    mesh.triangleCount = mesh.vertexCount / 3;
+    mesh.vertices = RaylibCopy(part.positions);
+    mesh.texcoords = RaylibCopy(part.texcoords);
+    mesh.normals = RaylibCopy(part.normals);
+    UploadMesh(&mesh, false);
 
-  if (!IsModelValid(model_)) {
-    Release();
-    throw std::runtime_error("No se pudo cargar el modelo: " + path);
+    model_.materials[i] = LoadMaterialDefault();
+    model_.materials[i].maps[MATERIAL_MAP_DIFFUSE].color = part.color;
+    const std::size_t k = static_cast<std::size_t>(i);
+    if (k < textures_.size() && textures_[k])
+      model_.materials[i].maps[MATERIAL_MAP_DIFFUSE].texture = textures_[k]->Get();
+    model_.meshMaterial[i] = i;
   }
-
-  for (const Texture2D& tex : ownedTextures_) {
-    SetTextureFilter(tex, TEXTURE_FILTER_POINT);
-  }
+  CollectOpenMaterials();
 }
 
 ModelResource::ModelResource(Mesh mesh) : model_(::LoadModelFromMesh(mesh)) {
-  CollectOwnedTextures();
+  CollectOpenMaterials();
   if (!IsModelValid(model_)) {
     Release();
     throw std::runtime_error("No se pudo crear el modelo desde la malla");
@@ -163,10 +125,10 @@ void ModelResource::SetShader(std::shared_ptr<ShaderResource> shader) {
 }
 
 ModelResource::ModelResource(ModelResource&& other) noexcept
-    : model_(std::exchange(other.model_, Model{})), ownedTextures_(std::move(other.ownedTextures_)),
+    : model_(std::exchange(other.model_, Model{})), textures_(std::move(other.textures_)),
       openMaterials_(std::move(other.openMaterials_)),
       collisionBoxes_(std::move(other.collisionBoxes_)), shader_(std::move(other.shader_)) {
-  other.ownedTextures_.clear();
+  other.textures_.clear();
   other.openMaterials_.clear();
 }
 
@@ -174,52 +136,36 @@ ModelResource& ModelResource::operator=(ModelResource&& other) noexcept {
   if (this != &other) {
     Release();
     model_ = std::exchange(other.model_, Model{});
-    ownedTextures_ = std::move(other.ownedTextures_);
+    textures_ = std::move(other.textures_);
     openMaterials_ = std::move(other.openMaterials_);
     collisionBoxes_ = std::move(other.collisionBoxes_);
     shader_ = std::move(other.shader_);
-    other.ownedTextures_.clear();
+    other.textures_.clear();
     other.openMaterials_.clear();
   }
 
   return *this;
 }
 
-void ModelResource::CollectOwnedTextures() {
+// Materiales sin textura: los que reciben la de la entidad ("texture").
+void ModelResource::CollectOpenMaterials() {
   const unsigned int defaultId = rlGetTextureIdDefault();
-
   for (int m = 0; m < model_.materialCount; ++m) {
     if (model_.materials[m].maps == nullptr)
       continue;
-
     const unsigned int diffuse = model_.materials[m].maps[MATERIAL_MAP_DIFFUSE].texture.id;
     if (diffuse == 0 || diffuse == defaultId)
       openMaterials_.push_back(m);
-
-    for (int k = 0; k < MAX_MATERIAL_MAPS; ++k) {
-      const Texture2D tex = model_.materials[m].maps[k].texture;
-      if (tex.id == 0 || tex.id == defaultId)
-        continue;
-
-      const bool alreadyTracked = std::any_of(ownedTextures_.begin(), ownedTextures_.end(),
-                                              [&](const Texture2D& t) { return t.id == tex.id; });
-
-      if (!alreadyTracked)
-        ownedTextures_.push_back(tex);
-    }
   }
 }
 
 void ModelResource::Release() noexcept {
-  for (const Texture2D& tex : ownedTextures_) {
-    UnloadTexture(tex);
-  }
-  ownedTextures_.clear();
-
+  // Las texturas son de la cache (textures_): UnloadModel no las toca.
   if (model_.meshCount > 0 || model_.materials != nullptr) {
     UnloadModel(model_);
   }
   model_ = Model{};
+  textures_.clear();
   shader_.reset();
 }
 
@@ -313,6 +259,14 @@ SoundResource::SoundResource(const std::string& path) {
   if (!IsSoundValid(sound_)) {
     sound_ = Sound{};
     throw std::runtime_error("No se pudo cargar el sonido: " + path);
+  }
+}
+
+SoundResource::SoundResource(Wave wave) : sound_(::LoadSoundFromWave(wave)) {
+  UnloadWave(wave);
+  if (!IsSoundValid(sound_)) {
+    sound_ = Sound{};
+    throw std::runtime_error("No se pudo crear el sonido");
   }
 }
 

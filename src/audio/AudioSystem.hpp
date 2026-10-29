@@ -3,10 +3,13 @@
 #include "assets/AssetManager.hpp"
 #include "audio/Emitter.hpp"
 
+#include <atomic>
 #include <memory>
+#include <mutex>
 #include <random>
 #include <span>
 #include <string>
+#include <thread>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -15,9 +18,14 @@ namespace retro {
 
 // Efectos, dos canales de streaming (música y ambiente, con fundido cruzado) y pasos.
 // Si no hay dispositivo de audio, todo se ignora y el juego sigue sin sonido.
+//
+// Los streams (musica, ambiente y emisores) los alimenta un HILO PROPIO cada pocos milisegundos:
+// si un fotograma tarda (un cambio de escena, una carga), la musica no se corta. Todo lo que toca
+// los streams va bajo mutex_; los metodos publicos lo toman y el hilo tambien.
 class AudioSystem {
 public:
   AudioSystem(AssetManager& assets, bool enabled);
+  ~AudioSystem();
 
   AudioSystem(const AudioSystem&) = delete;
   AudioSystem& operator=(const AudioSystem&) = delete;
@@ -35,11 +43,14 @@ public:
 
   void SetListener(Vector3 position, Vector3 forward);
   void UpdateEmitters(std::span<const Emitter> emitters, float dt);
-  void ClearEmitters() { voices_.clear(); }
+  void ClearEmitters();
 
   void PlaySfxAt(const std::string& file, float volume, Vector3 position, float radius,
                  float minDistance = 1.0f);
-  void PlayMusic(const std::string& file, float volume, float fadeSeconds);
+  // Con 'then', 'file' suena una sola vez y al acabar empieza 'then' en bucle (una entrada y
+  // lo que se queda sonando). Pedir 'then' mientras aun suena la entrada no la corta.
+  void PlayMusic(const std::string& file, float volume, float fadeSeconds,
+                 const std::string& then = {});
   void StopMusic(float fadeSeconds) { PlayMusic("", 0.0f, fadeSeconds); }
   void PlayAmbient(const std::string& file, float volume, float fadeSeconds);
 
@@ -51,6 +62,7 @@ private:
     std::unique_ptr<MusicResource> current;
     std::unique_ptr<MusicResource> outgoing;
     std::string file;
+    std::string then; // lo que sigue a 'file' cuando acabe (vacio: 'file' en bucle)
     float volume = 0.0f;
     float target = 0.0f;
     float upRate = 1.0f;
@@ -71,9 +83,12 @@ private:
   Vector3 listenerPos_{0.0f, 0.0f, 0.0f};
   Vector3 listenerFwd_{0.0f, 0.0f, -1.0f};
   std::unordered_map<std::string, Voice> voices_;
+  unsigned fadingSerial_ = 0; // para renombrar los emisores de la escena anterior
 
-  void StartChannel(Channel& channel, const std::string& file, float volume, float fade);
+  void StartChannel(Channel& channel, const std::string& file, float volume, float fade,
+                    const std::string& then = {});
   static void UpdateChannel(Channel& channel, float dt);
+  void FeedLoop(); // el hilo: UpdateMusicStream de todos los streams
   void Warn(const std::string& file, const char* what);
 
   AssetManager& assets_;
@@ -89,6 +104,11 @@ private:
 
   std::mt19937 rng_{std::random_device{}()};
   std::unordered_set<std::string> warned_;
+
+  // Al final: el hilo se crea cuando todo lo demas ya existe y se para antes de destruirlo.
+  std::mutex mutex_;
+  std::atomic<bool> feeding_{false};
+  std::thread feeder_;
 };
 
 } // namespace retro

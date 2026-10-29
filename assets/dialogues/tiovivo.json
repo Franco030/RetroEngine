@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "fe_zapato" } },
+      "lines": [
+        "Los caballos suben y bajan.\nNadie va montado.",
+        "Uno es pequeno, para un nino.\nDe su barra cuelga un zapato rojo.",
+        "Como el de Clara.",
+        "Lo miras otra vez.\nEs un lazo rojo, atado a la barra.",
+        "Quiza lo estas imaginando."
+      ],
+      "do": [{ "set_flag": "fe_zapato" }]
+    },
+    { "lines": ["Sigue girando. Un lazo rojo.\nSolo un lazo."] }
+  ]
+}

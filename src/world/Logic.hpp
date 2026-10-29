@@ -18,6 +18,8 @@ struct GotoScene {
   std::string scene;
   std::optional<Vector3> position;
   std::optional<float> yaw;
+  float dark = 0.0f;              // segundos en negro con la escena nueva ya cargada
+  std::vector<std::string> lines; // frases que aparecen una tras otra en ese negro
 };
 
 struct Teleport {
@@ -51,6 +53,7 @@ struct PlaySound {
 
 struct PlayMusic {
   std::string file;
+  std::string then; // si no esta vacio: 'file' suena una vez y luego 'then' en bucle
   float volume = 0.6f;
   float fade = 1.0f;
 };
@@ -64,12 +67,41 @@ struct StartDialogue {
   std::string id;
 };
 
+// Las dos giran la vista del jugador hacia una entidad (o un punto) mientras dure el mensaje o
+// dialogo que se este leyendo; 'speed' es lo rapido que gira.
+//
+// Mirar: suave y sin acercar (un objeto, alguien que habla).
+struct LookAt {
+  std::string entity;
+  std::optional<Vector3> point;
+  float speed = 6.0f;
+};
+
+// Susto de camara: giro de golpe y acercamiento (la vista se estrecha hasta 'fov' grados).
+struct Scare {
+  std::string entity;
+  std::optional<Vector3> point;
+  float speed = 20.0f;
+  float fov = 30.0f;
+};
+
+// El jugador puede mirar pero no andar (true) o vuelve a andar (false). Se suelta solo al cambiar
+// de escena.
+struct LockMovement {
+  bool locked = true;
+};
+
+// Al llegar a la escena del goto_scene que va en la misma lista, en lugar de jugar se muestra la
+// pantalla de inicio (con "Jugar", que lleva la camara al punto de inicio de la escena).
+struct TitleScreen {};
+
 } // namespace action
 
 using Action =
     std::variant<action::GotoScene, action::Teleport, action::SetFlag, action::AddFlag,
                  action::Message, action::PlaySound, action::PlayMusic, action::StopMusic,
-                 action::StartDialogue>;
+                 action::StartDialogue, action::LookAt, action::Scare, action::LockMovement,
+                 action::TitleScreen>;
 
 enum class CompareOp { Eq, Ne, Lt, Le, Gt, Ge };
 
@@ -94,6 +126,20 @@ bool AllHold(const std::vector<Condition>& conditions, const GameState& state);
 
 // Reemplaza {nombre} por el valor de la bandera (0 si nunca se fijo).
 std::string ExpandFlags(const std::string& text, const GameState& state);
+
+// Lo que pasa cuando el jugador MIRA una entidad: esta en el centro de la vista (a menos de
+// 'angle' grados), a menos de 'range' metros y sin nada solido en medio. 'onSeen' ("do") se
+// ejecuta al verla y 'onLookAway' ("away") cuando deja de mirarla despues de haberla visto. Cada
+// uno una sola vez por visita a la escena (lo que deba durar, con banderas y "showIf").
+struct Sight {
+  float range = 15.0f;
+  float angle = 20.0f;     // para "la ves": cerca del centro de la vista
+  float awayAngle = 75.0f; // para "dejas de mirarla": fuera de pantalla (mas que el campo de vision)
+  std::vector<Action> onSeen;
+  std::vector<Action> onLookAway;
+  bool seen = false;    // ya la vio (se ejecuto onSeen)
+  bool away = false;    // ya aparto la vista (se ejecuto onLookAway)
+};
 
 // Lo que ocurre al pulsar E sobre una entidad
 struct Interaction {

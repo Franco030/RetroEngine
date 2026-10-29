@@ -43,6 +43,10 @@ RetroShader::Program RetroShader::MakeProgram(std::shared_ptr<ShaderResource> sh
   l.fogColor = GetShaderLocation(s, "fogColor");
   l.fogStart = GetShaderLocation(s, "fogStart");
   l.fogEnd = GetShaderLocation(s, "fogEnd");
+  l.mistDensity = GetShaderLocation(s, "mistDensity");
+  l.mistHeight = GetShaderLocation(s, "mistHeight");
+  l.mistColor = GetShaderLocation(s, "mistColor");
+  l.fogFixed = GetShaderLocation(s, "fogFixed");
   l.clipY = GetShaderLocation(s, "clipY");
   l.useLighting = GetShaderLocation(s, "useLighting");
   l.lightCount = GetShaderLocation(s, "lightCount");
@@ -75,6 +79,12 @@ void RetroShader::Upload(const Program& p) const {
   SetUniform(s, l.fogColor, &params_.fogColor, SHADER_UNIFORM_VEC3);
   SetUniform(s, l.fogStart, &fogStart, SHADER_UNIFORM_FLOAT);
   SetUniform(s, l.fogEnd, &fogEnd, SHADER_UNIFORM_FLOAT);
+  const float mist = params_.fogEnabled ? params_.mistDensity : 0.0f;
+  SetUniform(s, l.mistDensity, &mist, SHADER_UNIFORM_FLOAT);
+  SetUniform(s, l.mistHeight, &params_.mistHeight, SHADER_UNIFORM_FLOAT);
+  SetUniform(s, l.mistColor, &params_.mistColor, SHADER_UNIFORM_VEC3);
+  const float noPanorama = -1.0f; // solo Scene::DrawPanorama la cambia, y la devuelve
+  SetUniform(s, l.fogFixed, &noPanorama, SHADER_UNIFORM_FLOAT);
   SetUniform(s, l.clipY, &params_.clipY, SHADER_UNIFORM_FLOAT);
 }
 

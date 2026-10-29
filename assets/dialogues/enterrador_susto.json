@@ -1,0 +1,14 @@
+{
+  "speaker": "Sepulturero",
+  "entries": [
+    {
+      "lines": ["No debiste tocarlo.", "Ahora ya saben que estas aqui.", "Y vienen subiendo."],
+      "do": [
+        { "set_flag": "organo_susto_fin" },
+        { "play_sound": "audio/portazo.wav", "volume": 1.0 },
+        { "message": "...", "seconds": 2.5 },
+        { "play_music": "audio/musica_iglesia_v2.wav", "volume": 0.38, "fade": 6 }
+      ]
+    }
+  ]
+}

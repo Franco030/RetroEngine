@@ -6,18 +6,37 @@
 
 #include <raylib.h>
 
+#include <nlohmann/json_fwd.hpp>
+
 #include <cstddef>
 #include <cstdint>
-#include <deque>
+#include <filesystem>
+#include <future>
 #include <memory>
 #include <optional>
 #include <string>
+#include <string_view>
+#include <unordered_map>
 #include <vector>
 
 namespace retro {
 
 class RetroEngine;
 class RetroCamera;
+
+// Un modelo o una textura que usa una escena (para la precarga).
+struct AssetRef {
+  enum class Kind { Model, Texture, Sound };
+  Kind kind;
+  std::string path;
+};
+
+// Lo que pasa en negro entre dos escenas (goto_scene "dark" y "lines"): la escena nueva ya esta
+// cargada (suena su musica) y las frases salen una tras otra, cada una con su parte del tiempo.
+struct Interlude {
+  float seconds = 0.0f;
+  std::vector<std::string> lines;
+};
 
 class SceneManager {
 public:
@@ -37,7 +56,7 @@ public:
   // JSON de destino. Lanza std::invalid_argument si el archivo no existe.
   void GoToPath(const std::string& relativePath,
                 std::optional<Vector3> spawnPosition = std::nullopt,
-                std::optional<float> spawnYaw = std::nullopt);
+                std::optional<float> spawnYaw = std::nullopt, Interlude interlude = {});
 
   void GoTo(std::size_t index);
   void Next();
@@ -49,6 +68,13 @@ public:
   void UpdateAudio(float dt);
   void Draw();
   void DrawFade() const;
+
+  // La frase del negro que toca ahora y su opacidad (0..1), si hay una.
+  struct Card {
+    std::string_view text;
+    float alpha;
+  };
+  std::optional<Card> CurrentCard() const;
 
   std::size_t Index() const noexcept { return index_; }
   std::size_t Count() const noexcept { return paths_.size(); }
@@ -62,7 +88,7 @@ public:
   void SetFocus(Vector3 focus) noexcept { focus_ = focus; }
 
 private:
-  enum class Phase { Idle, FadingOut, FadingIn };
+  enum class Phase { Idle, FadingOut, Dark, FadingIn };
 
   struct Environment {
     Color background;
@@ -71,6 +97,9 @@ private:
     Vector3 lightDirection;
     float ambient;
     float sun;
+    float mistDensity;
+    float mistHeight;
+    Vector3 mistColor;
   };
 
   Vector3 focus_{0.0f, 0.0f, 0.0f};
@@ -78,11 +107,23 @@ private:
   void ApplyEnvironment(const Environment& env);
   void ApplyAudio(const SceneAudio& audio);
 
-  // Precarga de las escenas vecinas (a las que lleva algun goto_scene de la actual): lo que ya
-  // esta en memoria se retiene para que la purga no lo borre, y lo que falta se carga poco a
-  // poco (StepPrefetch, con un presupuesto por fotograma) mientras se juega.
-  void PlanPrefetch();
+  // Precarga de las escenas vecinas (a las que lleva algun goto_scene de la actual). Un hilo de
+  // trabajo lee y parsea sus JSON (PlanPrefetch); cuando termina, StepPrefetch retiene lo que ya
+  // esta en memoria, pide lo que falta a los hilos y sube a la GPU poco a poco, con un
+  // presupuesto por fotograma. Los JSON parseados se guardan: al ir a una vecina no se parsea.
+  struct SceneDoc {
+    std::shared_ptr<const nlohmann::json> json;
+    std::filesystem::file_time_type stamp; // si el archivo cambia (F5), se vuelve a leer
+  };
+  struct PrefetchPlan {
+    std::vector<std::string> neighbors;
+    std::unordered_map<std::string, SceneDoc> docs;
+    std::vector<AssetRef> items;
+  };
+  void PlanPrefetch(std::shared_ptr<const nlohmann::json> current);
   void StepPrefetch();
+  // El JSON de 'path': el guardado si sigue al dia, si no lo lee ahora.
+  std::shared_ptr<const nlohmann::json> SceneJson(const std::string& path);
 
   RetroEngine& engine_;
   RetroCamera& camera_;
@@ -91,6 +132,9 @@ private:
 
   std::optional<Vector3> pendingSpawnPos_;
   std::optional<float> pendingSpawnYaw_;
+  Interlude pendingInterlude_;
+  Interlude interlude_; // el negro en curso (Phase::Dark)
+  float darkTime_ = 0.0f;
 
   std::vector<PointLight> lights_;
   std::vector<Emitter> emitters_;
@@ -103,13 +147,13 @@ private:
   Phase phase_ = Phase::Idle;
   float fade_ = 0.0f; // 0 = transparente, 1 = negro total
 
-  struct PrefetchItem {
-    bool model; // si no, textura
-    std::string path;
-  };
-  std::deque<PrefetchItem> prefetch_;
+  std::future<PrefetchPlan> plan_;
+  bool purgePending_ = false;  // la purga espera al plan (para no soltar lo que usan las vecinas)
+  std::unordered_map<std::string, SceneDoc> docs_; // JSON de las vecinas, ya parseados
+  std::vector<AssetRef> prefetch_;             // pedidos a los hilos, por retener al subirse
   std::vector<std::shared_ptr<ModelResource>> keepModels_;    // de las escenas vecinas
   std::vector<std::shared_ptr<TextureResource>> keepTextures_;
+  std::vector<std::shared_ptr<SoundResource>> keepSounds_;
   double prefetchMs_ = 0.0;     // tiempo de la precarga en curso (para el informe)
   double prefetchMaxMs_ = 0.0;  // el fotograma que mas le dedico
   int prefetchFrames_ = 0;

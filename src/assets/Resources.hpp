@@ -1,5 +1,7 @@
 #pragma once
 
+#include "assets/ObjLoader.hpp"
+
 #include <raylib.h>
 
 #include <memory>
@@ -13,6 +15,8 @@ class ShaderResource;
 class TextureResource {
 public:
   explicit TextureResource(const std::string& path);
+  // Sube una imagen ya decodificada (por ejemplo en un hilo de trabajo) y la libera.
+  explicit TextureResource(Image image);
   ~TextureResource();
 
   TextureResource(const TextureResource&) = delete;
@@ -29,19 +33,12 @@ private:
   Texture2D texture_{};
 };
 
-// Caja de colision que el propio modelo trae en su .obj, en una linea de comentario:
-//   # retro:col min_x min_y min_z max_x max_y max_z yaw
-// (coordenadas del motor; las escribe tools/blender/retro_comun.py). tinyobj ignora los
-// comentarios, asi que el modelo se sigue cargando igual en cualquier otro programa.
-struct ModelBox {
-  Vector3 min{};
-  Vector3 max{};
-  float yaw = 0.0f;
-};
-
 class ModelResource {
 public:
-  explicit ModelResource(const std::string& path);
+  // Sube a la GPU un .obj ya leido (LoadObjData, que puede ir en otro hilo). 'textures': la de
+  // cada parte, en orden (nullptr = sin textura); son de la cache de texturas y se comparten
+  // entre modelos (la madera de una casa es la misma textura que la de un banco).
+  ModelResource(const ObjData& data, std::vector<std::shared_ptr<TextureResource>> textures);
   explicit ModelResource(Mesh mesh);
   ~ModelResource();
 
@@ -66,10 +63,10 @@ public:
 
 private:
   void Release() noexcept;
-  void CollectOwnedTextures();
+  void CollectOpenMaterials();
 
   Model model_{};
-  std::vector<Texture2D> ownedTextures_;
+  std::vector<std::shared_ptr<TextureResource>> textures_; // vivas mientras el modelo exista
   std::vector<int> openMaterials_;
   std::vector<ModelBox> collisionBoxes_;
   std::shared_ptr<ShaderResource> shader_;
@@ -115,6 +112,8 @@ private:
 class SoundResource {
 public:
   explicit SoundResource(const std::string& path);
+  // Crea el sonido desde un audio ya decodificado (por ejemplo en un hilo) y lo libera.
+  explicit SoundResource(Wave wave);
   ~SoundResource();
 
   SoundResource(const SoundResource&) = delete;

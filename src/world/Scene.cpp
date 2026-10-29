@@ -1,9 +1,12 @@
 #include "world/Scene.hpp"
 #include "graphics/ShaderScope.hpp"
 
+#include <rlgl.h>
+
 #include <raymath.h>
 
 #include <algorithm>
+#include <cmath>
 #include <cfloat>
 #include <stdexcept>
 #include <utility>
@@ -123,8 +126,37 @@ void Scene::CollectEmitters(std::vector<Emitter>& out) const {
   }
 }
 
+void Scene::DrawPanorama(const Camera3D& camera, const Shader& spriteShader) const {
+  const Panorama& p = *panorama;
+  Model& model = p.model->Get();
+  const Shader lit = model.materials[0].shader;
+
+  SetFogFixed(lit, p.haze);
+  model.transform = MatrixTranslate(camera.position.x, p.y, camera.position.z);
+  DrawModel(model, {0.0f, 0.0f, 0.0f}, 1.0f, p.tint);
+  SetFogFixed(lit, -1.0f);
+
+  if (!p.sun)
+    return;
+  // Mas lejos que el modelo (que acaba a ~200 m): las montanas lo tapan por profundidad.
+  constexpr float kSunDistance = 320.0f;
+  const Vector3 pos{camera.position.x + p.sunDirection.x * kSunDistance,
+                    camera.position.y + p.sunDirection.y * kSunDistance,
+                    camera.position.z + p.sunDirection.z * kSunDistance};
+  ShaderScope scope(spriteShader);
+  if (const int loc = GetShaderLocation(spriteShader, "matModel"); loc >= 0)
+    SetShaderValueMatrix(spriteShader, loc, MatrixIdentity());
+  SetFogFixed(spriteShader, 0.0f); // el sol no se apaga con la niebla
+  DrawBillboard(camera, p.sun->Get(), pos, p.sunSize, WHITE);
+  rlDrawRenderBatchActive(); // que se dibuje antes de devolver el uniform
+  SetFogFixed(spriteShader, -1.0f);
+}
+
 void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float ambient, float sun,
                  std::span<const PointLight> lights) {
+  if (panorama)
+    DrawPanorama(camera, spriteShader);
+
   bool anySprite = false;
   for (auto& e : entities_) {
     if (e->IsSprite()) {
@@ -156,7 +188,15 @@ void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float ambie
       const float k = t * t * 0.6f;
       shade = {shade.x + l.color.x * k, shade.y + l.color.y * k, shade.z + l.color.z * k};
     }
+    if (!e->fog) { // los sprites van en lote: se vacia antes y despues de cambiar el uniform
+      rlDrawRenderBatchActive();
+      SetFogFixed(spriteShader, 0.0f);
+    }
     e->DrawSprite(camera, shade);
+    if (!e->fog) {
+      rlDrawRenderBatchActive();
+      SetFogFixed(spriteShader, -1.0f);
+    }
   }
 }
 
@@ -175,7 +215,7 @@ void Scene::CollectColliders(std::vector<WorldBox>& out) const {
 void Scene::RefreshVisibility(const GameState& state) {
   for (auto& e : entities_) {
     if (!e->showIf.empty())
-      e->visible = AllHold(e->showIf, state);
+      e->SetShown(AllHold(e->showIf, state));
   }
 }
 
@@ -219,6 +259,70 @@ void Scene::UpdateTriggers(Vector3 feet, float radius, float height, GameState& 
   triggersPrimed_ = true;
 }
 
+bool Scene::Occluded(Vector3 origin, Vector3 dir, float distance, const Entity* self) const {
+  for (const auto& o : entities_) {
+    if (o.get() == self || !o->visible)
+      continue;
+    for (const BoxCollider& c : o->colliders) {
+      float to = 0.0f;
+      if (RayIntersectsBox(MakeWorldBox(c, o->transform), origin, dir, to) && to < distance - 1e-3f)
+        return true;
+    }
+  }
+  return false;
+}
+
+// Mitad de la altura de la vista (60 grados de campo vertical), con algo de margen; y para
+// "fuera de pantalla", algo mas.
+constexpr float kSightVertical = 35.0f * DEG2RAD;
+constexpr float kOffScreenVertical = 45.0f * DEG2RAD;
+
+void Scene::UpdateSight(Vector3 eye, Vector3 forward, std::vector<Action>& fired) {
+  for (auto& e : entities_) {
+    if (!e->sight || !e->visible)
+      continue;
+    Sight& s = *e->sight;
+    if (s.seen && s.away)
+      continue;
+
+    // Se mira al centro de su caja (no a los pies): el cuerpo, la cara.
+    const BoundingBox lb = e->LocalBounds();
+    BoxCollider box;
+    box.min = lb.min;
+    box.max = lb.max;
+    const WorldBox wb = MakeWorldBox(box, e->transform);
+    const Vector3 center{wb.center.x, (wb.bottom + wb.top) * 0.5f, wb.center.z};
+    const Vector3 to = Vector3Subtract(center, eye);
+    const float dist = Vector3Length(to);
+    // Vista: el angulo se mide en horizontal (hacia donde se gira la cabeza) y en vertical basta
+    // con que quepa en pantalla: quien mira algo bajo o alto, tambien lo ve.
+    // "La ves" (cerca del centro, 'angle') no es lo contrario de "ya no la ves": eso es que este
+    // fuera de pantalla ('awayAngle', mas ancho que el campo de vision), lejos o tapada. Si no,
+    // lo que pasa al dejar de mirarla (algo que desaparece o se mueve) se veria por el borde.
+    bool inView = false;
+    bool onScreen = false;
+    if (dist > 1e-3f && dist <= s.range) {
+      const float flat = std::hypot(to.x, to.z);
+      const float fflat = std::hypot(forward.x, forward.z);
+      if (flat > 1e-3f && fflat > 1e-3f) {
+        const float cosYaw = (to.x * forward.x + to.z * forward.z) / (flat * fflat);
+        const float vertical = std::fabs(std::atan2(to.y, flat) - std::atan2(forward.y, fflat));
+        onScreen = cosYaw >= std::cos(s.awayAngle * DEG2RAD) && vertical <= kOffScreenVertical &&
+                   !Occluded(eye, Vector3Scale(to, 1.0f / dist), dist, e.get());
+        inView = onScreen && cosYaw >= std::cos(s.angle * DEG2RAD) && vertical <= kSightVertical;
+      }
+    }
+
+    if (!s.seen && inView) {
+      s.seen = true;
+      fired.insert(fired.end(), s.onSeen.begin(), s.onSeen.end());
+    } else if (s.seen && !s.away && !onScreen) {
+      s.away = true;
+      fired.insert(fired.end(), s.onLookAway.begin(), s.onLookAway.end());
+    }
+  }
+}
+
 Scene::InteractHit Scene::FindInteractable(Vector3 origin, Vector3 dir, const GameState& state) {
   InteractHit best;
   float bestT = FLT_MAX;
@@ -241,21 +345,7 @@ Scene::InteractHit Scene::FindInteractable(Vector3 origin, Vector3 dir, const Ga
 
     // Oclusión: cualquier OTRA entidad sólida más cerca bloquea el rayo.
     // La propia se excluye para que su collider no se tape a sí mismo.
-    bool blocked = false;
-    for (const auto& o : entities_) {
-      if (o.get() == e.get() || !o->visible)
-        continue;
-      for (const BoxCollider& c : o->colliders) {
-        float to = 0.0f;
-        if (RayIntersectsBox(MakeWorldBox(c, o->transform), origin, dir, to) && to < t - 1e-3f) {
-          blocked = true;
-          break;
-        }
-      }
-      if (blocked)
-        break;
-    }
-    if (blocked)
+    if (Occluded(origin, dir, t, e.get()))
       continue;
 
     best.entity = e.get();

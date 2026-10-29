@@ -1,0 +1,17 @@
+# RetroEngine: tienda
+
+newmtl mat_lona
+d 1.000000
+map_Kd ../textures/mat_lona.png
+
+newmtl mat_lona_naranja
+d 1.000000
+map_Kd ../textures/mat_lona_naranja.png
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png

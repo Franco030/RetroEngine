@@ -12,6 +12,7 @@
 #include <cmath>
 #include <filesystem>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <unordered_set>
 #include <stdexcept>
@@ -22,8 +23,9 @@ namespace retro {
 namespace {
 
 constexpr float kFadeSteps = 8.0f;
+// Subir a la GPU lo que los hilos ya leyeron (la lectura no cuesta al hilo principal).
 constexpr double kPrefetchBudgetMs = 3.0;      // por fotograma jugando (a 60 fps hay 16.6 ms)
-constexpr double kPrefetchDarkBudgetMs = 40.0; // mientras la pantalla sigue casi negra al llegar
+constexpr double kPrefetchDarkBudgetMs = 12.0; // mientras la pantalla sigue casi negra al llegar
 
 using Clock = std::chrono::steady_clock;
 
@@ -44,12 +46,88 @@ void CollectGotos(const nlohmann::json& j, std::vector<std::string>& out) {
   }
 }
 
-// Lee un JSON de escena; vacio si no se puede (la precarga es una ayuda: nunca falla).
-nlohmann::json ReadSceneJson(const std::string& fullPath) {
-  std::ifstream file(fullPath);
-  if (!file)
-    return {};
-  return nlohmann::json::parse(file, nullptr, false); // sin excepciones: discarded si esta mal
+// Modelos y texturas que usa una escena (entidades y panorama), sin repetir.
+void CollectAssets(const nlohmann::json& scene, std::vector<AssetRef>& out,
+                   std::unordered_set<std::string>& seen) {
+  using K = AssetRef::Kind;
+  auto push = [&](K kind, const std::string& path) {
+    if (seen.insert(std::to_string(static_cast<int>(kind)) + ":" + path).second)
+      out.push_back({kind, path});
+  };
+  auto add = [&](K kind, const nlohmann::json& j, const char* key) {
+    if (const auto it = j.find(key); it != j.end() && it->is_string())
+      push(kind, it->get<std::string>());
+  };
+  if (const auto e = scene.find("entities"); e != scene.end() && e->is_array()) {
+    for (const nlohmann::json& ent : *e) {
+      add(K::Model, ent, "model");
+      add(K::Texture, ent, "texture");
+      add(K::Texture, ent, "sprite");
+    }
+  }
+  if (const auto p = scene.find("panorama"); p != scene.end() && p->is_object()) {
+    add(K::Model, *p, "model");
+    if (const auto sun = p->find("sun"); sun != p->end() && sun->is_object())
+      add(K::Texture, *sun, "texture");
+  }
+  // sonidos cortos: los pasos y los "play_sound" de la logica (la musica y el ambiente son
+  // streams: se abren al llegar, en el hilo de audio no hay nada que precargar)
+  if (const auto a = scene.find("audio"); a != scene.end() && a->is_object()) {
+    if (const auto f = a->find("footsteps"); f != a->end() && f->is_object() && f->contains("files")) {
+      for (const nlohmann::json& file : f->at("files")) {
+        if (file.is_string())
+          push(K::Sound, file.get<std::string>());
+      }
+    }
+  }
+  std::function<void(const nlohmann::json&)> sonidos = [&](const nlohmann::json& j) {
+    if (j.is_object()) {
+      add(K::Sound, j, "play_sound");
+      for (const auto& v : j)
+        sonidos(v);
+    } else if (j.is_array()) {
+      for (const auto& v : j)
+        sonidos(v);
+    }
+  };
+  for (const char* key : {"entities", "triggers"}) {
+    if (const auto it = scene.find(key); it != scene.end())
+      sonidos(*it);
+  }
+}
+
+void Request(AssetManager& assets, const AssetRef& item) {
+  switch (item.kind) {
+  case AssetRef::Kind::Model: assets.RequestModel(item.path); break;
+  case AssetRef::Kind::Texture: assets.RequestTexture(item.path); break;
+  case AssetRef::Kind::Sound: assets.RequestSound(item.path); break;
+  }
+}
+
+bool Has(const AssetManager& assets, const AssetRef& item) {
+  switch (item.kind) {
+  case AssetRef::Kind::Model: return assets.HasModel(item.path);
+  case AssetRef::Kind::Texture: return assets.HasTexture(item.path);
+  case AssetRef::Kind::Sound: return assets.HasSound(item.path);
+  }
+  return false;
+}
+
+// Guarda un shared_ptr al recurso (ya cargado) para que la purga no lo suelte.
+void Keep(AssetManager& assets, const AssetRef& item,
+          std::vector<std::shared_ptr<ModelResource>>& models,
+          std::vector<std::shared_ptr<TextureResource>>& textures,
+          std::vector<std::shared_ptr<SoundResource>>& sounds) {
+  switch (item.kind) {
+  case AssetRef::Kind::Model: models.push_back(assets.GetModel(item.path)); break;
+  case AssetRef::Kind::Texture: textures.push_back(assets.GetTexture(item.path)); break;
+  case AssetRef::Kind::Sound: sounds.push_back(assets.GetSound(item.path)); break;
+  }
+}
+
+std::filesystem::file_time_type Stamp(const std::string& fullPath) {
+  std::error_code ec;
+  return std::filesystem::last_write_time(fullPath, ec);
 }
 constexpr float kMaxDt = 0.05f;
 
@@ -64,7 +142,7 @@ SceneManager::SceneManager(RetroEngine& engine, RetroCamera& camera,
 
   const RetroShaderParams& p = engine_.Retro().Params();
   defaults_ = {engine_.Config().clearColor, p.fogStart, p.fogEnd, p.lightDirection, p.ambient,
-               p.sun};
+               p.sun, p.mistDensity, p.mistHeight, p.mistColor};
 }
 
 void SceneManager::ApplyEnvironment(const Environment& env) {
@@ -76,6 +154,9 @@ void SceneManager::ApplyEnvironment(const Environment& env) {
   p.lightDirection = env.lightDirection;
   p.ambient = env.ambient;
   p.sun = env.sun;
+  p.mistDensity = env.mistDensity;
+  p.mistHeight = env.mistHeight;
+  p.mistColor = env.mistColor;
   engine_.Retro().SetParams(p);
 }
 
@@ -103,7 +184,9 @@ void SceneManager::LoadNow(std::size_t index) {
   if (index >= paths_.size())
     throw std::out_of_range("SceneManager: indice de escena invalido");
 
-  const auto start = std::chrono::steady_clock::now();
+  const auto start = Clock::now();
+  double tLoad = 0.0, tSwap = 0.0; // marcas para el informe
+  std::shared_ptr<const nlohmann::json> current;
   engine_.Assets().ResetStats();
 
   // Copias para deshacer si el JSON falla a medias.
@@ -116,10 +199,24 @@ void SceneManager::LoadNow(std::size_t index) {
     camera_ = RetroCamera{};
 
     // La nueva escena se construye aparte: la actual sigue viva hasta el final.
+    // El JSON ya parseado (si la precarga lo tenia) y todos sus modelos y texturas pedidos a
+    // los hilos de una vez: se leen en paralelo mientras se construyen las entidades, y cada
+    // GetModel solo espera al suyo.
+    const std::shared_ptr<const nlohmann::json> doc = SceneJson(paths_[index]);
+    std::vector<AssetRef> own;
+    std::unordered_set<std::string> seen;
+    CollectAssets(*doc, own, seen);
+    AssetManager& assets = engine_.Assets();
+    for (const AssetRef& item : own)
+      Request(assets, item);
+    current = doc;
+
     auto next = std::make_unique<Scene>();
-    LoadScene(paths_[index], engine_, *next, camera_);
+    LoadSceneFromJson(*doc, paths_[index], engine_, *next, camera_);
+    tLoad = MsSince(start);
 
     scene_ = std::move(next); // la escena anterior se destruye aqui
+    tSwap = MsSince(start);
     index_ = index;
     ++generation_;
 
@@ -135,11 +232,14 @@ void SceneManager::LoadNow(std::size_t index) {
   }
 
   ApplyAudio(scene_->audio);
+  const double tAudio = MsSince(start);
 
-  // Retiene lo de las escenas vecinas que ya estaba cargado (por ejemplo, la escena de la que se
-  // viene) y libera lo demas que solo usaba la escena anterior.
-  PlanPrefetch();
-  engine_.Assets().PurgeUnused();
+  // Las vecinas se leen en un hilo; la purga de lo que solo usaba la escena anterior espera a
+  // saber que necesitan (asi no se suelta lo que habria que volver a cargar).
+  PlanPrefetch(current);
+  std::cout << "[carga] fases: escena " << static_cast<int>(tLoad) << " | soltar la anterior "
+            << static_cast<int>(tSwap - tLoad) << " | audio " << static_cast<int>(tAudio - tSwap)
+            << " | planear precarga " << static_cast<int>(MsSince(start) - tAudio) << " ms\n";
 
   // Cuanto ha costado: es el tiron que queda tapado por el fundido en negro.
   const double total =
@@ -165,12 +265,13 @@ void SceneManager::GoTo(std::size_t index) {
 
   pendingSpawnPos_.reset();
   pendingSpawnYaw_.reset();
+  pendingInterlude_ = {};
   pending_ = index;
   phase_ = Phase::FadingOut;
 }
 
 void SceneManager::GoToPath(const std::string& relativePath, std::optional<Vector3> spawnPosition,
-                            std::optional<float> spawnYaw) {
+                            std::optional<float> spawnYaw, Interlude interlude) {
   if (phase_ != Phase::Idle)
     return;
 
@@ -186,6 +287,7 @@ void SceneManager::GoToPath(const std::string& relativePath, std::optional<Vecto
   GoTo(static_cast<std::size_t>(it - paths_.begin()));
   pendingSpawnPos_ = spawnPosition;
   pendingSpawnYaw_ = spawnYaw;
+  pendingInterlude_ = std::move(interlude);
 }
 
 void SceneManager::Next() {
@@ -201,10 +303,13 @@ void SceneManager::Previous() {
 void SceneManager::Reload() {
   pendingSpawnPos_.reset();
   pendingSpawnYaw_.reset();
+  pendingInterlude_ = {};
+  interlude_ = {};
   phase_ = Phase::Idle;
   fade_ = 0.0f;
 
   scene_.reset();
+  docs_.clear(); // F5: todo se vuelve a leer del disco
   engine_.Assets().PurgeUnused();
   LoadNow(index_);
 }
@@ -228,6 +333,16 @@ void SceneManager::Update(float dt) {
       pendingSpawnPos_.reset();
       pendingSpawnYaw_.reset();
 
+      interlude_ = std::exchange(pendingInterlude_, {});
+      darkTime_ = 0.0f;
+      phase_ = interlude_.seconds > 0.0f ? Phase::Dark : Phase::FadingIn;
+    }
+    break;
+
+  case Phase::Dark:
+    darkTime_ += dt;
+    if (darkTime_ >= interlude_.seconds) {
+      interlude_ = {};
       phase_ = Phase::FadingIn;
     }
     break;
@@ -246,99 +361,121 @@ void SceneManager::Update(float dt) {
     scene_->Update(dt, focus_);
 }
 
-void SceneManager::PlanPrefetch() {
-  AssetManager& assets = engine_.Assets();
-  const nlohmann::json actual = ReadSceneJson(assets.Root() + paths_[index_]);
-  std::vector<std::string> vecinas;
-  if (!actual.is_discarded())
-    CollectGotos(actual, vecinas);
-  std::sort(vecinas.begin(), vecinas.end());
-  vecinas.erase(std::unique(vecinas.begin(), vecinas.end()), vecinas.end());
-  std::erase(vecinas, paths_[index_]);
-
-  std::vector<std::shared_ptr<ModelResource>> models;
-  std::vector<std::shared_ptr<TextureResource>> textures;
-  std::unordered_set<std::string> vistos; // cada recurso una vez (muchos arboles comparten modelo)
-  prefetch_.clear();
-  int enMemoria = 0;
-  for (const std::string& v : vecinas) {
-    const nlohmann::json escena = ReadSceneJson(assets.Root() + v);
-    if (escena.is_discarded() || !escena.contains("entities"))
-      continue;
-    for (const nlohmann::json& e : escena.at("entities")) {
-      auto pedir = [&](const char* key, bool model) {
-        const auto it = e.find(key);
-        if (it == e.end() || !it->is_string())
-          return;
-        const std::string path = it->get<std::string>();
-        if (!vistos.insert((model ? "m:" : "t:") + path).second)
-          return;
-        if (model ? assets.HasModel(path) : assets.HasTexture(path)) {
-          ++enMemoria; // ya esta: basta con retenerlo
-          if (model)
-            models.push_back(assets.GetModel(path));
-          else
-            textures.push_back(assets.GetTexture(path));
-        } else {
-          prefetch_.push_back({model, path});
-        }
-      };
-      pedir("model", true);
-      pedir("texture", false);
-      pedir("sprite", false);
-    }
+std::shared_ptr<const nlohmann::json> SceneManager::SceneJson(const std::string& path) {
+  const std::string full = engine_.Assets().Root() + path;
+  if (auto it = docs_.find(path); it != docs_.end() && it->second.json &&
+                                  it->second.stamp == Stamp(full))
+    return it->second.json;
+  std::ifstream file(full);
+  if (!file)
+    throw std::runtime_error("No se pudo abrir la escena: " + full);
+  try {
+    return std::make_shared<const nlohmann::json>(nlohmann::json::parse(file));
+  } catch (const std::exception& e) {
+    throw std::runtime_error(path + " (parseando JSON): " + e.what());
   }
-  // lo mas pesado primero: se carga mientras la pantalla sigue negra (ver StepPrefetch)
-  auto peso = [&](const PrefetchItem& item) {
-    std::error_code ec;
-    const auto bytes = std::filesystem::file_size(assets.Root() + item.path, ec);
-    return ec ? std::uintmax_t{0} : bytes;
-  };
-  std::stable_sort(prefetch_.begin(), prefetch_.end(),
-                   [&](const PrefetchItem& a, const PrefetchItem& b) { return peso(a) > peso(b); });
+}
 
-  keepModels_ = std::move(models); // lo retenido antes y no repetido se suelta aqui
-  keepTextures_ = std::move(textures);
-  prefetchMs_ = prefetchMaxMs_ = 0.0;
-  prefetchFrames_ = prefetchCount_ = 0;
-
-  std::cout << "[precarga] vecinas:";
-  for (const std::string& v : vecinas)
-    std::cout << ' ' << v;
-  std::cout << " | ya en memoria " << enMemoria << " | por cargar " << prefetch_.size() << '\n';
+void SceneManager::PlanPrefetch(std::shared_ptr<const nlohmann::json> current) {
+  const std::string root = engine_.Assets().Root();
+  const std::string self = paths_[index_];
+  purgePending_ = true;
+  // En un hilo: buscar las vecinas, leer y parsear sus JSON y listar lo que usan. Solo lee
+  // archivos; el resultado lo recoge StepPrefetch.
+  plan_ = engine_.Assets().Loader().Submit([root, self, current] {
+    PrefetchPlan plan;
+    std::vector<std::string> vecinas;
+    if (current)
+      CollectGotos(*current, vecinas);
+    std::sort(vecinas.begin(), vecinas.end());
+    vecinas.erase(std::unique(vecinas.begin(), vecinas.end()), vecinas.end());
+    std::erase(vecinas, self);
+    std::unordered_set<std::string> seen;
+    for (const std::string& v : vecinas) {
+      const std::string full = root + v;
+      std::ifstream file(full);
+      if (!file)
+        continue;
+      auto j = nlohmann::json::parse(file, nullptr, false); // la precarga nunca falla
+      if (j.is_discarded())
+        continue;
+      auto doc = std::make_shared<const nlohmann::json>(std::move(j));
+      CollectAssets(*doc, plan.items, seen);
+      plan.docs.emplace(v, SceneDoc{doc, Stamp(full)});
+      plan.neighbors.push_back(v);
+    }
+    return plan;
+  });
 }
 
 void SceneManager::StepPrefetch() {
+  AssetManager& assets = engine_.Assets();
+  const auto start = Clock::now();
+
+  // 1) El plan de un hilo esta listo: retener lo que ya hay, pedir lo que falta y purgar.
+  if (plan_.valid() && plan_.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+    PrefetchPlan plan;
+    try {
+      plan = plan_.get();
+    } catch (const std::exception& e) {
+      std::cerr << "[precarga] " << e.what() << '\n';
+    }
+    docs_ = std::move(plan.docs);
+    std::vector<std::shared_ptr<ModelResource>> models;
+    std::vector<std::shared_ptr<TextureResource>> textures;
+    prefetch_.clear();
+    int enMemoria = 0;
+    std::vector<std::shared_ptr<SoundResource>> sounds;
+    for (const AssetRef& item : plan.items) {
+      if (Has(assets, item)) {
+        ++enMemoria;
+        Keep(assets, item, models, textures, sounds);
+      } else {
+        Request(assets, item);
+        prefetch_.push_back(item);
+      }
+    }
+    keepModels_ = std::move(models); // lo retenido antes y no repetido se suelta aqui
+    keepTextures_ = std::move(textures);
+    keepSounds_ = std::move(sounds);
+    if (purgePending_) {
+      assets.PurgeUnused();
+      purgePending_ = false;
+    }
+    prefetchMs_ = prefetchMaxMs_ = 0.0;
+    prefetchFrames_ = prefetchCount_ = 0;
+    std::cout << "[precarga] vecinas:";
+    for (const std::string& v : plan.neighbors)
+      std::cout << ' ' << v;
+    std::cout << " | ya en memoria " << enMemoria << " | por cargar " << prefetch_.size() << '\n';
+  }
+
   if (prefetch_.empty())
     return;
-  AssetManager& assets = engine_.Assets();
-  // Con la pantalla aun casi negra (llegando a la escena) el tiron no se ve: se aprovecha para
-  // lo pesado. Jugando, solo un poco por fotograma.
+
+  // 2) Subir a la GPU lo que los hilos ya leyeron, con presupuesto: con la pantalla aun casi
+  // negra (llegando) se puede gastar mas.
   const double budget = fade_ > 0.5f ? kPrefetchDarkBudgetMs : kPrefetchBudgetMs;
-  const auto start = Clock::now();
-  while (!prefetch_.empty() && MsSince(start) < budget) {
-    const PrefetchItem item = std::move(prefetch_.front());
-    prefetch_.pop_front();
-    try {
-      if (item.model)
-        keepModels_.push_back(assets.GetModel(item.path));
-      else
-        keepTextures_.push_back(assets.GetTexture(item.path));
+  assets.PumpUploads(budget);
+
+  // 3) Retener lo que ya esta subido; lo que fallo (ni cargado ni pendiente) se olvida.
+  std::erase_if(prefetch_, [&](const AssetRef& item) {
+    if (Has(assets, item)) {
+      Keep(assets, item, keepModels_, keepTextures_, keepSounds_);
       ++prefetchCount_;
-    } catch (const std::exception& e) {
-      std::cerr << "[precarga] no se pudo cargar " << item.path << ": " << e.what() << '\n';
+      return true;
     }
-  }
+    return !assets.IsPending(item.path);
+  });
+
   const double ms = MsSince(start);
   prefetchMs_ += ms;
-  if (budget == kPrefetchBudgetMs) // el tiron que se nota: jugando, no con la pantalla negra
-    prefetchMaxMs_ = std::max(prefetchMaxMs_, ms);
+  prefetchMaxMs_ = std::max(prefetchMaxMs_, ms);
   ++prefetchFrames_;
   if (prefetch_.empty()) {
-    std::cout << "[precarga] terminada: " << prefetchCount_ << " recursos en "
-              << static_cast<int>(prefetchMs_) << " ms repartidos en " << prefetchFrames_
-              << " fotogramas (el peor jugando: " << static_cast<int>(prefetchMaxMs_)
-              << " ms)\n";
+    std::cout << "[precarga] terminada: " << prefetchCount_ << " recursos, "
+              << static_cast<int>(prefetchMs_) << " ms del hilo principal en " << prefetchFrames_
+              << " fotogramas (el peor: " << static_cast<int>(prefetchMaxMs_) << " ms)\n";
   }
 }
 
@@ -356,6 +493,20 @@ void SceneManager::Draw() {
   engine_.Retro().SetPointLights(lights_);
 
   scene_->Draw(camera_.Raw(), engine_.Retro().Sprite()->Get(), p.ambient, p.sun, lights_);
+}
+
+std::optional<SceneManager::Card> SceneManager::CurrentCard() const {
+  if (phase_ != Phase::Dark || interlude_.lines.empty())
+    return std::nullopt;
+  const std::size_t count = interlude_.lines.size();
+  const float slot = interlude_.seconds / static_cast<float>(count);
+  const std::size_t i = std::min(static_cast<std::size_t>(darkTime_ / slot), count - 1);
+  const std::string& text = interlude_.lines[i];
+  if (text.empty()) // una frase vacia es un rato de silencio
+    return std::nullopt;
+  const float t = darkTime_ - static_cast<float>(i) * slot;
+  const float edge = std::min(0.9f, slot * 0.3f); // aparece y se apaga despacio
+  return Card{text, std::clamp(std::min(t, slot - t) / edge, 0.0f, 1.0f)};
 }
 
 void SceneManager::DrawFade() const {

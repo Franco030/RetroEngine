@@ -111,6 +111,13 @@ void ForEachLogic(const Json& doc, ActionsFn&& actions, CondFn&& conditions) {
         if (it.contains("do"))
           actions(it.at("do"), place);
       }
+      if (e.contains("seen") && e.at("seen").is_object()) {
+        const Place place{SelectionKind::Entity, static_cast<int>(i), label + " (al mirarla)"};
+        for (const char* key : {"do", "away"}) {
+          if (e.at("seen").contains(key))
+            actions(e.at("seen").at(key), place);
+        }
+      }
     }
   }
 }
@@ -218,7 +225,7 @@ std::vector<Issue> ValidateDocument(const Json& doc, const fs::path& root, const
             issues.push_back(MakeIssue(Severity::Error, place,
                                        "cambia a la escena '" + scene + "', que no existe"));
           }
-          for (const char* key : {"play_sound", "play_music"}) {
+          for (const char* key : {"play_sound", "play_music", "then"}) {
             const std::string file = ReadString(&a, key);
             if (a.contains(key) && !AssetExists(root, file)) {
               issues.push_back(
@@ -229,6 +236,14 @@ std::vector<Issue> ValidateDocument(const Json& doc, const fs::path& root, const
           if (a.contains("dialogue") && !AssetExists(root, "dialogues/" + dialogue + ".json")) {
             issues.push_back(MakeIssue(Severity::Error, place,
                                        "abre el dialogo '" + dialogue + "', que no existe"));
+          }
+          for (const char* key : {"look_at", "scare"}) {
+            if (a.contains(key) && a.at(key).is_string() &&
+                entityNames.count(a.at(key).get<std::string>()) == 0) {
+              issues.push_back(MakeIssue(Severity::Error, place,
+                                         "mira hacia la entidad '" +
+                                             a.at(key).get<std::string>() + "', que no existe"));
+            }
           }
           if (a.contains("play_sound") && a.contains("at") && a.at("at").is_string()) {
             const std::string target = a.at("at").get<std::string>();

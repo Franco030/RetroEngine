@@ -1,0 +1,9 @@
+# RetroEngine: tienda_caida
+
+newmtl mat_lona_naranja
+d 1.000000
+map_Kd ../textures/mat_lona_naranja.png
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png

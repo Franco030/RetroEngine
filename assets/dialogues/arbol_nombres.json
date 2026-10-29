@@ -1,0 +1,20 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "ah_nombre" } },
+      "lines": [
+        "Entre las raices hay zapatos de nino.\nCientos.",
+        "Dentro del tronco, nombres tallados.\nFechas. Uno por generacion.",
+        "El ultimo esta recien hecho.\nTodavia caen virutas.",
+        "No es el de Clara.",
+        "Es el tuyo."
+      ],
+      "do": [
+        { "set_flag": "ah_nombre" },
+        { "lock_movement": true },
+        { "play_sound": "audio/susurros.wav", "volume": 0.9 }
+      ]
+    },
+    { "lines": ["Tu nombre. Recien tallado."] }
+  ]
+}

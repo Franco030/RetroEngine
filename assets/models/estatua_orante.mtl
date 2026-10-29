@@ -1,0 +1,17 @@
+# RetroEngine: estatua_orante
+
+newmtl mat_hueso
+d 1.000000
+map_Kd ../textures/mat_hueso.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png
+
+newmtl mat_piedra_gastada
+d 1.000000
+map_Kd ../textures/mat_piedra_gastada.png
+
+newmtl mat_roca
+d 1.000000
+map_Kd ../textures/mat_roca.png

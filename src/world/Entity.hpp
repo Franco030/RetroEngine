@@ -32,6 +32,10 @@ struct EntitySound {
 
 // Objeto del mundo: un Transform propio y, según el tipo, un modelo 3D
 // compartido o un sprite billboard (textura + tamaño en el mundo).
+// Bruma fija del shader (uniform fogFixed): >= 0 sustituye a la niebla por distancia (0 = sin
+// niebla); -1 la devuelve. Para el panorama y las entidades con "fog": false.
+void SetFogFixed(const Shader& shader, float fog);
+
 class Entity {
 public:
   using UpdateFn = std::function<void(Entity&, float dt)>;
@@ -77,13 +81,21 @@ public:
   // Capa de dibujo para superficies apoyadas en otras (modelos): 1 gana siempre a lo que tiene
   // debajo, -1 pierde. Ver depthBias en retro.vs.
   int layer = 0;
+  // false: la niebla no la apaga (el sol, una luz que se ve de lejos).
+  bool fog = true;
   bool facePlayer = false;
   float lookRange = 10.0f;
   float turnSpeed = 240.0f;
   std::vector<Condition> showIf;
+  // Segundos de "interferencia" al aparecer o desaparecer por "showIf" (0 = de golpe).
+  float glitch = 0.0f;
+  // Lo que dicen sus condiciones ahora. Sin glitch cambia 'visible' al momento; con glitch, la
+  // entidad parpadea y se deforma un rato antes de quedarse (o de irse del todo).
+  void SetShown(bool shown);
   // Cajas de colision (vacia = se atraviesa). Varias si el modelo trae las suyas.
   std::vector<BoxCollider> colliders;
   std::optional<Interaction> interact;
+  std::optional<Sight> sight;
   std::optional<EntityLight> light;
   std::optional<EntitySound> sound;
 
@@ -103,6 +115,12 @@ private:
   float animTime_ = 0.0f;
   Vector3 drawOffset_{0.0f, 0.0f, 0.0f};
   float drawRoll_ = 0.0f;
+  bool shownKnown_ = false; // la primera vez se aplica sin efecto (al cargar la escena)
+  bool shown_ = true;
+  float glitchTime_ = -1.0f; // < 0: sin transicion en curso
+  bool glitchOut_ = false;   // la transicion es de salida
+  // Interferencia de este fotograma (0 = ninguna, 1 = maxima) y si se salta el dibujo.
+  float GlitchAmount() const noexcept;
   std::shared_ptr<ModelResource> model_;
   std::shared_ptr<TextureResource> texture_;
   Vector2 spriteSize_{1.0f, 1.0f};

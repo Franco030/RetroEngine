@@ -4,6 +4,7 @@
 #include <raymath.h>
 
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <iostream>
 #include <unordered_set>
@@ -15,10 +16,53 @@ namespace {
 
 constexpr std::size_t kMaxEmitterVoices = 6;
 constexpr bool kFlipPan = false;
+// Cada cuanto rellena el hilo los streams: muy por debajo de lo que dura su buffer (~190 ms).
+constexpr auto kFeedEvery = std::chrono::milliseconds(5);
 
 } // namespace
 
-AudioSystem::AudioSystem(AssetManager& assets, bool enabled) : assets_(assets), enabled_(enabled) {}
+AudioSystem::AudioSystem(AssetManager& assets, bool enabled) : assets_(assets), enabled_(enabled) {
+  if (enabled_) {
+    feeding_ = true;
+    feeder_ = std::thread(&AudioSystem::FeedLoop, this);
+  }
+}
+
+AudioSystem::~AudioSystem() {
+  feeding_ = false;
+  if (feeder_.joinable())
+    feeder_.join();
+}
+
+void AudioSystem::FeedLoop() {
+  while (feeding_) {
+    {
+      std::lock_guard lock(mutex_);
+      for (Channel* ch : {&music_, &ambient_}) {
+        if (ch->outgoing)
+          UpdateMusicStream(ch->outgoing->Get());
+        if (ch->current)
+          UpdateMusicStream(ch->current->Get());
+      }
+      for (auto& [key, voice] : voices_)
+        UpdateMusicStream(voice.stream->Get());
+    }
+    std::this_thread::sleep_for(kFeedEvery);
+  }
+}
+
+void AudioSystem::ClearEmitters() {
+  std::lock_guard lock(mutex_);
+  // Los de la escena anterior no se cortan en seco (se oiria el corte): se apagan con su fundido
+  // en UpdateEmitters, como cualquier emisor que deja de oirse. Se renombran porque las claves
+  // ("scene:0"...) se repiten en la escena nueva y si no se confundirian con los suyos.
+  std::unordered_map<std::string, Voice> saliendo;
+  for (auto& [key, voice] : voices_) {
+    voice.target = 0.0f;
+    saliendo.emplace("saliendo:" + std::to_string(fadingSerial_++), std::move(voice));
+  }
+  voices_ = std::move(saliendo);
+}
 
 void AudioSystem::Warn(const std::string& file, const char* what) {
   if (warned_.insert(file).second)
@@ -26,6 +70,7 @@ void AudioSystem::Warn(const std::string& file, const char* what) {
 }
 
 void AudioSystem::SetMasterVolume(float volume) {
+  std::lock_guard lock(mutex_);
   master_ = std::clamp(volume, 0.0f, 1.0f);
   if (enabled_)
     ::SetMasterVolume(master_);
@@ -34,6 +79,7 @@ void AudioSystem::SetMasterVolume(float volume) {
 void AudioSystem::PlaySfx(const std::string& file, float volume) {
   if (!enabled_ || file.empty())
     return;
+  std::lock_guard lock(mutex_);
   try {
     const auto sound = assets_.GetSound(file);
     SetSoundVolume(sound->Get(), std::clamp(volume, 0.0f, 1.0f));
@@ -45,16 +91,23 @@ void AudioSystem::PlaySfx(const std::string& file, float volume) {
   }
 }
 
-void AudioSystem::StartChannel(Channel& ch, const std::string& file, float volume, float fade) {
+void AudioSystem::StartChannel(Channel& ch, const std::string& file, float volume, float fade,
+                               const std::string& then) {
   if (!enabled_)
     return;
 
-  if (file == ch.file) {
-    ch.target = file.empty() ? 0.0f : volume;
-    ch.upRate = std::max(volume, 0.1f);
-    return;
+  {
+    std::lock_guard lock(mutex_);
+    // Lo mismo que ya suena (o lo que viene despues de la entrada que suena) sigue sin cortes.
+    if (file == ch.file || (!file.empty() && file == ch.then)) {
+      ch.target = file.empty() ? 0.0f : volume;
+      ch.upRate = std::max(volume, 0.1f);
+      return;
+    }
   }
 
+  // Abrir el archivo (decodificador, primeros datos) fuera del candado: el hilo sigue
+  // alimentando lo que suena mientras tanto.
   std::unique_ptr<MusicResource> next;
   if (!file.empty()) {
     try {
@@ -65,6 +118,7 @@ void AudioSystem::StartChannel(Channel& ch, const std::string& file, float volum
     }
   }
 
+  std::lock_guard lock(mutex_);
   const float f = std::max(fade, 0.01f);
   if (ch.current) {
     ch.outgoing = std::move(ch.current);
@@ -73,12 +127,17 @@ void AudioSystem::StartChannel(Channel& ch, const std::string& file, float volum
   }
 
   ch.file = file;
+  ch.then = then;
   ch.current = std::move(next);
   if (ch.current) {
-    PlayMusicStream(ch.current->Get());
+    ch.current->Get().looping = then.empty();
     ch.volume = fade > 0.0f ? 0.0f : volume;
     ch.target = volume;
     ch.upRate = std::max(volume, 0.1f) / f;
+    // El volumen ANTES de empezar: raylib arranca a 1 y el fundido no lo baja hasta el siguiente
+    // fotograma; esos milisegundos a todo volumen se oian como un chasquido.
+    SetMusicVolume(ch.current->Get(), ch.volume);
+    PlayMusicStream(ch.current->Get());
   }
 }
 
@@ -90,7 +149,6 @@ void AudioSystem::UpdateChannel(Channel& ch, float dt) {
       ch.outgoing.reset();
     } else {
       SetMusicVolume(ch.outgoing->Get(), ch.outVolume);
-      UpdateMusicStream(ch.outgoing->Get());
     }
   }
   if (ch.current) {
@@ -100,12 +158,12 @@ void AudioSystem::UpdateChannel(Channel& ch, float dt) {
       ch.volume = std::max(ch.target, ch.volume - ch.upRate * dt);
     }
     SetMusicVolume(ch.current->Get(), ch.volume);
-    UpdateMusicStream(ch.current->Get());
   }
 }
 
-void AudioSystem::PlayMusic(const std::string& file, float volume, float fade) {
-  StartChannel(music_, file, std::clamp(volume, 0.0f, 1.0f), fade);
+void AudioSystem::PlayMusic(const std::string& file, float volume, float fade,
+                            const std::string& then) {
+  StartChannel(music_, file, std::clamp(volume, 0.0f, 1.0f), fade, then);
 }
 
 void AudioSystem::PlayAmbient(const std::string& file, float volume, float fade) {
@@ -115,11 +173,24 @@ void AudioSystem::PlayAmbient(const std::string& file, float volume, float fade)
 void AudioSystem::Update(float dt) {
   if (!enabled_)
     return;
-  UpdateChannel(music_, dt);
-  UpdateChannel(ambient_, dt);
+  std::string next; // la entrada de la musica acabo: sigue su bucle
+  float nextVolume = 0.0f;
+  {
+    std::lock_guard lock(mutex_);
+    // Solo los fundidos: los streams los rellena el hilo (FeedLoop).
+    UpdateChannel(music_, dt);
+    UpdateChannel(ambient_, dt);
+    if (music_.current && !music_.then.empty() && !IsMusicStreamPlaying(music_.current->Get())) {
+      next = std::exchange(music_.then, {});
+      nextVolume = music_.target;
+    }
+  }
+  if (!next.empty())
+    StartChannel(music_, next, nextVolume, 0.0f); // abre el archivo fuera del candado
 }
 
 void AudioSystem::SetFootsteps(const std::vector<std::string>& files, float volume) {
+  std::lock_guard lock(mutex_);
   footsteps_.clear();
   footstepVolume_ = std::clamp(volume, 0.0f, 1.0f);
   lastStep_ = -1;
@@ -136,6 +207,7 @@ void AudioSystem::SetFootsteps(const std::vector<std::string>& files, float volu
 }
 
 void AudioSystem::Footstep() {
+  std::lock_guard lock(mutex_);
   if (!enabled_ || footsteps_.empty())
     return;
 
@@ -197,6 +269,7 @@ void AudioSystem::PlaySfxAt(const std::string& file, float volume, Vector3 posit
   if (gain <= 0.002f)
     return;
 
+  std::lock_guard lock(mutex_);
   try {
     const auto sound = assets_.GetSound(file);
     SetSoundVolume(sound->Get(), std::clamp(gain, 0.0f, 1.0f));
@@ -231,6 +304,7 @@ void AudioSystem::UpdateEmitters(std::span<const Emitter> emitters, float dt) {
   if (candidates.size() > kMaxEmitterVoices)
     candidates.resize(kMaxEmitterVoices);
 
+  std::lock_guard lock(mutex_);
   std::unordered_set<std::string> live;
   for (const Candidate& c : candidates) {
     live.insert(c.emitter->key);
@@ -239,6 +313,7 @@ void AudioSystem::UpdateEmitters(std::span<const Emitter> emitters, float dt) {
     if (it == voices_.end()) {
       try {
         auto stream = std::make_unique<MusicResource>(assets_.Root() + c.emitter->file);
+        SetMusicVolume(stream->Get(), 0.0f); // empieza en silencio y sube (ver StartChannel)
         PlayMusicStream(stream->Get());
         std::uniform_real_distribution<float> start(0.0f, 1.0f);
         SeekMusicStream(stream->Get(), start(rng_) * GetMusicTimeLength(stream->Get()));
@@ -268,7 +343,6 @@ void AudioSystem::UpdateEmitters(std::span<const Emitter> emitters, float dt) {
     }
     SetMusicVolume(v.stream->Get(), std::clamp(v.volume, 0.0f, 1.0f));
     SetMusicPan(v.stream->Get(), v.pan);
-    UpdateMusicStream(v.stream->Get());
     ++it;
   }
 }

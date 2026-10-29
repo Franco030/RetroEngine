@@ -1,0 +1,14 @@
+{
+  "speaker": "Radio",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "\"...aqui grupo de busqueda... alguien me oye...\"",
+        "\"...no es el bosque... es el pueblo... nos mandaron...\"",
+        "Solo estatica."
+      ]
+    },
+    { "lines": ["Estatica. A veces parece que respira."] }
+  ]
+}

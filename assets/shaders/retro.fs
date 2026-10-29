@@ -5,6 +5,7 @@ noperspective in vec4 fragColor;
 noperspective in vec3 fragLight;
 in float fragDepth;
 in float fragWorldY;
+in vec2 fragWorldXZ;
 
 // Corte por altura (editor: ver un interior por dentro). Fuera del editor es enorme.
 uniform float clipY;
@@ -18,6 +19,25 @@ uniform float ditherStrength;
 uniform vec3  fogColor;
 uniform float fogStart;
 uniform float fogEnd;
+
+// Neblina baja: mas densa cerca del suelo (por debajo de mistHeight), en bancos que varian por
+// el terreno y nunca pegada a la camara. Se mezcla hacia mistColor. mistDensity 0 = sin neblina.
+// Panorama (el horizonte lejano que sigue a la camara): bruma fija en vez de la niebla por
+// distancia. < 0 = no es el panorama.
+uniform float fogFixed;
+
+uniform float mistDensity;
+uniform float mistHeight;
+uniform vec3  mistColor;
+
+float MistAmount() {
+    if (mistDensity <= 0.0) return 0.0;
+    float suelo = clamp(1.0 - fragWorldY / max(mistHeight, 0.01), 0.0, 1.0);
+    float lejos = clamp((fragDepth - 1.5) / 7.0, 0.0, 1.0);
+    float banco = 0.62 + 0.38 * sin(fragWorldXZ.x * 0.33 + 2.0 * sin(fragWorldXZ.y * 0.21))
+                             * sin(fragWorldXZ.y * 0.29 + 1.7 + sin(fragWorldXZ.x * 0.17));
+    return clamp(mistDensity * suelo * suelo * lejos * banco, 0.0, 1.0);
+}
 
 out vec4 finalColor;
 
@@ -36,7 +56,13 @@ void main() {
     vec3 rgb = texel.rgb * fragColor.rgb * fragLight;
 
     float fog = clamp((fragDepth - fogStart) / max(fogEnd - fogStart, 0.0001), 0.0, 1.0);
-    rgb = mix(rgb, fogColor, fog);
+    float mist = MistAmount();
+    if (fogFixed >= 0.0) {
+        fog = fogFixed;
+        mist = 0.0;
+    }
+    rgb = mix(mix(rgb, mistColor, mist), fogColor, fog);
+    fog = 1.0 - (1.0 - fog) * (1.0 - mist); // el dithering tambien se apaga dentro de la neblina
 
     float strength  = ditherStrength * (1.0 - fog);
     float steps     = max(colorLevels, 2.0) - 1.0;

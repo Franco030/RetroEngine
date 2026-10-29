@@ -44,8 +44,22 @@ public:
     float distance = 0.0f;
   };
 
+  // El horizonte lejano (montanas, bosque): un modelo que se dibuja centrado en la camara, asi
+  // nunca se llega a el ni corta la escena, con una bruma fija en vez de la niebla por
+  // distancia. Opcionalmente un sol (sprite) detras, que el modelo tapa por profundidad.
+  struct Panorama {
+    std::shared_ptr<ModelResource> model;
+    Color tint = WHITE;
+    float haze = 0.4f;    // mezcla con el color de la niebla: 0 = nitido, 1 = invisible
+    float y = -6.0f;      // altura del modelo (por debajo de 0 para que no se vea la base)
+    std::shared_ptr<TextureResource> sun;
+    Vector3 sunDirection{0.0f, 0.1f, -1.0f}; // unitaria, desde la camara
+    float sunSize = 40.0f;
+  };
+
   SpawnPoint spawn;
   std::string path;
+  std::optional<Panorama> panorama;
   std::vector<Trigger> triggers;
   SceneAudio audio;
   std::vector<PointLight> lights;
@@ -62,6 +76,7 @@ public:
     lights.clear();
     emitters.clear();
     bounds.reset();
+    panorama.reset();
     triggersPrimed_ = false;
     audio = SceneAudio{};
   }
@@ -73,6 +88,11 @@ public:
             std::span<const PointLight> lights);
 
   std::size_t Count() const noexcept { return entities_.size(); }
+
+private:
+  void DrawPanorama(const Camera3D& camera, const Shader& spriteShader) const;
+
+public:
 
   Entity& EntityAt(std::size_t index) { return *entities_.at(index); }
 
@@ -98,7 +118,14 @@ public:
   // Marca el "once" y añade las acciones de la interacción a 'fired'.
   void Interact(Entity& entity, GameState& state, std::vector<Action>& fired);
 
+  // Entidades con "seen": añade a 'fired' las acciones de las que se acaban de ver (o de dejar de
+  // mirar) desde 'eye' mirando hacia 'forward' (unitaria).
+  void UpdateSight(Vector3 eye, Vector3 forward, std::vector<Action>& fired);
+
 private:
+  // Si alguna entidad solida (que no sea 'self') corta el rayo antes de 'distance'.
+  bool Occluded(Vector3 origin, Vector3 dir, float distance, const Entity* self) const;
+
   std::vector<std::unique_ptr<Entity>> entities_;
   bool triggersPrimed_ = false;
 };

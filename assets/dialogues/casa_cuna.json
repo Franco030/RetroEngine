@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Dentro hay una cuna podrida.",
+        "Encima, un molinillo de juguete\nque gira despacio.",
+        "No entra nada de aire."
+      ]
+    },
+    { "lines": ["El molinillo sigue girando."] }
+  ]
+}

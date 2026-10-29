@@ -216,7 +216,7 @@ EditorApp::EditorApp(retro::RetroEngine& engine, const std::string& initialScene
 
   const retro::RetroShaderParams& p = engine_.Retro().Params();
   defaults_ = {engine_.Config().clearColor, p.fogStart, p.fogEnd, p.lightDirection, p.ambient,
-               p.sun};
+               p.sun, p.mistDensity, p.mistHeight, p.mistColor};
 
   Log(false, "Assets: " + engine_.Assets().Root());
   assets_.Scan(engine_.Assets().Root());
@@ -280,6 +280,9 @@ void EditorApp::ResetEnvironment() {
   p.lightDirection = defaults_.lightDirection;
   p.ambient = defaults_.ambient;
   p.sun = defaults_.sun;
+  p.mistDensity = defaults_.mistDensity;
+  p.mistHeight = defaults_.mistHeight;
+  p.mistColor = defaults_.mistColor;
   engine_.Retro().SetParams(p);
 }
 
@@ -824,7 +827,7 @@ void EditorApp::AddFlameOn(int index) {
 }
 
 void EditorApp::AddCandleGroup(Vector3 position) {
-  // el modelo de velas y sus tres llamas (las mismas posiciones que en tools/blender/detalles.py)
+  // el modelo de velas y sus tres llamas (las posiciones de las mechas del modelo velas_grupo)
   Json v = Json::object();
   v["name"] = UniqueName("entities", "velas");
   v["model"] = "models/velas_grupo.obj";
@@ -1678,16 +1681,22 @@ void EditorApp::InspectEntity(Json& e) {
     ImGui::PushID("showIf");
     EditConditions(e, "showIf");
     ImGui::PopID();
+    FieldFloat("Aparecer con interferencia (s)", e, nullptr, "glitch", 0.0f, 0.01f, 0.0f, 5.0f);
+    ImGui::SetItemTooltip("Al aparecer o desaparecer parpadea y se deforma ese tiempo\n"
+                          "en vez de hacerlo de golpe (0 = de golpe; 0.45 va bien)");
   }
 
   if (theme::Section(ICON_FA_HAND_POINTER "  Interaccion (tecla E)", e.contains("interact")))
     EditInteraction(e, selection_.index);
+  if (theme::Section(ICON_FA_EYE "  Al mirarla", e.contains("seen")))
+    EditSight(e);
 
   bool header = false;
   for (auto it = e.begin(); it != e.end(); ++it) {
     if (IsOneOf(it.key(), {"name", "visible", "model", "sprite", "size", "emissive", "texture",
                            "wrap", "position", "rotation", "scale", "tint", "spin", "collider",
-                           "light", "sound", "showIf", "interact", "frames", "fps", "layer",
+                           "light", "sound", "showIf", "glitch", "interact", "seen", "frames", "fps",
+                           "layer",
                            "idle", "facePlayer"})) {
       continue;
     }
@@ -1799,6 +1808,16 @@ void EditorApp::InspectScene() {
     FieldColor("Fondo", d, nullptr, "background", defaults_.background, false);
     FieldFloat("Niebla: inicio", d, "fog", "start", defaults_.fogStart, 0.1f, 0.0f, 500.0f);
     FieldFloat("Niebla: fin", d, "fog", "end", defaults_.fogEnd, 0.1f, 0.1f, 500.0f);
+    FieldFloat("Neblina baja", d, "fog", "mist", 0.0f, 0.005f, 0.0f, 1.0f);
+    ImGui::SetItemTooltip("Niebla pegada al suelo, en bancos (0 = sin ella)");
+    if (ReadNumber(Src(d, "fog"), "mist", 0.0f) > 0.0f) {
+      FieldFloat("Neblina: altura", d, "fog", "mistHeight", 1.5f, 0.02f, 0.1f, 20.0f);
+      const Vector3 mc = defaults_.mistColor;
+      FieldColor("Neblina: color", d, "fog", "mistColor",
+                 Color{static_cast<unsigned char>(mc.x * 255.0f), static_cast<unsigned char>(mc.y * 255.0f),
+                       static_cast<unsigned char>(mc.z * 255.0f), 255},
+                 false);
+    }
     FieldVec3("Luz: direccion", d, "light", "direction", defaults_.lightDirection, 0.01f);
     FieldFloat("Luz: ambiente", d, "light", "ambient", defaults_.ambient, 0.005f, 0.0f, 1.0f);
     FieldFloat("Luz: sol", d, "light", "sun", defaults_.sun, 0.01f, 0.0f, 1.0f);

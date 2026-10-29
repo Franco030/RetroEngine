@@ -1,0 +1,17 @@
+# RetroEngine: panorama_bosque
+
+newmtl mat_corteza
+d 1.000000
+map_Kd ../textures/mat_corteza.png
+
+newmtl mat_hojas
+d 1.000000
+map_Kd ../textures/mat_hojas.png
+
+newmtl mat_pino
+d 1.000000
+map_Kd ../textures/mat_pino.png
+
+newmtl mat_roca
+d 1.000000
+map_Kd ../textures/mat_roca.png

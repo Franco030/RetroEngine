@@ -1,0 +1,31 @@
+{
+  "speaker": "Anciano",
+  "entries": [
+    {
+      "lines": [
+        "Lo siento, forastero.",
+        "El molino tiene que seguir girando.",
+        "Y el viento... alguien tiene que pagarlo."
+      ],
+      "do": [
+        { "set_flag": "bosque_sueno" },
+        { "play_sound": "audio/portazo.wav", "volume": 1.0 },
+        { "play_sound": "audio/latido.wav", "volume": 0.7 },
+        { "stop_music": true, "fade": 0.5 },
+        { "title_screen": true },
+        {
+          "goto_scene": "scenes/feria.json",
+          "dark": 21,
+          "lines": [
+            "",
+            "Caes hacia atras, dentro del arbol.",
+            "No hay fondo.",
+            "Alguien tararea la nana muy cerca.\nYa no suena rota.",
+            "\"Todavia no\", dice una voz de nina.",
+            ""
+          ]
+        }
+      ]
+    }
+  ]
+}

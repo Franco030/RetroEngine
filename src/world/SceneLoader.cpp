@@ -284,11 +284,16 @@ std::vector<Condition> ParseConditions(const json& j, const char* key) {
 }
 
 // Cada accion es un objeto con UNA clave de accion y, si hace falta, modificadores:
-//   { "goto_scene": "scenes/x.json", "position": [x,y,z], "yaw": 0 }
+//   { "goto_scene": "scenes/x.json", "position": [x,y,z], "yaw": 0,
+//     "dark": 10, "lines": ["...", "..."] }      (un rato en negro, con frases, antes de llegar)
 //   { "teleport": [x,y,z], "yaw": 90 }
 //   { "set_flag": "nombre", "value": 1 }
 //   { "message": "texto\notra linea", "seconds": 3 }
 //   { "dialogue": "sepulturero" }                      (assets/dialogues/sepulturero.json)
+//   { "look_at": "entidad" | [x,y,z], "speed": 6 }              (mirar, sin acercar)
+//   { "scare": "entidad" | [x,y,z], "speed": 20, "fov": 30 }    (susto: de golpe y acercando)
+//   { "lock_movement": true | false }                  (mirar sin poder andar; o volver a andar)
+//   { "title_screen": true }                           (con un goto_scene: llegar al menu)
 Action ParseAction(const json& ja) {
   if (!ja.is_object())
     throw std::runtime_error("cada accion debe ser un objeto");
@@ -303,6 +308,13 @@ Action ParseAction(const json& ja) {
       a.position = ReadVec3(ja, "position", {0.0f, 0.0f, 0.0f});
     if (ja.contains("yaw"))
       a.yaw = ja.at("yaw").get<float>();
+    a.dark = ja.value("dark", 0.0f);
+    if (ja.contains("lines"))
+      a.lines = ja.at("lines").get<std::vector<std::string>>();
+    if (a.dark < 0.0f || a.dark > 60.0f)
+      throw std::runtime_error("goto_scene: 'dark' debe ir de 0 a 60 segundos");
+    if (!a.lines.empty() && a.dark <= 0.0f)
+      throw std::runtime_error("goto_scene: 'lines' necesita 'dark' (los segundos en negro)");
     result = a;
     ++found;
   }
@@ -357,6 +369,7 @@ Action ParseAction(const json& ja) {
   if (ja.contains("play_music")) {
     action::PlayMusic a;
     a.file = ja.at("play_music").get<std::string>();
+    a.then = ja.value("then", std::string{});
     a.volume = ja.value("volume", 0.6f);
     a.fade = ja.value("fade", 1.0f);
     result = a;
@@ -366,6 +379,42 @@ Action ParseAction(const json& ja) {
     action::StopMusic a;
     a.fade = ja.value("fade", 1.0f);
     result = a;
+    ++found;
+  }
+  // Destino de look_at y scare: el nombre de una entidad o un punto.
+  auto readTarget = [&](const char* key, std::string& entity, std::optional<Vector3>& point) {
+    if (ja.at(key).is_string())
+      entity = ja.at(key).get<std::string>();
+    else
+      point = ReadVec3(ja, key, {0.0f, 0.0f, 0.0f});
+  };
+  if (ja.contains("look_at")) {
+    if (ja.contains("fov"))
+      throw std::runtime_error("'look_at' no acerca la vista: para eso esta 'scare'");
+    action::LookAt a;
+    readTarget("look_at", a.entity, a.point);
+    a.speed = ja.value("speed", a.speed);
+    if (a.speed <= 0.0f)
+      throw std::runtime_error("'look_at': 'speed' debe ser positivo");
+    result = a;
+    ++found;
+  }
+  if (ja.contains("scare")) {
+    action::Scare a;
+    readTarget("scare", a.entity, a.point);
+    a.speed = ja.value("speed", a.speed);
+    a.fov = ja.value("fov", a.fov);
+    if (a.speed <= 0.0f || a.fov < 1.0f || a.fov > 120.0f)
+      throw std::runtime_error("'scare': 'speed' debe ser positivo y 'fov' de 1 a 120");
+    result = a;
+    ++found;
+  }
+  if (ja.contains("lock_movement")) {
+    result = action::LockMovement{ja.at("lock_movement").get<bool>()};
+    ++found;
+  }
+  if (ja.contains("title_screen")) {
+    result = action::TitleScreen{};
     ++found;
   }
   if (ja.contains("dialogue")) {
@@ -380,7 +429,7 @@ Action ParseAction(const json& ja) {
   if (found != 1) {
     throw std::runtime_error("cada accion debe tener exactamente una de: goto_scene, teleport, "
                              "set_flag, add_flag, message, play_sound, play_music, stop_music, "
-                             "dialogue");
+                             "dialogue, look_at, scare, lock_movement, title_screen");
   }
   return result;
 }
@@ -557,15 +606,38 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
     entity = std::make_unique<Entity>(name, std::move(model), std::move(texture));
   }
   entity->emissive = je.value("emissive", false);
+  entity->fog = je.value("fog", true);
 
   std::vector<BoxCollider> colliders = ReadCollider(je, autoBoxes, isMeshFile, autoCollide);
   std::optional<Interaction> interact;
   if (je.contains("interact"))
     interact = ReadInteraction(je.at("interact"), autoBox, colliders);
 
+  // "seen": { "range": 15, "angle": 20, "do": [ ... ], "away": [ ... ] }
+  std::optional<Sight> sight;
+  if (je.contains("seen")) {
+    const json& js = je.at("seen");
+    Sight s;
+    s.range = js.value("range", s.range);
+    s.angle = js.value("angle", s.angle);
+    s.awayAngle = js.value("awayAngle", s.awayAngle);
+    if (s.range <= 0.0f || s.angle <= 0.0f || s.angle >= 90.0f || s.awayAngle < s.angle ||
+        s.awayAngle > 180.0f)
+      throw std::runtime_error("'seen': 'range' positivo, 'angle' entre 0 y 90 y 'awayAngle' "
+                               "entre 'angle' y 180");
+    for (const char* key : {"do", "away"}) {
+      if (!js.contains(key))
+        continue;
+      for (const json& ja : js.at(key))
+        (std::string(key) == "do" ? s.onSeen : s.onLookAway).push_back(ParseAction(ja));
+    }
+    sight = std::move(s);
+  }
+
   Entity& e = scene.Add(std::move(entity));
   e.colliders = std::move(colliders);
   e.interact = std::move(interact);
+  e.sight = std::move(sight);
   e.transform.position = ReadVec3(je, "position", {0.0f, 0.0f, 0.0f});
   e.transform.rotation = ReadVec3(je, "rotation", {0.0f, 0.0f, 0.0f});
   e.transform.scale = ReadVec3(je, "scale", {1.0f, 1.0f, 1.0f});
@@ -589,6 +661,13 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
   }
   e.visible = je.value("visible", true);
   e.showIf = ParseConditions(je, "showIf");
+  // "glitch": true (0.45 s) o los segundos: aparece y desaparece con interferencia
+  if (je.contains("glitch")) {
+    const json& jg = je.at("glitch");
+    e.glitch = jg.is_boolean() ? (jg.get<bool>() ? 0.45f : 0.0f) : jg.get<float>();
+    if (e.glitch < 0.0f || e.glitch > 5.0f)
+      throw std::runtime_error("'glitch' debe ser true/false o de 0 a 5 segundos");
+  }
 
   if (je.contains("sound")) {
     const json& js = je.at("sound");
@@ -677,6 +756,16 @@ void LoadSceneFromJson(const nlohmann::json& root, const std::string& relativePa
         context = "niebla";
         p.fogStart = root.at("fog").value("start", p.fogStart);
         p.fogEnd = root.at("fog").value("end", p.fogEnd);
+        // neblina baja: "mist" (densidad 0-1), "mistHeight" (m) y "mistColor" [r,g,b]
+        const json& jf = root.at("fog");
+        p.mistDensity = jf.value("mist", p.mistDensity);
+        p.mistHeight = jf.value("mistHeight", p.mistHeight);
+        if (jf.contains("mistColor")) {
+          const Color c = ReadColor(jf, "mistColor", WHITE);
+          p.mistColor = {c.r / 255.0f, c.g / 255.0f, c.b / 255.0f};
+        }
+        if (p.mistDensity < 0.0f || p.mistDensity > 1.0f || p.mistHeight <= 0.0f)
+          throw std::runtime_error("'mist' debe estar entre 0 y 1 y 'mistHeight' ser positivo");
       }
       if (root.contains("light")) {
         context = "luz";
@@ -695,6 +784,33 @@ void LoadSceneFromJson(const nlohmann::json& root, const std::string& relativePa
       const json& p = root.at("player");
       scene.spawn.position = ReadVec3(p, "position", scene.spawn.position);
       scene.spawn.yaw = p.value("yaw", scene.spawn.yaw);
+    }
+
+    // "panorama": { "model": "models/x.obj", "tint": [r,g,b], "haze": 0.4, "y": -6,
+    //               "sun": { "texture": "textures/spr_sol.png", "yaw": 0, "pitch": 8, "size": 40 } }
+    // yaw/pitch del sol: como la vista del jugador (yaw 0 = hacia -Z; pitch, grados sobre el
+    // horizonte).
+    if (root.contains("panorama")) {
+      context = "panorama";
+      const json& jp = root.at("panorama");
+      Scene::Panorama pano;
+      pano.model = engine.Assets().GetModel(jp.at("model").get<std::string>());
+      pano.model->SetShader(engine.Retro().Lit());
+      pano.tint = ReadColor(jp, "tint", WHITE);
+      pano.haze = jp.value("haze", pano.haze);
+      pano.y = jp.value("y", pano.y);
+      if (pano.haze < 0.0f || pano.haze > 1.0f)
+        throw std::runtime_error("'haze' debe estar entre 0 y 1");
+      if (jp.contains("sun")) {
+        const json& js = jp.at("sun");
+        pano.sun = engine.Assets().GetTexture(js.at("texture").get<std::string>());
+        const float yaw = js.value("yaw", 0.0f) * DEG2RAD;
+        const float pitch = js.value("pitch", 8.0f) * DEG2RAD;
+        pano.sunDirection = {-std::sin(yaw) * std::cos(pitch), std::sin(pitch),
+                             -std::cos(yaw) * std::cos(pitch)};
+        pano.sunSize = js.value("size", pano.sunSize);
+      }
+      scene.panorama = std::move(pano);
     }
 
     if (root.contains("bounds")) {

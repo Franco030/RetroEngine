@@ -44,11 +44,11 @@ nuevas). Lo que existe hoy:
 | Audio | Música y ambiente con fundido cruzado, efectos (también posicionales), emisores en bucle con atenuación y paneo, pasos. |
 | Guardado | Ranuras en `%APPDATA%/RetroEngine/saves`, escritura atómica con copia `.bak`, autoguardado. |
 | Editor | Visor 3D con cámara libre, vista PS1 opcional, selección por clic, gizmo de mover, jerarquía, inspector, panel de assets con arrastrar y soltar, deshacer/rehacer, guardar/abrir/crear escenas. Editor de lógica: acciones, condiciones, interacciones y `showIf` en formularios, un panel de validación que avisa de referencias rotas y banderas sospechosas, y un panel **Dialogos** para crearlos y editarlos (se guardan solos). |
-| Contenido | Modelos low-poly hechos con Blender por script (`tools/blender/`): molino con aspas que giran, casas de madera y de piedra (también de noche, con las ventanas encendidas), capilla, cripta, tumbas, verjas, faroles, fuente, pozo y otros objetos, y ocho personajes compatibles con los atlas de caras. Texturas de materiales y sprites procedurales con acabado PS1. |
-| Herramientas | `tools/texconv.py` (imagen a textura PS1), `tools/charatlas.py` (foto de cara a atlas de personaje), `tools/gen_texturas.py`, `tools/gen_sprites.py` y `tools/gen_personajes.py` (texturas, sprites y atlas de personajes procedurales), `tools/gen_musica.py` y `tools/gen_sonidos.py` (música y efectos sintetizados) y los scripts de Blender. |
+| Contenido | Modelos low-poly hechos con Blender por script: molino con aspas que giran, casas de madera y de piedra (también de noche, con las ventanas encendidas), capilla, cripta, tumbas, verjas, faroles, fuente, pozo y otros objetos, y ocho personajes compatibles con los atlas de caras. Texturas de materiales y sprites procedurales con acabado PS1. |
+| Herramientas | `tools/texconv.py` (imagen a textura PS1) y `tools/charatlas.py` (foto de cara a atlas de personaje), para meter contenido propio. |
 
-Los assets son **procedurales**, generados con scripts y por tanto se pueden regenerar y retocar;
-no es arte final hecho a mano.
+Los assets son **procedurales**: se generaron con scripts propios (Blender y Python) que no están
+en el repositorio; no es arte final hecho a mano.
 
 Escenas, conectadas entre sí por **senderos que se meten en el bosque** (no hay portales: al
 entrar en la espesura un trigger invisible cambia de escena con un fundido, y se llega a la otra
@@ -65,6 +65,28 @@ saliendo de su propio bosque):
 - `tuneles.json`: túneles de tierra bajo la cripta, con un cruce, un osario, un lago, un
   santuario de cristales con un ermitaño, un derrumbe, una reja que se abre con la llave del
   osario, y salidas al pozo de la aldea y a una trampilla de la plaza de noche.
+- `lago.json`: al norte de la aldea. Un lago al atardecer con muelle, barca, un sauce con
+  columpio, luciérnagas, montañas en la bruma rosada y un pescador. La calma antes de la
+  tormenta.
+- `bosque_negro.json`: al este del lago. Un sendero por un bosque muerto y con niebla donde pasan
+  cosas: una figura alta que se ve al fondo y desaparece, figuras de ramas colgadas, pasos detrás
+  (y algo a tu espalda si te das la vuelta), una cabaña donde alguien responde a tu llamada y un círculo de piedras
+  con velas recién encendidas. Por debajo de un árbol caído se sigue hacia:
+- `campamento.json`: el campamento de la partida de búsqueda que vino a por Clara, la niña
+  desaparecida: su cartel tachado, el diario, la radio, seis pares de botas en fila.
+- `aldea_vieja.json`: Valdemora, el primer pueblo del pacto, en ruinas: puertas con una X roja, el
+  cementerio de niños, una fosa recién cavada sin nombre.
+- `arbol_hueco.json`: el árbol con tu nombre tallado, y los aldeanos que se acercan cuando no
+  los miras.
+- `feria.json`: donde despiertas. La Fiesta del Viento de un pueblo vivo: puestos, guirnaldas,
+  un tiovivo, músicos tocando un vals precioso, vecinos con los que hablar... y pistas que no
+  terminan de cuadrar.
+
+En la capilla, tocar el órgano tiene consecuencias.
+
+Las escenas de exterior tienen un **panorama**: montañas o bosque lejanos que siguen a la cámara
+(nunca se llega a ellos), con el sol o la luna detrás, para que la escena no acabe en el vacío.
+Están rodeadas de un borde de bosque que solo se abre por los senderos.
 
 ---
 
@@ -98,8 +120,18 @@ Los ejecutables quedan en `build/bin/`:
 - `RetroEditor.exe`: el editor. Edita directamente los assets **de origen** (`assets/` del
   proyecto; la ruta se fija al compilar con `RETRO_PROJECT_ASSETS_DIR`). Se puede cambiar con
   `RetroEditor.exe --assets <carpeta>`.
-- Los dos aceptan `--scene scenes/<escena>.json` para empezar en esa escena (el juego empieza
-  por defecto en la demo).
+- El juego (*Festum Venti*, "la fiesta del viento" en latín) empieza en la demo hasta que la
+  partida llega a la feria; desde entonces arranca en la **pantalla de inicio**: la feria de
+  fondo, con la cámara dando vueltas al tiovivo y el vals con percusión; Continuar (la partida más
+  reciente), Nueva partida (empieza en la demo), Configuración (volumen, ratón, pantalla
+  completa, imagen, grano y viñeta; se guarda en `ajustes.json` junto a las partidas) y Salir.
+  En la partida, Esc abre la pausa.
+- Los dos aceptan `--scene scenes/<escena>.json` para empezar en esa escena (el juego, sin
+  pantalla de inicio: directamente jugando). El juego acepta también `--windowed`: en ventana aunque la
+  configuración diga pantalla completa (sin cambiar la configuración guardada).
+- El juego apunta en la consola los fotogramas de más de 25 ms (`[tiron]`, con lo que costó
+  cada parte) y cada carga de escena (`[carga]`, `[precarga]`). Los `INFO` de raylib están
+  apagados: escribir miles de líneas en la consola de Windows bloquea el juego.
 
 > Importante: como el juego lee la copia, después de guardar una escena en el editor hay que
 > **volver a compilar** (o al menos ejecutar el destino `CopyAssets`) para verla en el juego.
@@ -127,7 +159,7 @@ Los ejecutables quedan en `build/bin/`:
 | 1 2 3 4 6 | Temblor, color de 15 bits, *dithering*, niebla, luces puntuales |
 | M | Silenciar |
 | F11 | Ventana sin bordes |
-| Esc | Salir |
+| Esc | Pausa (seguir, configuración, salir al menú o del juego) / volver en un menú |
 
 ### Editor
 
@@ -164,15 +196,13 @@ editor/               RetroEditor: EditorApp, EditorLogic (acciones, condiciones
                       EditorValidation (panel Validacion), EditorCamera, AssetCatalog,
                       JsonUtil, JsonFormat
 assets/
-  scenes/             demo.json, aldea.json, noche.json, cementerio.json, iglesia.json, cripta.json, tuneles.json
+  scenes/             demo.json, aldea.json, noche.json, cementerio.json, iglesia.json, cripta.json, tuneles.json,
+                      lago.json, bosque_negro.json, campamento.json, aldea_vieja.json, arbol_hueco.json,
+                      feria.json
+  dialogues/          un .json por diálogo
   shaders/            retro.vs, retro.fs, retro_unlit.fs, retro_sprite.fs, post.fs
   models/ textures/ audio/ fonts/
-tools/                texconv.py, charatlas.py, gen_texturas.py, gen_sprites.py, gen_personajes.py, gen_musica.py,
-                      gen_sonidos.py
-  blender/            retro_comun.py (piezas y exportador), molino.py, aldea_props.py,
-                      cementerio.py, personajes.py, subterraneo.py (+ tuneles_mapa.py), bosque.py,
-                      iglesia.py, detalles.py:
-                      los modelos, por script
+tools/                texconv.py (imagen a textura PS1), charatlas.py (foto de cara a atlas)
 docs/SISTEMA.md       funcionamiento detallado de todos los sistemas
 ```
 
@@ -298,7 +328,7 @@ post-proceso y dibujar la interfaz encima. El detalle está en
 
 | Decisión | Por qué |
 |---|---|
-| **Modelos hechos con Blender por script** (`tools/blender/`), no a mano | Cada modelo es código: se puede regenerar, cambiar una medida y volver a exportar, y las piezas comunes (tejados, ventanas, cuerpos) se reutilizan. Blender se maneja desde Claude con el MCP o ejecutando el script. |
+| **Modelos hechos con Blender por script**, no a mano | Cada modelo es código: se puede regenerar, cambiar una medida y volver a exportar, y las piezas comunes (tejados, ventanas, cuerpos) se reutilizan. Blender se maneja desde Claude con el MCP o ejecutando el script. |
 | **Varios materiales por modelo, con texturas pequeñas que se repiten** | Una pared de madera y un tejado de tejas usan su propia textura de 64 px con UV en metros reales, en vez de un atlas único: más detalle con menos memoria y sin estirar la textura. El `.mtl` apunta a `../textures/`. |
 | **`"texture"` solo reemplaza los materiales sin textura propia** | Así un personaje recibe su atlas de cara y ropa sin perder el sombrero de paja o el farol, que traen su material. Con los modelos que no traen texturas en el `.mtl` el resultado es el de siempre. |
 | **Personajes con la misma distribución de atlas que los antiguos** | Las caras hechas con `charatlas.py` sirven en todos los cuerpos nuevos. |

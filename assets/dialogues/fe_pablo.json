@@ -1,0 +1,13 @@
+{
+  "speaker": "Pablo",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Has subido a la noria? Desde arriba\nse ve un pueblo viejo entre los arboles.",
+        "Mi padre dice que alli no hay nada.\nQue son las sombras de las nubes."
+      ]
+    },
+    { "lines": ["La noria no para nunca.\nNi para que subas."] }
+  ]
+}

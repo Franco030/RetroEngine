@@ -1,9 +1,14 @@
 build/
 .cache/
 fotos/
+docs/HISTORIA.md
+# generadores de assets (Blender y Python): no son del motor, se quedan fuera del repo
+tools/gen_*.py
+tools/blender/
 
 compile_commands.json
 RetroEngine
 # copias de respaldo del editor y cache de Python
 *.bak
 __pycache__/
+build-release/

@@ -38,7 +38,7 @@ struct EngineConfig {
   bool resizable = true;
   bool integerScaling = false;
   Color clearColor = {24, 20, 32, 255};
-  std::string uiFont = "fonts/roboto_medium.ttf";
+  std::string uiFont = "fonts/dpcomic.ttf";
   std::string assetRoot;
 };
 
@@ -56,7 +56,9 @@ public:
   RetroEngine(RetroEngine&&) = delete;
   RetroEngine& operator=(RetroEngine&&) = delete;
 
+  // El bucle dura hasta que se cierra la ventana o se llama a Quit (Esc lo decide el juego).
   void Run(const UpdateFn& update, const DrawFn& draw, const OverlayFn& overlay = {});
+  void Quit() noexcept { quit_ = true; }
 
   AssetManager& Assets() noexcept { return assets_; }
   RetroShader& Retro() noexcept { return retroShader_; }
@@ -105,6 +107,7 @@ private:
   Ui ui_;
   PostProcess post_;
   AudioSystem audio_;
+  bool quit_ = false;
 };
 
 } // namespace retro

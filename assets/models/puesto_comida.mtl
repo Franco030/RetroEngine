@@ -1,0 +1,33 @@
+# RetroEngine: puesto_comida
+
+newmtl mat_flor_amarilla
+d 1.000000
+map_Kd ../textures/mat_flor_amarilla.png
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_madera_gris
+d 1.000000
+map_Kd ../textures/mat_madera_gris.png
+
+newmtl mat_paja
+d 1.000000
+map_Kd ../textures/mat_paja.png
+
+newmtl mat_sangre
+d 1.000000
+map_Kd ../textures/mat_sangre.png
+
+newmtl mat_tela_roja
+d 1.000000
+map_Kd ../textures/mat_tela_roja.png
+
+newmtl mat_toldo_verde
+d 1.000000
+map_Kd ../textures/mat_toldo_verde.png
+
+newmtl mat_ventana_luz
+d 1.000000
+map_Kd ../textures/mat_ventana_luz.png

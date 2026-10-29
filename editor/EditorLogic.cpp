@@ -30,8 +30,10 @@ struct ActionInfo {
   const char* title;
 };
 
-constexpr std::array<ActionInfo, 9> kActions{{
+constexpr std::array<ActionInfo, 13> kActions{{
     {"dialogue", "Dialogo"},
+    {"look_at", "Mirar hacia"},
+    {"scare", "Susto de camara"},
     {"message", "Mensaje"},
     {"set_flag", "Fijar bandera"},
     {"add_flag", "Sumar a bandera"},
@@ -40,6 +42,8 @@ constexpr std::array<ActionInfo, 9> kActions{{
     {"play_sound", "Sonido"},
     {"play_music", "Musica"},
     {"stop_music", "Parar musica"},
+    {"lock_movement", "Quieto (solo mirar)"},
+    {"title_screen", "Pantalla de inicio"},
 }};
 
 const ActionInfo* FindAction(const Json& action) {
@@ -80,6 +84,10 @@ Json NewAction(const std::string& key, const std::vector<std::string>& scenes,
 
   if (key == "dialogue")
     return Json::object({{"dialogue", dialogues.empty() ? std::string() : dialogues.front()}});
+  if (key == "look_at")
+    return Json::object({{"look_at", Vec3Json({0.0f, 1.6f, 0.0f})}});
+  if (key == "scare")
+    return Json::object({{"scare", Vec3Json({0.0f, 1.6f, 0.0f})}});
   if (key == "message")
     return Json::object({{"message", "Texto"}});
   if (key == "set_flag")
@@ -94,6 +102,10 @@ Json NewAction(const std::string& key, const std::vector<std::string>& scenes,
     return Json::object({{"play_sound", firstSound}});
   if (key == "play_music")
     return Json::object({{"play_music", firstSound}});
+  if (key == "lock_movement")
+    return Json::object({{"lock_movement", true}});
+  if (key == "title_screen")
+    return Json::object({{"title_screen", true}});
   return Json::object({{"stop_music", true}});
 }
 
@@ -236,6 +248,37 @@ void EditorApp::EditAction(Json& a) {
       ImGui::TextDisabled("Elige uno, o crealo en el panel Dialogos");
     }
 
+  } else if (key == "look_at" || key == "scare") {
+    // A donde: una entidad por su nombre ("look_at": "nombre") o un punto ([x,y,z]).
+    const char* k = info->key;
+    const char* modes[] = {"Una entidad", "Un punto"};
+    const int mode = a.at(k).is_string() ? 0 : 1;
+    int next = mode;
+    if (ImGui::Combo("Hacia", &next, modes, 2) && next != mode) {
+      BeginChange(0);
+      if (next == 0) {
+        const std::vector<std::string> names = EntityNames();
+        a[k] = names.empty() ? std::string() : names.front();
+      } else {
+        a[k] = Vec3Json({0.0f, 1.6f, 0.0f});
+      }
+      MarkChanged(0);
+    }
+    if (a.at(k).is_string())
+      FieldFile("Entidad", a, nullptr, k, EntityNames(), false, false);
+    else
+      FieldVec3("Punto", a, nullptr, k, {0.0f, 1.6f, 0.0f}, 0.05f, false);
+    if (key == "look_at") {
+      FieldFloat("Rapidez", a, nullptr, "speed", 6.0f, 0.1f, 0.5f, 60.0f);
+      ImGui::TextDisabled("Gira suave, sin acercar, mientras dure el mensaje o dialogo.\n"
+                          "Ponla antes del mensaje o el dialogo.");
+    } else {
+      FieldFloat("Rapidez", a, nullptr, "speed", 20.0f, 0.1f, 0.5f, 60.0f);
+      FieldFloat("Acercar (fov)", a, nullptr, "fov", 30.0f, 0.5f, 1.0f, 120.0f);
+      ImGui::TextDisabled("Giro de golpe y acercamiento mientras dure el mensaje o dialogo.\n"
+                          "Rapidez 2-3: la vista se va sola; 20+: susto.");
+    }
+
   } else if (key == "message") {
     FieldText("Texto", a, nullptr, "message", true);
     ImGui::TextDisabled("{bandera} muestra el valor de esa bandera");
@@ -268,6 +311,36 @@ void EditorApp::EditAction(Json& a) {
       FieldFloat("Giro al llegar", a, nullptr, "yaw", 0.0f, 0.5f, -360.0f, 360.0f, false);
     } else {
       ImGui::TextDisabled("Se aparece en el inicio de la escena de destino");
+    }
+    FieldFloat("Negro (s)", a, nullptr, "dark", 0.0f, 0.1f, 0.0f, 60.0f);
+    ImGui::SetItemTooltip("Segundos en negro antes de llegar (ya suena la escena nueva)");
+    if (a.value("dark", 0.0f) > 0.0f) {
+      if (!a.contains("lines") || !a.at("lines").is_array())
+        a["lines"] = Json::array();
+      Json& lines = a["lines"];
+      ListOp op = ListOp::None;
+      std::size_t target = 0;
+      for (std::size_t i = 0; i < lines.size(); ++i) {
+        ImGui::PushID(static_cast<int>(i));
+        const ListOp asked = ListButtons({i, lines.size(), true});
+        if (asked != ListOp::None) {
+          op = asked;
+          target = i;
+        }
+        EditLine("##frase", lines[i]);
+        ImGui::PopID();
+      }
+      ApplyListOp(lines, op, target);
+      if (ImGui::Button(ICON_FA_PLUS "  Anadir frase")) {
+        BeginChange(0);
+        lines.push_back("...");
+        MarkChanged(0);
+      }
+      ImGui::TextDisabled("Salen una tras otra en el negro (vacia = silencio)");
+      if (lines.empty())
+        a.erase("lines");
+    } else {
+      a.erase("lines"); // sin negro no hay donde mostrarlas
     }
 
   } else if (key == "teleport") {
@@ -316,11 +389,21 @@ void EditorApp::EditAction(Json& a) {
 
   } else if (key == "play_music") {
     FieldFile("Archivo", a, nullptr, "play_music", assets_.sounds, false, false);
+    FieldFile("Despues, en bucle", a, nullptr, "then", assets_.sounds, true, false);
+    ImGui::SetItemTooltip("Opcional: el archivo suena una vez y luego este se repite");
     FieldFloat("Volumen", a, nullptr, "volume", 0.6f, 0.01f, 0.0f, 1.0f);
     FieldFloat("Fundido (s)", a, nullptr, "fade", 1.0f, 0.05f, 0.0f, 30.0f);
 
   } else if (key == "stop_music") {
     FieldFloat("Fundido (s)", a, nullptr, "fade", 1.0f, 0.05f, 0.0f, 30.0f);
+
+  } else if (key == "lock_movement") {
+    FieldBool("Sin andar", a, nullptr, "lock_movement", true, false);
+    ImGui::TextDisabled("Activado: puede mirar pero no andar. Se suelta al cambiar de escena.");
+
+  } else if (key == "title_screen") {
+    ImGui::TextDisabled("Con un 'Cambiar de escena' en la misma lista: al llegar sale la\n"
+                        "pantalla de inicio; 'Jugar' lleva la camara al punto de inicio.");
   }
 }
 
@@ -640,6 +723,53 @@ void EditorApp::EditInteraction(Json& e, int entityIndex) {
   if (remove) {
     BeginChange(0);
     e.erase("interact");
+    MarkChanged(0);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Al mirarla ("seen")
+// ---------------------------------------------------------------------------
+void EditorApp::EditSight(Json& e) {
+  if (!e.contains("seen") || !e.at("seen").is_object()) {
+    if (ImGui::Button("Anadir \"al mirarla\"")) {
+      BeginChange(0);
+      e["seen"] = Json::object({{"range", 12}, {"angle", 20}, {"do", Json::array()}});
+      MarkChanged(0);
+    }
+    ImGui::TextDisabled("Acciones cuando el jugador la ve (sin pulsar nada)");
+    return;
+  }
+  Json& s = e["seen"];
+  ImGui::PushID("seen");
+  FieldFloat("Distancia", s, nullptr, "range", 15.0f, 0.1f, 0.5f, 100.0f);
+  FieldFloat("Angulo", s, nullptr, "angle", 20.0f, 0.2f, 1.0f, 89.0f);
+  FieldFloat("Angulo al apartar", s, nullptr, "awayAngle", 75.0f, 0.5f, 1.0f, 180.0f);
+  ImGui::SetItemTooltip("Deja de contar como mirada cuando queda a mas de este angulo (75: ya\n"
+                        "fuera de pantalla, asi lo que pase al apartar la vista no se ve)");
+  ImGui::TextDisabled("Cuenta como vista si esta a menos de ese angulo del centro de la\n"
+                      "vista y no hay nada solido en medio. Una vez por visita a la escena.");
+  for (const char* key : {"do", "away"}) {
+    if (!s.contains(key))
+      s[key] = Json::array(); // para editarla; vacia no se guarda (ver abajo)
+  }
+  ImGui::SeparatorText("Al verla");
+  ImGui::PushID("do");
+  EditActionList(s, "do");
+  ImGui::PopID();
+  ImGui::SeparatorText("Al dejar de mirarla");
+  ImGui::PushID("away");
+  EditActionList(s, "away");
+  ImGui::PopID();
+  for (const char* key : {"do", "away"}) {
+    if (s.contains(key) && s.at(key).is_array() && s.at(key).empty())
+      s.erase(key);
+  }
+  const bool remove = ImGui::Button("Quitar \"al mirarla\"");
+  ImGui::PopID();
+  if (remove) {
+    BeginChange(0);
+    e.erase("seen");
     MarkChanged(0);
   }
 }

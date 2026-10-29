@@ -1,0 +1,9 @@
+{
+  "entries": [
+    {
+      "once": true,
+      "lines": ["Una barca atada al muelle.", "Tiene un poco de agua dentro.\nY un zapato pequeno."]
+    },
+    { "lines": ["Nadie ha remado en ella en mucho tiempo."] }
+  ]
+}

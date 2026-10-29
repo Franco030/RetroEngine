@@ -1,0 +1,9 @@
+# RetroEngine: figura_ramas
+
+newmtl mat_corteza
+d 1.000000
+map_Kd ../textures/mat_corteza.png
+
+newmtl mat_lona
+d 1.000000
+map_Kd ../textures/mat_lona.png

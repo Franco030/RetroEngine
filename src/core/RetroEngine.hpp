@@ -10,7 +10,9 @@
 #include <raylib.h>
 
 #include <functional>
+#include <optional>
 #include <string>
+#include <utility>
 
 #ifndef RETRO_INTERNAL_WIDTH
 #define RETRO_INTERNAL_WIDTH 320
@@ -60,6 +62,15 @@ public:
   void Run(const UpdateFn& update, const DrawFn& draw, const OverlayFn& overlay = {});
   void Quit() noexcept { quit_ = true; }
 
+  // Foto: guarda en 'file' (PNG) la imagen tal como se ve (con el post-proceso, a la resolucion
+  // de la ventana y sin las barras negras) al final del fotograma en curso. Va por el propio
+  // motor porque a pantalla completa muchas capturas del sistema salen negras.
+  void RequestScreenshot(std::string file) { shotFile_ = std::move(file); }
+  // El resultado de la ultima foto pedida (una vez): true si se guardo.
+  std::optional<bool> TakeScreenshotResult() noexcept {
+    return std::exchange(shotResult_, std::nullopt);
+  }
+
   AssetManager& Assets() noexcept { return assets_; }
   RetroShader& Retro() noexcept { return retroShader_; }
   PostProcess& Post() noexcept { return post_; }
@@ -108,6 +119,10 @@ private:
   PostProcess post_;
   AudioSystem audio_;
   bool quit_ = false;
+  std::string shotFile_;            // foto pedida para este fotograma (vacio: ninguna)
+  std::optional<bool> shotResult_;  // como salio la ultima
+
+  bool SaveScreenshot(const std::string& file) const;
 };
 
 } // namespace retro

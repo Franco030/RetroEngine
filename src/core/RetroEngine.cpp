@@ -121,6 +121,10 @@ void RetroEngine::Run(const UpdateFn& update, const DrawFn& draw, const OverlayF
     BeginDrawing();
     ClearBackground(BLACK); // barras del letterbox
     Present();
+    if (!shotFile_.empty()) { // antes de EndDrawing: luego la imagen ya no esta en el bufer
+      shotResult_ = SaveScreenshot(shotFile_);
+      shotFile_.clear();
+    }
     EndDrawing();
     const auto t4 = Clock::now();
     constexpr double kSpikeMs = 25.0;
@@ -153,6 +157,25 @@ Rectangle RetroEngine::PresentationRect() const {
   const float w = intW * scale;
   const float h = intH * scale;
   return {std::floor((winW - w) * 0.5f), std::floor((winH - h) * 0.5f), w, h};
+}
+
+bool RetroEngine::SaveScreenshot(const std::string& file) const {
+  // La Image de raylib es un struct de C: este envoltorio la libera pase lo que pase.
+  struct Shot {
+    explicit Shot(Image i) : image(i) {}
+    ~Shot() { UnloadImage(image); }
+    Shot(const Shot&) = delete;
+    Shot& operator=(const Shot&) = delete;
+    Image image;
+  };
+  Shot shot(LoadImageFromScreen());
+  if (shot.image.data == nullptr)
+    return false;
+  // la imagen va en pixeles reales (con escalado de pantalla puede no coincidir con la ventana)
+  const float k = static_cast<float>(shot.image.width) / static_cast<float>(GetScreenWidth());
+  const Rectangle r = PresentationRect();
+  ImageCrop(&shot.image, {r.x * k, r.y * k, r.width * k, r.height * k});
+  return ExportImage(shot.image, file.c_str());
 }
 
 Vector2 RetroEngine::WindowToInternal(Vector2 windowPos) const {

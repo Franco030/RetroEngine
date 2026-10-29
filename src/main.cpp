@@ -4,7 +4,10 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <cstdlib>
+#include <ctime>
 #include <exception>
+#include <filesystem>
 #include <iostream>
 #include <optional>
 #include <string>
@@ -266,6 +269,39 @@ static bool LatestSaveReachedTitle(const retro::SaveManager& saves, std::optiona
     std::cerr << "Carga: " << e.what() << '\n';
     return false;
   }
+}
+
+// Donde van las fotos (F12): Imagenes/Festum Venti del usuario; si no hay carpeta de imagenes,
+// junto a las partidas.
+static std::filesystem::path PhotosDirectory(const retro::SaveManager& saves) {
+  for (const char* var : {"USERPROFILE", "HOME"}) {
+    if (const char* home = std::getenv(var); home && *home) {
+      const std::filesystem::path pics = std::filesystem::path(home) / "Pictures";
+      if (std::filesystem::is_directory(pics))
+        return pics / "Festum Venti";
+    }
+  }
+  return saves.Directory().parent_path() / "fotos";
+}
+
+// festum_venti_AAAA-MM-DD_hh-mm-ss.png en 'dir' (con _2, _3... si ya existe).
+static std::filesystem::path NewPhotoPath(const std::filesystem::path& dir) {
+  const std::time_t t = std::time(nullptr);
+  std::tm tm{};
+#if defined(_MSC_VER)
+  localtime_s(&tm, &t);
+#elif defined(_WIN32)
+  if (const std::tm* p = std::localtime(&t))
+    tm = *p;
+#else
+  localtime_r(&t, &tm);
+#endif
+  char stamp[32];
+  std::strftime(stamp, sizeof stamp, "%Y-%m-%d_%H-%M-%S", &tm);
+  std::filesystem::path path = dir / (std::string("festum_venti_") + stamp + ".png");
+  for (int n = 2; std::filesystem::exists(path); ++n)
+    path = dir / (std::string("festum_venti_") + stamp + "_" + std::to_string(n) + ".png");
+  return path;
 }
 
 // La partida guardada mas reciente (la ranura 1 o el autoguardado), si hay alguna.
@@ -650,6 +686,23 @@ int main(int argc, char** argv) {
 
     engine.Run(
         [&](float dt) {
+          // --- Fotos (F12): el motor la saca al final del fotograma; el aviso, en el siguiente ---
+          if (const auto saved = engine.TakeScreenshotResult())
+            state.ShowMessage(*saved ? "Foto guardada" : "No se pudo guardar la foto (ver consola)",
+                              2.0f);
+          if (IsKeyPressed(KEY_F12)) {
+            try {
+              const std::filesystem::path dir = PhotosDirectory(saves);
+              std::filesystem::create_directories(dir);
+              const std::filesystem::path file = NewPhotoPath(dir);
+              std::cout << "Foto: " << file.string() << std::endl;
+              engine.RequestScreenshot(file.string());
+            } catch (const std::exception& e) {
+              std::cerr << "Foto: " << e.what() << '\n';
+              state.ShowMessage("No se pudo guardar la foto (ver consola)", 2.5f);
+            }
+          }
+
           // --- Menus (inicio y pausa) ---
           if (screen != Screen::Playing && !leaving && !glide && !scenes.Transitioning() &&
               menuAge > 0.4f)

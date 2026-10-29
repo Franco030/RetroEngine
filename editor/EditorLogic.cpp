@@ -30,7 +30,7 @@ struct ActionInfo {
   const char* title;
 };
 
-constexpr std::array<ActionInfo, 11> kActions{{
+constexpr std::array<ActionInfo, 13> kActions{{
     {"dialogue", "Dialogo"},
     {"look_at", "Mirar hacia"},
     {"scare", "Susto de camara"},
@@ -42,6 +42,8 @@ constexpr std::array<ActionInfo, 11> kActions{{
     {"play_sound", "Sonido"},
     {"play_music", "Musica"},
     {"stop_music", "Parar musica"},
+    {"lock_movement", "Quieto (solo mirar)"},
+    {"title_screen", "Pantalla de inicio"},
 }};
 
 const ActionInfo* FindAction(const Json& action) {
@@ -100,6 +102,10 @@ Json NewAction(const std::string& key, const std::vector<std::string>& scenes,
     return Json::object({{"play_sound", firstSound}});
   if (key == "play_music")
     return Json::object({{"play_music", firstSound}});
+  if (key == "lock_movement")
+    return Json::object({{"lock_movement", true}});
+  if (key == "title_screen")
+    return Json::object({{"title_screen", true}});
   return Json::object({{"stop_music", true}});
 }
 
@@ -306,6 +312,36 @@ void EditorApp::EditAction(Json& a) {
     } else {
       ImGui::TextDisabled("Se aparece en el inicio de la escena de destino");
     }
+    FieldFloat("Negro (s)", a, nullptr, "dark", 0.0f, 0.1f, 0.0f, 60.0f);
+    ImGui::SetItemTooltip("Segundos en negro antes de llegar (ya suena la escena nueva)");
+    if (a.value("dark", 0.0f) > 0.0f) {
+      if (!a.contains("lines") || !a.at("lines").is_array())
+        a["lines"] = Json::array();
+      Json& lines = a["lines"];
+      ListOp op = ListOp::None;
+      std::size_t target = 0;
+      for (std::size_t i = 0; i < lines.size(); ++i) {
+        ImGui::PushID(static_cast<int>(i));
+        const ListOp asked = ListButtons({i, lines.size(), true});
+        if (asked != ListOp::None) {
+          op = asked;
+          target = i;
+        }
+        EditLine("##frase", lines[i]);
+        ImGui::PopID();
+      }
+      ApplyListOp(lines, op, target);
+      if (ImGui::Button(ICON_FA_PLUS "  Anadir frase")) {
+        BeginChange(0);
+        lines.push_back("...");
+        MarkChanged(0);
+      }
+      ImGui::TextDisabled("Salen una tras otra en el negro (vacia = silencio)");
+      if (lines.empty())
+        a.erase("lines");
+    } else {
+      a.erase("lines"); // sin negro no hay donde mostrarlas
+    }
 
   } else if (key == "teleport") {
     FieldVec3("Destino", a, nullptr, "teleport", {0.0f, 0.0f, 0.0f}, 0.05f, false);
@@ -353,11 +389,21 @@ void EditorApp::EditAction(Json& a) {
 
   } else if (key == "play_music") {
     FieldFile("Archivo", a, nullptr, "play_music", assets_.sounds, false, false);
+    FieldFile("Despues, en bucle", a, nullptr, "then", assets_.sounds, true, false);
+    ImGui::SetItemTooltip("Opcional: el archivo suena una vez y luego este se repite");
     FieldFloat("Volumen", a, nullptr, "volume", 0.6f, 0.01f, 0.0f, 1.0f);
     FieldFloat("Fundido (s)", a, nullptr, "fade", 1.0f, 0.05f, 0.0f, 30.0f);
 
   } else if (key == "stop_music") {
     FieldFloat("Fundido (s)", a, nullptr, "fade", 1.0f, 0.05f, 0.0f, 30.0f);
+
+  } else if (key == "lock_movement") {
+    FieldBool("Sin andar", a, nullptr, "lock_movement", true, false);
+    ImGui::TextDisabled("Activado: puede mirar pero no andar. Se suelta al cambiar de escena.");
+
+  } else if (key == "title_screen") {
+    ImGui::TextDisabled("Con un 'Cambiar de escena' en la misma lista: al llegar sale la\n"
+                        "pantalla de inicio; 'Jugar' lleva la camara al punto de inicio.");
   }
 }
 
@@ -698,6 +744,9 @@ void EditorApp::EditSight(Json& e) {
   ImGui::PushID("seen");
   FieldFloat("Distancia", s, nullptr, "range", 15.0f, 0.1f, 0.5f, 100.0f);
   FieldFloat("Angulo", s, nullptr, "angle", 20.0f, 0.2f, 1.0f, 89.0f);
+  FieldFloat("Angulo al apartar", s, nullptr, "awayAngle", 75.0f, 0.5f, 1.0f, 180.0f);
+  ImGui::SetItemTooltip("Deja de contar como mirada cuando queda a mas de este angulo (75: ya\n"
+                        "fuera de pantalla, asi lo que pase al apartar la vista no se ve)");
   ImGui::TextDisabled("Cuenta como vista si esta a menos de ese angulo del centro de la\n"
                       "vista y no hay nada solido en medio. Una vez por visita a la escena.");
   for (const char* key : {"do", "away"}) {

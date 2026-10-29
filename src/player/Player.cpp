@@ -67,7 +67,8 @@ void Player::Update(float dt, std::span<const WorldBox> boxes) {
 
   if (active_ && !frozen_) {
     Look();
-
+  }
+  if (active_ && !frozen_ && !rooted_) {
     const float fwd = static_cast<float>(IsKeyDown(KEY_W)) - static_cast<float>(IsKeyDown(KEY_S));
     const float side = static_cast<float>(IsKeyDown(KEY_D)) - static_cast<float>(IsKeyDown(KEY_A));
 
@@ -108,14 +109,26 @@ void Player::SetPitch(float degrees) noexcept {
   pitch_ = std::clamp(degrees, -kMaxPitch, kMaxPitch);
 }
 
-void Player::TurnTowards(Vector3 target, float dt, float rate) noexcept {
+void Player::SetRooted(bool rooted) noexcept {
+  if (rooted && !rooted_)
+    vel_ = {0.0f, 0.0f};
+  rooted_ = rooted;
+}
+
+void Player::SetFrozen(bool frozen) noexcept {
+  if (frozen && !frozen_)
+    vel_ = {0.0f, 0.0f};
+  frozen_ = frozen;
+}
+
+float Player::TurnTowards(Vector3 target, float dt, float rate) noexcept {
   const Vector3 eye = Eye();
   const float dx = target.x - eye.x;
   const float dy = target.y - eye.y;
   const float dz = target.z - eye.z;
   const float flat = std::hypot(dx, dz);
   if (flat < 1e-3f && std::fabs(dy) < 1e-3f)
-    return;
+    return 0.0f;
 
   // Mismo convenio que SetView: adelante = (-sin(yaw), sin(pitch), -cos(yaw)).
   const float wantYaw = std::atan2(-dx, -dz) * RAD2DEG;
@@ -123,6 +136,7 @@ void Player::TurnTowards(Vector3 target, float dt, float rate) noexcept {
   const float k = std::min(1.0f, dt * rate); // recorre 'rate' veces por segundo lo que falta
   yaw_ += std::remainder(wantYaw - yaw_, 360.0f) * k;
   pitch_ += (wantPitch - pitch_) * k;
+  return std::max(std::fabs(std::remainder(wantYaw - yaw_, 360.0f)), std::fabs(wantPitch - pitch_));
 }
 
 void Player::Step(float h, std::span<const WorldBox> boxes) {

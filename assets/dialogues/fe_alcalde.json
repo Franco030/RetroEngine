@@ -1,0 +1,16 @@
+{
+  "speaker": "Don Aurelio",
+  "entries": [
+    {
+      "once": true,
+      "lines": ["Bienvenido a la Fiesta del Viento!", "El pueblo entero esta aqui.\nBueno... casi entero."]
+    },
+    {
+      "if": { "flag": "fe_billete" },
+      "once": true,
+      "key": "billete",
+      "lines": ["Tu nombre en un billete? Cosa de la imprenta.\nImprimen nombres al azar. Para la rifa."]
+    },
+    { "lines": ["Disfruta, forastero. Manana sera otro dia.\nO el mismo. Ya veremos."] }
+  ]
+}

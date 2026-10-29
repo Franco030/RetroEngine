@@ -7,6 +7,7 @@
 
 #include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace retro {
@@ -40,6 +41,9 @@ public:
     shot_.reset();
     return out;
   }
+  // Si se pidio title_screen desde la ultima llamada (y lo olvida): lo aplica main, que lleva las
+  // pantallas del juego.
+  bool TakeTitleRequest() noexcept { return std::exchange(titleRequested_, false); }
 
 private:
   // Mismo orden que en la lista de inicializacion del constructor (-Wreorder).
@@ -49,6 +53,7 @@ private:
   AudioSystem& audio_;
   DialogueSystem& dialogues_;
   std::optional<CameraShot> shot_;
+  bool titleRequested_ = false;
 };
 
 } // namespace retro

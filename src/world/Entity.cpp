@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <stdexcept>
 #include <utility>
 #include <vector>
@@ -53,6 +54,13 @@ BoundingBox Entity::LocalBounds() {
 void Entity::Update(float dt, Vector3 focus) {
   if (updateFn_)
     updateFn_(*this, dt);
+  if (glitchTime_ >= 0.0f) {
+    glitchTime_ += dt;
+    if (glitchTime_ >= glitch) {
+      glitchTime_ = -1.0f;
+      visible = shown_;
+    }
+  }
   if (frames_ > 1)
     animTime_ += dt;
 
@@ -91,6 +99,43 @@ void SetDepthBias(const Shader& shader, float bias) {
 
 } // namespace
 
+namespace {
+
+// Numero pseudoaleatorio 0..1 repetible a partir de un entero (sin estado: mismo fotograma, mismo
+// valor en todas las llamadas).
+float Hash01(std::uint32_t x) {
+  x ^= x >> 16;
+  x *= 0x7feb352dU;
+  x ^= x >> 15;
+  x *= 0x846ca68bU;
+  x ^= x >> 16;
+  return static_cast<float>(x & 0xFFFFFFU) / static_cast<float>(0xFFFFFFU);
+}
+
+} // namespace
+
+void Entity::SetShown(bool shown) {
+  if (glitch <= 0.0f || !shownKnown_) {
+    visible = shown;
+    shown_ = shown;
+    shownKnown_ = true;
+    return;
+  }
+  if (shown == shown_)
+    return;
+  shown_ = shown;
+  glitchTime_ = 0.0f;
+  glitchOut_ = !shown;
+  visible = true; // durante la salida sigue dibujandose (parpadeando) hasta el final
+}
+
+float Entity::GlitchAmount() const noexcept {
+  if (glitchTime_ < 0.0f)
+    return 0.0f;
+  const float t = std::clamp(glitchTime_ / glitch, 0.0f, 1.0f);
+  return glitchOut_ ? t : 1.0f - t * t; // al llegar se asienta deprisa; al irse, cada vez peor
+}
+
 void SetFogFixed(const Shader& shader, float fog) {
   const int loc = GetShaderLocation(shader, "fogFixed");
   if (loc >= 0)
@@ -115,6 +160,18 @@ void Entity::Draw(const Shader& fullbright) {
   Transform visual = transform;
   visual.position = Vector3Add(visual.position, drawOffset_);
   visual.rotation.z += drawRoll_;
+  if (const float k = GlitchAmount(); k > 0.0f) {
+    // Interferencia: a saltos (unos 30 por segundo) no se dibuja, se estira, se encoge y se
+    // desplaza de lado; cuanto mayor 'k', mas a menudo y mas fuerte.
+    const auto paso = static_cast<std::uint32_t>(glitchTime_ * 30.0f) * 4u +
+                      static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(this) >> 4);
+    if (Hash01(paso) < 0.5f * k)
+      return;
+    visual.scale.x *= 1.0f - 0.65f * k * Hash01(paso + 1);
+    visual.scale.y *= 1.0f + 0.45f * k * (Hash01(paso + 2) - 0.3f);
+    visual.position.x += (Hash01(paso + 3) - 0.5f) * 0.5f * k;
+    visual.position.z += (Hash01(paso + 4) - 0.5f) * 0.3f * k;
+  }
   model.transform = visual.ToMatrix();
   if (layer != 0)
     SetDepthBias(emissive ? fullbright : model.materials[0].shader, layer * kLayerStep);
@@ -148,8 +205,17 @@ void Entity::DrawSprite(const Camera3D& camera, Vector3 shade) {
   if (!visible || !IsSprite())
     return;
 
-  const Vector2 size{spriteSize_.x * std::fabs(transform.scale.x),
-                     spriteSize_.y * std::fabs(transform.scale.y)};
+  Vector2 size{spriteSize_.x * std::fabs(transform.scale.x),
+               spriteSize_.y * std::fabs(transform.scale.y)};
+  if (const float g = GlitchAmount(); g > 0.0f) {
+    // la misma interferencia que en Draw, sin desplazamiento (el billboard ya mira a la camara)
+    const auto paso = static_cast<std::uint32_t>(glitchTime_ * 30.0f) * 4u +
+                      static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(this) >> 4);
+    if (Hash01(paso) < 0.5f * g)
+      return;
+    size.x *= 1.0f - 0.65f * g * Hash01(paso + 1);
+    size.y *= 1.0f + 0.45f * g * (Hash01(paso + 2) - 0.3f);
+  }
 
   const Vector3 k = emissive ? Vector3{1.0f, 1.0f, 1.0f} : shade;
   auto channel = [](unsigned char t, float f) {

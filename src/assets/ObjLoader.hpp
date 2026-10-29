@@ -9,7 +9,7 @@ namespace retro {
 
 // Caja de colision que el propio modelo trae en su .obj, en una linea de comentario:
 //   # retro:col min_x min_y min_z max_x max_y max_z yaw
-// (coordenadas del motor; las escribe tools/blender/retro_comun.py).
+// (coordenadas del motor; las escribe el exportador de los modelos).
 struct ModelBox {
   Vector3 min{};
   Vector3 max{};

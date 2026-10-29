@@ -1357,7 +1357,6 @@
       "rotation": [0, -10, 0],
       "collider": false,
       "tint": [255, 240, 220, 255],
-      "sound": { "file": "audio/tarareo.wav", "offset": [0, 0.6, 0], "volume": 0.6, "radius": 9, "minDistance": 1 },
       "interact": {
         "prompt": "Leer",
         "range": 2.2,
@@ -1417,6 +1416,7 @@
       "rotation": [0, -90, 0],
       "collider": false,
       "showIf": { "not": { "flag": "av_sepulturero_fin" } },
+      "glitch": true,
       "idle": { "bob": 0.03, "sway": 3, "speed": 2.4 },
       "sound": { "file": "audio/pala.wav", "volume": 0.9, "radius": 18, "minDistance": 2 },
       "seen": { "range": 22, "angle": 18, "away": [{ "set_flag": "av_sepulturero_fin" }] }
@@ -4476,6 +4476,35 @@
     }
   ],
   "triggers": [
+    {
+      "position": [1.61, 0, -14.8],
+      "size": [18, 3, 8],
+      "name": "tarareo_empieza",
+      "if": { "not": { "flag": "av_tarareo" } },
+      "do": [
+        {
+          "play_music": "audio/tarareo_largo.wav",
+          "then": "audio/tarareo_roto.wav",
+          "volume": 0.22,
+          "fade": 4
+        },
+        { "set_flag": "av_tarareo" }
+      ]
+    },
+    {
+      "position": [1.61, 0, -14.8],
+      "size": [18, 3, 8],
+      "name": "tarareo_sigue",
+      "if": { "flag": "av_tarareo" },
+      "do": [{ "play_music": "audio/tarareo_roto.wav", "volume": 0.22, "fade": 3 }]
+    },
+    {
+      "name": "tarareo_norte",
+      "position": [-0.86, 0, -36.0],
+      "size": [14, 3, 1.0],
+      "if": { "flag": "av_tarareo" },
+      "do": [{ "play_music": "audio/tarareo_roto.wav", "volume": 0.22, "fade": 3 }]
+    },
     {
       "name": "volver",
       "position": [-0.06, 0, 44.5],

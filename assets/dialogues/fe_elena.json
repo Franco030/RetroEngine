@@ -1,0 +1,16 @@
+{
+  "speaker": "Elena",
+  "entries": [
+    {
+      "once": true,
+      "lines": ["Has visto a mi hija? Ah, si. Alli, en el tiovivo.\nSiempre en el tiovivo."]
+    },
+    {
+      "if": { "flag": "fe_zapato" },
+      "once": true,
+      "key": "zapato",
+      "lines": ["Un zapato rojo? No, no...\nMi nina lleva zapatos negros. Los de los domingos."]
+    },
+    { "lines": ["Da vueltas y vueltas.\nMirala que contenta."] }
+  ]
+}

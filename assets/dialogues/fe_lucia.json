@@ -1,0 +1,16 @@
+{
+  "speaker": "Lucia",
+  "entries": [
+    {
+      "once": true,
+      "lines": ["Me gusta tu sombra. Es muy larga.", "Mi mama dice que no hable con los que vienen del trigo."]
+    },
+    {
+      "if": { "flag": "fe_zapato" },
+      "once": true,
+      "key": "zapato",
+      "lines": ["Yo tenia unos zapatos rojos.", "Los perdi jugando.\nNo me acuerdo donde."]
+    },
+    { "lines": ["El globo quiere irse.\nPero yo no le dejo."] }
+  ]
+}

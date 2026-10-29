@@ -91,13 +91,15 @@ void AudioSystem::PlaySfx(const std::string& file, float volume) {
   }
 }
 
-void AudioSystem::StartChannel(Channel& ch, const std::string& file, float volume, float fade) {
+void AudioSystem::StartChannel(Channel& ch, const std::string& file, float volume, float fade,
+                               const std::string& then) {
   if (!enabled_)
     return;
 
   {
     std::lock_guard lock(mutex_);
-    if (file == ch.file) {
+    // Lo mismo que ya suena (o lo que viene despues de la entrada que suena) sigue sin cortes.
+    if (file == ch.file || (!file.empty() && file == ch.then)) {
       ch.target = file.empty() ? 0.0f : volume;
       ch.upRate = std::max(volume, 0.1f);
       return;
@@ -125,8 +127,10 @@ void AudioSystem::StartChannel(Channel& ch, const std::string& file, float volum
   }
 
   ch.file = file;
+  ch.then = then;
   ch.current = std::move(next);
   if (ch.current) {
+    ch.current->Get().looping = then.empty();
     ch.volume = fade > 0.0f ? 0.0f : volume;
     ch.target = volume;
     ch.upRate = std::max(volume, 0.1f) / f;
@@ -157,8 +161,9 @@ void AudioSystem::UpdateChannel(Channel& ch, float dt) {
   }
 }
 
-void AudioSystem::PlayMusic(const std::string& file, float volume, float fade) {
-  StartChannel(music_, file, std::clamp(volume, 0.0f, 1.0f), fade);
+void AudioSystem::PlayMusic(const std::string& file, float volume, float fade,
+                            const std::string& then) {
+  StartChannel(music_, file, std::clamp(volume, 0.0f, 1.0f), fade, then);
 }
 
 void AudioSystem::PlayAmbient(const std::string& file, float volume, float fade) {
@@ -168,10 +173,20 @@ void AudioSystem::PlayAmbient(const std::string& file, float volume, float fade)
 void AudioSystem::Update(float dt) {
   if (!enabled_)
     return;
-  std::lock_guard lock(mutex_);
-  // Solo los fundidos: los streams los rellena el hilo (FeedLoop).
-  UpdateChannel(music_, dt);
-  UpdateChannel(ambient_, dt);
+  std::string next; // la entrada de la musica acabo: sigue su bucle
+  float nextVolume = 0.0f;
+  {
+    std::lock_guard lock(mutex_);
+    // Solo los fundidos: los streams los rellena el hilo (FeedLoop).
+    UpdateChannel(music_, dt);
+    UpdateChannel(ambient_, dt);
+    if (music_.current && !music_.then.empty() && !IsMusicStreamPlaying(music_.current->Get())) {
+      next = std::exchange(music_.then, {});
+      nextVolume = music_.target;
+    }
+  }
+  if (!next.empty())
+    StartChannel(music_, next, nextVolume, 0.0f); // abre el archivo fuera del candado
 }
 
 void AudioSystem::SetFootsteps(const std::vector<std::string>& files, float volume) {

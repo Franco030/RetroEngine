@@ -7,6 +7,7 @@
   "fog": { "start": 2, "end": 22, "mist": 0.55, "mistHeight": 1.0, "mistColor": [62, 64, 72] },
   "light": { "direction": [0.2, -1.0, 0.1], "ambient": 0.15, "sun": 0.2 },
   "audio": {
+    "music": { "file": "audio/tarareo_roto.wav", "volume": 0.22 },
     "ambient": { "file": "audio/zumbido.wav", "volume": 0.3 },
     "footsteps": {
       "files": ["audio/paso_tierra_1.wav", "audio/paso_tierra_2.wav", "audio/paso_tierra_3.wav"],
@@ -1860,6 +1861,7 @@
       "position": [0.58, 0, -23.6],
       "collider": false,
       "showIf": { "flag": "ah_nombre" },
+      "glitch": true,
       "light": { "offset": [0, 2.2, 2.0], "color": [140, 150, 190], "radius": 4.0, "intensity": 0.9 }
     },
     {
@@ -5443,6 +5445,12 @@
     }
   ],
   "triggers": [
+    {
+      "name": "tarareo_calla",
+      "position": [0.78, 0, -11.0],
+      "size": [16, 3, 1.0],
+      "do": [{ "stop_music": true, "fade": 5 }]
+    },
     {
       "name": "volver",
       "position": [-1.49, 0, 44.5],

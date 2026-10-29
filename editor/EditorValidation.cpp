@@ -225,7 +225,7 @@ std::vector<Issue> ValidateDocument(const Json& doc, const fs::path& root, const
             issues.push_back(MakeIssue(Severity::Error, place,
                                        "cambia a la escena '" + scene + "', que no existe"));
           }
-          for (const char* key : {"play_sound", "play_music"}) {
+          for (const char* key : {"play_sound", "play_music", "then"}) {
             const std::string file = ReadString(&a, key);
             if (a.contains(key) && !AssetExists(root, file)) {
               issues.push_back(

@@ -1,0 +1,14 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "fe_billete" } },
+      "lines": [
+        "En el mostrador hay un billete.\nTodavia esta caliente, como recien impreso.",
+        "ADMITE UNO.\nFIESTA DEL VIENTO.",
+        "Debajo, a maquina, tu nombre."
+      ],
+      "do": [{ "set_flag": "fe_billete" }]
+    },
+    { "lines": ["La ventanilla esta a oscuras.\nNo hay nadie dentro."] }
+  ]
+}

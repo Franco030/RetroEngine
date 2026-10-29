@@ -1,0 +1,13 @@
+{
+  "speaker": "Marisa",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Manzanas de caramelo! Cuidado, que queman.",
+        "Vienes del trigo? Por alli no hay nada.\nNi caminos."
+      ]
+    },
+    { "lines": ["La nina del vestido rojo ya se ha comido tres.\nSu madre la va a matar."] }
+  ]
+}

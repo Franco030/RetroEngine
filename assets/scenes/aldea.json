@@ -76,15 +76,7 @@
       "model": "models/molino_aspas.obj",
       "position": [0, 6.9, -0.9],
       "spin": [0, 0, -40],
-      "collider": false,
-      "showIf": { "not": { "flag": "capitulo1_fin" } }
-    },
-    {
-      "name": "molino_aspas_quietas",
-      "model": "models/molino_aspas.obj",
-      "position": [0, 6.9, -0.9],
-      "collider": false,
-      "showIf": { "flag": "capitulo1_fin" }
+      "collider": false
     },
     {
       "name": "pozo",
@@ -5157,15 +5149,6 @@
         { "play_sound": "audio/hojas.wav", "volume": 0.7 },
         { "goto_scene": "scenes/lago.json", "position": [0, 0, 12], "yaw": 0 }
       ]
-    },
-    {
-      "name": "despertar",
-      "position": [3.2, 0, 6.4],
-      "size": [4, 3, 4],
-      "on": "stay",
-      "once": true,
-      "if": { "flag": "capitulo1_fin" },
-      "do": [{ "message": "Despiertas junto al pozo.\nTienes tierra bajo las unas.", "seconds": 5 }]
     }
   ],
   "panorama": { "model": "models/panorama_montes.obj", "tint": [170, 190, 215], "haze": 0.45 }

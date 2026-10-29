@@ -215,7 +215,7 @@ void Scene::CollectColliders(std::vector<WorldBox>& out) const {
 void Scene::RefreshVisibility(const GameState& state) {
   for (auto& e : entities_) {
     if (!e->showIf.empty())
-      e->visible = AllHold(e->showIf, state);
+      e->SetShown(AllHold(e->showIf, state));
   }
 }
 
@@ -272,8 +272,10 @@ bool Scene::Occluded(Vector3 origin, Vector3 dir, float distance, const Entity* 
   return false;
 }
 
-// Mitad de la altura de la vista (60 grados de campo vertical), con algo de margen.
+// Mitad de la altura de la vista (60 grados de campo vertical), con algo de margen; y para
+// "fuera de pantalla", algo mas.
 constexpr float kSightVertical = 35.0f * DEG2RAD;
+constexpr float kOffScreenVertical = 45.0f * DEG2RAD;
 
 void Scene::UpdateSight(Vector3 eye, Vector3 forward, std::vector<Action>& fired) {
   for (auto& e : entities_) {
@@ -294,22 +296,27 @@ void Scene::UpdateSight(Vector3 eye, Vector3 forward, std::vector<Action>& fired
     const float dist = Vector3Length(to);
     // Vista: el angulo se mide en horizontal (hacia donde se gira la cabeza) y en vertical basta
     // con que quepa en pantalla: quien mira algo bajo o alto, tambien lo ve.
+    // "La ves" (cerca del centro, 'angle') no es lo contrario de "ya no la ves": eso es que este
+    // fuera de pantalla ('awayAngle', mas ancho que el campo de vision), lejos o tapada. Si no,
+    // lo que pasa al dejar de mirarla (algo que desaparece o se mueve) se veria por el borde.
     bool inView = false;
+    bool onScreen = false;
     if (dist > 1e-3f && dist <= s.range) {
       const float flat = std::hypot(to.x, to.z);
       const float fflat = std::hypot(forward.x, forward.z);
       if (flat > 1e-3f && fflat > 1e-3f) {
         const float cosYaw = (to.x * forward.x + to.z * forward.z) / (flat * fflat);
         const float vertical = std::fabs(std::atan2(to.y, flat) - std::atan2(forward.y, fflat));
-        inView = cosYaw >= std::cos(s.angle * DEG2RAD) && vertical <= kSightVertical &&
-                 !Occluded(eye, Vector3Scale(to, 1.0f / dist), dist, e.get());
+        onScreen = cosYaw >= std::cos(s.awayAngle * DEG2RAD) && vertical <= kOffScreenVertical &&
+                   !Occluded(eye, Vector3Scale(to, 1.0f / dist), dist, e.get());
+        inView = onScreen && cosYaw >= std::cos(s.angle * DEG2RAD) && vertical <= kSightVertical;
       }
     }
 
     if (!s.seen && inView) {
       s.seen = true;
       fired.insert(fired.end(), s.onSeen.begin(), s.onSeen.end());
-    } else if (s.seen && !s.away && !inView) {
+    } else if (s.seen && !s.away && !onScreen) {
       s.away = true;
       fired.insert(fired.end(), s.onLookAway.begin(), s.onLookAway.end());
     }

@@ -1,0 +1,13 @@
+{
+  "speaker": "Tomas",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Llegaste con la ultima carreta? No te vi bajar.",
+        "Bosque? Por aqui no hay bosque.\nTrigo y mas trigo, hasta donde alcanza la vista."
+      ]
+    },
+    { "lines": ["Elena no deja de mirar el tiovivo.\nDice que la nina esta ahi."] }
+  ]
+}

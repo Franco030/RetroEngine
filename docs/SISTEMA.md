@@ -59,7 +59,7 @@ programa. Sus miembros se construyen en este orden y se destruyen en el inverso:
 
 | # | Miembro | Qué hace |
 |---|---|---|
-| 1 | `WindowGuard` | Abre la ventana y el contexto OpenGL 3.3 (`InitWindow`). Desactiva la tecla de salida de Raylib (Esc la gestiona el motor). La cierra al final. |
+| 1 | `WindowGuard` | Abre la ventana y el contexto OpenGL 3.3 (`InitWindow`). Desactiva la tecla de salida de Raylib (Esc la gestiona el juego). La cierra al final. |
 | 2 | `AudioGuard` | Abre el dispositivo de audio. Si no hay, avisa por consola y el juego sigue **sin sonido**. |
 | 3 | `RenderTarget` | La textura interna de **320x240** donde se dibuja el mundo. |
 | 4 | `AssetManager` | Cachés de texturas, modelos, shaders, fuentes y sonidos. |
@@ -86,7 +86,8 @@ vsync, resolución interna 320x240, color de fondo `(24, 20, 32)`, fuente `fonts
 resolución interna y la de ventana también se pueden cambiar con las macros
 `RETRO_INTERNAL_WIDTH/HEIGHT` y `RETRO_WINDOW_WIDTH/HEIGHT` del CMake.
 
-**Bucle del motor** (`RetroEngine::Run`): en cada fotograma, Esc sale, F11 alterna la ventana
+**Bucle del motor** (`RetroEngine::Run`): dura hasta que se cierra la ventana o el juego llama a
+`Quit()` (Esc lo decide el juego: abre la pausa). En cada fotograma F11 alterna la ventana
 sin bordes, se actualiza el audio, se llama a la función `update` del juego, se dibuja el mundo
 en la textura interna con la función `draw`, se presenta escalada con el post-proceso, y por
 último se dibuja la interfaz (`overlay`) encima.
@@ -357,7 +358,7 @@ dibujar cada entidad se pone su matriz en `model.transform` y su textura en los 
 |---|---|
 | `tint` | Multiplica el color. Su alfa participa en el recorte por alfa (por debajo de 128 no se dibuja). |
 | `visible` | Si es `false`, la entidad no se dibuja, **no choca**, no se puede interactuar con ella y su luz y su sonido se apagan. |
-| `showIf` | Condiciones (§9). Si las tiene, `visible` se recalcula cada fotograma: visible solo si se cumplen todas. |
+| `showIf` | Condiciones (§9). Si las tiene, `visible` se recalcula cada fotograma: visible solo si se cumplen todas (con `glitch`, el cambio pasa por la interferencia). |
 | `spin` | Grados por segundo en X, Y, Z sumados a la rotación cada fotograma. Cambia la rotación real, así que **la caja de colisión gira con ella**. |
 | `facePlayer` | Si el jugador está a menos de `range` (por defecto 10) en horizontal, la entidad gira en Y hacia él a `turnSpeed` grados por segundo (por defecto 240), por el camino más corto. |
 | `idle` | Balanceo de "respiración": un bote vertical `|sin(t)| × bob` y un balanceo lateral (giro en Z) `sin(t/2) × sway` grados, con `t = tiempo × speed × 3 + fase`. Es **solo visual**: no mueve la colisión ni el punto de interacción. La fase sale del nombre, así dos aldeanos no se mueven igual. |
@@ -419,7 +420,7 @@ caja.
 **Las cajas automáticas** se calculan al cargar:
 
 - Para un modelo que **trae sus propias cajas**: esas. Los modelos hechos con
-  `tools/blender/` las llevan dentro del `.obj`, en comentarios que raylib ignora:
+  del juego las llevan dentro del `.obj`, en comentarios que raylib ignora:
 
   ```
   # retro:col min_x min_y min_z max_x max_y max_z yaw
@@ -588,7 +589,7 @@ sobrevive al cambio de escena y a guardar y cargar. F6 lo reinicia.
 Con `"marker": true` el trigger se dibuja como un marco de alambre con dos rectángulos que suben
 en bucle, del color `color` (por defecto `[255, 200, 80, 255]`). Sirve para ver zonas mientras se
 diseña; las salidas de las escenas no lo usan: son senderos que entran en el bosque (modelo
-`sendero` de `tools/blender/bosque.py`, filas de árboles cada vez más cerradas, hojarasca más
+el modelo `sendero`, filas de árboles cada vez más cerradas, hojarasca más
 allá del borde y un trigger invisible ancho como la arboleda que suena a hojas y cambia de escena).
 
 ### 8.5 Patrón típico: dos triggers en el mismo sitio
@@ -633,14 +634,16 @@ ejecuta `ActionRunner` en orden.
 
 | Acción | Modificadores (valor por defecto) | Efecto |
 |---|---|---|
-| `{ "goto_scene": "scenes/x.json" }` | `position` [x,y,z], `yaw` | Cambia de escena con fundido. Si se dan, `position` y `yaw` sustituyen el punto de inicio del destino. Si el archivo no existe, se avisa por consola y no pasa nada. |
+| `{ "goto_scene": "scenes/x.json" }` | `position` [x,y,z], `yaw`, `dark` (0), `lines` | Cambia de escena con fundido. Si se dan, `position` y `yaw` sustituyen el punto de inicio del destino. Con `dark` (segundos, hasta 60) la pantalla se queda en negro ese rato con la escena nueva ya cargada (ya suena su música) y `lines` son frases que salen una tras otra en el centro, cada una con su parte del tiempo, apareciendo y apagándose despacio (una vacía es un rato de silencio). Si el archivo no existe, se avisa por consola y no pasa nada. |
 | `{ "teleport": [x, y, z] }` | `yaw` (el actual) | Mueve al jugador al instante (reinicia su velocidad). |
 | `{ "set_flag": "nombre" }` | `value` (1) | Fija la bandera. |
 | `{ "add_flag": "nombre" }` | `amount` (1) | Suma a la bandera (puede ser negativo). |
 | `{ "message": "texto" }` | `seconds` (3) | Muestra el texto abajo, como un subtítulo sobre la imagen. `\n` hace saltos de línea y `{bandera}` se sustituye por su valor: `"Monedas: {monedas}/3"`. Un mensaje nuevo reemplaza al anterior. |
 | `{ "play_sound": "audio/x.wav" }` | `volume` (1), `at`, `radius` (14), `minDistance` (1) | Efecto de sonido. Sin `at`, suena "en la cabeza" (sin posición). Con `at: [x,y,z]` o `at: "nombre_de_entidad"`, suena en ese punto con atenuación y paneo (§12.3). |
-| `{ "play_music": "audio/x.wav" }` | `volume` (0.6), `fade` (1) | Cambia la música con fundido cruzado. |
+| `{ "play_music": "audio/x.wav" }` | `volume` (0.6), `fade` (1), `then` | Cambia la música con fundido cruzado. Con `then`, el archivo suena **una vez** y al acabar empieza `then` en bucle (una entrada y lo que se queda sonando). Pedir lo que ya suena, o el `then` de la entrada que suena, no la corta: así una escena puede tener de música el bucle y no interrumpe la entrada que viene de la anterior. |
 | `{ "stop_music": true }` | `fade` (1) | Apaga la música con fundido (el valor de la clave no importa). |
+| `{ "lock_movement": true }` | — | El jugador puede **mirar pero no andar** ni saltar (se para en seco); `false` lo suelta. Se suelta solo al cambiar de escena. Para los momentos en que hay que darse la vuelta porque algo está detrás (los pasos del bosque negro, la emboscada del árbol hueco) y andar los rompería. |
+| `{ "title_screen": true }` | — | Con un `goto_scene` en la misma lista: al llegar a esa escena, en vez de jugar sale la **pantalla de inicio** (§15.6) con "Jugar", que lleva la cámara volando al punto de inicio de la escena. |
 | `{ "look_at": "entidad" }` o `{ "look_at": [x, y, z] }` | `speed` (6) | **Mirar**: gira la vista del jugador hacia la entidad (a la altura de la cara si es alta como una persona) o el punto, **suave y sin acercar**, mientras dure el mensaje o diálogo que se esté leyendo; si no hay nada que leer, no hace nada. Para enseñar un objeto o a alguien. `speed`: fracción de lo que falta que se recorre por segundo. Va antes del `message` o `dialogue`. |
 | `{ "scare": "entidad" }` o `{ "scare": [x, y, z] }` | `speed` (20), `fov` (30) | **Susto de cámara**: como `look_at`, pero de golpe y **acercando** (la vista se estrecha hasta `fov` grados y al terminar vuelve). Con `speed` 2-3 la vista "se va sola" hacia algo inquietante; con 20 o más es un susto. |
 | `{ "dialogue": "sepulturero" }` | — | Abre el diálogo `assets/dialogues/sepulturero.json` (§11.1). Si ninguna de sus entradas se cumple, no dice nada; si el archivo falla, se avisa por consola. |
@@ -910,7 +913,11 @@ recolocar al jugador y autoguardar.
    época). Durante el fundido el jugador no se mueve y no se evalúan triggers ni interacciones.
 3. Con la pantalla en negro se carga la escena (el tirón de la carga no se ve).
 4. Si la carga falla, se avisa por consola y se sigue en la escena anterior.
-5. Fundido de vuelta.
+5. Si `goto_scene` pidió `dark` (`Interlude`), la pantalla sigue en negro esos segundos
+   (`Phase::Dark`): la escena nueva ya está cargada y suena su audio, y `CurrentCard()` da la
+   frase de `lines` que toca y su opacidad; `main` la dibuja en el centro (`DrawCard`). El punto
+   de mira no se dibuja durante el cambio.
+6. Fundido de vuelta.
 
 Al arrancar el juego también se entra con un fundido desde negro (`FadeInFromBlack`).
 
@@ -1025,7 +1032,37 @@ el archivo falta o no es válido, se prueba el `.bak` (y se avisa por consola).
 - **F10 / Shift+F10**: lee la ranura, cambia a su escena con la posición y el yaw guardados y,
   cuando la escena termina de cargar, sustituye todas las banderas por las guardadas y restaura
   inclinación y tiempo de juego. Si la escena no se pudo cargar, avisa.
-- Al arrancar, si hay partida, un mensaje lo recuerda.
+- **Continuar** (pantalla de inicio): carga la más reciente de las dos ranuras (`savedAt`).
+- **Salir al menú** (pausa): autoguarda antes de volver a la pantalla de inicio.
+
+### 15.6 Pantalla de inicio, pausa y configuración (`main.cpp`, `ui/Menu`, `game/Settings`)
+
+- La pantalla de inicio va con la **partida**: al arrancar sale solo si la partida guardada más
+  reciente ya llegó a la feria (tiene la bandera `bosque_sueno`, que pone el anciano al
+  empujarte). Si no hay partida, o no ha llegado, el juego arranca como siempre, en la primera
+  escena (`scenes/demo.json`) con el aviso de F10 si hay partida, y la pausa no ofrece "Salir al
+  menú" (solo con la bandera puesta).
+- **Llegada jugando** (`title_screen`, el final del árbol hueco): el negro de `goto_scene` suena
+  ya con la música de la escena; al aclararse aparece la pantalla de inicio poco a poco (el
+  título se descubre) y entra el vals con percusión. Las opciones son Jugar, Configuración y
+  Salir; la partida se autoguarda al llegar, con el jugador en el inicio de la escena. **Jugar**
+  hace volar la cámara (3 s, suavizado) desde la vuelta al tiovivo hasta los ojos del jugador y
+  vuelve la música de la escena; al terminar, se juega.
+- Desbloqueada y sin `--scene`, el juego arranca en `scenes/feria.json` como **fondo**: no hay jugador; la
+  cámara da vueltas alrededor del `target` de la cámara de la escena, a la distancia y altura de
+  su `position` (los espantapájaros la siguen con la cabeza), y suena
+  `musica_feria_menu_v2.wav` (el vals con percusión) en lugar de la música de la escena. En el
+  juego, la feria suena con su música sin percusión.
+- `Screen` (`Title`, `Playing`, `Paused`) dice qué se actualiza. Al elegir Nueva partida,
+  Continuar o Salir al menú se pide el cambio de escena y `leaving` guarda la pantalla a la que se
+  pasa **cuando llegue** la escena (mientras tanto el menú no se ve); si el cambio falla, el menú
+  vuelve. En pausa el mundo se queda quieto.
+- `Menu`: lista de opciones con teclado (W/S, A/D para cambiar valores, E/Enter, Esc) y ratón
+  (pasar por encima elige; clic acepta; en un valor, la mitad izquierda baja y la derecha sube).
+  `Update` decide y `Draw` dibuja; las zonas del ratón son las del último `Draw`.
+- `Settings` (volumen, sensibilidad del ratón 1-10, pantalla completa, filtro de imagen, grano y
+  viñeta) se lee al arrancar de `ajustes.json`, en la carpeta de datos junto a `saves/`, y se
+  escribe (atómico) en cada cambio. Un archivo roto avisa y deja los valores por defecto.
 
 ---
 
@@ -1089,7 +1126,7 @@ contorno negro (la misma línea en negro desplazada alrededor), y cada `\n` es u
 El texto se **escribe letra a letra** a 40 letras por segundo (`GameState::VisibleBytes`, que
 corta siempre en una letra UTF-8 completa); los `seconds` del mensaje empiezan a contar cuando ya
 se ve entero. Cada línea se coloca según su ancho completo, así no se desplaza mientras crece.
-Cada dos letras suena un chasquido de estática (`letra_1..3.wav`, de `gen_sonidos.py`,
+Cada dos letras suena un chasquido de estática (`letra_1..3.wav`,
 alternados). En un mensaje de interacción, E primero muestra el texto entero y la segunda vez
 lo cierra; en un diálogo (§11.1) pasa a la página siguiente. Si el mensaje tiene quien habla, su
 nombre va encima en dorado, y en un diálogo un triángulo parpadea al final cuando la página ya
@@ -1112,9 +1149,15 @@ Hay dos clases de mensaje, según de dónde salen:
   (busca la entidad en la escena) porque es quien lleva la cámara. El acercamiento se
   guarda como los grados que se han quitado al campo de visión de la escena (`zoom`) y vuelve a
   0 suavemente al soltar; al cambiar de escena se pone a 0 (la escena nueva ya puso el suyo).
+  El punto, la velocidad y el `fov` van juntos (`Focus`, un solo `std::optional`): al soltar la
+  mirada se va todo a la vez, y la siguiente conversación no hereda el acercamiento de un susto.
+  Mientras dura, el jugador está **congelado** (se para en seco, sin deslizarse) y la mirada no se
+  suelta hasta que la cámara **ha llegado** (`TurnTowards` devuelve los grados que faltan; menos
+  de 2°, o 6 s como mucho), aunque el mensaje ya se haya ido; E tampoco lo cierra antes. Así no
+  se puede andar a medio giro y romper la escena (la figura del bosque negro, que gira despacio).
 
   Así están hechos los sustos: el órgano de la capilla (al cerrar su página, `scare` al
-  sepulturero que aparece en la puerta con `speed` 16 y `fov` 34, el golpe `susto_golpe.wav` y su
+  sepulturero que aparece en la puerta con `speed` 16 y `fov` 34, el golpe `susto.wav` y su
   diálogo), y en el bosque negro la figura que se ve al fondo (`scare` con `speed` 2.5: la vista
   se va sola) y los pasos detrás: la figura aparece a tu espalda sin que nada gire la cámara; el
   golpe (`susto_espalda.wav`) suena solo cuando tú te das la vuelta y la ves, y desaparece en cuanto apartas la vista
@@ -1134,7 +1177,7 @@ Todos los campos, con su valor por defecto. Solo `entities` es obligatorio en la
 | `player` | `position` [0, 0, 9], `yaw` 0 | Punto de inicio (los pies). |
 | `autoCollide` | `false` | §6.2. |
 | `bounds` | ninguno | `{ "min": [x, z], "max": [x, z] }`. §6.4. |
-| `panorama` | ninguno | El horizonte lejano de los exteriores: `{ "model", "tint": [r,g,b], "haze": 0.4, "y": -6, "sun": { "texture", "yaw", "pitch", "size": 40 } }`. El modelo (`panorama_montes` o `panorama_bosque`, de `tools/blender/panorama.py`, entre 90 y 210 m) se dibuja primero y **centrado en la cámara**: nunca se llega a él ni corta la escena, y siempre hay "algo lejos". En vez de la niebla por distancia lleva una bruma fija `haze` hacia el color de la niebla (uniform `fogFixed` de los fragment shaders). El `sun` (el sol del lago, la luna de las noches) es un sprite a 320 m, más lejos que el modelo, así que las montañas lo tapan por profundidad, y **no** lo apaga la niebla. `yaw`/`pitch` como la vista del jugador (`yaw` 0 = hacia -Z, `pitch` en grados sobre el horizonte). |
+| `panorama` | ninguno | El horizonte lejano de los exteriores: `{ "model", "tint": [r,g,b], "haze": 0.4, "y": -6, "sun": { "texture", "yaw", "pitch", "size": 40 } }`. El modelo (`panorama_montes` o `panorama_bosque`, entre 90 y 210 m) se dibuja primero y **centrado en la cámara**: nunca se llega a él ni corta la escena, y siempre hay "algo lejos". En vez de la niebla por distancia lleva una bruma fija `haze` hacia el color de la niebla (uniform `fogFixed` de los fragment shaders). El `sun` (el sol del lago, la luna de las noches) es un sprite a 320 m, más lejos que el modelo, así que las montañas lo tapan por profundidad, y **no** lo apaga la niebla. `yaw`/`pitch` como la vista del jugador (`yaw` 0 = hacia -Z, `pitch` en grados sobre el horizonte). |
 | `background` | `[24, 20, 32]` | También es el color de la niebla. |
 | `fog` | `start` 10, `end` 26 | Niebla por distancia, del color de `background`. **Neblina baja** (opcional): `mist` (densidad 0-1, 0 = sin ella), `mistHeight` (1.5 m) y `mistColor` [r, g, b]: niebla pegada al suelo que se desvanece hacia arriba, en bancos que cambian por el terreno y nunca pegada a la cámara (`MistAmount` en `retro.fs` y `retro_sprite.fs`). El cementerio la usa leve (0.6, 1.4 m, gris azulado), el lago rosada y el bosque negro densa. |
 | `light` | `direction` [-0.5, -1, -0.3], `ambient` 0.35, `sun` 1 | Luz direccional (`sun` entre 0 y 1). |
@@ -1154,7 +1197,7 @@ Todos los campos, con su valor por defecto. Solo `entities` es obligatorio en la
 | `wrap` | el de Raylib | `"repeat"`, `"clamp"` o `"mirror"`. |
 | `sprite` | — | Ruta de la textura del sprite. |
 | `size` | — | Obligatorio en sprites: `[ancho, alto]`, positivos. |
-| `seen` | ninguno | Acciones cuando el jugador **la mira**, sin pulsar nada: `{ "range": 15, "angle": 20, "do": [...], "away": [...] }`. Cuenta como vista si su centro está a menos de `angle` grados del centro de la vista **en horizontal** (hacia donde se gira la cabeza), dentro de la pantalla en vertical (35°: quien mira algo alto o bajo también lo ve), a menos de `range` metros y sin nada sólido en medio (la misma oclusión que la interacción). Encadenando `away` con banderas y `showIf` se hacen cosas que se acercan cuando no las miras (el final del capítulo, `docs/HISTORIA.md`). `do` se ejecuta al verla y `away` al dejar de mirarla después; cada uno una vez por visita a la escena (lo que tenga que durar, con banderas y `showIf`). `Scene::UpdateSight`, cada fotograma tras los triggers. El editor lo edita en "Al mirarla". |
+| `seen` | ninguno | Acciones cuando el jugador **la mira**, sin pulsar nada: `{ "range": 15, "angle": 20, "awayAngle": 75, "do": [...], "away": [...] }`. Cuenta como vista si su centro está a menos de `angle` grados del centro de la vista **en horizontal** (hacia donde se gira la cabeza), dentro de la pantalla en vertical (35°: quien mira algo alto o bajo también lo ve), a menos de `range` metros y sin nada sólido en medio (la misma oclusión que la interacción). Encadenando `away` con banderas y `showIf` se hacen cosas que se acercan cuando no las miras (el final del árbol hueco). `do` se ejecuta al verla y `away` al dejar de mirarla después, que **no** es salir de `angle`: es quedar a más de `awayAngle` grados en horizontal (por defecto 75, más que la media pantalla, ~38°), a más de 45° en vertical, lejos o tapada. Así lo que pase entonces (algo que se mueve o desaparece) ya no se ve por el borde; cada uno una vez por visita a la escena (lo que tenga que durar, con banderas y `showIf`). `Scene::UpdateSight`, cada fotograma tras los triggers. El editor lo edita en "Al mirarla". |
 | `fog` | `true` | `false`: la niebla no la apaga (`fogFixed` 0 al dibujarla), para algo que tiene que verse de lejos aunque haya niebla. |
 | `emissive` | `false` | Ignora la luz y se ve a pleno color. En un modelo, se dibuja con el shader de los sprites (textura sin luces, con niebla y trama): para vidrieras y cosas que brillan. |
 | `layer` | `0` | Solo modelos: capa para superficies apoyadas en otras (un sendero sobre el suelo, una alfombra). `1` siempre gana a lo de debajo y `-1` pierde, sin parpadeo (*z-fighting*): el vertex shader resta `layer * 3e-5` a la profundidad (`depthBias`, en NDC), sin mover la superficie en pantalla. El paso crece con la distancia igual que el error de profundidad y de cerca equivale a pocos centímetros. Los senderos usan `1`, la hojarasca bajo el bosque `-1` y la alfombra de la iglesia (modelo aparte) `1`. |
@@ -1166,6 +1209,7 @@ Todos los campos, con su valor por defecto. Solo `entities` es obligatorio en la
 | `tint` | `[255, 255, 255, 255]` | |
 | `visible` | `true` | |
 | `showIf` | ninguna | Condición o arreglo (§9). |
+| `glitch` | `0` | `true` (0,45 s) o segundos (hasta 5): al aparecer o desaparecer por `showIf`, en vez de hacerlo de golpe, parpadea ~30 veces por segundo, se estrecha, se estira y salta de lado; al llegar se asienta enseguida y al irse va a peor. Al cargar la escena se aplica sin efecto. `Entity::SetShown` / `GlitchAmount`. Editor: "Aparecer con interferencia (s)". |
 | `spin` | `[0, 0, 0]` | Grados por segundo. |
 | `collider` | según `autoCollide` | `true`, `false`, `"auto"` o `{ "min", "max" }` (§6.2). |
 | `light` | ninguna | `{ "offset": [0,0,0], "color", "intensity", "radius", "flicker", "flickerRate" }` (§18.4). |
@@ -1531,51 +1575,43 @@ diferidas de §19.3).
 
 ---
 
-## 20. Herramientas de contenido
+## 20. Assets y herramientas de contenido
 
-Las de Python requieren `pip install pillow numpy` (`tools/requirements.txt`).
+Los modelos, texturas, sprites, atlas de personaje, música y efectos de `assets/` se generaron
+con scripts propios (Blender y Python) que **no están en el repositorio**: aquí se describe lo
+que hay y cómo usarlo. En el repositorio quedan dos herramientas para meter contenido propio,
+`texconv.py` y `charatlas.py` (requieren `pip install pillow numpy`, `tools/requirements.txt`).
 
-### Modelos en Blender (`tools/blender/`)
+### Modelos (`assets/models/`)
 
-Cada modelo se construye con un script de Python que se ejecuta **dentro de Blender** (desde
-el MCP de Blender o pegándolo en su consola) y exporta a `assets/models/`:
-
-```python
-exec(open(ruta).read(), {"__file__": ruta, "__name__": "__main__"})
-```
-
-| Script | Modelos |
+| Grupo | Modelos |
 |---|---|
-| `molino.py` | `molino` y `molino_aspas` (las aspas giran con `"spin": [0, 0, -40]`; van colocadas en el buje: posición del molino + `[0, 6.9, 2.1]`). |
-| `aldea_props.py` | `casa_madera`, `casa_piedra` y sus variantes `_noche` con las ventanas encendidas, `pozo`, `valla`, `barril`, `caja`, `carreta`. |
-| `cementerio.py` | `capilla` (7 x 11 m), `cripta` (panteón de 9 x 12 m con porche: por fuera abarca la sala de 8 x 11 m de `cripta_interior`), `tumba`, `lapida`, `cruz`, `verja`, `farol` (luz con offset `[0, 2.75, 0]`), `banco`, `fuente`. |
-| `detalles.py` | Los detalles pequeños en 3D que sustituyen a los sprites billboard: `velas_grupo` (las llamas siguen siendo el sprite animado), `cuervo`, `setas_grupo`, `hierba_mata`, `flores_campo`, `flores_marchitas`, `huesos_pila`, `ojos` (emisivos y con `facePlayer`: te siguen), `raices` (cuelgan del techo) y `telarana` (quad de dos caras con textura transparente, tendido cruzando una esquina). En las escenas ya no hay sprites billboard salvo las llamas animadas. |
-| `iglesia.py` | `capilla_interior` (nave de 6.4 x 10.4 m a juego con el exterior), `vidrieras` (emisivas), `banco_iglesia`, `altar`, `candelabro`, `lampara`, `organo`. |
-| `bosque.py` | `sendero`, `tronco`, árboles 3D `arbol_pino`, `arbol_pino_alto`, `arbol_roble`, `arbol_roble_2`, `arbol_abedul`, `arbol_muerto` y arbustos `arbusto_hojas`, `arbusto_bayas` (low-poly, copas de icosferas deformadas; se mezclan con los sprites de árbol: en los bosques de las salidas, la mitad son 3D, con giro y tamaño al azar y el mismo tinte que el sprite). |
-| `subterraneo.py` | `cripta_interior`, `tuneles`, `sarcofago`, `atril`, `puerta_cripta`, `estatua` (mármol, cementerio), `reja`, `cuerda_pozo`, `escalera_mano`, `trampilla`, `antorcha_pared` (antorcha con un brazo de hierro largo que siempre se mete en la pared deformada; la llama es un sprite), `osamenta` (calavera y huesos para los nichos), `calavera_vela` (vela que sale por la coronilla y ojos encendidos; la llama es el sprite `spr_llama`). |
-| `bosque_historia.py` | Los modelos que cuentan el capítulo del bosque: el campamento (`tienda`, `tienda_caida`, `fogata`, `mochila`, `farol_suelo`, `radio`, `botas`, `cartel_busca` con su textura `mat_cartel_busca`), la aldea vieja (`casa_ruina` con la X roja, `campanario`, `pozo_tapado`, `cruz_pequena`, `tumba_abierta` con su pala) y el final (`arbol_hueco` con un hueco de verdad y su pared interior oscura, `zapatitos`, `farol_mano`). |
-| `panorama.py` | `panorama_montes` (cordillera con nieve de 155-205 m: la nieve es la punta del mismo cono, con los mismos lados y giro, así no parece cortada; colinas delante) y `panorama_bosque` (línea de pinos y árboles secos a 90-115 m, colinas y montes bajos). Bajan hasta y -12 para que nunca se vea la base. |
-| `estatuas.py` | `estatua_dolorosa` (iglesia: mujer de mármol con velo, halo de metal, corazón atravesado y lágrimas rojas) y `estatua_orante` (túneles: figura encapuchada arrodillada de piedra gastada con un rosario de hueso). |
-| `lago.py` | `lago` (óvalo de 26 x 14 m con orilla; sus cajas de colisión cierran el agua salvo el pasillo del muelle), `muelle` (se pisa, con farol), `barca`, `sauce` (con columpio), `montes` (montañas de fondo en un anillo de 48 m) y `rocas_orilla`. |
-| `bosque_negro.py` | `hombre_alto` (la figura de 2.7 m de túnica negra y cara pálida sin ojos), `figura_ramas` (se cuelga: el origen es el punto de arriba), `cartel`, `cabana`, `circulo_piedras` y `arbol_caido`. |
-| `personajes.py` | `granjero`, `aldeana`, `anciano`, `nino`, `hombre`, `mujer`, `sepulturero`, `sereno`, `encapuchado` (el ermitaño de los túneles: capucha de sudadera hasta los hombros y gabardina larga abierta por delante, ambas en la región del pantalón del atlas). |
+| molino | `molino` y `molino_aspas` (las aspas giran con `"spin": [0, 0, -40]`; van colocadas en el buje: posición del molino + `[0, 6.9, 2.1]`). |
+| aldea props | `casa_madera`, `casa_piedra` y sus variantes `_noche` con las ventanas encendidas, `pozo`, `valla`, `barril`, `caja`, `carreta`. |
+| cementerio | `capilla` (7 x 11 m), `cripta` (panteón de 9 x 12 m con porche: por fuera abarca la sala de 8 x 11 m de `cripta_interior`), `tumba`, `lapida`, `cruz`, `verja`, `farol` (luz con offset `[0, 2.75, 0]`), `banco`, `fuente`. |
+| detalles | Los detalles pequeños en 3D que sustituyen a los sprites billboard: `velas_grupo` (las llamas siguen siendo el sprite animado), `cuervo`, `setas_grupo`, `hierba_mata`, `flores_campo`, `flores_marchitas`, `huesos_pila`, `ojos` (emisivos y con `facePlayer`: te siguen), `raices` (cuelgan del techo) y `telarana` (quad de dos caras con textura transparente, tendido cruzando una esquina). En las escenas ya no hay sprites billboard salvo las llamas animadas. |
+| iglesia | `capilla_interior` (nave de 6.4 x 10.4 m a juego con el exterior), `vidrieras` (emisivas), `banco_iglesia`, `altar`, `candelabro`, `lampara`, `organo`. |
+| bosque | `sendero`, `tronco`, árboles 3D `arbol_pino`, `arbol_pino_alto`, `arbol_roble`, `arbol_roble_2`, `arbol_abedul`, `arbol_muerto` y arbustos `arbusto_hojas`, `arbusto_bayas` (low-poly, copas de icosferas deformadas; se mezclan con los sprites de árbol: en los bosques de las salidas, la mitad son 3D, con giro y tamaño al azar y el mismo tinte que el sprite). |
+| subterraneo | `cripta_interior`, `tuneles`, `sarcofago`, `atril`, `puerta_cripta`, `estatua` (mármol, cementerio), `reja`, `cuerda_pozo`, `escalera_mano`, `trampilla`, `antorcha_pared` (antorcha con un brazo de hierro largo que siempre se mete en la pared deformada; la llama es un sprite), `osamenta` (calavera y huesos para los nichos), `calavera_vela` (vela que sale por la coronilla y ojos encendidos; la llama es el sprite `spr_llama`). |
+| bosque historia | Los modelos que cuentan el capítulo del bosque: el campamento (`tienda`, `tienda_caida`, `fogata`, `mochila`, `farol_suelo`, `radio`, `botas`, `cartel_busca` con su textura `mat_cartel_busca`), la aldea vieja (`casa_ruina` con la X roja, `campanario`, `pozo_tapado`, `cruz_pequena`, `tumba_abierta` con su pala) y el final (`arbol_hueco` con un hueco de verdad y su pared interior oscura, `zapatitos`, `farol_mano`). |
+| feria | La feria del despertar: `tiovivo` (la parte que gira, con ocho caballos pintados; uno pequeño con un zapato colgado) y `tiovivo_base` (fija, con la colisión), `noria_rueda` (origen en el buje, para girarla) y `noria_soporte`, `taquilla` con su cartel (`mat_cartel_feria`), `espantapajaros` y `poste_bombillas`; y la feria con gente: `puesto_comida`, `puesto_dulces`, `puesto_tiro`, `guirnalda` y `banderines` (cables combados de x=-4 a 4, entre dos `mastil`), `mesa_larga`, `escenario` y `arco_feria`. Texturas: `mat_toldo` (y `_azul`, `_verde`), `mat_caballo`, `mat_dorado`, `mat_saco`, `mat_bombilla`, `mat_trigo`, `mat_algodon`, `mat_diana`, y el sprite `spr_trigo`. |
+| panorama | `panorama_montes` (cordillera con nieve de 155-205 m: la nieve es la punta del mismo cono, con los mismos lados y giro, así no parece cortada; colinas delante) y `panorama_bosque` (línea de pinos y árboles secos a 90-115 m, colinas y montes bajos). Bajan hasta y -12 para que nunca se vea la base. |
+| estatuas | `estatua_dolorosa` (iglesia: mujer de mármol con velo, halo de metal, corazón atravesado y lágrimas rojas) y `estatua_orante` (túneles: figura encapuchada arrodillada de piedra gastada con un rosario de hueso). |
+| lago | `lago` (óvalo de 26 x 14 m con orilla; sus cajas de colisión cierran el agua salvo el pasillo del muelle), `muelle` (se pisa, con farol), `barca`, `sauce` (con columpio), `montes` (montañas de fondo en un anillo de 48 m) y `rocas_orilla`. |
+| bosque negro | `hombre_alto` (la figura de 2.7 m de túnica negra y cara pálida sin ojos), `figura_ramas` (se cuelga: el origen es el punto de arriba), `cartel`, `cabana`, `circulo_piedras` y `arbol_caido`. |
+| personajes | `granjero`, `aldeana`, `anciano`, `nino`, `hombre`, `mujer`, `sepulturero`, `sereno`, `encapuchado` (el ermitaño de los túneles: capucha de sudadera hasta los hombros y gabardina larga abierta por delante, ambas en la región del pantalón del atlas); y los vecinos de la feria: `nina` (con un globo), `anciana`, `violinista`, `acordeonista`, `bailarin`, `bailarina` y `brindis` (con una jarra). Poses de brazo nuevas: `delante` (las dos manos delante del pecho) y `alza` (el antebrazo hacia arriba). Sus texturas (`pj_fe_*`) son atlas de **256x256** con la misma distribución que los de 128 (las UV son fracciones): la cara se pinta al doble de resolución (párpados y pestañas, iris con pupila y brillo, cejas con forma, nariz con luz y sombra, labios de dos tonos) y el resto se amplía. |
 
-`retro_comun.py` tiene las piezas comunes:
-
-- `Malla`: cajas, prismas, segmentos entre dos puntos, anillos apilados, polígonos y
-  "calcomanías" (puertas y ventanas sobre una pared). Las UV se proyectan en el plano de cada
-  cara con la escala del material en metros, así las tablas y tejas quedan derechas y sin
-  estirar.
-- `material()`: material de Blender con la textura de `assets/textures/` (filtro de punto).
-- `exportar()`: `.obj` triangulado con los ejes del motor (frente del modelo en -Y de Blender →
-  +Z del motor) y `.mtl` limpio con rutas `../textures/`.
+Convenciones de todos: metros, pies o base en el origen, el **frente mira a +Z**, `.obj`
+triangulado con su `.mtl` (rutas `../textures/`, filtro de punto) y, si estorban, sus cajas de
+colisión en comentarios `# retro:col` (§6.2). Las UV se proyectan en el plano de cada cara con la
+escala del material en metros: las tablas y tejas quedan derechas y sin estirar.
 
 Los personajes usan la distribución del atlas de 128x128 (cara, nuca, pelo, piel, torso,
 mangas, antebrazos, pantalón y zapatos): cada parte se mapea a su región, y el hueco `atlas`
 se exporta sin textura para que la entidad la elija con `"texture"`. Los complementos
 (sombrero, horca, bastón, pala, farol) traen su propio material.
 
-### `tools/gen_texturas.py`
+### Texturas (`mat_*.png`)
 
 Texturas de materiales (`mat_*.png`): madera, madera gris, piedra, revoque, tejas, paja, lona,
 hierro, agua, un negro para huecos, y puerta y ventanas (apagadas y encendidas). Para el cementerio, cada
@@ -1586,12 +1622,11 @@ de las catacumbas), `mat_lapida` (granito con líquenes) y
 `mat_granito` (cruces y verjas); más `mat_tela_roja` y `mat_sangre` (la estola y las lágrimas de
 la estatua). Subterráneo: tierra, roca, losas, piedra de cripta, pared de calaveras, hueso, cera
 y el brillo de vela. Ruido periódico
-para que se repitan sin costuras, y la misma cuantización que `texconv.py`. `--preview` guarda
-ampliaciones.
+para que se repitan sin costuras, y la misma cuantización que `texconv.py`.
 
-### `tools/gen_musica.py`
+### Música (`musica_*_v2.wav`)
 
-Compone y sintetiza la música de las escenas (`musica_<escena>_v2.wav`: aldea, noche,
+Música sintetizada de las escenas (`musica_<escena>_v2.wav`: aldea, noche,
 cementerio, demo, cripta, tuneles, iglesia y lago). La del lago es la calma antes de la
 tormenta: una nana en mi mayor con arpa de caja de música, flauta y coro cuyos cuatro últimos
 compases se nublan (acordes menores prestados y un dron que casi no se oye) antes de volver a
@@ -1605,22 +1640,18 @@ vuelta.
   principio) y la reverb es una convolución circular por FFT, así que la cola de la reverb del
   final suena sobre el principio y el bucle no tiene corte.
 - 22050 Hz estéreo de 16 bits, como el resto del audio pero en estéreo.
-- Las piezas se escriben compás a compás en el propio script (acordes, bajos, arpegios y
-  melodías como listas de `(compás, tiempo, duración, nota MIDI)`): para cambiar una melodía se
-  edita la lista y se vuelve a generar.
 - Las músicas antiguas (`musica_aldea.wav`...) siguen en `assets/audio/`; las escenas usan las
   `_v2`.
 
-### El subterráneo: `subterraneo.py` y `tuneles_mapa.py`
+### El subterráneo
 
 - **Interior de la cripta**: sala cerrada con bóveda de cañón, nichos con hueco de verdad (la
   pared se trocea alrededor y cada nicho tiene fondo, techo y lados) y una escalera que baja por
   un hueco del suelo. Como el jugador no puede bajar de Y=0, el **suelo de la sala está a 3 m**
   (tres bloques de colisión alrededor del hueco) y la escalera baja de 3 a 0 hasta un rellano
   oscuro; ahí un trigger lleva a los túneles.
-- **Túneles**: el mapa es una cuadrícula de celdas de 3 m en `tuneles_mapa.py` (Python puro):
-  salas como rectángulos y túneles como polilíneas de celdas. `python tuneles_mapa.py` lo dibuja
-  y comprueba que todo esté conectado. El modelo pone suelo, techo y paredes por celda en una
+- **Túneles**: el mapa es una cuadrícula de celdas de 3 m: salas como rectángulos y túneles
+  como polilíneas de celdas, todo conectado. El modelo pone suelo, techo y paredes por celda en una
   rejilla de 1 m (para que la luz por vértice tenga detalle), con escalones de techo entre salas
   altas y túneles bajos, y luego **deforma con ruido** solo los vértices de tierra: así parecen
   excavados, y lo que toca piedra o madera no se mueve, de modo que encaja. Todas las piezas
@@ -1629,10 +1660,10 @@ vuelta.
   deformada puede entrar hasta ~0.3 m y la cámara no debe atravesarla.
 - La cuerda del pozo y la escalera de mano son modelos aparte porque se usan con **E**.
 
-### `tools/gen_sonidos.py`
+### Efectos y ambientes
 
 Efectos y ambientes del subterráneo, mono a 22050 Hz: `cripta_amb` y `tuneles_amb` (bucles
-perfectos: buffer circular y la reverb de `gen_musica.py`), `paso_tierra_1..3`, `reja`,
+perfectos), `paso_tierra_1..3`, `reja`,
 `derrumbe` y `gemido`. Para los sustos, varios de la misma familia pero distintos (repetir el
 mismo cada vez lo abarata): `susto` (cuerdas que chirrían y un golpe grave), `susto_espalda`
 (un chillido que se derrumba y un golpe sordo, corto), `susto_golpe` (un barrido al revés que
@@ -1641,10 +1672,9 @@ corta en un golpe grave con cuerdas tensas), `susto_piano` (un racimo grave de p
 capítulo del bosque `radio_estatica` y `radio_voz`, `campana_rota` (una campana rajada que suena
 sola), `tarareo` y `nana_rota` (la nana del lago tarareada y en una caja de música estropeada:
 la misma melodía, que vuelve) y `pala`; y los
-bucles `latido`, `zumbido` (dron grave del bosque negro) y `campanillas` (la calma del lago). Los
-nuevos van al final de la lista: la semilla de cada sonido depende de su posición.
+bucles `latido`, `zumbido` (dron grave del bosque negro) y `campanillas` (la calma del lago). 
 
-### `tools/gen_sprites.py`
+### Sprites (`spr_*.png`)
 
 Sprites con transparencia (`spr_*.png`): árbol seco, cuervo, velas, hierba alta, flores y setas
 luminosas; para el subterráneo cristales, telaraña, huesos, raíces que cuelgan, antorcha, unos ojos
@@ -1656,9 +1686,9 @@ cuatro fotogramas en una tira (la llama cambia de alto, se inclina y suelta chis
 usan con `"frames": 4`. Pixel art procedural con contorno oscuro y alfa duro. Las velas y las setas se usan
 con `"emissive": true` y una `"light"` en la entidad.
 
-### `tools/gen_personajes.py`
+### Atlas de personaje (`pj_*.png`)
 
-Pinta atlas de personaje completos (`pj_<nombre>.png`, 128x128, misma distribución que
+Atlas de personaje completos (`pj_<nombre>.png`, 128x128, misma distribución que
 `charatlas.py`) sin foto: una cara pixel art procedural más el pelo, la nuca, la piel y la ropa.
 Cada personaje es una entrada del diccionario `PERSONAJES` con su piel, pelo, ojos, peinado
 (`corto`, `raya`, `despeinado`, `largo`, `calvo`, `gorro`), barba o bigote, rasgos (pecas,

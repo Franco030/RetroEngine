@@ -1,0 +1,12 @@
+{
+  "speaker": "Bruno",
+  "entries": [
+    {
+      "once": true,
+      "lines": ["Tres tiros, una perra chica.\nSi tumbas el pato grande, te llevas la muneca."]
+    },
+    {
+      "lines": ["Nadie ha tumbado el pato grande en veinte anos.\nPero la muneca sigue ahi. Esperando."]
+    }
+  ]
+}

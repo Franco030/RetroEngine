@@ -9,7 +9,11 @@
         "No es el de Clara.",
         "Es el tuyo."
       ],
-      "do": [{ "set_flag": "ah_nombre" }, { "play_sound": "audio/susurros.wav", "volume": 0.9 }]
+      "do": [
+        { "set_flag": "ah_nombre" },
+        { "lock_movement": true },
+        { "play_sound": "audio/susurros.wav", "volume": 0.9 }
+      ]
     },
     { "lines": ["Tu nombre. Recien tallado."] }
   ]

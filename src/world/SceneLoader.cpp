@@ -284,13 +284,16 @@ std::vector<Condition> ParseConditions(const json& j, const char* key) {
 }
 
 // Cada accion es un objeto con UNA clave de accion y, si hace falta, modificadores:
-//   { "goto_scene": "scenes/x.json", "position": [x,y,z], "yaw": 0 }
+//   { "goto_scene": "scenes/x.json", "position": [x,y,z], "yaw": 0,
+//     "dark": 10, "lines": ["...", "..."] }      (un rato en negro, con frases, antes de llegar)
 //   { "teleport": [x,y,z], "yaw": 90 }
 //   { "set_flag": "nombre", "value": 1 }
 //   { "message": "texto\notra linea", "seconds": 3 }
 //   { "dialogue": "sepulturero" }                      (assets/dialogues/sepulturero.json)
 //   { "look_at": "entidad" | [x,y,z], "speed": 6 }              (mirar, sin acercar)
 //   { "scare": "entidad" | [x,y,z], "speed": 20, "fov": 30 }    (susto: de golpe y acercando)
+//   { "lock_movement": true | false }                  (mirar sin poder andar; o volver a andar)
+//   { "title_screen": true }                           (con un goto_scene: llegar al menu)
 Action ParseAction(const json& ja) {
   if (!ja.is_object())
     throw std::runtime_error("cada accion debe ser un objeto");
@@ -305,6 +308,13 @@ Action ParseAction(const json& ja) {
       a.position = ReadVec3(ja, "position", {0.0f, 0.0f, 0.0f});
     if (ja.contains("yaw"))
       a.yaw = ja.at("yaw").get<float>();
+    a.dark = ja.value("dark", 0.0f);
+    if (ja.contains("lines"))
+      a.lines = ja.at("lines").get<std::vector<std::string>>();
+    if (a.dark < 0.0f || a.dark > 60.0f)
+      throw std::runtime_error("goto_scene: 'dark' debe ir de 0 a 60 segundos");
+    if (!a.lines.empty() && a.dark <= 0.0f)
+      throw std::runtime_error("goto_scene: 'lines' necesita 'dark' (los segundos en negro)");
     result = a;
     ++found;
   }
@@ -359,6 +369,7 @@ Action ParseAction(const json& ja) {
   if (ja.contains("play_music")) {
     action::PlayMusic a;
     a.file = ja.at("play_music").get<std::string>();
+    a.then = ja.value("then", std::string{});
     a.volume = ja.value("volume", 0.6f);
     a.fade = ja.value("fade", 1.0f);
     result = a;
@@ -398,6 +409,14 @@ Action ParseAction(const json& ja) {
     result = a;
     ++found;
   }
+  if (ja.contains("lock_movement")) {
+    result = action::LockMovement{ja.at("lock_movement").get<bool>()};
+    ++found;
+  }
+  if (ja.contains("title_screen")) {
+    result = action::TitleScreen{};
+    ++found;
+  }
   if (ja.contains("dialogue")) {
     action::StartDialogue a;
     a.id = ja.at("dialogue").get<std::string>();
@@ -410,7 +429,7 @@ Action ParseAction(const json& ja) {
   if (found != 1) {
     throw std::runtime_error("cada accion debe tener exactamente una de: goto_scene, teleport, "
                              "set_flag, add_flag, message, play_sound, play_music, stop_music, "
-                             "dialogue, look_at, scare");
+                             "dialogue, look_at, scare, lock_movement, title_screen");
   }
   return result;
 }
@@ -601,8 +620,11 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
     Sight s;
     s.range = js.value("range", s.range);
     s.angle = js.value("angle", s.angle);
-    if (s.range <= 0.0f || s.angle <= 0.0f || s.angle >= 90.0f)
-      throw std::runtime_error("'seen': 'range' positivo y 'angle' entre 0 y 90");
+    s.awayAngle = js.value("awayAngle", s.awayAngle);
+    if (s.range <= 0.0f || s.angle <= 0.0f || s.angle >= 90.0f || s.awayAngle < s.angle ||
+        s.awayAngle > 180.0f)
+      throw std::runtime_error("'seen': 'range' positivo, 'angle' entre 0 y 90 y 'awayAngle' "
+                               "entre 'angle' y 180");
     for (const char* key : {"do", "away"}) {
       if (!js.contains(key))
         continue;
@@ -639,6 +661,13 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
   }
   e.visible = je.value("visible", true);
   e.showIf = ParseConditions(je, "showIf");
+  // "glitch": true (0.45 s) o los segundos: aparece y desaparece con interferencia
+  if (je.contains("glitch")) {
+    const json& jg = je.at("glitch");
+    e.glitch = jg.is_boolean() ? (jg.get<bool>() ? 0.45f : 0.0f) : jg.get<float>();
+    if (e.glitch < 0.0f || e.glitch > 5.0f)
+      throw std::runtime_error("'glitch' debe ser true/false o de 0 a 5 segundos");
+  }
 
   if (je.contains("sound")) {
     const json& js = je.at("sound");

@@ -1,0 +1,33 @@
+# RetroEngine: tiovivo
+
+newmtl mat_bombilla
+d 1.000000
+map_Kd ../textures/mat_bombilla.png
+
+newmtl mat_caballo
+d 1.000000
+map_Kd ../textures/mat_caballo.png
+
+newmtl mat_dorado
+d 1.000000
+map_Kd ../textures/mat_dorado.png
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_madera_gris
+d 1.000000
+map_Kd ../textures/mat_madera_gris.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png
+
+newmtl mat_tela_roja
+d 1.000000
+map_Kd ../textures/mat_tela_roja.png
+
+newmtl mat_toldo
+d 1.000000
+map_Kd ../textures/mat_toldo.png

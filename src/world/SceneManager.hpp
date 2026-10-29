@@ -15,6 +15,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 #include <vector>
 
@@ -28,6 +29,13 @@ struct AssetRef {
   enum class Kind { Model, Texture, Sound };
   Kind kind;
   std::string path;
+};
+
+// Lo que pasa en negro entre dos escenas (goto_scene "dark" y "lines"): la escena nueva ya esta
+// cargada (suena su musica) y las frases salen una tras otra, cada una con su parte del tiempo.
+struct Interlude {
+  float seconds = 0.0f;
+  std::vector<std::string> lines;
 };
 
 class SceneManager {
@@ -48,7 +56,7 @@ public:
   // JSON de destino. Lanza std::invalid_argument si el archivo no existe.
   void GoToPath(const std::string& relativePath,
                 std::optional<Vector3> spawnPosition = std::nullopt,
-                std::optional<float> spawnYaw = std::nullopt);
+                std::optional<float> spawnYaw = std::nullopt, Interlude interlude = {});
 
   void GoTo(std::size_t index);
   void Next();
@@ -60,6 +68,13 @@ public:
   void UpdateAudio(float dt);
   void Draw();
   void DrawFade() const;
+
+  // La frase del negro que toca ahora y su opacidad (0..1), si hay una.
+  struct Card {
+    std::string_view text;
+    float alpha;
+  };
+  std::optional<Card> CurrentCard() const;
 
   std::size_t Index() const noexcept { return index_; }
   std::size_t Count() const noexcept { return paths_.size(); }
@@ -73,7 +88,7 @@ public:
   void SetFocus(Vector3 focus) noexcept { focus_ = focus; }
 
 private:
-  enum class Phase { Idle, FadingOut, FadingIn };
+  enum class Phase { Idle, FadingOut, Dark, FadingIn };
 
   struct Environment {
     Color background;
@@ -117,6 +132,9 @@ private:
 
   std::optional<Vector3> pendingSpawnPos_;
   std::optional<float> pendingSpawnYaw_;
+  Interlude pendingInterlude_;
+  Interlude interlude_; // el negro en curso (Phase::Dark)
+  float darkTime_ = 0.0f;
 
   std::vector<PointLight> lights_;
   std::vector<Emitter> emitters_;

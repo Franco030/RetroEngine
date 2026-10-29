@@ -33,6 +33,7 @@ public:
   Player& operator=(const Player&) = delete;
 
   const PlayerSettings& Settings() const noexcept { return cfg_; }
+  void SetMouseSensitivity(float degreesPerPixel) noexcept { cfg_.mouseSensitivity = degreesPerPixel; }
 
   void Spawn(Vector3 feet, float yawDegrees);
 
@@ -51,11 +52,17 @@ public:
   float Pitch() const noexcept { return pitch_; }
   void SetPitch(float degrees) noexcept;
 
-  // Congelado (durante un dialogo): no lee el teclado ni el raton, pero la fisica sigue.
-  void SetFrozen(bool frozen) noexcept { frozen_ = frozen; }
+  // Congelado (durante un dialogo o una mirada forzada): no lee el teclado ni el raton y se
+  // para en seco (lo que llevaba de velocidad no le hace deslizarse); la gravedad sigue.
+  void SetFrozen(bool frozen) noexcept;
+  // Clavado en el sitio (lock_movement): puede mirar alrededor pero no andar ni saltar. Para los
+  // momentos en que hay que darse la vuelta (algo esta detras) y andar los romperia.
+  void SetRooted(bool rooted) noexcept;
+  bool Rooted() const noexcept { return rooted_; }
   // Gira la vista poco a poco hasta mirar al punto 'target' (los ojos, desde Eye()).
   // 'rate': fraccion de lo que falta que se recorre por segundo (6 = suave, 20+ = de golpe).
-  void TurnTowards(Vector3 target, float dt, float rate = 6.0f) noexcept;
+  // Devuelve los grados que aun faltan (el mayor de giro y cabeceo).
+  float TurnTowards(Vector3 target, float dt, float rate = 6.0f) noexcept;
 
 private:
   void Look();
@@ -70,6 +77,7 @@ private:
   bool grounded_ = false;
   bool active_ = false;
   bool frozen_ = false;
+  bool rooted_ = false;
   int skipMouseFrames_ = 0;
 };
 

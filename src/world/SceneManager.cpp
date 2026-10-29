@@ -265,12 +265,13 @@ void SceneManager::GoTo(std::size_t index) {
 
   pendingSpawnPos_.reset();
   pendingSpawnYaw_.reset();
+  pendingInterlude_ = {};
   pending_ = index;
   phase_ = Phase::FadingOut;
 }
 
 void SceneManager::GoToPath(const std::string& relativePath, std::optional<Vector3> spawnPosition,
-                            std::optional<float> spawnYaw) {
+                            std::optional<float> spawnYaw, Interlude interlude) {
   if (phase_ != Phase::Idle)
     return;
 
@@ -286,6 +287,7 @@ void SceneManager::GoToPath(const std::string& relativePath, std::optional<Vecto
   GoTo(static_cast<std::size_t>(it - paths_.begin()));
   pendingSpawnPos_ = spawnPosition;
   pendingSpawnYaw_ = spawnYaw;
+  pendingInterlude_ = std::move(interlude);
 }
 
 void SceneManager::Next() {
@@ -301,6 +303,8 @@ void SceneManager::Previous() {
 void SceneManager::Reload() {
   pendingSpawnPos_.reset();
   pendingSpawnYaw_.reset();
+  pendingInterlude_ = {};
+  interlude_ = {};
   phase_ = Phase::Idle;
   fade_ = 0.0f;
 
@@ -329,6 +333,16 @@ void SceneManager::Update(float dt) {
       pendingSpawnPos_.reset();
       pendingSpawnYaw_.reset();
 
+      interlude_ = std::exchange(pendingInterlude_, {});
+      darkTime_ = 0.0f;
+      phase_ = interlude_.seconds > 0.0f ? Phase::Dark : Phase::FadingIn;
+    }
+    break;
+
+  case Phase::Dark:
+    darkTime_ += dt;
+    if (darkTime_ >= interlude_.seconds) {
+      interlude_ = {};
       phase_ = Phase::FadingIn;
     }
     break;
@@ -479,6 +493,20 @@ void SceneManager::Draw() {
   engine_.Retro().SetPointLights(lights_);
 
   scene_->Draw(camera_.Raw(), engine_.Retro().Sprite()->Get(), p.ambient, p.sun, lights_);
+}
+
+std::optional<SceneManager::Card> SceneManager::CurrentCard() const {
+  if (phase_ != Phase::Dark || interlude_.lines.empty())
+    return std::nullopt;
+  const std::size_t count = interlude_.lines.size();
+  const float slot = interlude_.seconds / static_cast<float>(count);
+  const std::size_t i = std::min(static_cast<std::size_t>(darkTime_ / slot), count - 1);
+  const std::string& text = interlude_.lines[i];
+  if (text.empty()) // una frase vacia es un rato de silencio
+    return std::nullopt;
+  const float t = darkTime_ - static_cast<float>(i) * slot;
+  const float edge = std::min(0.9f, slot * 0.3f); // aparece y se apaga despacio
+  return Card{text, std::clamp(std::min(t, slot - t) / edge, 0.0f, 1.0f)};
 }
 
 void SceneManager::DrawFade() const {

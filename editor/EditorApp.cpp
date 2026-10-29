@@ -827,7 +827,7 @@ void EditorApp::AddFlameOn(int index) {
 }
 
 void EditorApp::AddCandleGroup(Vector3 position) {
-  // el modelo de velas y sus tres llamas (las mismas posiciones que en tools/blender/detalles.py)
+  // el modelo de velas y sus tres llamas (las posiciones de las mechas del modelo velas_grupo)
   Json v = Json::object();
   v["name"] = UniqueName("entities", "velas");
   v["model"] = "models/velas_grupo.obj";
@@ -1681,6 +1681,9 @@ void EditorApp::InspectEntity(Json& e) {
     ImGui::PushID("showIf");
     EditConditions(e, "showIf");
     ImGui::PopID();
+    FieldFloat("Aparecer con interferencia (s)", e, nullptr, "glitch", 0.0f, 0.01f, 0.0f, 5.0f);
+    ImGui::SetItemTooltip("Al aparecer o desaparecer parpadea y se deforma ese tiempo\n"
+                          "en vez de hacerlo de golpe (0 = de golpe; 0.45 va bien)");
   }
 
   if (theme::Section(ICON_FA_HAND_POINTER "  Interaccion (tecla E)", e.contains("interact")))
@@ -1692,7 +1695,8 @@ void EditorApp::InspectEntity(Json& e) {
   for (auto it = e.begin(); it != e.end(); ++it) {
     if (IsOneOf(it.key(), {"name", "visible", "model", "sprite", "size", "emissive", "texture",
                            "wrap", "position", "rotation", "scale", "tint", "spin", "collider",
-                           "light", "sound", "showIf", "interact", "seen", "frames", "fps", "layer",
+                           "light", "sound", "showIf", "glitch", "interact", "seen", "frames", "fps",
+                           "layer",
                            "idle", "facePlayer"})) {
       continue;
     }

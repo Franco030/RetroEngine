@@ -86,11 +86,7 @@ RetroEngine::RetroEngine(EngineConfig config)
       audio_(assets_, audioGuard_.Ready()) {}
 
 void RetroEngine::Run(const UpdateFn& update, const DrawFn& draw, const OverlayFn& overlay) {
-  bool running = true;
-
-  while (running && !WindowShouldClose()) {
-    if (IsKeyPressed(KEY_ESCAPE))
-      running = false;
+  while (!quit_ && !WindowShouldClose()) {
     if (IsKeyPressed(KEY_F11))
       ToggleBorderlessWindowed();
 

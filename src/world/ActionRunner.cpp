@@ -25,7 +25,7 @@ void ActionRunner::Run(const std::vector<Action>& actions) {
         Overloaded{
             [&](const action::GotoScene& g) {
               try {
-                scenes_.GoToPath(g.scene, g.position, g.yaw);
+                scenes_.GoToPath(g.scene, g.position, g.yaw, Interlude{g.dark, g.lines});
               } catch (const std::exception& e) {
                 std::cerr << "goto_scene: " << e.what() << '\n';
               }
@@ -54,11 +54,13 @@ void ActionRunner::Run(const std::vector<Action>& actions) {
                 audio_.PlaySfx(s.file, s.volume);
               }
             },
-            [&](const action::PlayMusic& m) { audio_.PlayMusic(m.file, m.volume, m.fade); },
+            [&](const action::PlayMusic& m) { audio_.PlayMusic(m.file, m.volume, m.fade, m.then); },
             [&](const action::StopMusic& m) { audio_.StopMusic(m.fade); },
             [&](const action::StartDialogue& d) { dialogues_.Start(d.id, state_); },
             [&](const action::LookAt& l) { shot_ = CameraShot{l.entity, l.point, l.speed, 0.0f}; },
             [&](const action::Scare& s) { shot_ = CameraShot{s.entity, s.point, s.speed, s.fov}; },
+            [&](const action::LockMovement& l) { player_.SetRooted(l.locked); },
+            [&](const action::TitleScreen&) { titleRequested_ = true; },
         },
         a);
   }

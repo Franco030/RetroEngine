@@ -87,6 +87,11 @@ public:
   float lookRange = 10.0f;
   float turnSpeed = 240.0f;
   std::vector<Condition> showIf;
+  // Segundos de "interferencia" al aparecer o desaparecer por "showIf" (0 = de golpe).
+  float glitch = 0.0f;
+  // Lo que dicen sus condiciones ahora. Sin glitch cambia 'visible' al momento; con glitch, la
+  // entidad parpadea y se deforma un rato antes de quedarse (o de irse del todo).
+  void SetShown(bool shown);
   // Cajas de colision (vacia = se atraviesa). Varias si el modelo trae las suyas.
   std::vector<BoxCollider> colliders;
   std::optional<Interaction> interact;
@@ -110,6 +115,12 @@ private:
   float animTime_ = 0.0f;
   Vector3 drawOffset_{0.0f, 0.0f, 0.0f};
   float drawRoll_ = 0.0f;
+  bool shownKnown_ = false; // la primera vez se aplica sin efecto (al cargar la escena)
+  bool shown_ = true;
+  float glitchTime_ = -1.0f; // < 0: sin transicion en curso
+  bool glitchOut_ = false;   // la transicion es de salida
+  // Interferencia de este fotograma (0 = ninguna, 1 = maxima) y si se salta el dibujo.
+  float GlitchAmount() const noexcept;
   std::shared_ptr<ModelResource> model_;
   std::shared_ptr<TextureResource> texture_;
   Vector2 spriteSize_{1.0f, 1.0f};

@@ -1,0 +1,21 @@
+# RetroEngine: guirnalda
+
+newmtl mat_bombilla
+d 1.000000
+map_Kd ../textures/mat_bombilla.png
+
+newmtl mat_flor_amarilla
+d 1.000000
+map_Kd ../textures/mat_flor_amarilla.png
+
+newmtl mat_flor_roja
+d 1.000000
+map_Kd ../textures/mat_flor_roja.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png
+
+newmtl mat_seta
+d 1.000000
+map_Kd ../textures/mat_seta.png

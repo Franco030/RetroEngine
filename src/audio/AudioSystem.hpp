@@ -47,7 +47,10 @@ public:
 
   void PlaySfxAt(const std::string& file, float volume, Vector3 position, float radius,
                  float minDistance = 1.0f);
-  void PlayMusic(const std::string& file, float volume, float fadeSeconds);
+  // Con 'then', 'file' suena una sola vez y al acabar empieza 'then' en bucle (una entrada y
+  // lo que se queda sonando). Pedir 'then' mientras aun suena la entrada no la corta.
+  void PlayMusic(const std::string& file, float volume, float fadeSeconds,
+                 const std::string& then = {});
   void StopMusic(float fadeSeconds) { PlayMusic("", 0.0f, fadeSeconds); }
   void PlayAmbient(const std::string& file, float volume, float fadeSeconds);
 
@@ -59,6 +62,7 @@ private:
     std::unique_ptr<MusicResource> current;
     std::unique_ptr<MusicResource> outgoing;
     std::string file;
+    std::string then; // lo que sigue a 'file' cuando acabe (vacio: 'file' en bucle)
     float volume = 0.0f;
     float target = 0.0f;
     float upRate = 1.0f;
@@ -81,7 +85,8 @@ private:
   std::unordered_map<std::string, Voice> voices_;
   unsigned fadingSerial_ = 0; // para renombrar los emisores de la escena anterior
 
-  void StartChannel(Channel& channel, const std::string& file, float volume, float fade);
+  void StartChannel(Channel& channel, const std::string& file, float volume, float fade,
+                    const std::string& then = {});
   static void UpdateChannel(Channel& channel, float dt);
   void FeedLoop(); // el hilo: UpdateMusicStream de todos los streams
   void Warn(const std::string& file, const char* what);

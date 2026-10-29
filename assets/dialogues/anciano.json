@@ -2,12 +2,6 @@
   "speaker": "Anciano",
   "entries": [
     {
-      "key": "capitulo1",
-      "if": { "flag": "capitulo1_fin" },
-      "once": true,
-      "lines": ["Has vuelto.", "Eso... no habia pasado nunca.", "El molino se ha parado esta manana."]
-    },
-    {
       "if": { "flag": "dlg:ermitano", "op": ">=", "value": 1 },
       "once": true,
       "lines": ["Has estado abajo, verdad?\nHueles a tierra mojada."]

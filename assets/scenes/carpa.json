@@ -1,0 +1,99 @@
+{
+  "camera": { "position": [0, 2.2, 2.3], "target": [0, 1.0, -0.6], "fov": 60 },
+  "player": { "position": [0, 0, 1.6], "yaw": 0 },
+  "autoCollide": true,
+  "bounds": { "min": [-2.1, -2.1], "max": [2.1, 2.9] },
+  "background": [16, 10, 20],
+  "fog": { "start": 5, "end": 16 },
+  "light": { "direction": [0.2, -1.0, 0.1], "ambient": 0.18, "sun": 0.05 },
+  "audio": {
+    "music": { "file": "audio/musica_vidente_v2.wav", "volume": 0.45 },
+    "ambient": { "file": "audio/gente_feria.wav", "volume": 0.08 },
+    "footsteps": {
+      "files": ["audio/paso_tierra_1.wav", "audio/paso_tierra_2.wav", "audio/paso_tierra_3.wav"],
+      "volume": 0.2
+    },
+    "fade": 1.2
+  },
+  "entities": [
+    {
+      "name": "carpa",
+      "model": "models/carpa_interior.obj",
+      "position": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "mesa",
+      "model": "models/mesa_vidente.obj",
+      "position": [0, 0, -0.6],
+      "rotation": [0, 0, 0],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "box": { "min": [-0.65, 0, -0.65], "max": [0.65, 0.9, 0.65] },
+        "do": [{ "dialogue": "sibila" }]
+      }
+    },
+    {
+      "name": "bola",
+      "model": "models/bola_cristal.obj",
+      "position": [0, 0.83, -0.6],
+      "rotation": [0, 0, 0],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [0, 0.15, 0],
+        "color": [140, 180, 255],
+        "radius": 4,
+        "intensity": 1.2,
+        "flicker": 0.4,
+        "flickerRate": 1.5
+      }
+    },
+    {
+      "name": "sibila",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_sibila.png",
+      "position": [0, 0, -1.55],
+      "rotation": [0, 0, 0],
+      "idle": { "bob": 0.01, "sway": 2.0, "speed": 0.8 },
+      "interact": { "prompt": "Hablar", "range": 2.6, "do": [{ "dialogue": "sibila" }] }
+    },
+    { "name": "silla", "model": "models/silla.obj", "position": [0, 0, 0.25], "rotation": [0, 180, 0] },
+    {
+      "name": "velas_1",
+      "model": "models/velas_grupo.obj",
+      "position": [-1.9, 0, -1.6],
+      "rotation": [0, 0, 0],
+      "emissive": true,
+      "collider": false,
+      "light": {
+        "offset": [0, 0.4, 0],
+        "color": [255, 170, 90],
+        "radius": 4,
+        "intensity": 1.0,
+        "flicker": 0.3,
+        "flickerRate": 8
+      }
+    },
+    {
+      "name": "velas_2",
+      "model": "models/velas_grupo.obj",
+      "position": [1.9, 0, -1.6],
+      "rotation": [0, 0, 0],
+      "emissive": true,
+      "collider": false
+    },
+    { "name": "baul", "model": "models/baul.obj", "position": [2.0, 0, 0.4], "rotation": [0, -60, 0] }
+  ],
+  "triggers": [
+    {
+      "name": "salir",
+      "position": [0, 0, 2.55],
+      "size": [1.4, 3, 0.4],
+      "do": [{ "goto_scene": "scenes/feria.json", "position": [-14.8, 0, 8.0], "yaw": -90 }]
+    }
+  ],
+  "emitters": []
+}

@@ -95,13 +95,39 @@ struct LockMovement {
 // pantalla de inicio (con "Jugar", que lleva la camara al punto de inicio de la escena).
 struct TitleScreen {};
 
+// Montarse en algo que se mueve (el tiovivo, la noria): el jugador va pegado a la entidad en el
+// punto 'seat' (coordenadas del mundo AL SUBIR: luego gira y sube con ella) y puede mirar pero
+// no andar. Baja con E, o a los 'seconds' (0 = solo con E), en 'exit' (o donde estaba). Mientras
+// va montado, 'flag' vale 1 (para que algo solo se vea desde arriba). Al bajar puede abrir el
+// dialogo 'after'.
+struct Ride {
+  std::string entity;
+  Vector3 seat{0.0f, 0.0f, 0.0f};
+  std::optional<Vector3> exit;
+  float seconds = 0.0f;
+  std::string flag;
+  std::string after;
+};
+
+// Tiro al blanco: el jugador se queda en 'position' mirando a 'yaw' y dispara (clic o E) a las
+// entidades cuyo nombre empieza por 'targets'; cada acierto la esconde un momento. A los
+// 'seconds', 'flag' guarda los aciertos y se abre el dialogo 'after' (si hay).
+struct Shooting {
+  std::string targets;
+  Vector3 position{0.0f, 0.0f, 0.0f};
+  float yaw = 0.0f;
+  float seconds = 20.0f;
+  std::string flag;
+  std::string after;
+};
+
 } // namespace action
 
 using Action =
     std::variant<action::GotoScene, action::Teleport, action::SetFlag, action::AddFlag,
                  action::Message, action::PlaySound, action::PlayMusic, action::StopMusic,
                  action::StartDialogue, action::LookAt, action::Scare, action::LockMovement,
-                 action::TitleScreen>;
+                 action::TitleScreen, action::Ride, action::Shooting>;
 
 enum class CompareOp { Eq, Ne, Lt, Le, Gt, Ge };
 

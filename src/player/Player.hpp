@@ -36,6 +36,10 @@ public:
   void SetMouseSensitivity(float degreesPerPixel) noexcept { cfg_.mouseSensitivity = degreesPerPixel; }
 
   void Spawn(Vector3 feet, float yawDegrees);
+  // Pone los pies en 'feet' sin cambiar hacia donde mira (y sin velocidad): para ir montado.
+  void PlaceFeet(Vector3 feet) noexcept;
+  // Solo el raton (mirar), sin moverse ni caer: montado en algo.
+  void UpdateLook();
 
   void SetActive(bool active);
   bool Active() const noexcept { return active_; }

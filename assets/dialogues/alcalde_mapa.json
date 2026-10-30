@@ -1,0 +1,15 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "pista_mapa" } },
+      "lines": [
+        "Un mapa de la comarca, a mano.",
+        "Ventosa en medio del trigo. Al norte, el bosque.",
+        "Valdemora esta tachada con una X roja.",
+        "Una via de tren sale de Ventosa hacia tres pueblos:\nSalinas, Hoz del Cuervo y Puerto Niebla."
+      ],
+      "do": [{ "set_flag": "pista_mapa" }, { "add_flag": "pistas" }]
+    },
+    { "lines": ["Tres pueblos unidos por la via.\nY uno tachado."] }
+  ]
+}

@@ -109,6 +109,18 @@ void Player::SetPitch(float degrees) noexcept {
   pitch_ = std::clamp(degrees, -kMaxPitch, kMaxPitch);
 }
 
+void Player::PlaceFeet(Vector3 feet) noexcept {
+  feet_ = feet;
+  vel_ = {0.0f, 0.0f};
+  velY_ = 0.0f;
+  grounded_ = false;
+}
+
+void Player::UpdateLook() {
+  if (active_ && !frozen_)
+    Look();
+}
+
 void Player::SetRooted(bool rooted) noexcept {
   if (rooted && !rooted_)
     vel_ = {0.0f, 0.0f};

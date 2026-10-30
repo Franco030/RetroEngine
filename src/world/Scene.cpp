@@ -76,6 +76,21 @@ bool Scene::Remove(const std::string& name) {
 void Scene::Update(float dt, Vector3 focus) {
   for (auto& e : entities_)
     e->Update(dt, focus);
+  ApplyAttachments(); // despues de que las otras se hayan movido este fotograma
+}
+
+void Scene::ApplyAttachments() {
+  for (auto& e : entities_) {
+    if (!e->attach)
+      continue;
+    Entity::Attach& a = *e->attach;
+    if (!a.parent)
+      a.parent = Find(a.to);
+    if (!a.parent)
+      continue;
+    e->transform.position = Vector3Transform(a.position, a.parent->transform.ToMatrix());
+    e->transform.rotation.y = a.parent->transform.rotation.y + a.yaw;
+  }
 }
 
 void Scene::CollectLights(std::vector<PointLight>& out) const {
@@ -164,11 +179,21 @@ void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float ambie
     } else {
       e->Draw(spriteShader);
     }
+    anySprite = anySprite || e->HasPuffs();
   }
   if (!anySprite)
     return;
 
   const float base = ambient + (1.0f - ambient) * 0.5f * sun;
+  auto shadeAt = [&](Vector3 center) {
+    Vector3 shade{base, base, base};
+    for (const PointLight& l : lights) {
+      const float t = std::clamp(1.0f - Vector3Distance(l.position, center) / l.radius, 0.0f, 1.0f);
+      const float k = t * t * 0.6f;
+      shade = {shade.x + l.color.x * k, shade.y + l.color.y * k, shade.z + l.color.z * k};
+    }
+    return shade;
+  };
 
   ShaderScope scope(spriteShader);
   // Los billboards se mandan ya en coordenadas de mundo: matriz de modelo identidad (si no, el
@@ -182,12 +207,7 @@ void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float ambie
     const Vector3 center{e->transform.position.x,
                          e->transform.position.y + e->SpriteHeight() * 0.5f,
                          e->transform.position.z};
-    Vector3 shade{base, base, base};
-    for (const PointLight& l : lights) {
-      const float t = std::clamp(1.0f - Vector3Distance(l.position, center) / l.radius, 0.0f, 1.0f);
-      const float k = t * t * 0.6f;
-      shade = {shade.x + l.color.x * k, shade.y + l.color.y * k, shade.z + l.color.z * k};
-    }
+    const Vector3 shade = shadeAt(center);
     if (!e->fog) { // los sprites van en lote: se vacia antes y despues de cambiar el uniform
       rlDrawRenderBatchActive();
       SetFogFixed(spriteShader, 0.0f);
@@ -197,6 +217,10 @@ void Scene::Draw(const Camera3D& camera, const Shader& spriteShader, float ambie
       rlDrawRenderBatchActive();
       SetFogFixed(spriteShader, -1.0f);
     }
+  }
+  for (auto& e : entities_) { // humo y vapor
+    if (e->HasPuffs())
+      e->DrawSmoke(camera, shadeAt(e->transform.position));
   }
 }
 
@@ -350,6 +374,27 @@ Scene::InteractHit Scene::FindInteractable(Vector3 origin, Vector3 dir, const Ga
 
     best.entity = e.get();
     best.distance = t;
+    bestT = t;
+  }
+  return best;
+}
+
+Entity* Scene::FindTarget(Vector3 origin, Vector3 dir, const std::string& prefix) {
+  Entity* best = nullptr;
+  float bestT = FLT_MAX;
+  for (const auto& e : entities_) {
+    if (!e->visible || e->Name().rfind(prefix, 0) != 0)
+      continue;
+    const BoundingBox local = e->LocalBounds();
+    BoxCollider box;
+    box.min = local.min;
+    box.max = local.max;
+    float t = 0.0f;
+    if (!RayIntersectsBox(MakeWorldBox(box, e->transform), origin, dir, t) || t >= bestT)
+      continue;
+    if (Occluded(origin, dir, t, e.get()))
+      continue;
+    best = e.get();
     bestT = t;
   }
   return best;

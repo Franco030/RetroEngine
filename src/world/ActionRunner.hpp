@@ -44,6 +44,12 @@ public:
   // Si se pidio title_screen desde la ultima llamada (y lo olvida): lo aplica main, que lleva las
   // pantallas del juego.
   bool TakeTitleRequest() noexcept { return std::exchange(titleRequested_, false); }
+  // Lo ultimo pedido de montarse (ride) o de tiro al blanco (shooting), y lo olvida: lo aplica
+  // main, que lleva al jugador y la camara.
+  std::optional<action::Ride> TakeRide() noexcept { return std::exchange(ride_, std::nullopt); }
+  std::optional<action::Shooting> TakeShooting() noexcept {
+    return std::exchange(shooting_, std::nullopt);
+  }
 
 private:
   // Mismo orden que en la lista de inicializacion del constructor (-Wreorder).
@@ -54,6 +60,8 @@ private:
   DialogueSystem& dialogues_;
   std::optional<CameraShot> shot_;
   bool titleRequested_ = false;
+  std::optional<action::Ride> ride_;
+  std::optional<action::Shooting> shooting_;
 };
 
 } // namespace retro

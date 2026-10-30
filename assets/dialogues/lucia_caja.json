@@ -1,0 +1,14 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "pista_lucia" } },
+      "lines": [
+        "Una caja de zapatos vacia.",
+        "En la tapa, con letra de niña: \"ROJOS\".",
+        "Dentro, envuelto en papel de seda, un puñado de tierra.\nTierra de bosque."
+      ],
+      "do": [{ "set_flag": "pista_lucia" }, { "add_flag": "pistas" }]
+    },
+    { "lines": ["La caja vacia. La tierra sigue ahi."] }
+  ]
+}

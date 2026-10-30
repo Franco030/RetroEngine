@@ -82,6 +82,9 @@ public:
   }
 
   void Update(float dt, Vector3 focus);
+  // Coloca las entidades pegadas a otra ("attach") segun donde esta esa otra. Update lo hace solo;
+  // el editor lo llama tambien cuando no anima, para dibujarlas en su sitio.
+  void ApplyAttachments();
   // 'ambient' y 'sun' son los de la luz direccional: los sprites no tienen normal y reciben
   // el ambiente mas la mitad del sol.
   void Draw(const Camera3D& camera, const Shader& spriteShader, float ambient, float sun,
@@ -113,6 +116,9 @@ public:
 
   // Entidad interactuable más cercana a lo largo del rayo (dirección unitaria),
   // dentro de su rango, con condiciones cumplidas y sin nada sólido delante.
+  // La entidad visible mas cercana cuyo nombre empieza por 'prefix' que corta el rayo (por su
+  // caja de dibujo), si no la tapa otra cosa: el tiro al blanco.
+  Entity* FindTarget(Vector3 origin, Vector3 dir, const std::string& prefix);
   InteractHit FindInteractable(Vector3 origin, Vector3 direction, const GameState& state);
 
   // Marca el "once" y añade las acciones de la interacción a 'fired'.

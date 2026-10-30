@@ -13,6 +13,21 @@
 
 namespace retro {
 
+namespace {
+
+// Numero pseudoaleatorio 0..1 repetible a partir de un entero (sin estado: mismo fotograma, mismo
+// valor en todas las llamadas).
+float Hash01(std::uint32_t x) {
+  x ^= x >> 16;
+  x *= 0x7feb352dU;
+  x ^= x >> 15;
+  x *= 0x846ca68bU;
+  x ^= x >> 16;
+  return static_cast<float>(x & 0xFFFFFFU) / static_cast<float>(0xFFFFFFU);
+}
+
+} // namespace
+
 Entity::Entity(std::string name, std::shared_ptr<ModelResource> model,
                std::shared_ptr<TextureResource> texture)
     : name_(std::move(name)), model_(std::move(model)), texture_(std::move(texture)) {
@@ -77,6 +92,34 @@ void Entity::Update(float dt, Vector3 focus) {
     }
   }
 
+  if (smoke) {
+    // bocanadas nuevas (solo si se ve) y las que hay suben, derivan y envejecen
+    if (visible) {
+      puffClock_ += dt * smoke->rate;
+      const Matrix m = transform.ToMatrix();
+      while (puffClock_ >= 1.0f) {
+        puffClock_ -= 1.0f;
+        const std::uint32_t k = puffCount_++ * 3u + 7u;
+        puffs_.push_back({Vector3Transform(smoke->offset, m), 0.0f, static_cast<int>(k % 4u),
+                          {(Hash01(k) - 0.5f) * 0.5f, (Hash01(k + 1) - 0.5f) * 0.5f}});
+      }
+    }
+    for (Puff& p : puffs_) {
+      p.age += dt;
+      p.position.x += p.drift.x * dt;
+      p.position.z += p.drift.y * dt;
+      p.position.y += smoke->rise * dt * (1.0f - 0.5f * p.age / smoke->life);
+    }
+    std::erase_if(puffs_, [&](const Puff& p) { return p.age >= smoke->life; });
+  }
+
+  if (slide) {
+    slideTime_ += dt;
+    const float u = slideTime_ / slide->period + slide->phase;
+    const float k = 0.5f - 0.5f * std::cos(2.0f * PI * u);
+    transform.position = Vector3Add(slide->base, Vector3Scale(slide->offset, k));
+  }
+
   if (idle) {
     idleTime_ += dt;
     const float t = idleTime_ * idle->speed * 3.0f + idle->phase;
@@ -99,20 +142,6 @@ void SetDepthBias(const Shader& shader, float bias) {
 
 } // namespace
 
-namespace {
-
-// Numero pseudoaleatorio 0..1 repetible a partir de un entero (sin estado: mismo fotograma, mismo
-// valor en todas las llamadas).
-float Hash01(std::uint32_t x) {
-  x ^= x >> 16;
-  x *= 0x7feb352dU;
-  x ^= x >> 15;
-  x *= 0x846ca68bU;
-  x ^= x >> 16;
-  return static_cast<float>(x & 0xFFFFFFU) / static_cast<float>(0xFFFFFFU);
-}
-
-} // namespace
 
 void Entity::SetShown(bool shown) {
   if (glitch <= 0.0f || !shownKnown_) {
@@ -199,6 +228,23 @@ void Entity::Draw(const Shader& fullbright) {
     SetDepthBias(fullbright, 0.0f);
   if (!fog)
     SetFogFixed(fullbright, -1.0f);
+}
+
+void Entity::DrawSmoke(const Camera3D& camera, Vector3 shade) const {
+  if (!smoke || !smoke->texture)
+    return;
+  auto channel = [](unsigned char t, float f) {
+    return static_cast<unsigned char>(std::min(255.0f, static_cast<float>(t) * f));
+  };
+  const Color c{channel(smoke->tint.r, shade.x), channel(smoke->tint.g, shade.y),
+                channel(smoke->tint.b, shade.z), smoke->tint.a};
+  for (const Puff& p : puffs_) {
+    const float t = p.age / smoke->life;
+    const float s = smoke->size.x + (smoke->size.y - smoke->size.x) * t;
+    const Vector3 base{p.position.x, p.position.y - s * 0.5f, p.position.z};
+    const float u0 = static_cast<float>(p.frame) / 4.0f;
+    DrawUprightBillboard(camera, smoke->texture->Get(), base, {s, s}, c, u0, u0 + 0.25f);
+  }
 }
 
 void Entity::DrawSprite(const Camera3D& camera, Vector3 shade) {

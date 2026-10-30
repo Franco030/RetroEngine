@@ -294,6 +294,8 @@ std::vector<Condition> ParseConditions(const json& j, const char* key) {
 //   { "scare": "entidad" | [x,y,z], "speed": 20, "fov": 30 }    (susto: de golpe y acercando)
 //   { "lock_movement": true | false }                  (mirar sin poder andar; o volver a andar)
 //   { "title_screen": true }                           (con un goto_scene: llegar al menu)
+//   { "ride": "entidad", "seat": [x,y,z], "exit": [x,y,z], "seconds": 40, "flag": "f", "after": "dialogo" }
+//   { "shooting": "pato_", "position": [x,y,z], "yaw": 0, "seconds": 20, "flag": "puntos" }
 Action ParseAction(const json& ja) {
   if (!ja.is_object())
     throw std::runtime_error("cada accion debe ser un objeto");
@@ -417,6 +419,34 @@ Action ParseAction(const json& ja) {
     result = action::TitleScreen{};
     ++found;
   }
+  if (ja.contains("ride")) {
+    action::Ride a;
+    a.entity = ja.at("ride").get<std::string>();
+    a.seat = ReadVec3(ja, "seat", a.seat);
+    if (ja.contains("exit"))
+      a.exit = ReadVec3(ja, "exit", {0.0f, 0.0f, 0.0f});
+    a.seconds = ja.value("seconds", a.seconds);
+    a.flag = ja.value("flag", std::string{});
+    a.after = ja.value("after", std::string{});
+    if (a.entity.empty() || !ja.contains("seat") || a.seconds < 0.0f)
+      throw std::runtime_error("'ride' necesita la entidad y 'seat'; 'seconds' no puede ser negativo");
+    result = a;
+    ++found;
+  }
+  if (ja.contains("shooting")) {
+    action::Shooting a;
+    a.targets = ja.at("shooting").get<std::string>();
+    a.position = ReadVec3(ja, "position", a.position);
+    a.yaw = ja.value("yaw", a.yaw);
+    a.seconds = ja.value("seconds", a.seconds);
+    a.flag = ja.value("flag", std::string{});
+    a.after = ja.value("after", std::string{});
+    if (a.targets.empty() || !ja.contains("position") || a.seconds <= 0.0f || a.flag.empty())
+      throw std::runtime_error("'shooting' necesita el prefijo de las dianas, 'position', 'flag' "
+                               "y 'seconds' positivo");
+    result = a;
+    ++found;
+  }
   if (ja.contains("dialogue")) {
     action::StartDialogue a;
     a.id = ja.at("dialogue").get<std::string>();
@@ -429,7 +459,8 @@ Action ParseAction(const json& ja) {
   if (found != 1) {
     throw std::runtime_error("cada accion debe tener exactamente una de: goto_scene, teleport, "
                              "set_flag, add_flag, message, play_sound, play_music, stop_music, "
-                             "dialogue, look_at, scare, lock_movement, title_screen");
+                             "dialogue, look_at, scare, lock_movement, title_screen, ride, "
+                             "shooting");
   }
   return result;
 }
@@ -704,6 +735,46 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
     } else {
       throw std::runtime_error("'facePlayer' debe ser true o un objeto");
     }
+  }
+
+  if (je.contains("attach")) {
+    const json& ja = je.at("attach");
+    Entity::Attach at;
+    at.to = ja.at("to").get<std::string>();
+    if (at.to.empty() || at.to == name)
+      throw std::runtime_error("'attach': 'to' debe ser otra entidad");
+    at.position = e.transform.position; // lo del JSON es relativo a la otra
+    at.yaw = e.transform.rotation.y;
+    e.attach = at;
+  }
+
+  if (je.contains("smoke")) {
+    const json& js = je.at("smoke");
+    Entity::Smoke sm;
+    sm.texture = engine.Assets().GetTexture(js.at("texture").get<std::string>());
+    sm.offset = ReadVec3(js, "offset", sm.offset);
+    sm.rate = js.value("rate", sm.rate);
+    sm.life = js.value("life", sm.life);
+    sm.rise = js.value("rise", sm.rise);
+    if (js.contains("size"))
+      sm.size = {js.at("size").at(0).get<float>(), js.at("size").at(1).get<float>()};
+    if (js.contains("tint"))
+      sm.tint = ReadColor(js, "tint", sm.tint);
+    if (sm.rate <= 0.0f || sm.life <= 0.0f || sm.rate * sm.life > 200.0f)
+      throw std::runtime_error("'smoke': 'rate' y 'life' positivos (y no mas de 200 bocanadas)");
+    e.smoke = sm;
+  }
+
+  if (je.contains("slide")) {
+    const json& js = je.at("slide");
+    Entity::Slide sl;
+    sl.offset = ReadVec3(js, "offset", sl.offset);
+    sl.period = js.value("period", sl.period);
+    sl.phase = js.value("phase", sl.phase);
+    if (sl.period <= 0.0f)
+      throw std::runtime_error("'slide': 'period' debe ser positivo");
+    sl.base = e.transform.position;
+    e.slide = sl;
   }
 
   if (je.contains("idle")) {

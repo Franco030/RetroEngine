@@ -134,6 +134,9 @@ void CollectActionFlags(const Json& list, const Place& place, FlagUse& use) {
       if (a.contains(key) && a.at(key).is_string())
         use.written.try_emplace(a.at(key).get<std::string>(), place);
     }
+    // montarse y el tiro al blanco tambien escriben su bandera ("flag")
+    if ((a.contains("ride") || a.contains("shooting")) && a.contains("flag") && a.at("flag").is_string())
+      use.written.try_emplace(a.at("flag").get<std::string>(), place);
     if (a.contains("message") && a.at("message").is_string()) {
       std::set<std::string> shown;
       CollectTextFlags(a.at("message").get<std::string>(), shown);
@@ -237,12 +240,31 @@ std::vector<Issue> ValidateDocument(const Json& doc, const fs::path& root, const
             issues.push_back(MakeIssue(Severity::Error, place,
                                        "abre el dialogo '" + dialogue + "', que no existe"));
           }
-          for (const char* key : {"look_at", "scare"}) {
+          for (const char* key : {"look_at", "scare", "ride"}) {
             if (a.contains(key) && a.at(key).is_string() &&
                 entityNames.count(a.at(key).get<std::string>()) == 0) {
               issues.push_back(MakeIssue(Severity::Error, place,
                                          "mira hacia la entidad '" +
                                              a.at(key).get<std::string>() + "', que no existe"));
+            }
+          }
+          for (const char* key : {"ride", "shooting"}) { // el dialogo de despues
+            const std::string after = ReadString(&a, "after");
+            if (a.contains(key) && !after.empty() &&
+                !AssetExists(root, "dialogues/" + after + ".json")) {
+              issues.push_back(MakeIssue(Severity::Error, place,
+                                         "al acabar abre el dialogo '" + after + "', que no existe"));
+            }
+          }
+          if (a.contains("shooting") && a.at("shooting").is_string()) {
+            const std::string prefix = a.at("shooting").get<std::string>();
+            const bool any = std::any_of(entityNames.begin(), entityNames.end(), [&](const std::string& n) {
+              return n.rfind(prefix, 0) == 0;
+            });
+            if (!any) {
+              issues.push_back(MakeIssue(Severity::Warning, place,
+                                         "tiro al blanco sin dianas: ninguna entidad empieza por '" +
+                                             prefix + "'"));
             }
           }
           if (a.contains("play_sound") && a.contains("at") && a.at("at").is_string()) {
@@ -255,6 +277,30 @@ std::vector<Issue> ValidateDocument(const Json& doc, const fs::path& root, const
         }
       },
       [](const Json&, const Place&) {});
+
+  // --- entidades pegadas a otra y su humo ---
+  if (doc.is_object() && doc.contains("entities") && doc.at("entities").is_array()) {
+    const Json& list = doc.at("entities");
+    for (std::size_t i = 0; i < list.size(); ++i) {
+      const Json& e = list[i];
+      const Place place{SelectionKind::Entity, static_cast<int>(i),
+                        "Entidad '" + ReadString(&e, "name") + "'"};
+      if (e.contains("attach") && e.at("attach").is_object()) {
+        const std::string to = ReadString(&e.at("attach"), "to");
+        if (entityNames.count(to) == 0 || to == ReadString(&e, "name")) {
+          issues.push_back(MakeIssue(Severity::Error, place,
+                                     "va pegada a la entidad '" + to + "', que no existe"));
+        }
+      }
+      if (e.contains("smoke") && e.at("smoke").is_object()) {
+        const std::string tex = ReadString(&e.at("smoke"), "texture");
+        if (!AssetExists(root, tex)) {
+          issues.push_back(MakeIssue(Severity::Warning, place,
+                                     "el humo usa la textura '" + tex + "', que no existe"));
+        }
+      }
+    }
+  }
 
   // --- banderas ---
   FlagUse here;

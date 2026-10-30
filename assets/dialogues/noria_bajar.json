@@ -1,0 +1,15 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "pista_noria" } },
+      "lines": [
+        "Desde arriba se veia todo.",
+        "Al norte, mas alla del trigo, un bosque negro.\nY entre los arboles, un campanario en ruinas.",
+        "Valdemora.",
+        "Y muy lejos, al este, las luces de otro pueblo."
+      ],
+      "do": [{ "set_flag": "pista_noria" }, { "add_flag": "pistas" }]
+    },
+    { "lines": ["Abajo otra vez. El bosque sigue alli, aunque no se vea."] }
+  ]
+}

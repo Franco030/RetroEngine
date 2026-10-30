@@ -82,7 +82,7 @@ private:
     PendingKind kind = PendingKind::None;
     std::string path;
   };
-  enum class Deferred { None, Delete, Duplicate, AddFlame };
+  enum class Deferred { None, Delete, Duplicate, AddFlame, AddSprite };
 
   // ------------------------------------------------------------------ escena y archivo
   void RefreshSceneList();
@@ -126,6 +126,9 @@ private:
   bool EntityWorldBox(int index, BoundingBox& out) const;
   // Pone una llama animada (sprite) en lo alto del modelo 'index' y, si no tiene, una luz.
   void AddFlameOn(int index);
+  // Un sprite animado (de kAnimatedSprites) pegado ("attach") en lo alto del modelo 'index': lo
+  // sigue si se mueve o gira.
+  void AddAnimatedSpriteOn(int index, int kind);
   void AddAnimatedFlame(Vector3 position);
   void AddCandleGroup(Vector3 position);
   static Vector3 GroundPoint(const Ray& ray);
@@ -297,7 +300,8 @@ private:
   bool gestureEnded_ = false;
 
   Deferred deferred_ = Deferred::None;
-  int deferredIndex_ = -1; // entidad sobre la que actua el diferido (AddFlame)
+  int deferredIndex_ = -1; // entidad sobre la que actua el diferido (AddFlame, AddSprite)
+  int animatedSprite_ = 0; // cual de kAnimatedSprites pega el boton "Pegar sprite animado"
   Pending pending_;
   bool openUnsavedPopup_ = false;
   bool openNewScenePopup_ = false;

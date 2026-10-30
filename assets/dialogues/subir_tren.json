@@ -1,0 +1,29 @@
+{
+  "entries": [
+    {
+      "lines": [
+        "El vagon esta vacio y caliente, como si alguien acabara de bajarse.",
+        "Nico sube detras de ti. El tren arranca."
+      ],
+      "do": [
+        { "set_flag": "capitulo2_fin" },
+        { "stop_music": true, "fade": 2.0 },
+        { "title_screen": true },
+        {
+          "goto_scene": "scenes/estacion.json",
+          "position": [0, 0, 26.0],
+          "yaw": 0,
+          "dark": 18,
+          "lines": [
+            "",
+            "Por la ventanilla, el trigo se aleja.",
+            "Las luces de la feria se apagan una a una.",
+            "Nico se duerme con la camara en el regazo.\nTu no puedes.",
+            "Proxima parada: SALINAS.",
+            ""
+          ]
+        }
+      ]
+    }
+  ]
+}

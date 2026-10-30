@@ -1,0 +1,5800 @@
+{
+  "camera": { "position": [0, 3.2, 12.0], "target": [0, 1.4, 0.0], "fov": 60 },
+  "player": { "position": [0, 0, 26.0], "yaw": 0 },
+  "autoCollide": true,
+  "bounds": { "min": [-26, -7], "max": [26, 32] },
+  "background": [30, 30, 52],
+  "fog": { "start": 8, "end": 50, "mist": 0.5, "mistHeight": 0.8, "mistColor": [74, 72, 96] },
+  "light": { "direction": [-0.3, -0.6, -0.5], "ambient": 0.26, "sun": 0.28 },
+  "audio": {
+    "music": { "file": "audio/musica_estacion_v2.wav", "volume": 0.4 },
+    "ambient": { "file": "audio/viento.wav", "volume": 0.3 },
+    "footsteps": {
+      "files": ["audio/paso_tierra_1.wav", "audio/paso_tierra_2.wav", "audio/paso_tierra_3.wav"],
+      "volume": 0.2
+    },
+    "fade": 3
+  },
+  "panorama": {
+    "model": "models/panorama_montes.obj",
+    "tint": [62, 56, 96],
+    "haze": 0.55,
+    "sun": { "texture": "textures/spr_luna.png", "yaw": 20, "pitch": 18, "size": 50 }
+  },
+  "entities": [
+    {
+      "name": "suelo",
+      "model": { "type": "plane", "size": 140, "subdivisions": 70, "tiles": 60 },
+      "texture": "textures/mat_trigo.png",
+      "wrap": "repeat",
+      "tint": [110, 96, 80, 255]
+    },
+    {
+      "name": "sendero",
+      "model": "models/sendero.obj",
+      "position": [0, 0, 30.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "layer": 1,
+      "tint": [130, 116, 100, 255]
+    },
+    {
+      "name": "sendero_2",
+      "model": "models/sendero.obj",
+      "position": [0, 0, 16.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "layer": 1,
+      "tint": [130, 116, 100, 255]
+    },
+    { "name": "anden", "model": "models/anden.obj", "position": [0, 0, 0], "rotation": [0, 180, 0] },
+    {
+      "name": "caseta",
+      "model": "models/caseta_estacion.obj",
+      "position": [-6.0, 0, 4.2],
+      "rotation": [0, 0, 0],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "box": { "min": [-1.7, 0, 1.3], "max": [-0.5, 2.2, 1.8] },
+        "do": [{ "dialogue": "estacion_puerta" }]
+      }
+    },
+    {
+      "name": "letrero",
+      "model": "models/letrero.obj",
+      "position": [-6.0, 2.55, 5.74],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_estacion.png",
+      "collider": false
+    },
+    {
+      "name": "reloj",
+      "model": "models/lamina.obj",
+      "position": [-6.1, 2.3, 5.72],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_reloj.png",
+      "collider": false,
+      "scale": [0.42, 0.56, 1],
+      "interact": { "prompt": "Mirar", "range": 2.2, "do": [{ "dialogue": "estacion_reloj" }] }
+    },
+    {
+      "name": "horarios",
+      "model": "models/lamina.obj",
+      "position": [-2.0, 1.5, 4.6],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_horarios.png",
+      "collider": false,
+      "interact": { "prompt": "Mirar", "range": 2.2, "do": [{ "dialogue": "estacion_horarios" }] }
+    },
+    {
+      "name": "poste_h1",
+      "model": "models/mastil.obj",
+      "position": [-2.48, 0, 4.55],
+      "rotation": [0, 0, 0],
+      "scale": [0.6, 0.38, 0.6]
+    },
+    {
+      "name": "poste_h2",
+      "model": "models/mastil.obj",
+      "position": [-1.52, 0, 4.55],
+      "rotation": [0, 0, 0],
+      "scale": [0.6, 0.38, 0.6]
+    },
+    {
+      "name": "banco",
+      "model": "models/banco.obj",
+      "position": [3.0, 0.3, -0.6],
+      "rotation": [0, 180, 0]
+    },
+    {
+      "name": "farol_1",
+      "model": "models/farol.obj",
+      "position": [-11.0, 0.3, 0.8],
+      "rotation": [0, 0, 0],
+      "light": {
+        "offset": [0, 2.75, 0],
+        "color": [255, 210, 150],
+        "radius": 9,
+        "intensity": 1.0,
+        "flicker": 0.15,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farol_2",
+      "model": "models/farol.obj",
+      "position": [9.0, 0.3, 0.8],
+      "rotation": [0, 0, 0],
+      "light": {
+        "offset": [0, 2.75, 0],
+        "color": [255, 210, 150],
+        "radius": 9,
+        "intensity": 1.0,
+        "flicker": 0.3,
+        "flickerRate": 9
+      }
+    },
+    {
+      "name": "locomotora",
+      "model": "models/locomotora.obj",
+      "position": [9.0, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "showIf": {
+        "all": [{ "flag": "tren_llega" }, { "not": { "flag": "capitulo2_fin" } }]
+      },
+      "glitch": 1.2,
+      "light": { "offset": [2.8, 1.9, 0], "color": [255, 230, 170], "radius": 12, "intensity": 1.4 },
+      "smoke": {
+        "texture": "textures/spr_vapor.png",
+        "offset": [1.6, 3.7, 0],
+        "rate": 5,
+        "life": 3.2,
+        "rise": 1.6,
+        "size": [0.6, 2.6],
+        "tint": [214, 214, 220, 255]
+      }
+    },
+    {
+      "name": "clara_estacion",
+      "model": "models/clara.obj",
+      "texture": "textures/pj_fe_clara.png",
+      "position": [-14.0, 0.3, 0.2],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "glitch": 0.5,
+      "showIf": {
+        "all": [{ "not": { "flag": "nico_estacion" } }, { "not": { "flag": "clara_estacion_vista" } }]
+      },
+      "seen": {
+        "range": 30,
+        "angle": 4,
+        "do": [
+          { "play_sound": "audio/risa_nina.wav", "at": "clara_estacion", "volume": 0.9, "radius": 18 },
+          { "set_flag": "clara_estacion_vista" }
+        ]
+      }
+    },
+    {
+      "name": "vagon",
+      "model": "models/vagon.obj",
+      "position": [-1.5, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "showIf": {
+        "all": [{ "flag": "tren_llega" }, { "not": { "flag": "capitulo2_fin" } }]
+      },
+      "glitch": 1.2,
+      "interact": {
+        "prompt": "Subir al tren",
+        "range": 3.0,
+        "box": { "min": [3.6, 0, 1.0], "max": [4.6, 3.0, 1.6] },
+        "do": [{ "dialogue": "subir_tren" }]
+      }
+    },
+    {
+      "name": "nico",
+      "model": "models/fotografo.obj",
+      "texture": "textures/pj_fe_nico.png",
+      "position": [1.4, 0.3, 0.2],
+      "rotation": [0, 160, 0],
+      "showIf": {
+        "all": [{ "flag": "nico_estacion" }, { "not": { "flag": "capitulo2_fin" } }]
+      },
+      "idle": { "bob": 0.012, "sway": 1.5, "speed": 1.6 },
+      "facePlayer": { "range": 5, "turnSpeed": 120 },
+      "interact": { "prompt": "Hablar", "range": 2.4, "do": [{ "dialogue": "nico_estacion" }] }
+    },
+    {
+      "name": "via_0",
+      "model": "models/via.obj",
+      "position": [-20.0, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_1",
+      "model": "models/via.obj",
+      "position": [0.0, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_2",
+      "model": "models/via.obj",
+      "position": [20.0, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "trigo_0",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.38, 1.46],
+      "position": [-13.37, 0, -13.59],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_1",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.16, 1.22],
+      "position": [38.42, 0, 15.98],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_2",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.33],
+      "position": [-25.86, 0, -20.25],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_3",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.42],
+      "position": [-38.25, 0, 16.59],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_4",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.38, 1.46],
+      "position": [-36.11, 0, -16.19],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_5",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.5],
+      "position": [-6.58, 0, 27.42],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_6",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.43],
+      "position": [-35.23, 0, 17.71],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_7",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.46, 1.54],
+      "position": [2.64, 0, 9.04],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_8",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.36],
+      "position": [-14.35, 0, 23.41],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_9",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.3, 1.37],
+      "position": [-37.41, 0, 5.45],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_10",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.33],
+      "position": [29.39, 0, 8.58],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_11",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.11, 1.16],
+      "position": [-5.79, 0, 29.5],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_12",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.37, 1.44],
+      "position": [11.47, 0, 19.11],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_13",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.24],
+      "position": [-35.76, 0, 5.88],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_14",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.43],
+      "position": [-2.8, 0, 27.51],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_15",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.35],
+      "position": [-32.85, 0, 0.02],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_16",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.28],
+      "position": [-19.87, 0, 20.49],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_17",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.42],
+      "position": [-3.11, 0, -22.44],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_18",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.21, 1.28],
+      "position": [-2.06, 0, -27.5],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_19",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.1, 1.15],
+      "position": [-19.31, 0, -4.28],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_20",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.19, 1.25],
+      "position": [15.87, 0, -23.35],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_21",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.17, 1.23],
+      "position": [-22.28, 0, -15.47],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_22",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [-29.15, 0, -21.38],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_23",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.21],
+      "position": [12.22, 0, -17.1],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_24",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.43],
+      "position": [-23.57, 0, 28.31],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_25",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.43],
+      "position": [-17.94, 0, 15.03],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_26",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.21, 1.27],
+      "position": [17.87, 0, -12.3],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_27",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [-32.55, 0, 30.79],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_28",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.11, 1.17],
+      "position": [30.24, 0, 17.63],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_29",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.46, 1.53],
+      "position": [-3.28, 0, 31.5],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_30",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.19, 1.25],
+      "position": [3.72, 0, 36.05],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_31",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.27],
+      "position": [-25.56, 0, -9.31],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_32",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.25, 1.31],
+      "position": [-13.25, 0, -19.59],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_33",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.16, 1.23],
+      "position": [30.65, 0, 39.7],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_34",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.45, 1.53],
+      "position": [9.42, 0, -14.72],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_35",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.3],
+      "position": [7.47, 0, 34.2],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_36",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.17],
+      "position": [-32.34, 0, -17.22],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_37",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.19],
+      "position": [27.63, 0, -20.58],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_38",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.35],
+      "position": [-39.26, 0, -28.63],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_39",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.32],
+      "position": [-38.16, 0, -23.93],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_40",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.29],
+      "position": [16.73, 0, -28.12],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_41",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.19],
+      "position": [-16.32, 0, -20.8],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_42",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.26],
+      "position": [27.02, 0, -14.86],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_43",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.14, 1.19],
+      "position": [-37.5, 0, -10.43],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_44",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.42],
+      "position": [-24.41, 0, 34.51],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_45",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [-18.79, 0, 25.0],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_46",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [26.18, 0, 17.21],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_47",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.52, 1.6],
+      "position": [10.22, 0, -17.27],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_48",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.21],
+      "position": [34.35, 0, -6.5],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_49",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.47, 1.55],
+      "position": [-22.03, 0, 15.25],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_50",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.23, 1.29],
+      "position": [-15.14, 0, 12.74],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_51",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.34],
+      "position": [-25.16, 0, 17.76],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_52",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.43, 1.51],
+      "position": [-37.03, 0, 21.41],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_53",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.36],
+      "position": [5.9, 0, 11.26],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_54",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [16.61, 0, 16.17],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_55",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.48, 1.56],
+      "position": [-34.25, 0, -16.84],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_56",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.21, 1.27],
+      "position": [-23.27, 0, -11.68],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_57",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.38, 1.45],
+      "position": [31.87, 0, -19.33],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_58",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.48, 1.56],
+      "position": [26.13, 0, 12.02],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_59",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.11, 1.17],
+      "position": [-13.44, 0, 21.38],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_60",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.25],
+      "position": [30.58, 0, 16.96],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_61",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.52, 1.6],
+      "position": [-21.16, 0, 8.94],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_62",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.35],
+      "position": [-26.64, 0, 26.75],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_63",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.25, 1.31],
+      "position": [-17.55, 0, 22.08],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_64",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.16, 1.22],
+      "position": [36.85, 0, 32.31],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_65",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.41, 1.48],
+      "position": [-1.01, 0, -16.4],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_66",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.26],
+      "position": [33.21, 0, 13.44],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_67",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.38, 1.45],
+      "position": [20.91, 0, -10.39],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_68",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [0.86, 0, -25.48],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_69",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.47, 1.55],
+      "position": [-26.5, 0, -27.68],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_70",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.42],
+      "position": [-31.82, 0, -4.63],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_71",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.24],
+      "position": [20.99, 0, -24.65],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_72",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.43, 1.51],
+      "position": [-34.23, 0, -23.32],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_73",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.19],
+      "position": [-21.1, 0, 23.7],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_74",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.37, 1.45],
+      "position": [19.8, 0, -18.55],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_75",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.17, 1.23],
+      "position": [21.47, 0, 13.96],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_76",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.31, 1.38],
+      "position": [7.16, 0, 18.89],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_77",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.21, 1.27],
+      "position": [-39.6, 0, 11.38],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_78",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.44, 1.52],
+      "position": [-21.17, 0, 20.39],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_79",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.32],
+      "position": [-25.8, 0, 25.2],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_80",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [-28.92, 0, 8.45],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_81",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.36],
+      "position": [-37.44, 0, -25.03],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_82",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.3, 1.37],
+      "position": [-14.14, 0, 19.85],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_83",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.26],
+      "position": [-30.78, 0, -14.58],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_84",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.29],
+      "position": [29.39, 0, 4.13],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_85",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.33],
+      "position": [-30.73, 0, 5.29],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_86",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.29],
+      "position": [34.86, 0, -10.38],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_87",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.42],
+      "position": [10.39, 0, 36.68],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_88",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.3, 1.37],
+      "position": [33.58, 0, -9.98],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_89",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.26],
+      "position": [-10.49, 0, -29.37],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_90",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.43, 1.5],
+      "position": [32.0, 0, 37.87],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_91",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.45, 1.53],
+      "position": [18.63, 0, 31.58],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_92",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.39, 1.46],
+      "position": [38.22, 0, 4.86],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_93",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.51, 1.59],
+      "position": [38.14, 0, -14.5],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_94",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [29.13, 0, 26.01],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_95",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.38, 1.45],
+      "position": [-28.27, 0, 23.58],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_96",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.17, 1.23],
+      "position": [22.77, 0, -28.53],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_97",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.1, 1.16],
+      "position": [32.91, 0, -23.84],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_98",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.21, 1.28],
+      "position": [19.78, 0, -16.17],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_99",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.38, 1.46],
+      "position": [-34.66, 0, -18.62],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_100",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.35],
+      "position": [-28.98, 0, 1.52],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_101",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [-12.27, 0, 39.06],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_102",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.1, 1.16],
+      "position": [-33.55, 0, 0.71],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_103",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.44, 1.52],
+      "position": [-21.24, 0, 14.77],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_104",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [-27.24, 0, -28.29],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_105",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.18],
+      "position": [24.98, 0, 23.35],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_106",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.42],
+      "position": [12.83, 0, 11.07],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_107",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.36],
+      "position": [-28.89, 0, -15.88],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_108",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.17, 1.23],
+      "position": [6.09, 0, -23.13],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_109",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.25, 1.31],
+      "position": [-32.47, 0, 7.42],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_110",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.42],
+      "position": [-9.93, 0, 26.7],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_111",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.52, 1.6],
+      "position": [-20.44, 0, -20.99],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_112",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.16, 1.22],
+      "position": [-17.7, 0, -18.13],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_113",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.21],
+      "position": [35.8, 0, -25.32],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_114",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.41, 1.49],
+      "position": [31.52, 0, -16.74],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_115",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.1, 1.16],
+      "position": [-24.08, 0, 7.19],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_116",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.33],
+      "position": [27.78, 0, 13.22],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_117",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [-19.94, 0, 24.11],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_118",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.24],
+      "position": [-28.2, 0, 16.25],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_119",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.25, 1.32],
+      "position": [26.51, 0, 27.73],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_120",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.46, 1.54],
+      "position": [22.62, 0, -27.88],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_121",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.31, 1.38],
+      "position": [-34.25, 0, -14.02],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_122",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.28],
+      "position": [28.21, 0, 26.88],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_123",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.44, 1.52],
+      "position": [-13.1, 0, 18.63],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_124",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.3],
+      "position": [27.95, 0, 31.58],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_125",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.42],
+      "position": [36.77, 0, 33.54],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_126",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.19],
+      "position": [-23.02, 0, 34.86],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_127",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.33],
+      "position": [-32.57, 0, 16.49],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_128",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.38, 1.45],
+      "position": [32.97, 0, -15.95],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_129",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.3, 1.37],
+      "position": [-6.66, 0, 30.09],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_130",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.48],
+      "position": [8.91, 0, 12.94],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_131",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.49, 1.56],
+      "position": [-21.68, 0, 16.43],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_132",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.51, 1.59],
+      "position": [24.57, 0, 25.04],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_133",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.32, 1.39],
+      "position": [-19.58, 0, 38.6],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_134",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.41, 1.48],
+      "position": [25.15, 0, -7.96],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_135",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.33],
+      "position": [22.59, 0, -27.23],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_136",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.28],
+      "position": [34.23, 0, -6.7],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_137",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.25],
+      "position": [-14.09, 0, 30.39],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_138",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.37, 1.45],
+      "position": [-39.44, 0, -3.73],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_139",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.24],
+      "position": [-10.27, 0, 29.4],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_140",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.31, 1.38],
+      "position": [35.26, 0, -16.39],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_141",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.32, 1.39],
+      "position": [-5.75, 0, -19.29],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_142",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.39, 1.47],
+      "position": [9.05, 0, -22.47],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_143",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.16, 1.22],
+      "position": [-6.39, 0, -27.79],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_144",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.43, 1.5],
+      "position": [-26.19, 0, 20.46],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_145",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.51, 1.59],
+      "position": [-28.71, 0, 32.67],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_146",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.57],
+      "position": [30.67, 0, -3.13],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_147",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.33],
+      "position": [-25.32, 0, -25.39],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_148",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.58],
+      "position": [29.86, 0, 20.77],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_149",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.32, 1.39],
+      "position": [-34.3, 0, -1.02],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_150",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.43],
+      "position": [-17.31, 0, -28.53],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_151",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.33],
+      "position": [21.51, 0, 14.3],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_152",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.38, 1.45],
+      "position": [9.29, 0, 34.43],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_153",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.21],
+      "position": [29.4, 0, -6.99],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_154",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.33],
+      "position": [25.29, 0, -6.74],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_155",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.39, 1.47],
+      "position": [34.38, 0, -0.71],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_156",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.23, 1.29],
+      "position": [-38.65, 0, 39.69],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_157",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.14, 1.2],
+      "position": [-36.5, 0, -18.12],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_158",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.3],
+      "position": [-12.72, 0, 14.84],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_159",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.16, 1.23],
+      "position": [-18.26, 0, 4.11],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_160",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.45, 1.53],
+      "position": [-35.62, 0, 37.61],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_161",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.31],
+      "position": [-15.1, 0, 30.04],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_162",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [-8.09, 0, 35.58],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_163",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.26],
+      "position": [-22.28, 0, -29.56],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_164",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.44],
+      "position": [-34.97, 0, -10.64],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_165",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.47, 1.55],
+      "position": [-38.34, 0, 11.5],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_166",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.36],
+      "position": [-15.97, 0, -24.97],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_167",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.34],
+      "position": [20.55, 0, -21.29],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_168",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.28],
+      "position": [-6.71, 0, 38.34],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_169",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.35],
+      "position": [-36.23, 0, -2.81],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_170",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.21],
+      "position": [4.61, 0, 33.41],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_171",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.17, 1.23],
+      "position": [-20.09, 0, -10.75],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_172",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.3],
+      "position": [-22.94, 0, 20.94],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_173",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.26],
+      "position": [-35.52, 0, -17.34],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_174",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.22],
+      "position": [29.17, 0, 27.75],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_175",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.23, 1.29],
+      "position": [27.83, 0, -6.11],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_176",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.39, 1.46],
+      "position": [29.19, 0, 27.98],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_177",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.28],
+      "position": [2.43, 0, -23.99],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_178",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.19, 1.25],
+      "position": [-6.52, 0, 10.59],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_179",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.32, 1.39],
+      "position": [29.77, 0, -8.76],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_180",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.17, 1.24],
+      "position": [27.41, 0, 30.58],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_181",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.43, 1.5],
+      "position": [-17.49, 0, -17.3],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_182",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.5],
+      "position": [27.29, 0, 8.14],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_183",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.24],
+      "position": [33.6, 0, -11.3],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_184",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.34],
+      "position": [24.24, 0, 26.64],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_185",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [11.88, 0, -17.31],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_186",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.25, 1.32],
+      "position": [26.9, 0, -10.83],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_187",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.35],
+      "position": [4.1, 0, -27.55],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_188",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.35],
+      "position": [12.44, 0, -20.56],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_189",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.41, 1.48],
+      "position": [17.91, 0, 17.76],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_190",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.43],
+      "position": [-21.71, 0, 27.12],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_191",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.31, 1.38],
+      "position": [-17.65, 0, -11.63],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_192",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.37, 1.45],
+      "position": [-32.37, 0, -12.77],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_193",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.3, 1.37],
+      "position": [-39.48, 0, 34.78],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_194",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [-38.86, 0, 17.92],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_195",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.3],
+      "position": [26.01, 0, 4.88],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_196",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.58],
+      "position": [18.45, 0, -11.53],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_197",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.48, 1.55],
+      "position": [-6.38, 0, 28.83],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_198",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.34],
+      "position": [32.15, 0, 32.8],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_199",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.49, 1.56],
+      "position": [39.03, 0, -12.84],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_200",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.42],
+      "position": [25.05, 0, -7.85],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_201",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.43],
+      "position": [7.78, 0, 15.2],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_202",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.41, 1.48],
+      "position": [-8.93, 0, 33.71],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_203",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.58],
+      "position": [27.41, 0, -10.69],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_204",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.58],
+      "position": [-20.1, 0, 33.45],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_205",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.44, 1.52],
+      "position": [-30.31, 0, -10.19],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_206",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [-11.36, 0, 9.34],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_207",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [33.37, 0, -19.4],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_208",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.43],
+      "position": [-29.68, 0, -24.97],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_209",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.51, 1.59],
+      "position": [28.99, 0, 11.54],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_210",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.1, 1.16],
+      "position": [36.35, 0, -1.71],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_211",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.58],
+      "position": [-7.12, 0, 19.35],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_212",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.48, 1.55],
+      "position": [12.78, 0, -24.06],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_213",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.46, 1.54],
+      "position": [28.73, 0, 26.68],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_214",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.5],
+      "position": [-37.48, 0, 15.34],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_215",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.47],
+      "position": [25.27, 0, -11.9],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_216",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.39, 1.47],
+      "position": [-12.5, 0, -27.24],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_217",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.45, 1.52],
+      "position": [-33.19, 0, -24.01],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_218",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.47, 1.55],
+      "position": [25.15, 0, 7.48],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_219",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.31, 1.38],
+      "position": [20.5, 0, 38.56],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_220",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.27],
+      "position": [37.22, 0, -24.22],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_221",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.47],
+      "position": [35.43, 0, -17.79],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_222",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.19],
+      "position": [-10.51, 0, -18.4],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_223",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.3],
+      "position": [-12.02, 0, 37.88],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_224",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [37.47, 0, 27.69],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_225",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.31],
+      "position": [24.06, 0, 34.9],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_226",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [-33.67, 0, -24.71],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_227",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.34],
+      "position": [11.18, 0, 30.0],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_228",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.44],
+      "position": [-4.15, 0, 19.49],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_229",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.19],
+      "position": [-32.16, 0, 7.38],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_230",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.39, 1.46],
+      "position": [-33.53, 0, 18.06],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_231",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.48],
+      "position": [5.46, 0, 35.5],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_232",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.58],
+      "position": [-1.01, 0, -20.41],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_233",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.46, 1.54],
+      "position": [-29.24, 0, 24.93],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_234",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.21],
+      "position": [4.9, 0, 29.94],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_235",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.29],
+      "position": [-39.41, 0, 28.11],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_236",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.23, 1.3],
+      "position": [38.87, 0, 22.99],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_237",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [-7.78, 0, 37.89],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_238",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.32],
+      "position": [-5.9, 0, 39.28],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_239",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.3, 1.37],
+      "position": [32.7, 0, 10.41],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_240",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.25],
+      "position": [3.99, 0, 16.64],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_241",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.47],
+      "position": [30.49, 0, 1.88],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_242",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.11, 1.17],
+      "position": [-10.66, 0, -14.55],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_243",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.45, 1.53],
+      "position": [-39.05, 0, -18.87],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_244",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.21, 1.27],
+      "position": [22.91, 0, -15.16],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_245",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.44, 1.51],
+      "position": [-13.09, 0, 24.54],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_246",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.47],
+      "position": [-39.86, 0, 9.73],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_247",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.44, 1.52],
+      "position": [-35.78, 0, -6.55],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_248",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.14, 1.2],
+      "position": [-19.89, 0, 14.76],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_249",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.3, 1.37],
+      "position": [32.21, 0, 3.39],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_250",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.27],
+      "position": [-26.7, 0, 29.31],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_251",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.44, 1.51],
+      "position": [24.05, 0, -19.58],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_252",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.31],
+      "position": [29.81, 0, 18.78],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_253",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.42],
+      "position": [-16.0, 0, 30.66],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_254",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.26],
+      "position": [-33.42, 0, 39.12],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_255",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.19, 1.25],
+      "position": [27.94, 0, 10.95],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_256",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.34],
+      "position": [-19.28, 0, 16.75],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_257",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.47],
+      "position": [-32.55, 0, 27.93],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_258",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.3],
+      "position": [25.7, 0, 16.97],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_259",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.3, 1.37],
+      "position": [10.93, 0, 38.59],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_260",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.25, 1.31],
+      "position": [7.8, 0, -13.29],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_261",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.25, 1.32],
+      "position": [-28.34, 0, 32.63],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_262",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.36],
+      "position": [-33.08, 0, 0.13],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_263",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.32, 1.38],
+      "position": [-29.6, 0, -3.66],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_264",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.45, 1.53],
+      "position": [-32.07, 0, 16.02],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_265",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.24],
+      "position": [-22.12, 0, 20.12],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_266",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.11, 1.17],
+      "position": [-14.13, 0, 14.94],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_267",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.47, 1.55],
+      "position": [-7.78, 0, -14.94],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_268",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.58],
+      "position": [5.0, 0, 37.6],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_269",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.28],
+      "position": [-5.2, 0, 17.52],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_270",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.44, 1.51],
+      "position": [25.14, 0, 34.36],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_271",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.32, 1.39],
+      "position": [-25.15, 0, -21.97],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_272",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [7.58, 0, -10.51],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_273",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.5],
+      "position": [-21.48, 0, -8.25],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_274",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.38, 1.46],
+      "position": [-4.05, 0, 26.18],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_275",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.3],
+      "position": [-18.94, 0, -9.1],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_276",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.31, 1.38],
+      "position": [-16.79, 0, -19.27],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_277",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.33],
+      "position": [22.67, 0, -1.68],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_278",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.41, 1.49],
+      "position": [-35.96, 0, -27.08],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_279",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.58],
+      "position": [-14.52, 0, -16.95],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_280",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.35],
+      "position": [-27.71, 0, 28.2],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_281",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.19, 1.25],
+      "position": [21.88, 0, 35.58],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_282",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.44, 1.52],
+      "position": [-38.87, 0, -7.5],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_283",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.34],
+      "position": [31.0, 0, -13.56],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_284",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.21],
+      "position": [-12.6, 0, -29.54],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_285",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.49, 1.57],
+      "position": [-21.24, 0, -3.39],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_286",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.28],
+      "position": [-37.75, 0, -12.73],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_287",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.25, 1.32],
+      "position": [-20.44, 0, -6.51],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_288",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.21, 1.28],
+      "position": [-25.76, 0, 25.47],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_289",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.42],
+      "position": [30.04, 0, 2.92],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_290",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.21],
+      "position": [-27.4, 0, 26.79],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_291",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.39, 1.46],
+      "position": [34.98, 0, 2.22],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_292",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [4.65, 0, -15.7],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_293",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [-30.19, 0, 14.38],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_294",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.43],
+      "position": [27.67, 0, 20.45],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_295",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.57],
+      "position": [-18.25, 0, 28.33],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_296",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.26],
+      "position": [9.9, 0, 21.31],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_297",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.25, 1.31],
+      "position": [-29.56, 0, 7.25],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_298",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.3],
+      "position": [16.99, 0, -16.17],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_299",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.1, 1.16],
+      "position": [9.64, 0, -17.03],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_300",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.11, 1.16],
+      "position": [20.85, 0, -18.17],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_301",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.32],
+      "position": [-27.99, 0, -12.55],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_302",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.48, 1.56],
+      "position": [11.53, 0, 39.26],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_303",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.27],
+      "position": [-26.07, 0, -26.8],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_304",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.43, 1.51],
+      "position": [-12.73, 0, -17.16],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_305",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.32],
+      "position": [39.76, 0, -28.45],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_306",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.19, 1.26],
+      "position": [-37.41, 0, 29.78],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_307",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [-34.8, 0, 24.78],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_308",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.46, 1.53],
+      "position": [-27.74, 0, -1.86],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_309",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.19, 1.25],
+      "position": [-28.27, 0, 26.68],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_310",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.29],
+      "position": [35.78, 0, -26.9],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_311",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.45, 1.52],
+      "position": [6.02, 0, -19.05],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_312",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.41, 1.48],
+      "position": [37.99, 0, 20.49],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_313",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.25],
+      "position": [-36.97, 0, 10.14],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_314",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.21],
+      "position": [-5.17, 0, 25.03],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_315",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.36],
+      "position": [24.31, 0, 37.56],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_316",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.49],
+      "position": [-18.54, 0, 12.42],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_317",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [-28.66, 0, 25.72],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_318",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.42],
+      "position": [-8.72, 0, 38.65],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_319",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.46, 1.53],
+      "position": [15.23, 0, 24.0],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_320",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.48, 1.56],
+      "position": [38.95, 0, -24.11],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_321",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.35],
+      "position": [-18.94, 0, -27.71],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_322",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.31, 1.38],
+      "position": [31.85, 0, -26.89],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_323",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.28],
+      "position": [19.17, 0, 37.75],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_324",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.36],
+      "position": [-32.2, 0, -27.38],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_325",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.19],
+      "position": [-15.97, 0, -19.78],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_326",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.11, 1.17],
+      "position": [8.89, 0, 21.72],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_327",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.38, 1.45],
+      "position": [23.06, 0, 25.32],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_328",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [37.08, 0, -10.64],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_329",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.16, 1.22],
+      "position": [-19.48, 0, -20.31],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_330",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.43],
+      "position": [8.22, 0, 26.14],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_331",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.14, 1.2],
+      "position": [3.9, 0, -20.93],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_332",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.41, 1.48],
+      "position": [30.21, 0, -25.8],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_333",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.45, 1.52],
+      "position": [9.75, 0, 21.31],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_334",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.34],
+      "position": [-0.13, 0, -14.37],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_335",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.31],
+      "position": [12.19, 0, -18.41],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_336",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.48, 1.55],
+      "position": [-17.22, 0, 36.73],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_337",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.33],
+      "position": [39.18, 0, 20.09],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_338",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.09, 1.15],
+      "position": [-18.61, 0, 1.79],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_339",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.19, 1.25],
+      "position": [-28.2, 0, -22.25],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_340",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [-36.89, 0, -13.68],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_341",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.31, 1.38],
+      "position": [-22.05, 0, 26.15],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_342",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.21, 1.28],
+      "position": [10.05, 0, -24.49],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_343",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.16, 1.23],
+      "position": [-24.38, 0, 27.24],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_344",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.47, 1.54],
+      "position": [-9.18, 0, -19.37],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_345",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.11, 1.16],
+      "position": [-16.66, 0, -12.11],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_346",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.46, 1.54],
+      "position": [-26.35, 0, -19.6],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_347",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.3],
+      "position": [-19.85, 0, 24.44],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_348",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.21, 1.27],
+      "position": [-23.27, 0, 36.91],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_349",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.19],
+      "position": [36.62, 0, -14.18],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_350",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.1, 1.16],
+      "position": [25.19, 0, -15.57],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_351",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.48, 1.55],
+      "position": [-4.51, 0, 20.85],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_352",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.49, 1.56],
+      "position": [15.64, 0, -19.55],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_353",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.43],
+      "position": [-24.8, 0, 4.36],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_354",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.47, 1.55],
+      "position": [27.38, 0, -25.26],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_355",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.49, 1.57],
+      "position": [-19.04, 0, 22.74],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_356",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.39, 1.46],
+      "position": [-24.17, 0, 18.42],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_357",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.52, 1.59],
+      "position": [-10.34, 0, -28.15],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_358",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.43],
+      "position": [35.24, 0, 6.46],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_359",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.17, 1.23],
+      "position": [25.11, 0, 7.39],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_360",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.46, 1.53],
+      "position": [32.92, 0, -1.86],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_361",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.39, 1.47],
+      "position": [26.6, 0, 23.87],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_362",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [-27.04, 0, -6.55],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_363",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.37, 1.44],
+      "position": [-28.33, 0, -9.65],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_364",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.37, 1.44],
+      "position": [-24.53, 0, 1.79],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_365",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.35],
+      "position": [-19.91, 0, -25.23],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_366",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.18],
+      "position": [-33.59, 0, 10.69],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_367",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.09, 1.15],
+      "position": [9.86, 0, -21.41],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_368",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.34],
+      "position": [-9.67, 0, 37.2],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_369",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.17, 1.23],
+      "position": [4.96, 0, 18.46],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_370",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.23, 1.29],
+      "position": [-36.31, 0, -19.17],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_371",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.49, 1.57],
+      "position": [-21.51, 0, -15.18],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_372",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.31],
+      "position": [-8.71, 0, 38.26],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_373",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.57],
+      "position": [-6.18, 0, 27.37],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_374",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.16, 1.22],
+      "position": [-30.51, 0, -7.48],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_375",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [-18.47, 0, -20.94],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_376",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.46, 1.53],
+      "position": [34.92, 0, -14.36],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_377",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.34],
+      "position": [-35.14, 0, 16.22],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_378",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.19, 1.26],
+      "position": [-21.7, 0, -21.24],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_379",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.32],
+      "position": [-8.51, 0, 28.24],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_380",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.45, 1.53],
+      "position": [35.75, 0, -3.76],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_381",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.44, 1.52],
+      "position": [8.58, 0, 32.55],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_382",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.43],
+      "position": [-6.53, 0, 32.21],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_383",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.48, 1.56],
+      "position": [27.02, 0, -28.79],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_384",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.17, 1.23],
+      "position": [26.34, 0, 28.73],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_385",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.16, 1.23],
+      "position": [-29.24, 0, -6.57],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_386",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.44, 1.52],
+      "position": [-26.47, 0, -26.0],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_387",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.29],
+      "position": [-5.84, 0, 13.79],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_388",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.23, 1.29],
+      "position": [-26.77, 0, -21.0],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_389",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.47],
+      "position": [34.28, 0, 25.28],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_390",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.32, 1.39],
+      "position": [-24.54, 0, 4.14],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_391",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.39, 1.46],
+      "position": [39.25, 0, 32.0],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_392",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.14, 1.2],
+      "position": [-26.93, 0, -8.53],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_393",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.14, 1.2],
+      "position": [-15.35, 0, 24.4],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_394",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.49],
+      "position": [18.35, 0, -12.57],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_395",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.28],
+      "position": [-8.58, 0, 13.6],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_396",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.44, 1.52],
+      "position": [37.62, 0, 2.11],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_397",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.27],
+      "position": [34.35, 0, 17.59],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_398",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.43],
+      "position": [13.44, 0, 9.11],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_399",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.39, 1.46],
+      "position": [-29.83, 0, 8.7],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_400",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.24],
+      "position": [5.14, 0, -27.07],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_401",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.21, 1.27],
+      "position": [34.97, 0, -25.75],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_402",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.38, 1.45],
+      "position": [4.19, 0, -26.97],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_403",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.44, 1.51],
+      "position": [5.02, 0, 23.29],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_404",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.41, 1.48],
+      "position": [-13.22, 0, 19.21],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_405",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.14, 1.2],
+      "position": [-19.7, 0, -28.1],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_406",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.51, 1.59],
+      "position": [-30.11, 0, 3.84],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_407",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.41, 1.49],
+      "position": [-33.91, 0, -5.98],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_408",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.34],
+      "position": [10.2, 0, -16.03],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_409",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.48, 1.56],
+      "position": [37.95, 0, -27.59],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_410",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.3, 1.37],
+      "position": [25.02, 0, 10.53],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_411",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.43, 1.51],
+      "position": [16.8, 0, 27.67],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_412",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.14, 1.2],
+      "position": [-7.45, 0, -17.27],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_413",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.36],
+      "position": [24.69, 0, 25.05],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_414",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.34],
+      "position": [35.6, 0, -13.59],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_415",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.43, 1.5],
+      "position": [15.64, 0, 16.55],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_416",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.48, 1.55],
+      "position": [-21.44, 0, 34.17],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_417",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [-14.77, 0, 22.56],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_418",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.11, 1.17],
+      "position": [28.14, 0, -1.9],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_419",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.23, 1.3],
+      "position": [23.9, 0, -15.15],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_420",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.47],
+      "position": [33.17, 0, 27.54],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_421",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.19],
+      "position": [-29.18, 0, 5.89],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_422",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [-24.17, 0, -9.1],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_423",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.32, 1.39],
+      "position": [16.89, 0, -24.38],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_424",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.25, 1.31],
+      "position": [-35.16, 0, -24.64],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_425",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.11, 1.17],
+      "position": [32.19, 0, 39.52],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_426",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.32],
+      "position": [28.28, 0, -14.68],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_427",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.23, 1.29],
+      "position": [-26.14, 0, -7.28],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_428",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [19.91, 0, 12.84],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_429",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.37, 1.44],
+      "position": [20.92, 0, 10.06],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_430",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.3, 1.37],
+      "position": [20.98, 0, 28.35],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_431",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.19],
+      "position": [33.65, 0, -11.8],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_432",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.39, 1.47],
+      "position": [-16.86, 0, 8.18],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_433",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.31],
+      "position": [-33.15, 0, -5.86],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_434",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.26],
+      "position": [-2.91, 0, -17.07],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_435",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [19.4, 0, -8.95],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_436",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.43],
+      "position": [-22.13, 0, -8.97],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_437",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.45, 1.53],
+      "position": [-12.22, 0, 8.86],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_438",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.17, 1.23],
+      "position": [23.76, 0, 14.62],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_439",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.21],
+      "position": [-37.13, 0, -20.89],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_440",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.17, 1.23],
+      "position": [-14.67, 0, 18.06],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_441",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.31, 1.38],
+      "position": [8.96, 0, 15.66],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_442",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.3, 1.37],
+      "position": [-10.73, 0, 18.33],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_443",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.3],
+      "position": [39.89, 0, 28.02],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_444",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [-19.14, 0, -23.07],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_445",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.23, 1.3],
+      "position": [-19.5, 0, 30.77],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_446",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.51, 1.59],
+      "position": [-22.0, 0, -8.38],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_447",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.41, 1.49],
+      "position": [-18.85, 0, -20.94],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_448",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.34],
+      "position": [30.45, 0, -5.52],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_449",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.21],
+      "position": [-37.54, 0, -22.5],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_450",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.14, 1.2],
+      "position": [27.65, 0, 31.21],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_451",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.41, 1.49],
+      "position": [7.43, 0, 13.33],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_452",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.41],
+      "position": [35.58, 0, -15.93],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_453",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.19],
+      "position": [-21.56, 0, 30.48],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_454",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.49],
+      "position": [31.96, 0, 5.54],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_455",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.3],
+      "position": [27.93, 0, 2.39],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_456",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.44],
+      "position": [24.39, 0, 7.76],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_457",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.24],
+      "position": [-8.39, 0, 14.21],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_458",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.49, 1.57],
+      "position": [-8.02, 0, 31.0],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_459",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.31, 1.38],
+      "position": [9.94, 0, 24.12],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_460",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.43],
+      "position": [31.04, 0, -0.92],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_461",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.44],
+      "position": [-19.52, 0, -29.0],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_462",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.31],
+      "position": [-21.69, 0, 4.47],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_463",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.49, 1.57],
+      "position": [25.08, 0, 38.02],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_464",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.23, 1.3],
+      "position": [37.44, 0, 20.37],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_465",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.36],
+      "position": [-22.37, 0, 31.38],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_466",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.58],
+      "position": [-36.44, 0, -25.8],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_467",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.46, 1.54],
+      "position": [36.41, 0, -16.6],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_468",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.19, 1.25],
+      "position": [-37.89, 0, -20.05],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_469",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.11, 1.17],
+      "position": [5.91, 0, 11.82],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_470",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.33],
+      "position": [-21.51, 0, 11.42],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_471",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [14.1, 0, 16.45],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_472",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.49],
+      "position": [-14.65, 0, 30.01],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_473",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.35],
+      "position": [16.7, 0, 22.65],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_474",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.43],
+      "position": [28.3, 0, 11.89],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_475",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.14, 1.2],
+      "position": [17.96, 0, -23.24],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_476",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.37, 1.44],
+      "position": [-20.13, 0, 24.55],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_477",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.5],
+      "position": [12.13, 0, 10.53],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_478",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.23, 1.3],
+      "position": [28.95, 0, 10.76],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_479",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.47],
+      "position": [6.66, 0, -18.59],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_480",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.51, 1.59],
+      "position": [35.11, 0, 19.22],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_481",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [19.94, 0, -1.92],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_482",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.19],
+      "position": [25.03, 0, 13.04],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_483",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.44],
+      "position": [23.11, 0, 23.96],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_484",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.35],
+      "position": [20.51, 0, 23.84],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_485",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.43, 1.51],
+      "position": [19.1, 0, 1.88],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_486",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.25],
+      "position": [15.28, 0, 34.44],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_487",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.21, 1.27],
+      "position": [-35.24, 0, -9.35],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_488",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.58],
+      "position": [-30.87, 0, -13.97],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_489",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.43, 1.51],
+      "position": [-29.4, 0, -12.47],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_490",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [-9.89, 0, 32.53],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_491",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.21],
+      "position": [-29.71, 0, -1.85],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_492",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.33],
+      "position": [11.26, 0, -18.83],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_493",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.42],
+      "position": [39.53, 0, -1.88],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_494",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.58],
+      "position": [14.48, 0, 36.11],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_495",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.3],
+      "position": [-28.13, 0, -4.05],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_496",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.29],
+      "position": [30.15, 0, -22.4],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_497",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.43, 1.51],
+      "position": [-21.21, 0, 32.72],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_498",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.1, 1.16],
+      "position": [29.41, 0, -15.51],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_499",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.35],
+      "position": [18.58, 0, -5.73],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_500",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.47],
+      "position": [-39.24, 0, -22.26],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_501",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.47, 1.55],
+      "position": [1.51, 0, -28.74],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_502",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.24],
+      "position": [-30.16, 0, 7.01],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_503",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.46, 1.54],
+      "position": [-31.22, 0, 7.67],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_504",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.42],
+      "position": [-33.61, 0, 2.61],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_505",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.43, 1.5],
+      "position": [11.73, 0, 22.92],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_506",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.16, 1.22],
+      "position": [4.12, 0, -27.55],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_507",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.48, 1.56],
+      "position": [35.9, 0, -4.07],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_508",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.19, 1.25],
+      "position": [35.55, 0, -24.7],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_509",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.28],
+      "position": [-32.78, 0, -3.5],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_510",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.25, 1.32],
+      "position": [16.33, 0, 16.84],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_511",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.31, 1.38],
+      "position": [-8.86, 0, -16.62],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_512",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.44, 1.52],
+      "position": [-36.84, 0, 38.14],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_513",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [-39.64, 0, -3.91],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_514",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.19],
+      "position": [33.84, 0, 24.42],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_515",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.51, 1.59],
+      "position": [-1.17, 0, -25.01],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_516",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.33],
+      "position": [-22.11, 0, -9.71],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_517",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.43],
+      "position": [-25.21, 0, 19.56],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_518",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.19],
+      "position": [29.7, 0, 29.19],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_519",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.1, 1.16],
+      "position": [-26.43, 0, -2.01],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_520",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.41, 1.48],
+      "position": [-16.53, 0, -23.77],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_521",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [36.25, 0, -2.37],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_522",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.43],
+      "position": [13.19, 0, 34.47],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_523",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.43, 1.51],
+      "position": [4.87, 0, 19.77],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_524",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.36],
+      "position": [0.31, 0, -17.83],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_525",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.49],
+      "position": [3.36, 0, 28.72],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_526",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.36],
+      "position": [-18.17, 0, -26.98],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_527",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.11, 1.17],
+      "position": [29.1, 0, -16.74],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_528",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.14, 1.2],
+      "position": [8.0, 0, 34.1],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_529",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.35],
+      "position": [38.37, 0, 13.29],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_530",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.3, 1.37],
+      "position": [12.68, 0, 12.67],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_531",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.33],
+      "position": [21.02, 0, 0.25],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_532",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.34],
+      "position": [21.24, 0, 32.22],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_533",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.5],
+      "position": [2.62, 0, 39.96],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_534",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.21],
+      "position": [29.81, 0, 11.04],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_535",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.47, 1.54],
+      "position": [5.97, 0, 22.15],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_536",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.1, 1.16],
+      "position": [17.05, 0, 37.17],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_537",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.36],
+      "position": [-23.96, 0, 17.42],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_538",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.47],
+      "position": [38.47, 0, -3.5],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_539",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.3],
+      "position": [-6.54, 0, -28.18],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_540",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [-7.71, 0, -12.46],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_541",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.27],
+      "position": [9.67, 0, 30.92],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_542",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.21, 1.28],
+      "position": [24.11, 0, 14.14],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_543",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.47, 1.54],
+      "position": [-29.57, 0, 22.16],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_544",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.25, 1.31],
+      "position": [-18.17, 0, 34.32],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_545",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.58],
+      "position": [8.13, 0, 12.32],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_546",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.11, 1.17],
+      "position": [21.44, 0, -27.34],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_547",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.26],
+      "position": [-30.1, 0, 10.53],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_548",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.18],
+      "position": [35.45, 0, -13.13],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_549",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.21],
+      "position": [33.67, 0, -7.33],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_550",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.1, 1.15],
+      "position": [-34.63, 0, -17.14],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_551",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.3, 1.37],
+      "position": [21.8, 0, -7.71],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_552",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.09, 1.15],
+      "position": [-13.76, 0, 9.89],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_553",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.34],
+      "position": [36.34, 0, -13.57],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_554",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.38, 1.45],
+      "position": [-17.43, 0, 20.08],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_555",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [31.62, 0, 31.28],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_556",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.48, 1.56],
+      "position": [-15.93, 0, -17.42],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_557",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.58],
+      "position": [-39.42, 0, -23.45],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_558",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.46, 1.54],
+      "position": [28.48, 0, 32.46],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_559",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.38, 1.45],
+      "position": [-36.58, 0, 16.52],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_560",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.47, 1.55],
+      "position": [-8.28, 0, 8.97],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_561",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.34],
+      "position": [-16.05, 0, 30.91],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_562",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.23, 1.3],
+      "position": [2.63, 0, 29.08],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_563",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.51, 1.59],
+      "position": [-31.34, 0, -20.53],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_564",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.39, 1.46],
+      "position": [33.59, 0, -10.46],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_565",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [-0.07, 0, -24.91],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_566",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.26],
+      "position": [21.4, 0, 10.52],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_567",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.46, 1.54],
+      "position": [37.88, 0, -23.89],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_568",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.58],
+      "position": [12.86, 0, -29.04],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_569",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.35],
+      "position": [-14.01, 0, 29.41],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_570",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.21],
+      "position": [-18.97, 0, 24.5],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_571",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.47],
+      "position": [-29.71, 0, 33.54],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_572",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.52, 1.6],
+      "position": [-30.49, 0, 33.63],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_573",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.42],
+      "position": [14.93, 0, 28.0],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_574",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.42],
+      "position": [21.0, 0, 13.93],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_575",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.23, 1.29],
+      "position": [16.78, 0, -19.32],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_576",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.25],
+      "position": [17.46, 0, 13.12],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_577",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.49],
+      "position": [-33.62, 0, 29.65],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_578",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.36],
+      "position": [10.86, 0, 12.55],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_579",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.31, 1.37],
+      "position": [26.09, 0, -27.73],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_580",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [-24.84, 0, 5.66],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_581",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.17, 1.23],
+      "position": [15.86, 0, 14.95],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_582",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.32],
+      "position": [38.22, 0, 32.67],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_583",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [14.04, 0, 13.7],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_584",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.25, 1.32],
+      "position": [-33.43, 0, -15.73],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_585",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.49, 1.57],
+      "position": [1.67, 0, -18.58],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_586",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.47],
+      "position": [-16.58, 0, 20.17],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_587",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.44],
+      "position": [11.6, 0, 22.37],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_588",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.48],
+      "position": [22.98, 0, 5.32],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_589",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.41, 1.49],
+      "position": [-0.8, 0, -22.16],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_590",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.51, 1.59],
+      "position": [-37.49, 0, 39.52],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_591",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.09, 1.15],
+      "position": [-33.96, 0, 27.34],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_592",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.16, 1.22],
+      "position": [15.2, 0, -23.49],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_593",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.49, 1.56],
+      "position": [39.86, 0, 32.69],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_594",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [-16.54, 0, -27.1],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_595",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.14, 1.2],
+      "position": [22.72, 0, -24.77],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_596",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.38, 1.45],
+      "position": [12.07, 0, 27.82],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_597",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.24],
+      "position": [-9.49, 0, -11.94],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_598",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.26],
+      "position": [-37.7, 0, -2.66],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_599",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.48, 1.56],
+      "position": [-27.3, 0, -8.1],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_600",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.45, 1.52],
+      "position": [36.37, 0, 14.86],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_601",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.25, 1.32],
+      "position": [-23.04, 0, -3.17],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_602",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [-30.32, 0, -4.37],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_603",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.33],
+      "position": [38.28, 0, 20.91],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_604",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.39, 1.46],
+      "position": [37.53, 0, -1.35],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_605",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.47, 1.55],
+      "position": [-36.37, 0, 8.66],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_606",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.36],
+      "position": [34.04, 0, -26.43],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_607",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.19],
+      "position": [-16.15, 0, 13.17],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_608",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.41, 1.49],
+      "position": [30.43, 0, 18.0],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_609",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.45, 1.53],
+      "position": [21.43, 0, 38.67],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_610",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.48],
+      "position": [10.16, 0, 19.65],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_611",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.58],
+      "position": [-22.35, 0, 38.98],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_612",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.26, 1.33],
+      "position": [17.45, 0, 34.12],
+      "collider": false,
+      "tint": [132, 118, 100, 255]
+    },
+    {
+      "name": "trigo_613",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.37, 1.45],
+      "position": [-29.69, 0, 26.13],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_614",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [26.08, 0, 39.03],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_615",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.3],
+      "position": [30.5, 0, 20.01],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_616",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.09, 1.15],
+      "position": [22.31, 0, 32.75],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_617",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.49],
+      "position": [34.63, 0, -3.95],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_618",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.23, 1.3],
+      "position": [-28.29, 0, -20.36],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_619",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.49],
+      "position": [-36.78, 0, -22.7],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_620",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.45, 1.52],
+      "position": [4.96, 0, 15.65],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_621",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.13, 1.19],
+      "position": [39.91, 0, 21.2],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_622",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.48, 1.56],
+      "position": [36.78, 0, 10.64],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_623",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.21, 1.27],
+      "position": [-12.73, 0, 22.68],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_624",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.39, 1.47],
+      "position": [0.78, 0, -25.8],
+      "collider": false,
+      "tint": [131, 117, 99, 255]
+    },
+    {
+      "name": "trigo_625",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.31, 1.38],
+      "position": [-20.89, 0, -26.57],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_626",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.21],
+      "position": [37.45, 0, 4.09],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_627",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.47],
+      "position": [-4.3, 0, 18.87],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_628",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [26.48, 0, 11.74],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_629",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [30.75, 0, -22.08],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_630",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.24],
+      "position": [22.5, 0, -17.88],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_631",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.35],
+      "position": [5.76, 0, 18.8],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_632",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [22.05, 0, -16.46],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_633",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.31, 1.37],
+      "position": [21.18, 0, 5.84],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_634",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [-16.54, 0, -23.98],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_635",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.3, 1.37],
+      "position": [-28.42, 0, -12.37],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_636",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.46, 1.53],
+      "position": [-0.81, 0, -20.73],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_637",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.19, 1.25],
+      "position": [36.75, 0, -29.53],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_638",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.12, 1.18],
+      "position": [-36.61, 0, 21.17],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_639",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.16, 1.22],
+      "position": [-21.02, 0, 12.33],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_640",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.46, 1.54],
+      "position": [-32.85, 0, 27.4],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_641",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.49],
+      "position": [-30.49, 0, 31.54],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_642",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.36, 1.43],
+      "position": [-36.62, 0, 6.84],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_643",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.47],
+      "position": [-23.63, 0, 15.89],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_644",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.23, 1.29],
+      "position": [0.76, 0, -26.0],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_645",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.14, 1.2],
+      "position": [16.14, 0, -23.3],
+      "collider": false,
+      "tint": [134, 120, 102, 255]
+    },
+    {
+      "name": "trigo_646",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.35],
+      "position": [-3.46, 0, 29.58],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_647",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.4, 1.48],
+      "position": [-19.87, 0, -14.16],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_648",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [39.06, 0, 16.38],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_649",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.28, 1.35],
+      "position": [30.95, 0, 26.37],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_650",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.42],
+      "position": [15.75, 0, 14.56],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_651",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.5],
+      "position": [-16.43, 0, 38.5],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_652",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.37, 1.45],
+      "position": [19.65, 0, -2.93],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_653",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.3],
+      "position": [-25.71, 0, -1.59],
+      "collider": false,
+      "tint": [148, 134, 116, 255]
+    },
+    {
+      "name": "trigo_654",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.42],
+      "position": [-3.02, 0, -15.5],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_655",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.37, 1.44],
+      "position": [21.24, 0, 11.66],
+      "collider": false,
+      "tint": [133, 119, 101, 255]
+    },
+    {
+      "name": "trigo_656",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.44, 1.52],
+      "position": [20.31, 0, 31.7],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_657",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.41, 1.48],
+      "position": [-16.47, 0, 29.55],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_658",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.2, 1.27],
+      "position": [-28.33, 0, -14.32],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_659",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.51, 1.59],
+      "position": [-39.96, 0, 8.59],
+      "collider": false,
+      "tint": [140, 126, 108, 255]
+    },
+    {
+      "name": "trigo_660",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.29, 1.36],
+      "position": [33.27, 0, 20.29],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_661",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.5],
+      "position": [-11.62, 0, -27.72],
+      "collider": false,
+      "tint": [138, 124, 106, 255]
+    },
+    {
+      "name": "trigo_662",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.45, 1.53],
+      "position": [-16.7, 0, -20.41],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_663",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.39, 1.46],
+      "position": [18.32, 0, -18.98],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_664",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.17, 1.24],
+      "position": [0.99, 0, -15.24],
+      "collider": false,
+      "tint": [128, 114, 96, 255]
+    },
+    {
+      "name": "trigo_665",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.32, 1.39],
+      "position": [-34.68, 0, 0.21],
+      "collider": false,
+      "tint": [135, 121, 103, 255]
+    },
+    {
+      "name": "trigo_666",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.1, 1.16],
+      "position": [-31.75, 0, 25.94],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_667",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.09, 1.15],
+      "position": [13.85, 0, -12.31],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_668",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.14, 1.2],
+      "position": [5.68, 0, -21.66],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_669",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.15, 1.21],
+      "position": [-39.13, 0, 22.47],
+      "collider": false,
+      "tint": [126, 112, 94, 255]
+    },
+    {
+      "name": "trigo_670",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [-5.06, 0, -24.11],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_671",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.45, 1.52],
+      "position": [-34.17, 0, 32.33],
+      "collider": false,
+      "tint": [144, 130, 112, 255]
+    },
+    {
+      "name": "trigo_672",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.49, 1.56],
+      "position": [16.43, 0, -17.28],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_673",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.23, 1.29],
+      "position": [-33.93, 0, -19.5],
+      "collider": false,
+      "tint": [143, 129, 111, 255]
+    },
+    {
+      "name": "trigo_674",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.47, 1.54],
+      "position": [16.34, 0, 9.64],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_675",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.49],
+      "position": [2.65, 0, 28.33],
+      "collider": false,
+      "tint": [147, 133, 115, 255]
+    },
+    {
+      "name": "trigo_676",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.34, 1.41],
+      "position": [25.47, 0, 3.91],
+      "collider": false,
+      "tint": [145, 131, 113, 255]
+    },
+    {
+      "name": "trigo_677",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.42, 1.49],
+      "position": [-27.44, 0, 26.03],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_678",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.47, 1.55],
+      "position": [33.29, 0, 26.58],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_679",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.35, 1.42],
+      "position": [39.08, 0, 34.91],
+      "collider": false,
+      "tint": [127, 113, 95, 255]
+    },
+    {
+      "name": "trigo_680",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.5, 1.58],
+      "position": [-23.25, 0, -25.2],
+      "collider": false,
+      "tint": [130, 116, 98, 255]
+    },
+    {
+      "name": "trigo_681",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.32, 1.39],
+      "position": [-6.08, 0, 39.34],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_682",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.37, 1.44],
+      "position": [-11.24, 0, -25.66],
+      "collider": false,
+      "tint": [129, 115, 97, 255]
+    },
+    {
+      "name": "trigo_683",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.17, 1.24],
+      "position": [-11.9, 0, 19.3],
+      "collider": false,
+      "tint": [142, 128, 110, 255]
+    },
+    {
+      "name": "trigo_684",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.27, 1.34],
+      "position": [-18.28, 0, 16.72],
+      "collider": false,
+      "tint": [149, 135, 117, 255]
+    },
+    {
+      "name": "trigo_685",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.41, 1.48],
+      "position": [16.3, 0, 17.72],
+      "collider": false,
+      "tint": [141, 127, 109, 255]
+    },
+    {
+      "name": "trigo_686",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.33, 1.4],
+      "position": [-25.77, 0, 32.1],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    },
+    {
+      "name": "trigo_687",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.31],
+      "position": [-11.76, 0, 25.7],
+      "collider": false,
+      "tint": [139, 125, 107, 255]
+    },
+    {
+      "name": "trigo_688",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.18, 1.24],
+      "position": [-17.3, 0, -11.68],
+      "collider": false,
+      "tint": [146, 132, 114, 255]
+    },
+    {
+      "name": "trigo_689",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.29],
+      "position": [25.67, 0, -23.92],
+      "collider": false,
+      "tint": [137, 123, 105, 255]
+    },
+    {
+      "name": "trigo_690",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.24, 1.31],
+      "position": [0.79, 0, -12.73],
+      "collider": false,
+      "tint": [136, 122, 104, 255]
+    },
+    {
+      "name": "trigo_691",
+      "sprite": "textures/spr_trigo.png",
+      "size": [1.22, 1.28],
+      "position": [22.39, 0, 31.33],
+      "collider": false,
+      "tint": [150, 136, 118, 255]
+    }
+  ],
+  "triggers": [
+    {
+      "name": "volver",
+      "position": [0, 0, 31.0],
+      "size": [8, 3, 1.0],
+      "do": [
+        { "play_sound": "audio/hojas.wav", "volume": 0.6 },
+        { "goto_scene": "scenes/feria.json", "position": [7.0, 0, -40.0], "yaw": 180 }
+      ]
+    },
+    {
+      "name": "llega_tren",
+      "position": [0, 0, 1.0],
+      "size": [24, 3, 2.0],
+      "once": true,
+      "if": {
+        "all": [{ "flag": "nico_estacion" }, { "not": { "flag": "capitulo2_fin" } }]
+      },
+      "do": [
+        { "play_sound": "audio/tren.wav", "volume": 1.0 },
+        { "set_flag": "tren_llega" },
+        { "look_at": "locomotora", "speed": 2.0 },
+        { "message": "Una luz entre el trigo. El tren de las 23:40.", "seconds": 4 }
+      ]
+    },
+    {
+      "name": "anden_vacio",
+      "position": [0, 0, 6.5],
+      "size": [24, 3, 1.0],
+      "once": true,
+      "if": { "not": { "flag": "nico_estacion" } },
+      "do": [{ "message": "La estacion esta vacia.\nEl reloj no se mueve.", "seconds": 4 }]
+    }
+  ],
+  "emitters": []
+}

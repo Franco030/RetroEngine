@@ -9,7 +9,7 @@
     {
       "if": { "flag": "cripta_abierta" },
       "once": true,
-      "lines": ["Asi que bajaste.\nYo tambien bajaba, hace anos."]
+      "lines": ["Asi que bajaste.\nYo tambien bajaba, hace años."]
     },
     {
       "key": "organo",

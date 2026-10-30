@@ -1,0 +1,27 @@
+{
+  "entries": [
+    {
+      "if": {
+        "all": [{ "flag": "clara_tiovivo_vista" }, { "not": { "flag": "pista_clara" } }]
+      },
+      "lines": [
+        "Bajas mareado.",
+        "En el caballo pequeño, de pie, habia una niña.\nZapatos rojos. Te sonreia.",
+        "La miraste y ya no estaba.",
+        "Clara."
+      ],
+      "do": [{ "set_flag": "pista_clara" }, { "add_flag": "pistas" }]
+    },
+    {
+      "if": { "not": { "flag": "pista_anciano" } },
+      "lines": [
+        "Bajas mareado. Las luces siguen dando vueltas.",
+        "Mientras girabas, entre la gente, habia un viejo con un farol.\nTe miraba.",
+        "Como el anciano del bosque.",
+        "Ahora no hay nadie alli."
+      ],
+      "do": [{ "set_flag": "pista_anciano" }, { "add_flag": "pistas" }]
+    },
+    { "lines": ["Bajas. Por un momento, todo sigue girando."] }
+  ]
+}

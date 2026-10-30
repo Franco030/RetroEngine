@@ -30,7 +30,7 @@ struct ActionInfo {
   const char* title;
 };
 
-constexpr std::array<ActionInfo, 13> kActions{{
+constexpr std::array<ActionInfo, 15> kActions{{
     {"dialogue", "Dialogo"},
     {"look_at", "Mirar hacia"},
     {"scare", "Susto de camara"},
@@ -44,6 +44,8 @@ constexpr std::array<ActionInfo, 13> kActions{{
     {"stop_music", "Parar musica"},
     {"lock_movement", "Quieto (solo mirar)"},
     {"title_screen", "Pantalla de inicio"},
+    {"ride", "Montarse"},
+    {"shooting", "Tiro al blanco"},
 }};
 
 const ActionInfo* FindAction(const Json& action) {
@@ -106,6 +108,11 @@ Json NewAction(const std::string& key, const std::vector<std::string>& scenes,
     return Json::object({{"lock_movement", true}});
   if (key == "title_screen")
     return Json::object({{"title_screen", true}});
+  if (key == "ride")
+    return Json::object({{"ride", ""}, {"seat", Vec3Json({0.0f, 1.0f, 0.0f})}});
+  if (key == "shooting")
+    return Json::object({{"shooting", "diana_"}, {"position", Vec3Json({0.0f, 0.0f, 0.0f})},
+                         {"seconds", 20}, {"flag", "puntos"}});
   return Json::object({{"stop_music", true}});
 }
 
@@ -400,6 +407,32 @@ void EditorApp::EditAction(Json& a) {
   } else if (key == "lock_movement") {
     FieldBool("Sin andar", a, nullptr, "lock_movement", true, false);
     ImGui::TextDisabled("Activado: puede mirar pero no andar. Se suelta al cambiar de escena.");
+
+  } else if (key == "ride") {
+    FieldFile("Entidad", a, nullptr, "ride", EntityNames(), false, false);
+    FieldVec3("Asiento (mundo, al subir)", a, nullptr, "seat", {0.0f, 1.0f, 0.0f}, 0.05f, false);
+    bool salida = a.contains("exit");
+    if (ImGui::Checkbox("Elegir donde baja", &salida)) {
+      BeginChange(0);
+      if (salida)
+        a["exit"] = Vec3Json({0.0f, 0.0f, 0.0f});
+      else
+        a.erase("exit");
+      MarkChanged(0);
+    }
+    if (a.contains("exit"))
+      FieldVec3("Baja en", a, nullptr, "exit", {0.0f, 0.0f, 0.0f}, 0.05f, false);
+    FieldFloat("Segundos (0 = hasta E)", a, nullptr, "seconds", 0.0f, 0.5f, 0.0f, 600.0f);
+    FieldText("Bandera mientras va", a, nullptr, "flag");
+    FieldFile("Dialogo al bajar", a, nullptr, "after", dialogueList_, true, false);
+
+  } else if (key == "shooting") {
+    FieldText("Dianas (prefijo)", a, nullptr, "shooting");
+    FieldVec3("Donde se pone", a, nullptr, "position", {0.0f, 0.0f, 0.0f}, 0.05f, false);
+    FieldFloat("Mirando a (grados)", a, nullptr, "yaw", 0.0f, 0.5f, -360.0f, 360.0f);
+    FieldFloat("Segundos", a, nullptr, "seconds", 20.0f, 0.5f, 1.0f, 600.0f);
+    FieldText("Bandera (aciertos)", a, nullptr, "flag");
+    FieldFile("Dialogo al acabar", a, nullptr, "after", dialogueList_, true, false);
 
   } else if (key == "title_screen") {
     ImGui::TextDisabled("Con un 'Cambiar de escena' en la misma lista: al llegar sale la\n"

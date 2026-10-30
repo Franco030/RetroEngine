@@ -61,6 +61,8 @@ void ActionRunner::Run(const std::vector<Action>& actions) {
             [&](const action::Scare& s) { shot_ = CameraShot{s.entity, s.point, s.speed, s.fov}; },
             [&](const action::LockMovement& l) { player_.SetRooted(l.locked); },
             [&](const action::TitleScreen&) { titleRequested_ = true; },
+            [&](const action::Ride& r) { ride_ = r; },
+            [&](const action::Shooting& s) { shooting_ = s; },
         },
         a);
   }

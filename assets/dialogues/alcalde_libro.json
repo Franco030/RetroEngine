@@ -1,0 +1,15 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "pista_libro" } },
+      "lines": [
+        "Un libro de cuentas. No: de forasteros.",
+        "Un nombre cada quince años, mas o menos.\nNinguno dice de donde vino.",
+        "La ultima casilla esta vacia y recuadrada en rojo.",
+        "Al margen, con la letra del alcalde: \"23:40\"."
+      ],
+      "do": [{ "set_flag": "pista_libro" }, { "add_flag": "pistas" }]
+    },
+    { "lines": ["La casilla vacia te espera."] }
+  ]
+}

@@ -9,7 +9,7 @@
       "if": { "flag": "fe_zapato" },
       "once": true,
       "key": "zapato",
-      "lines": ["Un zapato rojo? No, no...\nMi nina lleva zapatos negros. Los de los domingos."]
+      "lines": ["Un zapato rojo? No, no...\nMi niña lleva zapatos negros. Los de los domingos."]
     },
     { "lines": ["Da vueltas y vueltas.\nMirala que contenta."] }
   ]

@@ -362,6 +362,27 @@ int main(int argc, char** argv) {
     std::uint64_t seenGeneration = scenes.Generation();
     bool firstPerson = true;
     std::optional<Focus> dialogueFocus; // a quien se mira mientras dura un dialogo
+    // Montado en algo (ride): el asiento va en coordenadas de la entidad, asi gira y sube con ella.
+    struct Riding {
+      std::string entity;
+      Vector3 local;
+      Vector3 exit;
+      float seconds = 0.0f;
+      std::string flag;
+      std::string after; // dialogo al terminar
+      float age = 0.0f;
+    };
+    std::optional<Riding> riding;
+    // Tiro al blanco en curso (shooting): las dianas acertadas vuelven a salir al rato.
+    struct Gallery {
+      std::string prefix;
+      float left = 0.0f;
+      std::string flag;
+      std::string after; // dialogo al terminar
+      int score = 0;
+      std::vector<std::pair<retro::Entity*, float>> hidden; // diana y segundos para volver
+    };
+    std::optional<Gallery> gallery;
     float zoom = 0.0f;                  // grados que se ha estrechado la vista ahora
     LetterSounds letterSounds;
     float dialogueAge = 0.0f; // tiempo en la pagina actual
@@ -648,6 +669,8 @@ int main(int argc, char** argv) {
     auto onSceneChanged = [&]() {
       zoom = 0.0f; // la escena nueva ya puso su campo de vision
       player.SetRooted(false); // lock_movement dura solo lo que la escena
+      riding.reset();          // y lo mismo ir montado o el tiro al blanco
+      gallery.reset();
       if (leaving) {
         screen = *std::exchange(leaving, std::nullopt);
         if (screen == Screen::Playing) {
@@ -815,9 +838,31 @@ int main(int argc, char** argv) {
           dialogueAge = reading ? dialogueAge + dt : 0.0f;
           player.SetFrozen(reading);
 
+          bool eUsed = false; // E ya sirvio para algo este fotograma (bajar, disparar)
           if (firstPerson) {
-            if (!scenes.Transitioning())
+            if (riding) {
+              // montado: los pies siguen el asiento (que gira y sube con la entidad) y solo se
+              // mira; E (con un respiro) o el tiempo bajan en 'exit'
+              riding->age += dt;
+              retro::Scene* s = scenes.CurrentMut();
+              retro::Entity* e = s ? s->Find(riding->entity) : nullptr;
+              if (e)
+                player.PlaceFeet(Vector3Transform(riding->local, e->transform.ToMatrix()));
+              player.UpdateLook();
+              const bool timeUp = riding->seconds > 0.0f && riding->age >= riding->seconds;
+              const bool getOff = IsKeyPressed(KEY_E) && riding->age > 0.8f && !reading;
+              if (!e || timeUp || getOff) {
+                eUsed = getOff;
+                player.PlaceFeet(riding->exit);
+                if (!riding->flag.empty())
+                  state.Set(riding->flag, 0);
+                if (!riding->after.empty())
+                  runner.Run({retro::action::StartDialogue{riding->after}});
+                riding.reset();
+              }
+            } else if (!scenes.Transitioning()) {
               player.Update(dt, colliders);
+            }
             if (dialogueFocus) {
               const float left = player.TurnTowards(dialogueFocus->point, dt, dialogueFocus->rate);
               dialogueFocus->age += dt;
@@ -834,8 +879,46 @@ int main(int argc, char** argv) {
                            firstPerson && !scenes.Transitioning(), engine.Audio());
           scenes.UpdateAudio(dt);
 
+          // --- Tiro al blanco ---
+          if (gallery && !reading) {
+            gallery->left -= dt;
+            for (auto it = gallery->hidden.begin(); it != gallery->hidden.end();) {
+              it->second -= dt;
+              if (it->second <= 0.0f) {
+                it->first->visible = true;
+                it = gallery->hidden.erase(it);
+              } else {
+                ++it;
+              }
+            }
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsKeyPressed(KEY_E)) {
+              eUsed = true;
+              engine.Audio().PlaySfx("audio/corcho.wav", 0.8f);
+              const Vector3 origin = camera.Position();
+              const Vector3 dir = Vector3Normalize(Vector3Subtract(camera.Target(), origin));
+              retro::Scene* s = scenes.CurrentMut();
+              if (retro::Entity* t = s ? s->FindTarget(origin, dir, gallery->prefix) : nullptr) {
+                t->visible = false;
+                gallery->hidden.emplace_back(t, 1.4f);
+                ++gallery->score;
+                engine.Audio().PlaySfx("audio/acierto.wav", 0.7f);
+              }
+            }
+            if (gallery->left <= 0.0f) {
+              for (auto& [t, _] : gallery->hidden)
+                t->visible = true;
+              state.Set(gallery->flag, gallery->score);
+              player.SetRooted(false);
+              if (!gallery->after.empty())
+                runner.Run({retro::action::StartDialogue{gallery->after}});
+              else
+                state.ShowMessage(TextFormat("Tiempo! %d aciertos.", gallery->score), 3.0f);
+              gallery.reset();
+            }
+          }
+
           // --- Triggers ---
-          if (firstPerson && !scenes.Transitioning()) {
+          if (firstPerson && !scenes.Transitioning() && !riding) {
             if (retro::Scene* s = scenes.CurrentMut()) {
               const retro::PlayerSettings& cfg = player.Settings();
               firedActions.clear();
@@ -850,7 +933,7 @@ int main(int argc, char** argv) {
 
           // --- Interaccion (E) ---
           interactPrompt.clear();
-          if (firstPerson && !scenes.Transitioning()) {
+          if (firstPerson && !scenes.Transitioning() && !eUsed && !riding && !gallery) {
             if (retro::Scene* s = scenes.CurrentMut()) {
               const Vector3 origin = camera.Position();
               const Vector3 dir = Vector3Normalize(Vector3Subtract(camera.Target(), origin));
@@ -892,6 +975,24 @@ int main(int argc, char** argv) {
           if (runner.TakeTitleRequest()) { // title_screen: al llegar, la pantalla de inicio
             leaving = Screen::Title;
             arrival = true;
+          }
+          if (auto r = runner.TakeRide()) { // ride: el asiento, en coordenadas de la entidad
+            retro::Scene* s = scenes.CurrentMut();
+            if (retro::Entity* e = s ? s->Find(r->entity) : nullptr) {
+              const Matrix inv = MatrixInvert(e->transform.ToMatrix());
+              riding = Riding{r->entity, Vector3Transform(r->seat, inv),
+                              r->exit.value_or(player.Feet()), r->seconds, r->flag, r->after,
+                              0.0f};
+              if (!r->flag.empty())
+                state.Set(r->flag, 1);
+            } else {
+              std::cerr << "ride: entidad inexistente '" << r->entity << "'\n";
+            }
+          }
+          if (auto g = runner.TakeShooting()) { // shooting: al puesto, quieto, a disparar
+            player.Spawn(g->position, g->yaw);
+            player.SetRooted(true);
+            gallery = Gallery{g->targets, g->seconds, g->flag, g->after, 0, {}};
           }
           if (auto look = runner.TakeShot(); look && state.HasMessage()) {
             retro::Scene* s = scenes.CurrentMut();
@@ -974,6 +1075,17 @@ int main(int argc, char** argv) {
                     4, h - 12.0f, 8.0f, RAYWHITE);
           }
 
+          if (screen == Screen::Playing && riding) {
+            const char* hint = "E: bajar";
+            ui.Text(hint, (w - ui.TextWidth(hint, 9.0f)) * 0.5f, h - 16.0f, 9.0f,
+                    Color{230, 214, 180, 220});
+          }
+          if (screen == Screen::Playing && gallery) {
+            const std::string score = TextFormat("ACIERTOS %d    %02d", gallery->score,
+                                                 static_cast<int>(std::ceil(gallery->left)));
+            ui.Text(score, (w - ui.TextWidth(score, 12.0f)) * 0.5f, 10.0f, 12.0f,
+                    Color{240, 210, 120, 255});
+          }
           if (const auto card = scenes.CurrentCard())
             DrawCard(ui, card->text, card->alpha);
           if (state.HasMessage())

@@ -1,0 +1,5 @@
+# RetroEngine: bola_cristal
+
+newmtl mat_seta
+d 1.000000
+map_Kd ../textures/mat_seta.png

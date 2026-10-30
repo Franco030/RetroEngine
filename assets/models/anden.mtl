@@ -1,0 +1,9 @@
+# RetroEngine: anden
+
+newmtl mat_flor_amarilla
+d 1.000000
+map_Kd ../textures/mat_flor_amarilla.png
+
+newmtl mat_losa
+d 1.000000
+map_Kd ../textures/mat_losa.png

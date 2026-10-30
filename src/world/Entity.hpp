@@ -107,7 +107,55 @@ public:
   };
   std::optional<Idle> idle;
 
+  // Va y viene (suave) entre 'base' y base + 'offset', 'period' segundos la ida y la vuelta:
+  // los patos del tiro al blanco, una barca que se mece. Mueve la posicion de verdad (la
+  // colision y los disparos la siguen). 'phase' (0..1) desfasa unas de otras.
+  struct Slide {
+    Vector3 offset{0.0f, 0.0f, 0.0f};
+    float period = 4.0f;
+    float phase = 0.0f;
+    Vector3 base{0.0f, 0.0f, 0.0f};
+  };
+  std::optional<Slide> slide;
+
+  // Pegada a otra entidad ('to'): la posicion y el giro en Y del JSON son relativos a ella, y la
+  // sigue cuando se mueve o gira (Clara montada en el tiovivo, alguien en una barquilla de la
+  // noria). Sigue derecha aunque la otra gire en X o Z. La resuelve Scene::Update.
+  struct Attach {
+    std::string to;
+    Vector3 position{0.0f, 0.0f, 0.0f};
+    float yaw = 0.0f;
+    Entity* parent = nullptr; // se busca la primera vez (es de la misma escena)
+  };
+  std::optional<Attach> attach;
+
+  // Humo o vapor (la chimenea del tren): bocanadas, sprites de 'texture' (tira de 4 fotogramas),
+  // que salen de 'offset' (relativo a la entidad) a 'rate' por segundo, suben a 'rise' m/s con
+  // algo de deriva y crecen de size.x a size.y durante 'life' segundos. Solo si es visible.
+  struct Smoke {
+    std::shared_ptr<TextureResource> texture;
+    Vector3 offset{0.0f, 0.0f, 0.0f};
+    float rate = 4.0f;
+    float life = 2.5f;
+    float rise = 1.2f;
+    Vector2 size{0.5f, 1.8f};
+    Color tint{200, 200, 205, 255};
+  };
+  std::optional<Smoke> smoke;
+  bool HasPuffs() const noexcept { return !puffs_.empty(); }
+  void DrawSmoke(const Camera3D& camera, Vector3 shade) const;
+
 private:
+  struct Puff {
+    Vector3 position;
+    float age;
+    int frame;
+    Vector2 drift; // deriva lateral (m/s)
+  };
+  std::vector<Puff> puffs_;
+  float puffClock_ = 0.0f;
+  unsigned puffCount_ = 0;
+  float slideTime_ = 0.0f;
   std::string name_;
   float idleTime_ = 0.0f;
   int frames_ = 1;

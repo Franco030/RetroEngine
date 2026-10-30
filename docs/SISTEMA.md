@@ -653,6 +653,8 @@ ejecuta `ActionRunner` en orden.
 | `{ "stop_music": true }` | `fade` (1) | Apaga la música con fundido (el valor de la clave no importa). |
 | `{ "lock_movement": true }` | — | El jugador puede **mirar pero no andar** ni saltar (se para en seco); `false` lo suelta. Se suelta solo al cambiar de escena. Para los momentos en que hay que darse la vuelta porque algo está detrás (los pasos del bosque negro, la emboscada del árbol hueco) y andar los rompería. |
 | `{ "title_screen": true }` | — | Con un `goto_scene` en la misma lista: al llegar a esa escena, en vez de jugar sale la **pantalla de inicio** (§15.6) con "Jugar", que lleva la cámara volando al punto de inicio de la escena. |
+| `{ "ride": "entidad", "seat": [x,y,z] }` | `exit` [x,y,z], `seconds` (0), `flag`, `after` | **Montarse** en algo que se mueve (el tiovivo, la noria). `seat` es un punto del mundo **al subir**: se pasa a coordenadas de la entidad, así gira y sube con ella. El jugador va pegado a ese punto, puede mirar pero no andar (sin física, sin triggers ni interacciones) y baja con **E** (tras un respiro) o a los `seconds` (0 = solo con E), en `exit` (o donde estaba). Mientras va montado, `flag` vale 1: con `showIf` se ven cosas solo desde arriba. Al bajar se abre el diálogo `after`. |
+| `{ "shooting": "prefijo_", "position": [x,y,z] }` | `yaw` (0), `seconds` (20), `flag`, `after` | **Tiro al blanco**: el jugador se planta en `position` mirando a `yaw` (puede mirar, no andar) y dispara con clic o **E** a las entidades visibles cuyo nombre empieza por el prefijo (por su caja de dibujo y si nada las tapa: `Scene::FindTarget`). Cada acierto esconde la diana 1.4 s; arriba se ven los aciertos y los segundos. Al acabar, `flag` guarda los aciertos y se abre el diálogo `after` (en sus líneas, `{flag}` muestra la cuenta y las entradas pueden pedir `"op": ">="`). |
 | `{ "look_at": "entidad" }` o `{ "look_at": [x, y, z] }` | `speed` (6) | **Mirar**: gira la vista del jugador hacia la entidad (a la altura de la cara si es alta como una persona) o el punto, **suave y sin acercar**, mientras dure el mensaje o diálogo que se esté leyendo; si no hay nada que leer, no hace nada. Para enseñar un objeto o a alguien. `speed`: fracción de lo que falta que se recorre por segundo. Va antes del `message` o `dialogue`. |
 | `{ "scare": "entidad" }` o `{ "scare": [x, y, z] }` | `speed` (20), `fov` (30) | **Susto de cámara**: como `look_at`, pero de golpe y **acercando** (la vista se estrecha hasta `fov` grados y al terminar vuelve). Con `speed` 2-3 la vista "se va sola" hacia algo inquietante; con 20 o más es un susto. |
 | `{ "dialogue": "sepulturero" }` | — | Abre el diálogo `assets/dialogues/sepulturero.json` (§11.1). Si ninguna de sus entradas se cumple, no dice nada; si el archivo falla, se avisa por consola. |
@@ -1075,6 +1077,18 @@ el archivo falta o no es válido, se prueba el `.bak` (y se avisa por consola).
 
 ---
 
+### 15.7 Ir montado y el tiro al blanco (`main.cpp`)
+
+- `ActionRunner` guarda las peticiones (`TakeRide`, `TakeShooting`) y `main` las aplica al final
+  del fotograma, como las miradas: es quien lleva al jugador y la cámara.
+- **Montado** (`Riding`): el asiento se guarda en coordenadas de la entidad (`MatrixInvert` de su
+  transformación al subir) y cada fotograma los pies van a `Vector3Transform(asiento, matriz)`
+  (`Player::PlaceFeet`); el jugador solo mira (`Player::UpdateLook`). Bajar con E gasta la E de
+  ese fotograma (`eUsed`), para que no vuelva a subir con la misma pulsación.
+- **Tiro al blanco** (`Gallery`): el jugador queda clavado (`SetRooted`); las dianas acertadas se
+  esconden (`visible = false`) y vuelven a los 1.4 s.
+- Cambiar de escena termina las dos cosas.
+
 ## 16. Assets y caché
 
 ### 16.1 Envoltorios RAII (`src/assets/Resources.hpp`)
@@ -1082,6 +1096,12 @@ el archivo falta o no es válido, se prueba el `.bak` (y se avisa por consola).
 `TextureResource`, `ModelResource`, `ShaderResource`, `FontResource`, `SoundResource`,
 `MusicResource` y `RenderTarget`: cada uno carga en su constructor (y lanza una excepción con la
 ruta si falla) y libera en su destructor. No se copian; se pueden mover.
+
+**La eñe y las tildes**: la fuente pixel art (`dpcomic.ttf`) no las trae. Al cargarla,
+`FontResource` compone las que faltan (ñ, Ñ, á é í ó ú y sus mayúsculas, ü, Ü): copia la letra
+base y le dibuja encima el acento en bloques del tamaño de un "píxel" de la fuente (el ancho del
+punto), y rehace el atlas. Las que la fuente ya dibuje no se tocan. Los diálogos y mensajes
+usan la eñe.
 
 - Las **texturas** usan filtro de punto (texeles nítidos).
 - Los **modelos** `.obj` los lee un lector propio (`src/assets/ObjLoader.cpp`, sin OpenGL:
@@ -1219,6 +1239,9 @@ Todos los campos, con su valor por defecto. Solo `entities` es obligatorio en la
 | `visible` | `true` | |
 | `showIf` | ninguna | Condición o arreglo (§9). |
 | `glitch` | `0` | `true` (0,45 s) o segundos (hasta 5): al aparecer o desaparecer por `showIf`, en vez de hacerlo de golpe, parpadea ~30 veces por segundo, se estrecha, se estira y salta de lado; al llegar se asienta enseguida y al irse va a peor. Al cargar la escena se aplica sin efecto. `Entity::SetShown` / `GlitchAmount`. Editor: "Aparecer con interferencia (s)". |
+| `slide` | ninguno | `{ "offset": [x,y,z], "period": 4, "phase": 0 }`: va y viene, suave, entre su posición y su posición + `offset` (`period` segundos la ida y la vuelta; `phase` 0..1 desfasa unas de otras). Mueve la posición de verdad, así que la colisión y los disparos la siguen (los patos del tiro al blanco). Editor: "Va y viene". |
+| `attach` | ninguno | `{ "to": "entidad" }`: **pegada a otra**. Su `position` y su giro en Y pasan a ser relativos a esa entidad y la sigue cuando se mueve o gira (Clara de pie en un caballo del tiovivo, en una barquilla de la noria); se queda derecha aunque la otra gire en X o Z. `Scene::ApplyAttachments`, tras actualizar las demás (el editor la llama aunque no anime). Editor: "Pegada a otra entidad". |
+| `smoke` | ninguno | `{ "texture": "textures/spr_vapor.png", "offset": [x,y,z], "rate": 4, "life": 2.5, "rise": 1.2, "size": [0.5, 1.8], "tint": [r,g,b,a] }`: **humo o vapor** (la chimenea del tren). Bocanadas (sprites de una tira de 4 fotogramas, uno al azar por bocanada) que salen de `offset` (relativo a la entidad) a `rate` por segundo, suben a `rise` m/s con algo de deriva, crecen de `size[0]` a `size[1]` y duran `life` s. Solo mientras la entidad se ve. Editor: "Humo o vapor". |
 | `spin` | `[0, 0, 0]` | Grados por segundo. |
 | `collider` | según `autoCollide` | `true`, `false`, `"auto"` o `{ "min", "max" }` (§6.2). |
 | `light` | ninguna | `{ "offset": [0,0,0], "color", "intensity", "radius", "flicker", "flickerRate" }` (§18.4). |
@@ -1365,7 +1388,8 @@ entidad que no existe), y aceptan que se les suelte un asset arrastrado.
   condiciones (`if`) y acciones (`do`) (§19.12).
 - **Luz**: posición, color, intensidad, radio, parpadeo y cambios por segundo.
 - **Sonido**: archivo, posición, volumen, radio, distancia mínima.
-- **Escena** (sin nada seleccionado): cámara inicial (con "Usar la vista actual"), inicio del
+- **Escena** (sin nada seleccionado): la sección "Panorama" (horizonte lejano: modelo, tinte,
+  bruma y altura; y sol o luna con su imagen, dirección y tamaño); cámara inicial (con "Usar la vista actual"), inicio del
   jugador (con "Inicio en el centro de la vista"), colisión automática, fondo, niebla, luz
   direccional (dirección, ambiente y fuerza del sol), límites (activar, editar, quitar) y **audio**: música y ambiente
   (añadir, archivo, volumen 0-1, quitar), pasos (volumen y lista de sonidos: añadir, cambiar,
@@ -1384,11 +1408,22 @@ entidad que no existe), y aceptan que se les suelte un asset arrastrado.
   shaders y en el juego no se usa. En la escena, "Ambiente de interior" pone sin sol, ambiente
   0.12, niebla 3-18 y fondo casi negro; "Exterior" vuelve a lo de por defecto. En Límites,
   "Ajustar a la entidad más grande" los deja dentro de la sala.
-- **Animaciones**: los modelos tienen la sección "Animación" con el giro, el balanceo (`idle`),
-  "Mirar al jugador" (`facePlayer`) y "Poner llama encima", que crea una llama animada en lo alto
-  del modelo y, si no tiene, una luz que parpadea. En "Añadir" están "Llama animada" y "Velas con
-  llamas" (el modelo `velas_grupo` con sus tres llamas). En el visor, el botón de reproducir
-  anima la escena (giros, llamas, balanceos).
+- **Animaciones**: la sección "Animación" tiene, para los modelos, el giro, el balanceo (`idle`),
+  "Mirar al jugador" (`facePlayer`), "Poner llama encima" (una llama animada **pegada** en lo
+  alto del modelo y, si no tiene, una luz que parpadea) y "Pegar sprite animado" (llama, velas o
+  luciérnagas: tiras de 4 fotogramas pegadas al modelo con `attach`, que lo siguen si se mueve o
+  gira). Para modelos y sprites: "Pegada a otra entidad" (`attach`), "Va y viene" (`slide`) y
+  "Humo o vapor" (`smoke`). Los sprites tienen sus fotogramas y fps, y todas las entidades "Le
+  afecta la niebla" (`fog`). En "Añadir" están "Llama animada" y "Velas con llamas" (el modelo
+  `velas_grupo` con sus tres llamas). En el visor, el botón de reproducir anima la escena (giros,
+  llamas, balanceos, lo que va y viene, el humo); sin reproducir, lo pegado se dibuja igualmente
+  en su sitio (`Scene::ApplyAttachments`).
+- **Minijuegos y lo demás de la lógica**: todas las acciones están en la lista de acciones
+  (interacciones, triggers, `seen`, diálogos): montarse (`ride`), tiro al blanco (`shooting`),
+  quieto (`lock_movement`), pantalla de inicio (`title_screen`), cambiar de escena con su negro y
+  sus frases (`dark`, `lines`), música con entrada y bucle (`then`), mirar y susto. La validación
+  avisa de un tiro al blanco sin dianas, de un diálogo de después que no existe y de algo pegado
+  a una entidad que no existe; las banderas que ponen `ride` y `shooting` cuentan como escritas.
 
 ### 19.6 Visor
 
@@ -1604,11 +1639,12 @@ que hay y cómo usarlo. En el repositorio quedan dos herramientas para meter con
 | subterraneo | `cripta_interior`, `tuneles`, `sarcofago`, `atril`, `puerta_cripta`, `estatua` (mármol, cementerio), `reja`, `cuerda_pozo`, `escalera_mano`, `trampilla`, `antorcha_pared` (antorcha con un brazo de hierro largo que siempre se mete en la pared deformada; la llama es un sprite), `osamenta` (calavera y huesos para los nichos), `calavera_vela` (vela que sale por la coronilla y ojos encendidos; la llama es el sprite `spr_llama`). |
 | bosque historia | Los modelos que cuentan el capítulo del bosque: el campamento (`tienda`, `tienda_caida`, `fogata`, `mochila`, `farol_suelo`, `radio`, `botas`, `cartel_busca` con su textura `mat_cartel_busca`), la aldea vieja (`casa_ruina` con la X roja, `campanario`, `pozo_tapado`, `cruz_pequena`, `tumba_abierta` con su pala) y el final (`arbol_hueco` con un hueco de verdad y su pared interior oscura, `zapatitos`, `farol_mano`). |
 | feria | La feria del despertar: `tiovivo` (la parte que gira, con ocho caballos pintados; uno pequeño con un zapato colgado) y `tiovivo_base` (fija, con la colisión), `noria_rueda` (origen en el buje, para girarla) y `noria_soporte`, `taquilla` con su cartel (`mat_cartel_feria`), `espantapajaros` y `poste_bombillas`; y la feria con gente: `puesto_comida`, `puesto_dulces`, `puesto_tiro`, `guirnalda` y `banderines` (cables combados de x=-4 a 4, entre dos `mastil`), `mesa_larga`, `escenario` y `arco_feria`. Texturas: `mat_toldo` (y `_azul`, `_verde`), `mat_caballo`, `mat_dorado`, `mat_saco`, `mat_bombilla`, `mat_trigo`, `mat_algodon`, `mat_diana`, y el sprite `spr_trigo`. |
+| capitulo2 | Ventosa y alrededores: `interior_casa` (habitación de 6 x 5 x 2.8 m, se sale por la puerta de +Z), `cama`, `armario`, `mesa_cocina`, `silla`, `chimenea`, `estanteria`, `escritorio`, `baul`, `caja_zapatos`; `lamina` (1 x 0.75) y `letrero` (2 x 0.5), cuyo cuadro no tiene textura: la pone la entidad con `"texture"` (los `lam_*.png`: el cartel de la estación, el horario, el mapa de la comarca, los dibujos de Lucía, el libro de forasteros y el reloj); la carpa de la vidente por fuera y por dentro (`carpa`, `carpa_interior`), `mesa_vidente` y `bola_cristal` (emisiva); `anden` (a 0.3 m: se sube sin saltar), `caseta_estacion`, `via` (20 m), `locomotora` y `vagon`; y `pato`, la diana del tiro. Personajes: `fotografo` (Nico, con la cámara) y las texturas `pj_fe_nico`, `pj_fe_sibila`. |
 | panorama | `panorama_montes` (cordillera con nieve de 155-205 m: la nieve es la punta del mismo cono, con los mismos lados y giro, así no parece cortada; colinas delante) y `panorama_bosque` (línea de pinos y árboles secos a 90-115 m, colinas y montes bajos). Bajan hasta y -12 para que nunca se vea la base. |
 | estatuas | `estatua_dolorosa` (iglesia: mujer de mármol con velo, halo de metal, corazón atravesado y lágrimas rojas) y `estatua_orante` (túneles: figura encapuchada arrodillada de piedra gastada con un rosario de hueso). |
 | lago | `lago` (óvalo de 26 x 14 m con orilla; sus cajas de colisión cierran el agua salvo el pasillo del muelle), `muelle` (se pisa, con farol), `barca`, `sauce` (con columpio), `montes` (montañas de fondo en un anillo de 48 m) y `rocas_orilla`. |
 | bosque negro | `hombre_alto` (la figura de 2.7 m de túnica negra y cara pálida sin ojos), `figura_ramas` (se cuelga: el origen es el punto de arriba), `cartel`, `cabana`, `circulo_piedras` y `arbol_caido`. |
-| personajes | `granjero`, `aldeana`, `anciano`, `nino`, `hombre`, `mujer`, `sepulturero`, `sereno`, `encapuchado` (el ermitaño de los túneles: capucha de sudadera hasta los hombros y gabardina larga abierta por delante, ambas en la región del pantalón del atlas); y los vecinos de la feria: `nina` (con un globo), `anciana`, `violinista`, `acordeonista`, `bailarin`, `bailarina` y `brindis` (con una jarra). Poses de brazo nuevas: `delante` (las dos manos delante del pecho) y `alza` (el antebrazo hacia arriba). Sus texturas (`pj_fe_*`) son atlas de **256x256** con la misma distribución que los de 128 (las UV son fracciones): la cara se pinta al doble de resolución (párpados y pestañas, iris con pupila y brillo, cejas con forma, nariz con luz y sombra, labios de dos tonos) y el resto se amplía. |
+| personajes | `granjero`, `aldeana`, `anciano`, `nino`, `hombre`, `mujer`, `sepulturero`, `sereno`, `encapuchado` (el ermitaño de los túneles: capucha de sudadera hasta los hombros y gabardina larga abierta por delante, ambas en la región del pantalón del atlas); y los vecinos de la feria: `clara` y `clara_sentada` (a horcajadas, con las piernas colgando por los costados: va pegada a un caballo del tiovivo), `nina` (con un globo), `anciana`, `violinista`, `acordeonista`, `bailarin`, `bailarina` y `brindis` (con una jarra). Poses de brazo nuevas: `delante` (las dos manos delante del pecho) y `alza` (el antebrazo hacia arriba). Sus texturas (`pj_fe_*`) son atlas de **256x256** con la misma distribución que los de 128 (las UV son fracciones): la cara se pinta al doble de resolución (párpados y pestañas, iris con pupila y brillo, cejas con forma, nariz con luz y sombra, labios de dos tonos) y el resto se amplía. |
 
 Convenciones de todos: metros, pies o base en el origen, el **frente mira a +Z**, `.obj`
 triangulado con su `.mtl` (rutas `../textures/`, filtro de punto) y, si estorban, sus cajas de
@@ -1636,7 +1672,14 @@ para que se repitan sin costuras, y la misma cuantización que `texconv.py`.
 ### Música (`musica_*_v2.wav`)
 
 Música sintetizada de las escenas (`musica_<escena>_v2.wav`: aldea, noche,
-cementerio, demo, cripta, tuneles, iglesia y lago). La del lago es la calma antes de la
+cementerio, demo, cripta, tuneles, iglesia, lago, feria y feria_menu, casa, vidente y estacion).
+Las del capítulo 2 usan instrumentos propios: **casa** (las casas por dentro: acogedora pero en
+5/4, 3 + 2, con guitarra de nylon en arpegios, contrabajo en pizzicato, el tic-tac de un reloj,
+clarinete y acordeón), **vidente** (la carpa: mi frigio con la tercera mayor, zumbido grave, arpa,
+armónica de cristal, pandero grave y crótalos) y **estacion** (ritmo de tren con escobillas,
+contrabajo, guitarra rasgueada, armónica de boca y un silbato lejano). Las cuerdas punteadas son
+síntesis de Karplus-Strong (ruido que recorre una línea de retardo de un periodo y se suaviza en
+cada vuelta). La del lago es la calma antes de la
 tormenta: una nana en mi mayor con arpa de caja de música, flauta y coro cuyos cuatro últimos
 compases se nublan (acordes menores prestados y un dron que casi no se oye) antes de volver a
 empezar. La de la iglesia usa un instrumento de órgano

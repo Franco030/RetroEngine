@@ -1,0 +1,22 @@
+{
+  "speaker": "Sibila",
+  "entries": [
+    {
+      "if": { "not": { "flag": "pista_sibila" } },
+      "lines": [
+        "Sientate. No, no hace falta que pagues.\nYa has pagado. Mas que nadie.",
+        "La primera carta: la Rueda. Lo que gira sin viento.",
+        "La segunda: el Viajero. Despierta donde no se durmio.",
+        "La tercera... la Niña. Del reves.",
+        "Esta feria no es la unica, cariño. Salinas, donde el mar se fue.\nHoz del Cuervo, donde nadie duerme. Puerto Niebla...",
+        "En todas hay una fiesta. Y en todas sobra alguien."
+      ],
+      "do": [{ "set_flag": "pista_sibila" }, { "add_flag": "pistas" }]
+    },
+    {
+      "if": { "flag": "pistas", "op": ">=", "value": 5 },
+      "lines": ["El tren te espera. Siempre espera a alguien."]
+    },
+    { "lines": ["Las cartas no se leen dos veces la misma noche."] }
+  ]
+}

@@ -788,6 +788,48 @@ bool EditorApp::EntityWorldBox(int index, BoundingBox& out) const {
   return true;
 }
 
+namespace {
+
+// Sprites animados (tiras de 4 fotogramas) que se pegan a un modelo con un boton.
+struct AnimatedSprite {
+  const char* label;
+  const char* texture;
+  Vector2 size;
+  float fps;
+  bool emissive;
+};
+constexpr AnimatedSprite kAnimatedSprites[] = {
+    {"Llama", "textures/spr_llama.png", {0.14f, 0.28f}, 9.0f, true},
+    {"Velas", "textures/spr_velas.png", {0.3f, 0.3f}, 7.0f, true},
+    {"Luciernagas", "textures/spr_luciernagas.png", {1.4f, 1.4f}, 2.8f, true},
+};
+
+} // namespace
+
+void EditorApp::AddAnimatedSpriteOn(int index, int kind) {
+  BoundingBox wb{};
+  if (!EntityWorldBox(index, wb) || !doc_.contains("entities") || !scene_ ||
+      kind < 0 || kind >= static_cast<int>(std::size(kAnimatedSprites)))
+    return;
+  const AnimatedSprite& a = kAnimatedSprites[kind];
+  const std::string host = ReadString(&doc_["entities"][static_cast<std::size_t>(index)], "name");
+  // en lo alto del modelo, pasado a sus coordenadas: la posicion de una pegada es relativa
+  const Vector3 top{(wb.min.x + wb.max.x) * 0.5f, wb.max.y, (wb.min.z + wb.max.z) * 0.5f};
+  retro::Entity& he = scene_->EntityAt(static_cast<std::size_t>(index));
+  const Vector3 local = Vector3Transform(top, MatrixInvert(he.transform.ToMatrix()));
+  Json f = Json::object();
+  f["name"] = UniqueName("entities", (host.empty() ? std::string("entidad") : host) + "_sprite");
+  f["sprite"] = a.texture;
+  f["size"] = Vec2Json(a.size);
+  f["position"] = Vec3Json(local);
+  f["emissive"] = a.emissive;
+  f["collider"] = false;
+  f["frames"] = 4;
+  f["fps"] = a.fps;
+  f["attach"] = Json::object({{"to", host}});
+  InsertItem(SelectionKind::Entity, std::move(f));
+}
+
 void EditorApp::AddAnimatedFlame(Vector3 position) {
   Json f = Json::object();
   f["name"] = UniqueName("entities", "llama");
@@ -820,10 +862,8 @@ void EditorApp::AddFlameOn(int index) {
                                   {"flickerRate", 9}});
     MarkChanged(0);
   }
-  const std::string base = ReadString(&host, "name");
-  AddAnimatedFlame({top.x, top.y - 0.02f, top.z});
-  Json& f = doc_["entities"].back();
-  f["name"] = UniqueName("entities", (base.empty() ? std::string("entidad") : base) + "_llama");
+  // la llama va pegada al modelo: si se mueve o gira, la sigue
+  AddAnimatedSpriteOn(index, 0);
 }
 
 void EditorApp::AddCandleGroup(Vector3 position) {
@@ -1057,6 +1097,8 @@ void EditorApp::ExecuteDeferred() {
     DeleteSelection();
   if (what == Deferred::AddFlame)
     AddFlameOn(deferredIndex_);
+  if (what == Deferred::AddSprite)
+    AddAnimatedSpriteOn(deferredIndex_, animatedSprite_);
 }
 
 // ---------------------------------------------------------------------------
@@ -1470,6 +1512,7 @@ void EditorApp::InspectEntity(Json& e) {
       FieldFile("Imagen", e, nullptr, "sprite", assets_.textures, false, true);
       FieldVec2("Tamano", e, nullptr, "size", {1.0f, 2.0f}, 0.05f, false);
       FieldBool("Emisivo", e, nullptr, "emissive", false);
+      FieldBool("Le afecta la niebla", e, nullptr, "fog", true);
       FieldInt("Fotogramas", e, nullptr, "frames", 1, 1, 64);
       if (ReadNumber(&e, "frames", 1.0f) > 1.0f)
         FieldFloat("Fotogramas por segundo", e, nullptr, "fps", 8.0f, 0.1f, 0.5f, 60.0f);
@@ -1487,6 +1530,9 @@ void EditorApp::InspectEntity(Json& e) {
         FieldChoice("Repeticion", e, nullptr, "wrap", {"repeat", "clamp", "mirror"}, "");
       }
       FieldBool("Emisivo (sin luces)", e, nullptr, "emissive", false);
+      FieldBool("Le afecta la niebla", e, nullptr, "fog", true);
+      ImGui::SetItemTooltip("Desmarcado, se ve aunque este lejos y haya niebla (el sol, una noria\n"
+                            "encendida, lo que solo se ve desde lo alto)");
       FieldInt("Capa (encima de lo de debajo)", e, nullptr, "layer", 0, -3, 3);
       // Una superficie plana apoyada en otra (alfombra, sendero, charco) parpadea con ella si
       // no tiene capa: se avisa y se arregla con un clic.
@@ -1540,11 +1586,14 @@ void EditorApp::InspectEntity(Json& e) {
                         "Si es plana, le pone capa 1 para que no parpadee.");
   }
 
-  if (!sprite && theme::Section(ICON_FA_FILM "  Animacion",
-                                e.contains("spin") || e.contains("idle") || e.contains("facePlayer"))) {
-    FieldVec3("Giro (grados/s)", e, nullptr, "spin", {0.0f, 0.0f, 0.0f}, 0.5f);
+  if (theme::Section(ICON_FA_FILM "  Animacion",
+                     e.contains("spin") || e.contains("idle") || e.contains("facePlayer") ||
+                         e.contains("slide") || e.contains("attach") || e.contains("smoke"))) {
+    if (!sprite) // un sprite siempre mira a la camara: girar, mecerse o mirar no le hacen nada
+      FieldVec3("Giro (grados/s)", e, nullptr, "spin", {0.0f, 0.0f, 0.0f}, 0.5f);
 
     bool idle = e.contains("idle");
+    if (!sprite) {
     if (ImGui::Checkbox("Balanceo (respira y se mece)", &idle)) {
       BeginChange(0);
       if (idle)
@@ -1558,9 +1607,61 @@ void EditorApp::InspectEntity(Json& e) {
       FieldFloat("Se mece (grados)", e, "idle", "sway", 1.2f, 0.05f, 0.0f, 15.0f, false);
       FieldFloat("Velocidad", e, "idle", "speed", 2.0f, 0.05f, 0.05f, 10.0f, false);
     }
+    } // !sprite
+
+    bool pegada = e.contains("attach");
+    if (ImGui::Checkbox("Pegada a otra entidad", &pegada)) {
+      BeginChange(0);
+      if (pegada) {
+        const std::vector<std::string> otras = EntityNames();
+        e["attach"] = Json::object({{"to", otras.empty() ? std::string() : otras.front()}});
+      } else {
+        e.erase("attach");
+      }
+      MarkChanged(0);
+    }
+    ImGui::SetItemTooltip("La sigue cuando se mueve o gira (alguien montado en el tiovivo, en la\n"
+                          "noria). Su posicion y su giro en Y pasan a ser relativos a ella.");
+    if (pegada && e.contains("attach"))
+      FieldFile("A la entidad", e, "attach", "to", EntityNames(), false, false);
+
+    bool humo = e.contains("smoke");
+    if (ImGui::Checkbox("Humo o vapor", &humo)) {
+      BeginChange(0);
+      if (humo)
+        e["smoke"] = Json::object({{"texture", "textures/spr_vapor.png"},
+                                   {"offset", Vec3Json({0.0f, 2.0f, 0.0f})}});
+      else
+        e.erase("smoke");
+      MarkChanged(0);
+    }
+    if (humo && e.contains("smoke")) {
+      FieldFile("Bocanada (tira de 4)", e, "smoke", "texture", assets_.textures, false, true);
+      FieldVec3("Sale de", e, "smoke", "offset", {0.0f, 2.0f, 0.0f}, 0.05f, false);
+      FieldFloat("Por segundo", e, "smoke", "rate", 4.0f, 0.1f, 0.1f, 40.0f);
+      FieldFloat("Dura (s)", e, "smoke", "life", 2.5f, 0.05f, 0.1f, 20.0f);
+      FieldFloat("Sube (m/s)", e, "smoke", "rise", 1.2f, 0.05f, 0.0f, 10.0f);
+      FieldVec2("Tamano (al salir, al final)", e, "smoke", "size", {0.5f, 1.8f}, 0.05f);
+      FieldColor("Color", e, "smoke", "tint", Color{200, 200, 205, 255}, false);
+    }
+
+    bool vaiven = e.contains("slide");
+    if (ImGui::Checkbox("Va y viene", &vaiven)) {
+      BeginChange(0);
+      if (vaiven)
+        e["slide"] = Json::object({{"offset", Vec3Json({1.0f, 0.0f, 0.0f})}, {"period", 4.0}});
+      else
+        e.erase("slide");
+      MarkChanged(0);
+    }
+    if (vaiven && e.contains("slide")) {
+      FieldVec3("Hasta (desplazamiento)", e, "slide", "offset", {1.0f, 0.0f, 0.0f}, 0.05f, false);
+      FieldFloat("Ida y vuelta (s)", e, "slide", "period", 4.0f, 0.05f, 0.1f, 120.0f, false);
+      FieldFloat("Desfase (0-1)", e, "slide", "phase", 0.0f, 0.01f, 0.0f, 1.0f);
+    }
 
     bool mira = e.contains("facePlayer");
-    if (ImGui::Checkbox("Mirar al jugador", &mira)) {
+    if (!sprite && ImGui::Checkbox("Mirar al jugador", &mira)) {
       BeginChange(0);
       if (mira)
         e["facePlayer"] = Json::object({{"range", 8}, {"turnSpeed", 120}});
@@ -1574,13 +1675,30 @@ void EditorApp::InspectEntity(Json& e) {
                  false);
     }
 
-    if (ImGui::Button(ICON_FA_FIRE "  Poner llama encima")) {
+    if (!sprite && ImGui::Button(ICON_FA_FIRE "  Poner llama encima")) {
       deferred_ = Deferred::AddFlame;   // anade otra entidad: se hace al empezar el frame
       deferredIndex_ = selection_.index;
     }
-    if (ImGui::IsItemHovered())
-      ImGui::SetTooltip("Llama animada en lo alto del modelo (vela, antorcha, farol...)\n"
+    if (!sprite && ImGui::IsItemHovered())
+      ImGui::SetTooltip("Llama animada pegada en lo alto del modelo (vela, antorcha, farol...)\n"
                         "y una luz que parpadea, si el modelo no tiene.");
+    if (!sprite) {
+      ImGui::SetNextItemWidth(130.0f);
+      if (ImGui::BeginCombo("##sprite_animado", kAnimatedSprites[animatedSprite_].label)) {
+        for (int k = 0; k < static_cast<int>(std::size(kAnimatedSprites)); ++k) {
+          if (ImGui::Selectable(kAnimatedSprites[k].label, k == animatedSprite_))
+            animatedSprite_ = k;
+        }
+        ImGui::EndCombo();
+      }
+      ImGui::SameLine();
+      if (ImGui::Button(ICON_FA_WAND_MAGIC_SPARKLES "  Pegar sprite animado")) {
+        deferred_ = Deferred::AddSprite;
+        deferredIndex_ = selection_.index;
+      }
+      ImGui::SetItemTooltip("Un sprite animado (tira de 4 fotogramas) pegado en lo alto del\n"
+                            "modelo: lo sigue si se mueve o gira. Luego se puede mover y cambiar.");
+    }
   }
 
   if (theme::Section(ICON_FA_BORDER_ALL "  Colision")) {
@@ -1695,9 +1813,9 @@ void EditorApp::InspectEntity(Json& e) {
   for (auto it = e.begin(); it != e.end(); ++it) {
     if (IsOneOf(it.key(), {"name", "visible", "model", "sprite", "size", "emissive", "texture",
                            "wrap", "position", "rotation", "scale", "tint", "spin", "collider",
-                           "light", "sound", "showIf", "glitch", "interact", "seen", "frames", "fps",
-                           "layer",
-                           "idle", "facePlayer"})) {
+                           "light", "sound", "showIf", "glitch", "interact", "seen", "slide",
+                           "attach", "smoke", "frames", "fps", "layer", "idle", "facePlayer",
+                           "fog"})) {
       continue;
     }
     if (!header) {
@@ -1845,6 +1963,45 @@ void EditorApp::InspectScene() {
       ImGui::SetTooltip("Vuelve al fondo, la niebla y la luz por defecto (con sol).");
   }
 
+  if (theme::Section(ICON_FA_MOUNTAIN "  Panorama", d.contains("panorama"))) {
+    bool on = d.contains("panorama");
+    if (ImGui::Checkbox("Horizonte lejano", &on)) {
+      BeginChange(0);
+      if (on)
+        d["panorama"] = Json::object({{"model", "models/panorama_montes.obj"},
+                                      {"tint", Json::array({170, 190, 215})},
+                                      {"haze", 0.45}});
+      else
+        d.erase("panorama");
+      MarkChanged(0);
+    }
+    ImGui::SetItemTooltip("Montes o bosque a lo lejos, centrados en la camara (nunca se llega a\n"
+                          "ellos), con una bruma fija hacia el color de la niebla.");
+    if (on && d.contains("panorama")) {
+      FieldFile("Modelo##panorama", d, "panorama", "model", assets_.models, false, false);
+      FieldColor("Tinte##panorama", d, "panorama", "tint", Color{255, 255, 255, 255}, false);
+      FieldFloat("Bruma (0-1)", d, "panorama", "haze", 0.4f, 0.01f, 0.0f, 1.0f);
+      FieldFloat("Altura (y)", d, "panorama", "y", -6.0f, 0.1f, -50.0f, 50.0f);
+      Json& pan = d["panorama"];
+      bool sol = pan.contains("sun");
+      if (ImGui::Checkbox("Sol o luna", &sol)) {
+        BeginChange(0);
+        if (sol)
+          pan["sun"] = Json::object({{"texture", "textures/spr_luna.png"}, {"yaw", 35}, {"pitch", 24},
+                                     {"size", 50}});
+        else
+          pan.erase("sun");
+        MarkChanged(0);
+      }
+      if (sol && pan.contains("sun")) {
+        FieldFile("Imagen##sol", pan, "sun", "texture", assets_.textures, false, true);
+        FieldFloat("Hacia (yaw)", pan, "sun", "yaw", 0.0f, 0.5f, -360.0f, 360.0f);
+        FieldFloat("Altura (pitch)", pan, "sun", "pitch", 20.0f, 0.5f, -10.0f, 89.0f);
+        FieldFloat("Tamano##sol", pan, "sun", "size", 50.0f, 0.5f, 1.0f, 400.0f);
+      }
+    }
+  }
+
   // Los volumenes por defecto son los de SceneAudio (src/world/Scene.hpp).
   if (theme::Section(ICON_FA_MUSIC "  Audio")) {
     AudioTrack(d, "music", "Musica", 0.6f);
@@ -1897,7 +2054,8 @@ void EditorApp::InspectScene() {
   bool header = false;
   for (auto it = d.begin(); it != d.end(); ++it) {
     if (IsOneOf(it.key(), {"camera", "player", "autoCollide", "bounds", "background", "fog",
-                           "light", "audio", "entities", "triggers", "lights", "emitters"})) {
+                           "light", "audio", "entities", "triggers", "lights", "emitters",
+                           "panorama"})) {
       continue;
     }
     if (!header) {
@@ -2783,6 +2941,8 @@ void EditorApp::RenderViewport(int w, int h) {
   const Camera3D cam = camera_.Raw();
   if (animate_)
     scene_->Update(GetFrameTime(), camera_.Position());
+  else
+    scene_->ApplyAttachments(); // las pegadas a otra, en su sitio aunque no se anime
 
   if (ps1View_) {
     const int iw = engine_.Config().internalWidth;

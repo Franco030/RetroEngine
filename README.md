@@ -78,9 +78,13 @@ saliendo de su propio bosque):
   cementerio de niños, una fosa recién cavada sin nombre.
 - `arbol_hueco.json`: el árbol con tu nombre tallado, y los aldeanos que se acercan cuando no
   los miras.
-- `feria.json`: donde despiertas. La Fiesta del Viento de un pueblo vivo: puestos, guirnaldas,
-  un tiovivo, músicos tocando un vals precioso, vecinos con los que hablar... y pistas que no
-  terminan de cuadrar.
+- `feria.json`: donde despiertas. La Fiesta del Viento de Ventosa, un pueblo vivo, y el centro
+  del capítulo 2 (sin camino principal): puestos, guirnaldas, músicos tocando un vals precioso y
+  vecinos con los que hablar. Se sube al tiovivo y a la noria, se juega al tiro al blanco, se
+  entra en `casa_lucia.json`, `casa_alcalde.json` y en la carpa de la vidente (`carpa.json`), y al
+  norte un sendero lleva a `estacion.json`. Las pistas se pueden encontrar en cualquier orden;
+  con cinco, el tren de las 23:40 llega a la estación. Nico, un fotógrafo que también despertó
+  en el trigo, investiga contigo.
 
 En la capilla, tocar el órgano tiene consecuencias.
 
@@ -199,7 +203,7 @@ editor/               RetroEditor: EditorApp, EditorLogic (acciones, condiciones
 assets/
   scenes/             demo.json, aldea.json, noche.json, cementerio.json, iglesia.json, cripta.json, tuneles.json,
                       lago.json, bosque_negro.json, campamento.json, aldea_vieja.json, arbol_hueco.json,
-                      feria.json
+                      feria.json, casa_lucia.json, casa_alcalde.json, carpa.json, estacion.json
   dialogues/          un .json por diálogo
   shaders/            retro.vs, retro.fs, retro_unlit.fs, retro_sprite.fs, post.fs
   models/ textures/ audio/ fonts/

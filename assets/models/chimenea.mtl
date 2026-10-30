@@ -1,0 +1,13 @@
+# RetroEngine: chimenea
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png
+
+newmtl mat_piedra
+d 1.000000
+map_Kd ../textures/mat_piedra.png

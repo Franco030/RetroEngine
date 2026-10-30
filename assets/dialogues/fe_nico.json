@@ -1,0 +1,32 @@
+{
+  "speaker": "Nico",
+  "entries": [
+    {
+      "if": { "not": { "flag": "nico_conocido" } },
+      "lines": [
+        "Tu tambien despertaste en el trigo, verdad?\nSe te nota en la cara.",
+        "Me llamo Nico. Hago fotos. Bueno, hacia: vine a fotografiar la fiesta...\ny me desperte entre las espigas.",
+        "Aqui todos sonrien demasiado. Y nadie recuerda como llegue.",
+        "Mira en las casas, en las atracciones, pregunta a la vidente.\nYo voy apuntando lo que no cuadra."
+      ],
+      "do": [{ "set_flag": "nico_conocido" }]
+    },
+    {
+      "if": { "flag": "pistas", "op": ">=", "value": 5 },
+      "lines": [
+        "{pistas} cosas que no cuadran. Suficiente.",
+        "El horario de la estacion: SALINAS, 23:40.\nTu billete dice ADMITE UNO, pero yo me cuelo.",
+        "Te espero en la estacion. Al norte, por el sendero."
+      ],
+      "do": [{ "set_flag": "nico_estacion" }]
+    },
+    {
+      "if": { "flag": "pistas", "op": ">=", "value": 2 },
+      "lines": [
+        "Llevamos {pistas}. Vamos bien.",
+        "Has subido a la noria? Has entrado en la carpa?\nDicen que la del alcalde nunca cierra con llave."
+      ]
+    },
+    { "lines": ["Llevamos {pistas}. Esta gente sabe algo.", "Las fotos no mienten. Casi nunca."] }
+  ]
+}

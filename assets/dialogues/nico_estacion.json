@@ -1,0 +1,10 @@
+{
+  "speaker": "Nico",
+  "entries": [
+    {
+      "if": { "not": { "flag": "tren_llega" } },
+      "lines": ["Has venido. Bien.", "Escucha... Ahi viene. Sube al anden."]
+    },
+    { "lines": ["Sube. Yo voy detras.", "No mires la feria. Si la miras, te quedas."] }
+  ]
+}

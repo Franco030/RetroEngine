@@ -2,11 +2,38 @@
   "speaker": "Bruno",
   "entries": [
     {
-      "once": true,
-      "lines": ["Tres tiros, una perra chica.\nSi tumbas el pato grande, te llevas la muneca."]
+      "if": { "flag": "pista_muneca" },
+      "lines": ["La muñeca ya es tuya. No me la devuelvas.\nNadie la quiere de vuelta."]
     },
     {
-      "lines": ["Nadie ha tumbado el pato grande en veinte anos.\nPero la muneca sigue ahi. Esperando."]
+      "once": true,
+      "lines": [
+        "Una perra chica y veinte segundos.\nSi tumbas seis patos, te llevas la muñeca.",
+        "Clic o E para disparar. Venga."
+      ],
+      "do": [
+        {
+          "shooting": "pato_",
+          "position": [-3.7, 0, 2.0],
+          "yaw": 90,
+          "seconds": 20,
+          "flag": "tiro_puntos",
+          "after": "fe_bruno_fin"
+        }
+      ]
+    },
+    {
+      "lines": ["Otra ronda? Veinte segundos. Seis patos."],
+      "do": [
+        {
+          "shooting": "pato_",
+          "position": [-3.7, 0, 2.0],
+          "yaw": 90,
+          "seconds": 20,
+          "flag": "tiro_puntos",
+          "after": "fe_bruno_fin"
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,18 @@
+{
+  "speaker": "Bruno",
+  "entries": [
+    {
+      "if": {
+        "all": [{ "flag": "tiro_puntos", "op": ">=", "value": 6 }, { "not": { "flag": "pista_muneca" } }]
+      },
+      "lines": [
+        "{tiro_puntos} patos! Nadie lo hacia desde hace veinte años.",
+        "La muñeca es tuya.",
+        "Tiene un papel cosido en la espalda:\n\"No subas al tren de las 23:40.\"",
+        "Bruno no lo mira. Ya lo sabia."
+      ],
+      "do": [{ "set_flag": "pista_muneca" }, { "add_flag": "pistas" }]
+    },
+    { "lines": ["{tiro_puntos} patos. Casi.\nVuelve cuando quieras: los patos no se cansan."] }
+  ]
+}

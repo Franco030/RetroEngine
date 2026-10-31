@@ -294,7 +294,9 @@ std::vector<Condition> ParseConditions(const json& j, const char* key) {
 //   { "scare": "entidad" | [x,y,z], "speed": 20, "fov": 30 }    (susto: de golpe y acercando)
 //   { "lock_movement": true | false }                  (mirar sin poder andar; o volver a andar)
 //   { "title_screen": true }                           (con un goto_scene: llegar al menu)
-//   { "ride": "entidad", "seat": [x,y,z], "exit": [x,y,z], "seconds": 40, "flag": "f", "after": "dialogo" }
+//   { "ride": "entidad", "seat": [x,y,z], "exit": [x,y,z], "seconds": 40, "flag": "f", "after": "dialogo",
+//     "locked": true }                                 (locked: E no baja, hay que esperar)
+//   { "behind_player": "entidad", "distance": 2.4, "side": 0 }  (a la espalda del jugador)
 //   { "shooting": "pato_", "position": [x,y,z], "yaw": 0, "seconds": 20, "flag": "puntos" }
 Action ParseAction(const json& ja) {
   if (!ja.is_object())
@@ -428,8 +430,21 @@ Action ParseAction(const json& ja) {
     a.seconds = ja.value("seconds", a.seconds);
     a.flag = ja.value("flag", std::string{});
     a.after = ja.value("after", std::string{});
+    a.locked = ja.value("locked", a.locked);
     if (a.entity.empty() || !ja.contains("seat") || a.seconds < 0.0f)
       throw std::runtime_error("'ride' necesita la entidad y 'seat'; 'seconds' no puede ser negativo");
+    if (a.locked && a.seconds <= 0.0f)
+      throw std::runtime_error("'ride' con 'locked' necesita 'seconds': si no, no se baja nunca");
+    result = a;
+    ++found;
+  }
+  if (ja.contains("behind_player")) {
+    action::BehindPlayer a;
+    a.entity = ja.at("behind_player").get<std::string>();
+    a.distance = ja.value("distance", a.distance);
+    a.side = ja.value("side", a.side);
+    if (a.entity.empty() || a.distance <= 0.0f)
+      throw std::runtime_error("'behind_player' necesita la entidad y una 'distance' positiva");
     result = a;
     ++found;
   }
@@ -460,7 +475,7 @@ Action ParseAction(const json& ja) {
     throw std::runtime_error("cada accion debe tener exactamente una de: goto_scene, teleport, "
                              "set_flag, add_flag, message, play_sound, play_music, stop_music, "
                              "dialogue, look_at, scare, lock_movement, title_screen, ride, "
-                             "shooting");
+                             "shooting, behind_player");
   }
   return result;
 }
@@ -644,7 +659,7 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
   if (je.contains("interact"))
     interact = ReadInteraction(je.at("interact"), autoBox, colliders);
 
-  // "seen": { "range": 15, "angle": 20, "do": [ ... ], "away": [ ... ] }
+  // "seen": { "range": 15, "angle": 20, "if": { ... }, "do": [ ... ], "away": [ ... ] }
   std::optional<Sight> sight;
   if (je.contains("seen")) {
     const json& js = je.at("seen");
@@ -656,6 +671,7 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
         s.awayAngle > 180.0f)
       throw std::runtime_error("'seen': 'range' positivo, 'angle' entre 0 y 90 y 'awayAngle' "
                                "entre 'angle' y 180");
+    s.conditions = ParseConditions(js);
     for (const char* key : {"do", "away"}) {
       if (!js.contains(key))
         continue;
@@ -775,6 +791,18 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
       throw std::runtime_error("'slide': 'period' debe ser positivo");
     sl.base = e.transform.position;
     e.slide = sl;
+  }
+
+  if (je.contains("arrive")) {
+    const json& ja = je.at("arrive");
+    Entity::Arrive ar;
+    ar.offset = ReadVec3(ja, "offset", ar.offset);
+    ar.seconds = ja.value("seconds", ar.seconds);
+    ar.brake = ja.value("brake", ar.brake);
+    if (ar.seconds <= 0.0f || ar.brake <= 0.0f || ar.brake > 1.0f)
+      throw std::runtime_error("'arrive': 'seconds' positivo y 'brake' entre 0 (sin incluir) y 1");
+    ar.base = e.transform.position;
+    e.arrive = ar;
   }
 
   if (je.contains("idle")) {

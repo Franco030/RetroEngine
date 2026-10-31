@@ -1,0 +1,289 @@
+{
+  "player": { "position": [0, 0, 3.0], "yaw": 0 },
+  "bounds": { "min": [-4.2, -4.2], "max": [4.2, 4.2] },
+  "background": [156, 208, 232],
+  "fog": { "start": 80, "end": 700 },
+  "light": { "direction": [-0.4, -0.85, 0.3], "ambient": 0.82, "sun": 0.6 },
+  "panorama": {
+    "model": "models/panorama_salinas.obj",
+    "tint": [255, 255, 255],
+    "haze": 0.12,
+    "y": 0,
+    "sun": { "texture": "textures/spr_sol.png", "yaw": 150, "pitch": 58, "size": 60 }
+  },
+  "audio": {
+    "music": { "file": "audio/musica_salinas_faro_v2.wav", "volume": 0.5 },
+    "ambient": { "file": "audio/viento.wav", "volume": 0.35 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.2
+    },
+    "fade": 3
+  },
+  "entities": [
+    {
+      "name": "suelo",
+      "model": { "type": "plane", "size": 900, "subdivisions": 60, "tiles": 400 },
+      "texture": "textures/mat_sal.png",
+      "wrap": "repeat",
+      "position": [0, -22.0, 0],
+      "tint": [240, 240, 246, 255],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "pueblo",
+      "model": { "type": "plane", "size": 120, "subdivisions": 40, "tiles": 70 },
+      "texture": "textures/mat_adoquin.png",
+      "wrap": "repeat",
+      "position": [36, -18.98, 84],
+      "tint": [246, 240, 226, 255],
+      "collider": false
+    },
+    {
+      "name": "muro_lejos",
+      "model": "models/muro_puerto.obj",
+      "position": [36, -22.0, 24],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "raya",
+      "model": { "type": "plane", "size": 900, "subdivisions": 4, "tiles": 200 },
+      "texture": "textures/mat_mar.png",
+      "wrap": "repeat",
+      "position": [0, -21.95, -760],
+      "tint": [70, 110, 170, 255],
+      "layer": 1,
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "galeria",
+      "model": "models/faro_galeria.obj",
+      "position": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "interact": {
+        "prompt": "Bajar",
+        "range": 2.8,
+        "box": { "min": [-1.9, 0, -1.9], "max": [1.9, 2.6, 1.9] },
+        "do": [{ "goto_scene": "scenes/salinas_puerto.json", "position": [-36.0, 0, -19.5], "yaw": 180 }]
+      }
+    },
+    {
+      "name": "telescopio",
+      "model": "models/telescopio.obj",
+      "position": [0.0, 0, -3.3],
+      "rotation": [0, 180, 0],
+      "interact": {
+        "prompt": "Mirar por el catalejo",
+        "range": 2.0,
+        "do": [
+          { "play_sound": "audio/bocina_faro.wav", "volume": 0.3 },
+          { "scare": [0, -21.0, -320], "speed": 4, "fov": 7 },
+          { "dialogue": "sa_telescopio" }
+        ]
+      }
+    },
+    {
+      "name": "evaristo",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_evaristo.png",
+      "position": [2.8, 0, 1.8],
+      "rotation": [0, 240, 0],
+      "idle": { "bob": 0.012, "sway": 1.4, "speed": 1.7 },
+      "facePlayer": { "range": 5.0, "turnSpeed": 120 },
+      "interact": { "prompt": "Hablar", "range": 2.4, "do": [{ "dialogue": "sa_evaristo" }] }
+    },
+    {
+      "name": "gato_faro",
+      "model": "models/gato.obj",
+      "position": [-2.4, 0, 2.2],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 90, 96, 255],
+      "showIf": { "not": { "flag": "s_gato_faro" } },
+      "interact": {
+        "prompt": "Mirar el gato",
+        "range": 2.2,
+        "do": [{ "dialogue": "sa_gato_faro" }],
+        "box": { "min": [-0.3, 0, -0.3], "max": [0.3, 0.5, 0.3] }
+      }
+    },
+    {
+      "name": "casa_0",
+      "model": "models/casa_blanca_alta.obj",
+      "position": [22, -19.0, 46],
+      "rotation": [0, 180, 0],
+      "collider": false
+    },
+    {
+      "name": "casa_1",
+      "model": "models/casa_azotea.obj",
+      "position": [30, -19.0, 44],
+      "rotation": [0, 180, 0],
+      "collider": false
+    },
+    {
+      "name": "casa_2",
+      "model": "models/casa_blanca.obj",
+      "position": [40, -19.0, 44],
+      "rotation": [0, 180, 0],
+      "collider": false
+    },
+    {
+      "name": "casa_3",
+      "model": "models/casa_azotea.obj",
+      "position": [50, -19.0, 45],
+      "rotation": [0, 180, 0],
+      "collider": false
+    },
+    {
+      "name": "casa_4",
+      "model": "models/casa_blanca_alta.obj",
+      "position": [60, -19.0, 45],
+      "rotation": [0, 180, 0],
+      "collider": false
+    },
+    {
+      "name": "casa_5",
+      "model": "models/casa_blanca.obj",
+      "position": [24, -19.0, 60],
+      "rotation": [0, 90, 0],
+      "collider": false
+    },
+    {
+      "name": "casa_6",
+      "model": "models/casa_azotea.obj",
+      "position": [46, -19.0, 60],
+      "rotation": [0, -90, 0],
+      "collider": false
+    },
+    {
+      "name": "casa_7",
+      "model": "models/casa_blanca_alta.obj",
+      "position": [30, -19.0, 76],
+      "rotation": [0, 180, 0],
+      "collider": false
+    },
+    {
+      "name": "casa_8",
+      "model": "models/casa_azotea.obj",
+      "position": [44, -19.0, 80],
+      "rotation": [0, 180, 0],
+      "collider": false
+    },
+    {
+      "name": "casa_9",
+      "model": "models/casa_blanca.obj",
+      "position": [20, -19.0, 90],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "barco_0",
+      "model": "models/barco.obj",
+      "texture": "textures/mat_casco_azul.png",
+      "position": [22, -21.88, 13],
+      "rotation": [3, 30, 5],
+      "collider": false
+    },
+    {
+      "name": "barco_1",
+      "model": "models/barco.obj",
+      "texture": "textures/mat_casco_rojo.png",
+      "position": [12, -21.88, 4],
+      "rotation": [3, 110, 5],
+      "collider": false
+    },
+    {
+      "name": "barco_2",
+      "model": "models/barco.obj",
+      "texture": "textures/mat_casco_blanco.png",
+      "position": [48, -21.88, 11],
+      "rotation": [3, -20, 5],
+      "collider": false
+    },
+    {
+      "name": "barco_3",
+      "model": "models/barco.obj",
+      "texture": "textures/mat_casco_verde.png",
+      "position": [60, -21.88, 16],
+      "rotation": [3, 70, 5],
+      "collider": false
+    },
+    {
+      "name": "barco_4",
+      "model": "models/barco.obj",
+      "texture": "textures/mat_casco_rojo.png",
+      "position": [42, -21.88, -8],
+      "rotation": [3, 160, 5],
+      "collider": false
+    },
+    {
+      "name": "muelle_lejos",
+      "model": "models/muelle_alto.obj",
+      "position": [36, -22.0, 24],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "gaviota_pivote_0",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0.71, -2.98, -2.08],
+      "rotation": [0, 320, 0],
+      "spin": [0, 24.13, 0]
+    },
+    {
+      "name": "gaviota_0",
+      "model": "models/gaviota.obj",
+      "position": [7.14, 0, 0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "scale": [1.2, 1.2, 1.2],
+      "attach": { "to": "gaviota_pivote_0" }
+    },
+    {
+      "name": "gaviota_pivote_1",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [6.54, -3.25, -0.49],
+      "rotation": [0, 98, 0],
+      "spin": [0, 29.94, 0]
+    },
+    {
+      "name": "gaviota_1",
+      "model": "models/gaviota.obj",
+      "position": [10.45, 0, 0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "scale": [1.2, 1.2, 1.2],
+      "attach": { "to": "gaviota_pivote_1" }
+    },
+    {
+      "name": "gaviota_pivote_2",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [5.38, -2.8, -0.38],
+      "rotation": [0, 77, 0],
+      "spin": [0, 19.25, 0]
+    },
+    {
+      "name": "gaviota_2",
+      "model": "models/gaviota.obj",
+      "position": [9.23, 0, 0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "scale": [1.2, 1.2, 1.2],
+      "attach": { "to": "gaviota_pivote_2" }
+    }
+  ],
+  "triggers": [],
+  "emitters": [],
+  "autoCollide": true,
+  "camera": { "position": [0, 1.7, 3.0], "target": [0, 1.5, 0], "fov": 60 }
+}

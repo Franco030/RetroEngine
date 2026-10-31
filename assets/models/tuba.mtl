@@ -1,0 +1,5 @@
+# RetroEngine: tuba
+
+newmtl mat_dorado
+d 1.000000
+map_Kd ../textures/mat_dorado.png

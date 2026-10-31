@@ -1,0 +1,19 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "senal_mareas" } },
+      "lines": [
+        "TABLA DE MAREAS. Quien sigue imprimiendo esto?",
+        "Lunes, BAJAMAR. Martes, BAJAMAR. Sesenta y un años de BAJAMAR.",
+        "Hoy, en rojo: PLEAMAR, 23:40.",
+        "La misma hora que el tren."
+      ],
+      "do": [
+        { "set_flag": "senal_mareas" },
+        { "add_flag": "senales" },
+        { "play_sound": "audio/susurros.wav", "volume": 0.2 }
+      ]
+    },
+    { "lines": ["PLEAMAR, 23:40.\nLa tinta esta fresca."] }
+  ]
+}

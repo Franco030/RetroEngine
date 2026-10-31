@@ -1,0 +1,14 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "pista_tiovivo_viejo" } },
+      "lines": [
+        "Gira.",
+        "Los focos se encienden uno a uno.\nAqui no llega la corriente.",
+        "Suena la cancion de la feria. Mas despacio.\nComo si alguien la tarareara de memoria."
+      ],
+      "do": [{ "set_flag": "pista_tiovivo_viejo" }, { "add_flag": "pistas" }]
+    },
+    { "lines": ["Sigue girando. Nadie lo empuja."] }
+  ]
+}

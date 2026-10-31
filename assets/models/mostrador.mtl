@@ -1,0 +1,17 @@
+# RetroEngine: mostrador
+
+newmtl mat_cobre
+d 1.000000
+map_Kd ../textures/mat_cobre.png
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_marmol
+d 1.000000
+map_Kd ../textures/mat_marmol.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png

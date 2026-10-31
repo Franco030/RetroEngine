@@ -1,0 +1,31 @@
+{
+  "speaker": "Ulises",
+  "entries": [
+    { "once": true, "key": "a", "lines": ["Shh. Que espantas a los peces.", "Hoy pican poco."] },
+    {
+      "once": true,
+      "key": "b",
+      "lines": [
+        "Sesenta y un años aqui, con la caña, en el mismo lugar.",
+        "Cuando regrese, yo ya voy a estar pescando.\nLos demas se van a reir de otra cosa."
+      ]
+    },
+    {
+      "if": { "not": { "flag": "senal_zapato" } },
+      "lines": [
+        "Quieto.",
+        "YA PICO!",
+        "La caña se dobla. Jala y jala, el viejo. Algo sube por la sal, dejando un surco mojado.",
+        "Un zapato. Rojo. De niña. Escurriendo.",
+        "Sesenta y un años, y lo primero que saco es un zapato.\nTen, ha de ser tuyo. Aqui ninguna niña usa de esos."
+      ],
+      "do": [
+        { "play_sound": "audio/chapoteo.wav", "volume": 0.9 },
+        { "set_flag": "senal_zapato" },
+        { "add_flag": "senales" },
+        { "play_sound": "audio/susurros.wav", "volume": 0.2 }
+      ]
+    },
+    { "lines": ["Otra vez picaron poco. Pero pican."] }
+  ]
+}

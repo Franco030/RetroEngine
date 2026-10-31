@@ -82,9 +82,22 @@ saliendo de su propio bosque):
   del capítulo 2 (sin camino principal): puestos, guirnaldas, músicos tocando un vals precioso y
   vecinos con los que hablar. Se sube al tiovivo y a la noria, se juega al tiro al blanco, se
   entra en `casa_lucia.json`, `casa_alcalde.json` y en la carpa de la vidente (`carpa.json`), y al
-  norte un sendero lleva a `estacion.json`. Las pistas se pueden encontrar en cualquier orden;
+  norte un sendero lleva a `estacion.json`. Al oeste, `trigal.json`: el trigo donde despertaste,
+  seis espantapájaros y un molino que gira sin viento. Al este, `feria_vieja.json`: el depósito
+  donde la feria guarda lo que ya no gira (un tiovivo viejo que se pone a girar cuando le das la
+  espalda); y al sur del depósito, `laguna.json`, la laguna de los farolillos, uno por cada
+  forastero. Cada sitio suena con su versión del vals de la feria. Las pistas se pueden encontrar en cualquier orden;
   con cinco, el tren de las 23:40 llega a la estación. Nico, un fotógrafo que también despertó
   en el trigo, investiga contigo.
+- `salinas_estacion.json`: el capítulo 3, de día. El tren te deja en Salinas, donde el mar se fue
+  hace 61 años, en un andén en medio de la sal. `salinas.json` es el pueblo: plaza, banda
+  municipal, pescadería, frutería, helados, el bar y gatos que miran todos al sur. Desde allí se
+  entra en `salinas_biblioteca.json`, `salinas_museo.json` y `salinas_almacenes.json`, y se va a
+  `salinas_puerto.json` (barcos varados, un viejo que pesca en la sal, casetas de baño, el faro:
+  `salinas_faro.json`) y a `salinas_salar.json` (flamencos, montones de sal, una ballena). El pueblo
+  es feliz y está convidándote a todo; con seis señales raras llega la Fiesta de la Vuelta
+  (`salinas_pleamar.json`), la marea (`salinas_marea.json`) y la noche después (`salinas_fin.json`).
+  Todo suena con variaciones de una habanera propia.
 
 En la capilla, tocar el órgano tiene consecuencias.
 
@@ -203,7 +216,8 @@ editor/               RetroEditor: EditorApp, EditorLogic (acciones, condiciones
 assets/
   scenes/             demo.json, aldea.json, noche.json, cementerio.json, iglesia.json, cripta.json, tuneles.json,
                       lago.json, bosque_negro.json, campamento.json, aldea_vieja.json, arbol_hueco.json,
-                      feria.json, casa_lucia.json, casa_alcalde.json, carpa.json, estacion.json
+                      feria.json, casa_lucia.json, casa_alcalde.json, carpa.json, estacion.json,
+                      trigal.json, feria_vieja.json, laguna.json
   dialogues/          un .json por diálogo
   shaders/            retro.vs, retro.fs, retro_unlit.fs, retro_sprite.fs, post.fs
   models/ textures/ audio/ fonts/

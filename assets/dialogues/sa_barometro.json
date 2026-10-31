@@ -1,0 +1,17 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "senal_barometro" } },
+      "lines": [
+        "El barometro del museo. Lleva 61 años clavado en SECO.",
+        "La aguja se mueve mientras la miras.\nTEMPESTAD. MUY TEMPESTAD. Luego una palabra que el fabricante rasco a mano."
+      ],
+      "do": [
+        { "set_flag": "senal_barometro" },
+        { "add_flag": "senales" },
+        { "play_sound": "audio/susurros.wav", "volume": 0.2 }
+      ]
+    },
+    { "lines": ["La aguja tiembla.\nHace sol."] }
+  ]
+}

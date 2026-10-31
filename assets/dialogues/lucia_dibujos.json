@@ -4,7 +4,7 @@
       "lines": [
         "Dibujos de niña, con cera.",
         "Una figura alta y negra entre los arboles.\nA sus pies, alguien pequeño, en rojo.",
-        "El tiovivo. Encima de un caballo, una niña: \"YO\".",
+        "El carrusel. Encima de un caballo, una niña: \"YO\".",
         "Unos zapatos rojos. Debajo, en grande: \"MIOS\"."
       ],
       "do": [{ "set_flag": "lucia_dibujos_vistos" }]

@@ -1,0 +1,13 @@
+{
+  "speaker": "Rosario",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Tu has de ser el forastero! Ay, que flaco. Ya te midio Fermin?",
+        "Date una vuelta por los Almacenes, ya te tiene listo tu traje de baño."
+      ]
+    },
+    { "lines": ["Que buena tarde. Parece mentira.\nTendi la ropa y no se seca nada."] }
+  ]
+}

@@ -8,18 +8,18 @@
       "do": [
         { "set_flag": "capitulo2_fin" },
         { "stop_music": true, "fade": 2.0 },
-        { "title_screen": true },
         {
-          "goto_scene": "scenes/estacion.json",
-          "position": [0, 0, 26.0],
-          "yaw": 0,
-          "dark": 18,
+          "goto_scene": "scenes/salinas_estacion.json",
+          "position": [-6.2, 0.3, 0.6],
+          "yaw": -90,
+          "dark": 20,
           "lines": [
             "",
             "Por la ventanilla, el trigo se aleja.",
             "Las luces de la feria se apagan una a una.",
             "Nico se duerme con la camara en el regazo.\nTu no puedes.",
             "Proxima parada: SALINAS.",
+            "Cuando abres los ojos, es de dia.",
             ""
           ]
         }

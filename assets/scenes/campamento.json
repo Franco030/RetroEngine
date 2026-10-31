@@ -1781,7 +1781,7 @@
       "model": "models/tienda.obj",
       "position": [-1.38, 0, 2.2],
       "rotation": [0, 35, 0],
-      "interact": { "prompt": "Mirar dentro", "range": 2.6, "do": [{ "dialogue": "diario_1" }] }
+      "interact": { "prompt": "Mirar adentro", "range": 2.6, "do": [{ "dialogue": "diario_1" }] }
     },
     {
       "name": "tienda_mueve",
@@ -1803,7 +1803,7 @@
       "position": [5.32, 0, -0.6],
       "rotation": [0, -40, 0],
       "showIf": { "flag": "cm_quieta" },
-      "interact": { "prompt": "Mirar dentro", "range": 2.6, "do": [{ "dialogue": "tienda_tibia" }] }
+      "interact": { "prompt": "Mirar adentro", "range": 2.6, "do": [{ "dialogue": "tienda_tibia" }] }
     },
     {
       "name": "tienda_caida",
@@ -1910,7 +1910,7 @@
     {
       "name": "figura_1",
       "model": "models/figura_ramas.obj",
-      "position": [-2.18, 2.3, 24],
+      "position": [-2.18, 3.34, 24],
       "rotation": [0, 324.75, 0],
       "collider": false,
       "tint": [150, 140, 130, 255],
@@ -1919,7 +1919,7 @@
     {
       "name": "figura_2",
       "model": "models/figura_ramas.obj",
-      "position": [3.69, 2.31, 18],
+      "position": [4.07, 3.49, 16.37],
       "rotation": [0, 210.92, 0],
       "collider": false,
       "tint": [150, 140, 130, 255],
@@ -1928,7 +1928,7 @@
     {
       "name": "figura_3",
       "model": "models/figura_ramas.obj",
-      "position": [-0.3, 2.21, 12],
+      "position": [-0.3, 4.38, 12],
       "rotation": [0, 274.84, 0],
       "collider": false,
       "tint": [150, 140, 130, 255],
@@ -1937,7 +1937,7 @@
     {
       "name": "figura_4",
       "model": "models/figura_ramas.obj",
-      "position": [0.76, 2.23, -20],
+      "position": [1.38, 4.16, -18.65],
       "rotation": [0, 49.42, 0],
       "collider": false,
       "tint": [150, 140, 130, 255],
@@ -1946,7 +1946,7 @@
     {
       "name": "figura_5",
       "model": "models/figura_ramas.obj",
-      "position": [-4.76, 2.45, -26],
+      "position": [-6.9, 4.15, -24.65],
       "rotation": [0, 28.64, 0],
       "collider": false,
       "tint": [150, 140, 130, 255],
@@ -1955,7 +1955,7 @@
     {
       "name": "figura_6",
       "model": "models/figura_ramas.obj",
-      "position": [0.25, 2.57, -34],
+      "position": [1.54, 4.41, -32.33],
       "rotation": [0, 191.78, 0],
       "collider": false,
       "tint": [150, 140, 130, 255],
@@ -1964,7 +1964,7 @@
     {
       "name": "figura_7",
       "model": "models/figura_ramas.obj",
-      "position": [-4.12, 2.43, -38],
+      "position": [-4.93, 5.0, -37.17],
       "rotation": [0, 322.24, 0],
       "collider": false,
       "tint": [150, 140, 130, 255],
@@ -1973,7 +1973,7 @@
     {
       "name": "figura_chaqueta",
       "model": "models/figura_ramas.obj",
-      "position": [-4.57, 2.4, -30],
+      "position": [-4.57, 3.36, -30],
       "rotation": [0, 90, 0],
       "scale": [1.5, 1.5, 1.5],
       "collider": false,
@@ -4844,6 +4844,27 @@
       "scale": [1.3, 1.3, 1.3],
       "tint": [118, 116, 128, 255],
       "collider": false
+    },
+    {
+      "name": "arbol_figura_0",
+      "model": "models/arbol_muerto.obj",
+      "position": [-2.93, 0, 23.03],
+      "rotation": [0, 60, 0],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_figura_1",
+      "model": "models/arbol_muerto.obj",
+      "position": [-2.5, 0, 12.79],
+      "rotation": [0, 150, 0],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_figura_2",
+      "model": "models/arbol_muerto.obj",
+      "position": [-5.75, 0, -29.79],
+      "rotation": [0, 120, 0],
+      "tint": [118, 116, 128, 255]
     }
   ],
   "triggers": [

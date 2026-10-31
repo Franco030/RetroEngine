@@ -1,0 +1,14 @@
+{
+  "speaker": "Paco",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Limones de la huerta! Ten, ten, invita el pueblo.",
+        "Mi huerta esta alla arriba, porque abajo no se da nada: la sal se lo come todo.",
+        "Aunque esta semana la tierra anda humeda.\nY yo no he regado."
+      ]
+    },
+    { "lines": ["Agarra otro limon. Para que guardar, digo yo.\nNo se por que lo digo."] }
+  ]
+}

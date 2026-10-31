@@ -5,9 +5,9 @@
       "if": { "not": { "flag": "nico_conocido" } },
       "lines": [
         "Tu tambien despertaste en el trigo, verdad?\nSe te nota en la cara.",
-        "Me llamo Nico. Hago fotos. Bueno, hacia: vine a fotografiar la fiesta...\ny me desperte entre las espigas.",
+        "Me llamo Nico. Tomo fotos. Bueno, tomaba: vine a fotografiar la fiesta...\ny me desperte entre las espigas.",
         "Aqui todos sonrien demasiado. Y nadie recuerda como llegue.",
-        "Mira en las casas, en las atracciones, pregunta a la vidente.\nYo voy apuntando lo que no cuadra."
+        "Mira en las casas, en las atracciones, pregunta a la vidente.\nYo voy anotando lo que no cuadra."
       ],
       "do": [{ "set_flag": "nico_conocido" }]
     },
@@ -15,7 +15,7 @@
       "if": { "flag": "pistas", "op": ">=", "value": 5 },
       "lines": [
         "{pistas} cosas que no cuadran. Suficiente.",
-        "El horario de la estacion: SALINAS, 23:40.\nTu billete dice ADMITE UNO, pero yo me cuelo.",
+        "El horario de la estacion: SALINAS, 23:40.\nTu boleto dice ADMITE UNO, pero yo me meto de colado.",
         "Te espero en la estacion. Al norte, por el sendero."
       ],
       "do": [{ "set_flag": "nico_estacion" }]
@@ -24,7 +24,8 @@
       "if": { "flag": "pistas", "op": ">=", "value": 2 },
       "lines": [
         "Llevamos {pistas}. Vamos bien.",
-        "Has subido a la noria? Has entrado en la carpa?\nDicen que la del alcalde nunca cierra con llave."
+        "Ya te subiste a la rueda de la fortuna? Ya entraste a la carpa?\nDicen que la del alcalde nunca cierra con llave.",
+        "Al oeste, por el trigo, hay un molino. Al este, el deposito.\nY mas alla, una laguna con luces."
       ]
     },
     { "lines": ["Llevamos {pistas}. Esta gente sabe algo.", "Las fotos no mienten. Casi nunca."] }

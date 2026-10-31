@@ -3,7 +3,7 @@
   "entries": [
     {
       "once": true,
-      "lines": ["Has visto a mi hija? Ah, si. Alli, en el tiovivo.\nSiempre en el tiovivo."]
+      "lines": ["Has visto a mi hija? Ah, si. Alla, en el carrusel.\nSiempre en el carrusel."]
     },
     {
       "if": { "flag": "fe_zapato" },

@@ -1,0 +1,25 @@
+# RetroEngine: tienda_blanca
+
+newmtl lamina_libre
+Kd 1.000000 1.000000 1.000000
+d 1.000000
+
+newmtl mat_azulejo
+d 1.000000
+map_Kd ../textures/mat_azulejo.png
+
+newmtl mat_cal
+d 1.000000
+map_Kd ../textures/mat_cal.png
+
+newmtl mat_pintura_blanca
+d 1.000000
+map_Kd ../textures/mat_pintura_blanca.png
+
+newmtl mat_puerta_azul
+d 1.000000
+map_Kd ../textures/mat_puerta_azul.png
+
+newmtl mat_ventana_luz
+d 1.000000
+map_Kd ../textures/mat_ventana_luz.png

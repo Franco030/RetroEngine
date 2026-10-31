@@ -1,0 +1,13 @@
+# RetroEngine: gato
+
+newmtl mat_flor_blanca
+d 1.000000
+map_Kd ../textures/mat_flor_blanca.png
+
+newmtl mat_flor_roja
+d 1.000000
+map_Kd ../textures/mat_flor_roja.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png

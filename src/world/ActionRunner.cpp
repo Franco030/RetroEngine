@@ -63,6 +63,15 @@ void ActionRunner::Run(const std::vector<Action>& actions) {
             [&](const action::TitleScreen&) { titleRequested_ = true; },
             [&](const action::Ride& r) { ride_ = r; },
             [&](const action::Shooting& s) { shooting_ = s; },
+            [&](const action::BehindPlayer& b) {
+              Scene* scene = scenes_.CurrentMut();
+              Entity* e = scene ? scene->Find(b.entity) : nullptr;
+              if (e) {
+                scene->PlaceBehind(*e, player_.Feet(), player_.Yaw(), b.distance, b.side);
+              } else {
+                std::cerr << "behind_player: entidad inexistente '" << b.entity << "'\n";
+              }
+            },
         },
         a);
   }

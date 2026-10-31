@@ -1,0 +1,14 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "pista_zapatos" } },
+      "lines": [
+        "Unos zapatos rojos de niña, en el borde del muelle.\nMojados. Uno al lado del otro.",
+        "Como si alguien se los hubiera quitado para meterse en el agua.",
+        "Pequeños. Como los que perdio Lucia.\nO como los de Clara."
+      ],
+      "do": [{ "set_flag": "pista_zapatos" }, { "add_flag": "pistas" }]
+    },
+    { "lines": ["Siguen mojados.\nEl agua no se seca."] }
+  ]
+}

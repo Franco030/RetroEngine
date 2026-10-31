@@ -1,0 +1,41 @@
+# RetroEngine: iglesia_blanca
+
+newmtl mat_azulejo
+d 1.000000
+map_Kd ../textures/mat_azulejo.png
+
+newmtl mat_cal
+d 1.000000
+map_Kd ../textures/mat_cal.png
+
+newmtl mat_cobre
+d 1.000000
+map_Kd ../textures/mat_cobre.png
+
+newmtl mat_dorado
+d 1.000000
+map_Kd ../textures/mat_dorado.png
+
+newmtl mat_madera_gris
+d 1.000000
+map_Kd ../textures/mat_madera_gris.png
+
+newmtl mat_marmol
+d 1.000000
+map_Kd ../textures/mat_marmol.png
+
+newmtl mat_pintura_azul
+d 1.000000
+map_Kd ../textures/mat_pintura_azul.png
+
+newmtl mat_puerta_azul
+d 1.000000
+map_Kd ../textures/mat_puerta_azul.png
+
+newmtl mat_ventana
+d 1.000000
+map_Kd ../textures/mat_ventana.png
+
+newmtl mat_ventana_luz
+d 1.000000
+map_Kd ../textures/mat_ventana_luz.png

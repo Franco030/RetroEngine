@@ -30,7 +30,7 @@ struct ActionInfo {
   const char* title;
 };
 
-constexpr std::array<ActionInfo, 15> kActions{{
+constexpr std::array<ActionInfo, 16> kActions{{
     {"dialogue", "Dialogo"},
     {"look_at", "Mirar hacia"},
     {"scare", "Susto de camara"},
@@ -45,6 +45,7 @@ constexpr std::array<ActionInfo, 15> kActions{{
     {"lock_movement", "Quieto (solo mirar)"},
     {"title_screen", "Pantalla de inicio"},
     {"ride", "Montarse"},
+    {"behind_player", "A la espalda del jugador"},
     {"shooting", "Tiro al blanco"},
 }};
 
@@ -110,6 +111,8 @@ Json NewAction(const std::string& key, const std::vector<std::string>& scenes,
     return Json::object({{"title_screen", true}});
   if (key == "ride")
     return Json::object({{"ride", ""}, {"seat", Vec3Json({0.0f, 1.0f, 0.0f})}});
+  if (key == "behind_player")
+    return Json::object({{"behind_player", ""}, {"distance", 2.4f}});
   if (key == "shooting")
     return Json::object({{"shooting", "diana_"}, {"position", Vec3Json({0.0f, 0.0f, 0.0f})},
                          {"seconds", 20}, {"flag", "puntos"}});
@@ -423,8 +426,16 @@ void EditorApp::EditAction(Json& a) {
     if (a.contains("exit"))
       FieldVec3("Baja en", a, nullptr, "exit", {0.0f, 0.0f, 0.0f}, 0.05f, false);
     FieldFloat("Segundos (0 = hasta E)", a, nullptr, "seconds", 0.0f, 0.5f, 0.0f, 600.0f);
+    FieldBool("Sin bajar con E", a, nullptr, "locked", false, false);
     FieldText("Bandera mientras va", a, nullptr, "flag");
     FieldFile("Dialogo al bajar", a, nullptr, "after", dialogueList_, true, false);
+
+  } else if (key == "behind_player") {
+    FieldFile("Entidad", a, nullptr, "behind_player", EntityNames(), false, false);
+    FieldFloat("Distancia", a, nullptr, "distance", 2.4f, 0.05f, 0.1f, 30.0f);
+    FieldFloat("A su derecha", a, nullptr, "side", 0.0f, 0.05f, -30.0f, 30.0f);
+    ImGui::TextDisabled("La deja mirando al jugador, dentro de los limites y sin\n"
+                        "meterla en nada solido (si no cabe, mas cerca).");
 
   } else if (key == "shooting") {
     FieldText("Dianas (prefijo)", a, nullptr, "shooting");
@@ -782,6 +793,7 @@ void EditorApp::EditSight(Json& e) {
                         "fuera de pantalla, asi lo que pase al apartar la vista no se ve)");
   ImGui::TextDisabled("Cuenta como vista si esta a menos de ese angulo del centro de la\n"
                       "vista y no hay nada solido en medio. Una vez por visita a la escena.");
+  EditConditions(s, "if");
   for (const char* key : {"do", "away"}) {
     if (!s.contains(key))
       s[key] = Json::array(); // para editarla; vacia no se guarda (ver abajo)

@@ -17,7 +17,7 @@
   },
   "entities": [
     {
-      "name": "habitacion",
+      "interact": { "prompt": "Salir", "range": 2.8, "box": {"min": [-0.8, 0, 2.2], "max": [0.8, 2.4, 2.65]}, "do": [ { "play_sound": "audio/portazo.wav", "volume": 0.25 }, { "goto_scene": "scenes/feria.json", "position": [9.5, 0, 13.5], "yaw": 90 } ] }, "name": "habitacion",
       "model": "models/interior_casa.obj",
       "position": [0, 0, 0],
       "rotation": [0, 0, 0]
@@ -70,12 +70,12 @@
     {
       "name": "lampara",
       "model": "models/lampara.obj",
-      "position": [-1.8, 0.8, -1.9],
+      "position": [-1.8, 1.56, -1.6],
       "rotation": [0, 0, 0],
       "collider": false,
-      "scale": [0.5, 0.5, 0.5],
+      "scale": [0.42, 0.24, 0.42],
       "light": {
-        "offset": [0, 0.4, 0],
+        "offset": [0, -0.2, 0],
         "color": [255, 190, 120],
         "radius": 4,
         "intensity": 1.0,
@@ -112,16 +112,6 @@
       }
     }
   ],
-  "triggers": [
-    {
-      "name": "salir",
-      "position": [0, 0, 2.35],
-      "size": [1.4, 3, 0.3],
-      "do": [
-        { "play_sound": "audio/portazo.wav", "volume": 0.25 },
-        { "goto_scene": "scenes/feria.json", "position": [9.5, 0, 13.5], "yaw": 90 }
-      ]
-    }
-  ],
+  "triggers": [],
   "emitters": []
 }

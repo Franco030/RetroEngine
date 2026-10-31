@@ -1,0 +1,21 @@
+# RetroEngine: faro
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png
+
+newmtl mat_pintura_blanca
+d 1.000000
+map_Kd ../textures/mat_pintura_blanca.png
+
+newmtl mat_pintura_roja
+d 1.000000
+map_Kd ../textures/mat_pintura_roja.png
+
+newmtl mat_puerta_azul
+d 1.000000
+map_Kd ../textures/mat_puerta_azul.png
+
+newmtl mat_ventana_luz
+d 1.000000
+map_Kd ../textures/mat_ventana_luz.png

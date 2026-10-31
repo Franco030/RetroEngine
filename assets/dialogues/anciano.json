@@ -4,7 +4,7 @@
     {
       "if": { "flag": "dlg:ermitano", "op": ">=", "value": 1 },
       "once": true,
-      "lines": ["Has estado abajo, verdad?\nHueles a tierra mojada."]
+      "lines": ["Bajaste, verdad?\nHueles a tierra mojada."]
     },
     { "once": true, "lines": ["Ese pozo es mas viejo que yo.\nY yo soy muy viejo."] },
     {

@@ -118,6 +118,18 @@ public:
   };
   std::optional<Slide> slide;
 
+  // Llega (una vez) cuando 'showIf' pasa a cumplirse: aparece en base + 'offset' y va hasta su
+  // sitio en 'seconds' segundos, a velocidad constante y frenando de forma uniforme la
+  // ultima fraccion 'brake' del tiempo (el tren en la estacion). Tiembla un poco mientras se
+  // mueve. Si ya se cumplia al cargar la escena, esta en su sitio.
+  struct Arrive {
+    Vector3 offset{0.0f, 0.0f, 0.0f};
+    float seconds = 6.0f;
+    float brake = 0.5f;
+    Vector3 base{0.0f, 0.0f, 0.0f};
+  };
+  std::optional<Arrive> arrive;
+
   // Pegada a otra entidad ('to'): la posicion y el giro en Y del JSON son relativos a ella, y la
   // sigue cuando se mueve o gira (Clara montada en el tiovivo, alguien en una barquilla de la
   // noria). Sigue derecha aunque la otra gire en X o Z. La resuelve Scene::Update.
@@ -156,6 +168,7 @@ private:
   float puffClock_ = 0.0f;
   unsigned puffCount_ = 0;
   float slideTime_ = 0.0f;
+  float arriveTime_ = -1.0f; // negativo: no esta llegando
   std::string name_;
   float idleTime_ = 0.0f;
   int frames_ = 1;

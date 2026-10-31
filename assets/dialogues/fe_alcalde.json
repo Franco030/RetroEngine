@@ -9,7 +9,7 @@
       "if": { "flag": "fe_billete" },
       "once": true,
       "key": "billete",
-      "lines": ["Tu nombre en un billete? Cosa de la imprenta.\nImprimen nombres al azar. Para la rifa."]
+      "lines": ["Tu nombre en un boleto? Cosa de la imprenta.\nImprimen nombres al azar. Para la rifa."]
     },
     { "lines": ["Disfruta, forastero. Mañana sera otro dia.\nO el mismo. Ya veremos."] }
   ]

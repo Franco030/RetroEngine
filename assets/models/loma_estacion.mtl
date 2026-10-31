@@ -1,0 +1,5 @@
+# RetroEngine: loma_estacion
+
+newmtl mat_tierra_clara
+d 1.000000
+map_Kd ../textures/mat_tierra_clara.png

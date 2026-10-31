@@ -1,0 +1,21 @@
+# RetroEngine: burro
+
+newmtl mat_madera_gris
+d 1.000000
+map_Kd ../textures/mat_madera_gris.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png
+
+newmtl mat_saco
+d 1.000000
+map_Kd ../textures/mat_saco.png
+
+newmtl mat_sal
+d 1.000000
+map_Kd ../textures/mat_sal.png
+
+newmtl mat_tela_roja
+d 1.000000
+map_Kd ../textures/mat_tela_roja.png

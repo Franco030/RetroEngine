@@ -1,0 +1,1163 @@
+{
+  "player": { "position": [-6.2, 0.3, 0.6], "yaw": -90 },
+  "bounds": { "min": [-16, -13.6], "max": [16, 1.7] },
+  "background": [156, 208, 232],
+  "fog": { "start": 34, "end": 190 },
+  "light": { "direction": [-0.4, -0.85, 0.3], "ambient": 0.82, "sun": 0.6 },
+  "panorama": {
+    "model": "models/panorama_salinas.obj",
+    "tint": [255, 255, 255],
+    "haze": 0.12,
+    "y": 0,
+    "sun": { "texture": "textures/spr_sol.png", "yaw": 150, "pitch": 58, "size": 60 }
+  },
+  "audio": {
+    "music": { "file": "audio/musica_salinas_salar_v2.wav", "volume": 0.5 },
+    "ambient": { "file": "audio/salinas_amb.wav", "volume": 0.3 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.16
+    },
+    "fade": 3
+  },
+  "entities": [
+    {
+      "name": "loma",
+      "model": "models/loma_estacion.obj",
+      "position": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "anden", "model": "models/anden.obj", "position": [0, 0, 0], "rotation": [0, 0, 0] },
+    {
+      "name": "caseta",
+      "model": "models/caseta_estacion.obj",
+      "position": [-3, 0, -3.6],
+      "rotation": [0, 0, 0],
+      "tint": [255, 250, 240, 255]
+    },
+    {
+      "name": "cartel_estacion",
+      "model": "models/letrero.obj",
+      "position": [-1.4, 2.55, -1.8],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_s_estacion.png",
+      "collider": false,
+      "scale": [0.7, 0.7, 1]
+    },
+    {
+      "name": "cartel_estacion_2",
+      "model": "models/letrero.obj",
+      "position": [4.0, 2.4, 0.0],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_s_estacion.png",
+      "collider": false
+    },
+    {
+      "name": "poste_est_1",
+      "model": "models/mastil.obj",
+      "position": [3.1, 0.3, 0.0],
+      "rotation": [0, 0, 0],
+      "scale": [0.8, 0.46, 0.8]
+    },
+    {
+      "name": "poste_est_2",
+      "model": "models/mastil.obj",
+      "position": [4.9, 0.3, 0.0],
+      "rotation": [0, 0, 0],
+      "scale": [0.8, 0.46, 0.8]
+    },
+    {
+      "name": "banco",
+      "model": "models/banco.obj",
+      "position": [-9.0, 0.3, -1.2],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "maceta_0",
+      "model": "models/maceta.obj",
+      "position": [-6.2, 0.3, -1.4],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "maceta_1",
+      "model": "models/maceta.obj",
+      "position": [0.2, 0.3, -1.4],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "locomotora",
+      "model": "models/locomotora.obj",
+      "position": [6.0, 0.16, 3.6],
+      "rotation": [0, 0, 0],
+      "smoke": {
+        "texture": "textures/spr_vapor.png",
+        "offset": [1.6, 3.7, 0],
+        "rate": 3,
+        "life": 3.0,
+        "rise": 1.0,
+        "size": [0.5, 2.2]
+      }
+    },
+    {
+      "name": "vagon_0",
+      "model": "models/vagon.obj",
+      "position": [-3.8, 0.16, 3.6],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "vagon_1",
+      "model": "models/vagon.obj",
+      "position": [-13.6, 0.16, 3.6],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "escalinata",
+      "model": "models/escalinata_alta.obj",
+      "position": [9.0, 0, -14.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "arco_cerro",
+      "model": "models/portico.obj",
+      "position": [9.0, 0, -13.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "texture": "textures/lam_s_a_estacion.png"
+    },
+    { "name": "via_0", "model": "models/via.obj", "position": [-240, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_0",
+      "model": "models/viaducto.obj",
+      "position": [-240, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_1", "model": "models/via.obj", "position": [-220, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_1",
+      "model": "models/viaducto.obj",
+      "position": [-220, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_2", "model": "models/via.obj", "position": [-200, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_2",
+      "model": "models/viaducto.obj",
+      "position": [-200, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_3", "model": "models/via.obj", "position": [-180, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_3",
+      "model": "models/viaducto.obj",
+      "position": [-180, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_4", "model": "models/via.obj", "position": [-160, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_4",
+      "model": "models/viaducto.obj",
+      "position": [-160, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_5", "model": "models/via.obj", "position": [-140, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_5",
+      "model": "models/viaducto.obj",
+      "position": [-140, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_6", "model": "models/via.obj", "position": [-120, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_6",
+      "model": "models/viaducto.obj",
+      "position": [-120, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_7", "model": "models/via.obj", "position": [-100, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_7",
+      "model": "models/viaducto.obj",
+      "position": [-100, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_8", "model": "models/via.obj", "position": [-80, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_8",
+      "model": "models/viaducto.obj",
+      "position": [-80, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_9", "model": "models/via.obj", "position": [-60, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_9",
+      "model": "models/viaducto.obj",
+      "position": [-60, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_10", "model": "models/via.obj", "position": [-40, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_10",
+      "model": "models/viaducto.obj",
+      "position": [-40, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_11", "model": "models/via.obj", "position": [-20, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_11",
+      "model": "models/viaducto.obj",
+      "position": [-20, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_12", "model": "models/via.obj", "position": [0, 0, 3.6], "rotation": [0, 0, 0] },
+    { "name": "via_13", "model": "models/via.obj", "position": [20, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_13",
+      "model": "models/viaducto.obj",
+      "position": [20, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_14", "model": "models/via.obj", "position": [40, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_14",
+      "model": "models/viaducto.obj",
+      "position": [40, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_15", "model": "models/via.obj", "position": [60, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_15",
+      "model": "models/viaducto.obj",
+      "position": [60, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_16", "model": "models/via.obj", "position": [80, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_16",
+      "model": "models/viaducto.obj",
+      "position": [80, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_17", "model": "models/via.obj", "position": [100, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_17",
+      "model": "models/viaducto.obj",
+      "position": [100, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_18", "model": "models/via.obj", "position": [120, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_18",
+      "model": "models/viaducto.obj",
+      "position": [120, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_19", "model": "models/via.obj", "position": [140, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_19",
+      "model": "models/viaducto.obj",
+      "position": [140, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_20", "model": "models/via.obj", "position": [160, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_20",
+      "model": "models/viaducto.obj",
+      "position": [160, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_21", "model": "models/via.obj", "position": [180, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_21",
+      "model": "models/viaducto.obj",
+      "position": [180, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_22", "model": "models/via.obj", "position": [200, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_22",
+      "model": "models/viaducto.obj",
+      "position": [200, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_23", "model": "models/via.obj", "position": [220, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_23",
+      "model": "models/viaducto.obj",
+      "position": [220, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    { "name": "via_24", "model": "models/via.obj", "position": [240, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_24",
+      "model": "models/viaducto.obj",
+      "position": [240, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "cerca_0_0",
+      "model": "models/valla.obj",
+      "position": [-16.4, 0, -3.4],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_2_0",
+      "model": "models/valla.obj",
+      "position": [16.4, 0, -3.4],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_0_1",
+      "model": "models/valla.obj",
+      "position": [-16.4, 0, -5.6],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_2_1",
+      "model": "models/valla.obj",
+      "position": [16.4, 0, -5.6],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_0_2",
+      "model": "models/valla.obj",
+      "position": [-16.4, 0, -7.8],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_2_2",
+      "model": "models/valla.obj",
+      "position": [16.4, 0, -7.8],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_0_3",
+      "model": "models/valla.obj",
+      "position": [-16.4, 0, -10.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_2_3",
+      "model": "models/valla.obj",
+      "position": [16.4, 0, -10.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_0_4",
+      "model": "models/valla.obj",
+      "position": [-16.4, 0, -12.2],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_2_4",
+      "model": "models/valla.obj",
+      "position": [16.4, 0, -12.2],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_n_0",
+      "model": "models/valla.obj",
+      "position": [-15.2, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_n_1",
+      "model": "models/valla.obj",
+      "position": [-13.0, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_n_2",
+      "model": "models/valla.obj",
+      "position": [-10.8, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_n_3",
+      "model": "models/valla.obj",
+      "position": [-8.6, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_n_4",
+      "model": "models/valla.obj",
+      "position": [-6.4, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_n_5",
+      "model": "models/valla.obj",
+      "position": [-4.2, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_n_6",
+      "model": "models/valla.obj",
+      "position": [-2.0, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_n_7",
+      "model": "models/valla.obj",
+      "position": [0.2, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_n_8",
+      "model": "models/valla.obj",
+      "position": [2.4, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_n_9",
+      "model": "models/valla.obj",
+      "position": [4.6, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_n_10",
+      "model": "models/valla.obj",
+      "position": [13.2, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "cerca_n_11",
+      "model": "models/valla.obj",
+      "position": [15.4, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "suelo",
+      "model": { "type": "plane", "size": 520, "subdivisions": 60, "tiles": 260 },
+      "texture": "textures/mat_sal.png",
+      "wrap": "repeat",
+      "position": [0, -10.5, 0],
+      "tint": [240, 240, 244, 255],
+      "collider": false
+    },
+    {
+      "name": "camino",
+      "model": { "type": "plane", "size": 12, "subdivisions": 4, "tiles": 8 },
+      "texture": "textures/mat_adoquin.png",
+      "wrap": "repeat",
+      "position": [9.0, 0.03, -8.0],
+      "tint": [244, 228, 200, 255],
+      "collider": false,
+      "scale": [0.4, 1, 1]
+    },
+    {
+      "name": "angel",
+      "model": "models/bailarin.obj",
+      "texture": "textures/pj_fe_jefe.png",
+      "position": [-1.0, 0.3, 0.6],
+      "rotation": [0, 200, 0],
+      "idle": { "bob": 0.012, "sway": 1.4, "speed": 1.7 },
+      "facePlayer": { "range": 5.0, "turnSpeed": 120 },
+      "interact": { "prompt": "Hablar", "range": 2.4, "do": [{ "dialogue": "sa_angel" }] }
+    },
+    {
+      "name": "nico",
+      "model": "models/fotografo.obj",
+      "texture": "textures/pj_fe_nico.png",
+      "position": [-4.4, 0.3, 0.4],
+      "rotation": [0, 90, 0],
+      "idle": { "bob": 0.012, "sway": 1.4, "speed": 1.7 },
+      "facePlayer": { "range": 5.0, "turnSpeed": 120 },
+      "interact": { "prompt": "Hablar", "range": 2.4, "do": [{ "dialogue": "sa_nico" }] },
+      "showIf": { "not": { "flag": "s_nico_plaza" } }
+    },
+    {
+      "name": "gato_banco",
+      "model": "models/gato.obj",
+      "position": [-8.7, 0.76, -1.2],
+      "rotation": [0, 20, 0],
+      "collider": false,
+      "tint": [226, 140, 60, 255],
+      "interact": {
+        "prompt": "Acariciar",
+        "range": 2.2,
+        "do": [{ "dialogue": "sa_gato" }],
+        "box": { "min": [-0.3, 0, -0.3], "max": [0.3, 0.5, 0.3] }
+      }
+    },
+    {
+      "name": "cabra",
+      "model": "models/cabra.obj",
+      "position": [-11.6, 0.3, 0.2],
+      "rotation": [0, 200, 0],
+      "idle": { "bob": 0.01, "sway": 2, "speed": 1 },
+      "interact": { "prompt": "Mirar", "range": 2.4, "do": [{ "dialogue": "sa_cabra" }] }
+    },
+    {
+      "name": "bienvenida",
+      "model": "models/letrero.obj",
+      "position": [6.0, 1.9, -9.0],
+      "rotation": [0, 90, 0],
+      "texture": "textures/lam_s_bienvenida.png",
+      "collider": false,
+      "scale": [1.2, 1.2, 1]
+    },
+    {
+      "name": "bienvenida_p1",
+      "model": "models/mastil.obj",
+      "position": [5.96, 0, -10.0],
+      "rotation": [0, 0, 0],
+      "scale": [0.7, 0.38, 0.7]
+    },
+    {
+      "name": "bienvenida_p2",
+      "model": "models/mastil.obj",
+      "position": [5.96, 0, -8.0],
+      "rotation": [0, 0, 0],
+      "scale": [0.7, 0.38, 0.7]
+    },
+    {
+      "name": "lejos_suelo",
+      "model": { "type": "plane", "size": 92, "subdivisions": 25, "tiles": 57 },
+      "texture": "textures/mat_adoquin.png",
+      "wrap": "repeat",
+      "position": [9.0, -10.0, -80.0],
+      "tint": [246, 240, 226, 255],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_faro",
+      "model": "models/faro.obj",
+      "position": [-27.0, -13.5, -171.8],
+      "rotation": [0, 0, 0],
+      "fog": false,
+      "collider": false
+    },
+    {
+      "name": "lejos_0",
+      "model": "models/casa_blanca_alta.obj",
+      "position": [0.4, -10.5, -48.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_1",
+      "model": "models/casa_azotea.obj",
+      "position": [0.8, -10.5, -55.8],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_2",
+      "model": "models/casa_blanca.obj",
+      "position": [17.2, -10.5, -47.6],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_3",
+      "model": "models/casa_blanca_alta.obj",
+      "position": [17.6, -10.5, -55.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_4",
+      "model": "models/casa_blanca_alta.obj",
+      "position": [0.4, -10.5, -108.6],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_5",
+      "model": "models/casa_azotea.obj",
+      "position": [17.2, -10.5, -101.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_6",
+      "model": "models/casa_blanca.obj",
+      "position": [0.8, -10.5, -101.2],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_7",
+      "model": "models/casa_blanca_alta.obj",
+      "position": [17.6, -10.5, -108.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_8",
+      "model": "models/casa_blanca_alta.obj",
+      "position": [29.0, -10.5, -89.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_9",
+      "model": "models/casa_azotea.obj",
+      "position": [37.0, -10.5, -92.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_10",
+      "model": "models/casa_blanca.obj",
+      "position": [29.0, -10.5, -56.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_11",
+      "model": "models/casa_azotea.obj",
+      "position": [-11.0, -10.5, -62.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_12",
+      "model": "models/casa_blanca_alta.obj",
+      "position": [-11.0, -10.5, -92.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_13",
+      "model": "models/casa_blanca_alta.obj",
+      "position": [35.0, -10.5, -102.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_14",
+      "model": "models/casa_blanca.obj",
+      "position": [31.0, -10.5, -48.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_15",
+      "model": "models/casa_azotea.obj",
+      "position": [-13.0, -10.5, -48.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_16",
+      "model": "models/casa_blanca_alta.obj",
+      "position": [-21.0, -10.5, -56.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_17",
+      "model": "models/casa_azotea.obj",
+      "position": [29.0, -10.5, -110.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_18",
+      "model": "models/casa_blanca.obj",
+      "position": [39.0, -10.5, -50.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_19",
+      "model": "models/edificio_grande.obj",
+      "position": [-15.0, -10.5, -76.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_20",
+      "model": "models/edificio_grande.obj",
+      "position": [33.0, -10.5, -70.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "lejos_21",
+      "model": "models/tienda_blanca.obj",
+      "position": [-2.0, -10.5, -62.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "texture": "textures/mat_toldo_azul.png",
+      "fog": false
+    },
+    {
+      "name": "lejos_22",
+      "model": "models/tienda_blanca.obj",
+      "position": [20.0, -10.5, -62.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "texture": "textures/mat_toldo_azul.png",
+      "fog": false
+    },
+    {
+      "name": "lejos_23",
+      "model": "models/tienda_blanca.obj",
+      "position": [-2.0, -10.5, -95.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "texture": "textures/mat_toldo_azul.png",
+      "fog": false
+    },
+    {
+      "name": "lejos_24",
+      "model": "models/tienda_blanca.obj",
+      "position": [20.0, -10.5, -95.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "texture": "textures/mat_toldo_azul.png",
+      "fog": false
+    },
+    {
+      "name": "lejos_25",
+      "model": "models/iglesia_blanca.obj",
+      "position": [-15.0, -10.5, -109.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "fog": false
+    },
+    {
+      "name": "indica_poste",
+      "model": "models/mastil.obj",
+      "position": [6.2, 0, -3.6],
+      "rotation": [0, 0, 0],
+      "scale": [1.3, 0.84, 1.3],
+      "collider": { "min": [-0.12, 0, -0.12], "max": [0.12, 4, 0.12] }
+    },
+    {
+      "name": "indica_0",
+      "model": "models/flecha.obj",
+      "position": [6.2, 3.7, -3.6],
+      "rotation": [0, 90, 0],
+      "texture": "textures/lam_s_a_pueblo.png",
+      "collider": false
+    },
+    {
+      "name": "telegrafo_0",
+      "model": "models/mastil.obj",
+      "position": [4.6, 0, -6],
+      "rotation": [0, 0, 0],
+      "scale": [0.9, 1.2, 0.9],
+      "collider": false
+    },
+    {
+      "name": "telegrafo_1",
+      "model": "models/mastil.obj",
+      "position": [4.6, 0, -12],
+      "rotation": [0, 0, 0],
+      "scale": [0.9, 1.2, 0.9],
+      "collider": false
+    },
+    {
+      "name": "valla_b_0",
+      "model": "models/valla.obj",
+      "position": [11.0, 0, -5],
+      "rotation": [0, 90, 0],
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "valla_b_1",
+      "model": "models/valla.obj",
+      "position": [11.0, 0, -10],
+      "rotation": [0, 90, 0],
+      "tint": [220, 214, 200, 255]
+    },
+    {
+      "name": "mata_0",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.68, 0.52],
+      "position": [15.34, 0, -12.38],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_1",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.55, 0.42],
+      "position": [-11.01, 0, -4.19],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_2",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.42, 0.33],
+      "position": [-4.83, 0, -6.91],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_3",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.39, 0.3],
+      "position": [-11.55, 0, -4.98],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_4",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.65, 0.5],
+      "position": [0.66, 0, -5.36],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_5",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.55, 0.42],
+      "position": [1.83, 0, -3.25],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_6",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.73, 0.56],
+      "position": [12.58, 0, -4.87],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_8",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.71, 0.54],
+      "position": [-9.86, 0, -5.63],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_10",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.48, 0.37],
+      "position": [-12.53, 0, -6.91],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_11",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.77, 0.59],
+      "position": [-15.25, 0, -3.09],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_12",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.42, 0.32],
+      "position": [-11.68, 0, -10.97],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_13",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.62, 0.48],
+      "position": [1.55, 0, -7.67],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_14",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.48, 0.37],
+      "position": [-11.54, 0, -11.17],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_16",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.75, 0.58],
+      "position": [-14.28, 0, -3.77],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_17",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.58, 0.45],
+      "position": [14.22, 0, -9.75],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_18",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.58, 0.44],
+      "position": [-14.05, 0, -9.8],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_19",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.72, 0.55],
+      "position": [-11.43, 0, -5.82],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_20",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.63, 0.48],
+      "position": [13.7, 0, -8.8],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_22",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.53, 0.41],
+      "position": [1.7, 0, -5.11],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_23",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.58, 0.45],
+      "position": [-12.54, 0, -8.04],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_24",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.63, 0.48],
+      "position": [-4.95, 0, -10.92],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_25",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.63, 0.48],
+      "position": [-5.77, 0, -11.86],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_26",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.5, 0.39],
+      "position": [4.21, 0, -5.76],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_27",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.64, 0.49],
+      "position": [-11.42, 0, -7.0],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_28",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.61, 0.47],
+      "position": [0.65, 0, -4.67],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "mata_29",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.73, 0.56],
+      "position": [-11.16, 0, -8.77],
+      "collider": false,
+      "tint": [190, 190, 150, 255]
+    },
+    {
+      "name": "gaviota_pivote_0",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-4.57, 16.85, -19.7],
+      "rotation": [0, 125, 0],
+      "spin": [0, 17.17, 0]
+    },
+    {
+      "name": "gaviota_0",
+      "model": "models/gaviota.obj",
+      "position": [13.7, 0, 0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "scale": [1.2, 1.2, 1.2],
+      "attach": { "to": "gaviota_pivote_0" }
+    },
+    {
+      "name": "gaviota_pivote_1",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-6.39, 14.61, -7.67],
+      "rotation": [0, 0, 0],
+      "spin": [0, 22.51, 0]
+    },
+    {
+      "name": "gaviota_1",
+      "model": "models/gaviota.obj",
+      "position": [8.57, 0, 0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "scale": [1.2, 1.2, 1.2],
+      "attach": { "to": "gaviota_pivote_1" }
+    },
+    {
+      "name": "gaviota_pivote_2",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-1.12, 14.71, -10.65],
+      "rotation": [0, 232, 0],
+      "spin": [0, 17.05, 0]
+    },
+    {
+      "name": "gaviota_2",
+      "model": "models/gaviota.obj",
+      "position": [12.03, 0, 0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "scale": [1.2, 1.2, 1.2],
+      "attach": { "to": "gaviota_pivote_2" }
+    },
+    {
+      "name": "gaviota_pivote_3",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [7.54, 16.75, -14.58],
+      "rotation": [0, 253, 0],
+      "spin": [0, 22.64, 0]
+    },
+    {
+      "name": "gaviota_3",
+      "model": "models/gaviota.obj",
+      "position": [12.44, 0, 0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "scale": [1.2, 1.2, 1.2],
+      "attach": { "to": "gaviota_pivote_3" }
+    }
+  ],
+  "triggers": [
+    {
+      "name": "llegada",
+      "position": [0, 0, 0.6],
+      "size": [24, 3, 2],
+      "once": true,
+      "do": [{ "message": "Hace sol. Nunca habias visto tanto blanco.", "seconds": 4 }]
+    },
+    {
+      "name": "al_pueblo",
+      "position": [9.0, 0, -13.2],
+      "size": [5, 3, 1],
+      "do": [
+        { "set_flag": "s_nico_plaza" },
+        { "goto_scene": "scenes/salinas.json", "position": [0, 0, 36.0], "yaw": 0 }
+      ]
+    }
+  ],
+  "emitters": [],
+  "autoCollide": true,
+  "camera": { "position": [-6.2, 1.7, 0.6], "target": [0, 1.5, 0], "fov": 60 }
+}

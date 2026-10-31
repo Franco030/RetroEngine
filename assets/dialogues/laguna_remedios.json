@@ -1,0 +1,28 @@
+{
+  "speaker": "Remedios",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Cada fiesta enciendo uno por cada forastero que paso por Ventosa.",
+        "Para que encuentren el camino.",
+        "Cual? El de vuelta, no, cariño."
+      ]
+    },
+    {
+      "if": { "flag": "pista_farolillos" },
+      "once": true,
+      "key": "tuyo",
+      "lines": ["El tuyo? Todavia no toca.", "Esta noche, cuando suene el tren, a lo mejor."]
+    },
+    {
+      "once": true,
+      "key": "pueblo",
+      "lines": [
+        "Ves la torre, en medio del agua? Era la iglesia de Ventosa.\nLa vieja. Antes de la laguna.",
+        "Cuando hay luna, la campana suena sola.\nLos peces no se acercan."
+      ]
+    },
+    { "lines": ["Mira que bonitos.\nCada uno es alguien."] }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "speaker": "El enterrado",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Hola! No te asustes. Soy Ramiro.",
+        "Unos niños. Una broma. El martes.",
+        "No, si aqui se esta bien. Fresquito. No le digas a mi señora, le dije que estaba en el correo."
+      ]
+    },
+    {
+      "once": true,
+      "key": "pies",
+      "lines": ["Oye, una cosa.", "Tengo los pies mojados.\nHace rato no los tenia."]
+    },
+    { "lines": ["Tu sigue, sigue. Yo aqui, atento."] }
+  ]
+}

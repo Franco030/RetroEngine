@@ -1,0 +1,15 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "pista_farolillos" } },
+      "lines": [
+        "Farolitos de papel a la deriva. En cada uno, un nombre a pluma.",
+        "Los nombres son viejos, de otros tiempos.\nEntre unos y otros, quince años, mas o menos.",
+        "\"Clara Rosales\". Seis nombres juntos, de la misma letra.",
+        "En el borde del muelle hay uno sin encender.\nEl nombre esta escrito. Es el tuyo."
+      ],
+      "do": [{ "set_flag": "pista_farolillos" }, { "add_flag": "pistas" }]
+    },
+    { "lines": ["El tuyo sigue apagado.\nRemedios todavia no lo ha soltado."] }
+  ]
+}

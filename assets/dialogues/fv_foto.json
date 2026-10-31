@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "pista_foto" } },
+      "lines": [
+        "Una foto de la fiesta, clavada en el tablon. Amarilla.",
+        "La rueda de la fortuna, la carpa, una fila de gente posando.",
+        "Una cara esta rodeada en rojo y rascada a conciencia.\nDebajo, a lapiz: \"el forastero\".",
+        "Lleva tu mochila. La misma. Con el mismo parche.",
+        "Por detras, una fecha: hace quince años."
+      ],
+      "do": [{ "set_flag": "pista_foto" }, { "add_flag": "pistas" }]
+    },
+    { "lines": ["La cara rascada. Tu mochila."] }
+  ]
+}

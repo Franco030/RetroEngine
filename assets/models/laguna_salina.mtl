@@ -1,0 +1,13 @@
+# RetroEngine: laguna_salina
+
+newmtl mat_sal
+d 1.000000
+map_Kd ../textures/mat_sal.png
+
+newmtl mat_sal_rosa
+d 1.000000
+map_Kd ../textures/mat_sal_rosa.png
+
+newmtl mat_salmuera
+d 1.000000
+map_Kd ../textures/mat_salmuera.png

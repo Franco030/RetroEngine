@@ -236,6 +236,40 @@ void Scene::CollectColliders(std::vector<WorldBox>& out) const {
     AppendBoundsWalls(*bounds, out);
 }
 
+void Scene::PlaceBehind(Entity& entity, Vector3 feet, float yawDegrees, float distance,
+                        float side) const {
+  constexpr float kBody = 0.36f; // lo que ocupa quien se pone ahi
+  const float yaw = yawDegrees * DEG2RAD;
+  const Vector2 back{std::sin(yaw), std::cos(yaw)};
+  const Vector2 right{std::cos(yaw), -std::sin(yaw)};
+
+  std::vector<WorldBox> solid;
+  CollectColliders(solid);
+  auto isFree = [&](Vector2 p) {
+    for (const WorldBox& b : solid) {
+      const bool inTheWay = b.top > feet.y + 0.35f && b.bottom < feet.y + 1.7f;
+      if (inTheWay && OverlapsCircle(b, p, kBody))
+        return false;
+    }
+    return true;
+  };
+
+  Vector2 spot{feet.x, feet.z};
+  for (float k = 1.0f; k > 0.3f; k -= 0.25f) { // si no cabe, mas cerca
+    spot = {feet.x + back.x * distance * k + right.x * side,
+            feet.z + back.y * distance * k + right.y * side};
+    if (bounds) {
+      spot.x = std::clamp(spot.x, bounds->min.x + kBody, bounds->max.x - kBody);
+      spot.y = std::clamp(spot.y, bounds->min.y + kBody, bounds->max.y - kBody);
+    }
+    if (isFree(spot))
+      break;
+  }
+  entity.transform.position.x = spot.x;
+  entity.transform.position.z = spot.y;
+  entity.transform.rotation.y = std::atan2(feet.x - spot.x, feet.z - spot.y) * RAD2DEG;
+}
+
 void Scene::RefreshVisibility(const GameState& state) {
   for (auto& e : entities_) {
     if (!e->showIf.empty())
@@ -301,12 +335,13 @@ bool Scene::Occluded(Vector3 origin, Vector3 dir, float distance, const Entity* 
 constexpr float kSightVertical = 35.0f * DEG2RAD;
 constexpr float kOffScreenVertical = 45.0f * DEG2RAD;
 
-void Scene::UpdateSight(Vector3 eye, Vector3 forward, std::vector<Action>& fired) {
+void Scene::UpdateSight(Vector3 eye, Vector3 forward, const GameState& state,
+                        std::vector<Action>& fired) {
   for (auto& e : entities_) {
     if (!e->sight || !e->visible)
       continue;
     Sight& s = *e->sight;
-    if (s.seen && s.away)
+    if ((s.seen && s.away) || !AllHold(s.conditions, state))
       continue;
 
     // Se mira al centro de su caja (no a los pies): el cuerpo, la cara.

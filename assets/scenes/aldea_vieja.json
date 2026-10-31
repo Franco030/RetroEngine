@@ -1222,7 +1222,7 @@
       "position": [-5.99, 0, 12.0],
       "rotation": [0, 90, 0],
       "interact": {
-        "prompt": "Mirar dentro",
+        "prompt": "Mirar adentro",
         "range": 2.6,
         "box": { "min": [-0.7, 0, 1.8], "max": [0.7, 2.1, 2.4] },
         "do": [{ "dialogue": "casa_cuna" }]
@@ -1454,7 +1454,7 @@
     {
       "name": "figura_1",
       "model": "models/figura_ramas.obj",
-      "position": [-1.02, 2.49, 34],
+      "position": [-1.02, 4.08, 34],
       "rotation": [0, 96.59, 0],
       "collider": false,
       "tint": [150, 140, 130, 255],
@@ -1463,7 +1463,7 @@
     {
       "name": "figura_2",
       "model": "models/figura_ramas.obj",
-      "position": [3.64, 2.53, 30],
+      "position": [4.65, 3.77, 29.66],
       "rotation": [0, 60.94, 0],
       "collider": false,
       "tint": [150, 140, 130, 255],
@@ -1472,7 +1472,7 @@
     {
       "name": "figura_3",
       "model": "models/figura_ramas.obj",
-      "position": [-2.87, 2.71, -8],
+      "position": [-5.73, 4.15, -8.88],
       "rotation": [0, 275.21, 0],
       "collider": false,
       "tint": [150, 140, 130, 255],
@@ -1481,7 +1481,7 @@
     {
       "name": "figura_4",
       "model": "models/figura_ramas.obj",
-      "position": [1.39, 2.35, -36],
+      "position": [1.39, 3.34, -36],
       "rotation": [0, 179.2, 0],
       "collider": false,
       "tint": [150, 140, 130, 255],
@@ -1490,7 +1490,7 @@
     {
       "name": "figura_5",
       "model": "models/figura_ramas.obj",
-      "position": [-2.85, 2.52, -40],
+      "position": [-2.41, 4.38, -39.82],
       "rotation": [0, 88.52, 0],
       "collider": false,
       "tint": [150, 140, 130, 255],
@@ -4473,6 +4473,20 @@
       "scale": [1.19, 1.19, 1.19],
       "tint": [118, 116, 128, 255],
       "collider": false
+    },
+    {
+      "name": "arbol_figura_0",
+      "model": "models/arbol_muerto.obj",
+      "position": [-2.49, 0, 32.87],
+      "rotation": [0, 90, 0],
+      "tint": [118, 116, 128, 255]
+    },
+    {
+      "name": "arbol_figura_1",
+      "model": "models/arbol_muerto.obj",
+      "position": [2.6, 0, -36.16],
+      "rotation": [0, 300, 0],
+      "tint": [118, 116, 128, 255]
     }
   ],
   "triggers": [

@@ -1,0 +1,3771 @@
+{
+  "camera": { "position": [0, 1.7, -32], "target": [0, 1.2, 0], "fov": 60 },
+  "player": { "position": [0, 0, -32.0], "yaw": 180 },
+  "autoCollide": true,
+  "bounds": { "min": [-30, -36], "max": [30, 30] },
+  "background": [26, 28, 56],
+  "fog": { "start": 8, "end": 58, "mist": 0.55, "mistHeight": 0.6, "mistColor": [70, 74, 108] },
+  "light": { "direction": [-0.3, -0.6, -0.5], "ambient": 0.26, "sun": 0.3 },
+  "audio": {
+    "music": { "file": "audio/musica_laguna_v2.wav", "volume": 0.5 },
+    "ambient": { "file": "audio/grillos.wav", "volume": 0.25 },
+    "footsteps": {
+      "files": ["audio/paso_pasto_1.wav", "audio/paso_pasto_2.wav", "audio/paso_pasto_3.wav"],
+      "volume": 0.16
+    },
+    "fade": 3
+  },
+  "panorama": {
+    "model": "models/panorama_montes.obj",
+    "tint": [56, 54, 96],
+    "haze": 0.55,
+    "sun": { "texture": "textures/spr_luna.png", "yaw": -50, "pitch": 17, "size": 50 }
+  },
+  "entities": [
+    {
+      "name": "suelo",
+      "model": { "type": "plane", "size": 150, "subdivisions": 75, "tiles": 70 },
+      "texture": "textures/suelo_pasto.png",
+      "wrap": "repeat",
+      "tint": [120, 120, 140, 255]
+    },
+    {
+      "name": "lago",
+      "model": "models/lago.obj",
+      "position": [4.8, 0, 8.0],
+      "rotation": [0, 180, 0],
+      "scale": [1.6, 1.0, 1.6],
+      "layer": 1,
+      "tint": [170, 170, 200, 255]
+    },
+    {
+      "name": "muelle",
+      "model": "models/muelle.obj",
+      "position": [0.0, 0, -3.0],
+      "rotation": [0, 180, 0],
+      "scale": [1.0, 1.0, 1.42],
+      "light": {
+        "offset": [-0.78, 1.5, 6.35],
+        "color": [255, 186, 110],
+        "radius": 6,
+        "intensity": 1.0,
+        "flicker": 0.08,
+        "flickerRate": 5
+      },
+      "interact": {
+        "prompt": "Mirar los farolitos",
+        "range": 2.6,
+        "box": { "min": [-1.0, 0.2, 5.4], "max": [1.0, 1.4, 6.8] },
+        "do": [{ "dialogue": "laguna_farolillos" }]
+      }
+    },
+    {
+      "name": "barca",
+      "model": "models/barca.obj",
+      "position": [1.6, 0.02, 5.6],
+      "rotation": [0, 8, 0],
+      "collider": false,
+      "idle": { "bob": 0.02, "sway": 1.2, "speed": 0.5 },
+      "interact": {
+        "prompt": "Subir a la barca",
+        "range": 3.2,
+        "box": { "min": [-0.55, 0, -1.3], "max": [0.55, 0.6, 1.3] },
+        "do": [
+          {
+            "ride": "barca",
+            "seat": [1.6, 0.22, 5.6000000000000005],
+            "exit": [0.0, 0.25, 4.800000000000001],
+            "seconds": 26,
+            "flag": "en_barca",
+            "after": "laguna_barca_bajar"
+          }
+        ]
+      }
+    },
+    {
+      "name": "zapatitos",
+      "model": "models/zapatitos.obj",
+      "position": [-0.5, 0.25, 6.0],
+      "rotation": [0, 200, 0],
+      "collider": false,
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.2,
+        "do": [{ "dialogue": "laguna_zapatos" }],
+        "box": { "min": [-0.3, -0.05, -0.3], "max": [0.3, 0.3, 0.3] }
+      }
+    },
+    {
+      "name": "remedios",
+      "model": "models/aldeana.obj",
+      "texture": "textures/pj_aldeana.png",
+      "position": [-4.2, 0, -6.8],
+      "rotation": [0, 160, 0],
+      "idle": { "bob": 0.01, "sway": 1.0, "speed": 1.1 },
+      "facePlayer": { "range": 5, "turnSpeed": 70 },
+      "light": {
+        "offset": [0.3, 0.9, 0.4],
+        "color": [255, 180, 100],
+        "radius": 4,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 6
+      },
+      "interact": { "prompt": "Hablar", "range": 2.4, "do": [{ "dialogue": "laguna_remedios" }] }
+    },
+    {
+      "name": "cesta",
+      "model": "models/caja.obj",
+      "position": [-5.0, 0, -6.2],
+      "rotation": [0, 30, 0],
+      "scale": [0.6, 0.5, 0.6]
+    },
+    {
+      "name": "campanario_hundido",
+      "model": "models/campanario.obj",
+      "position": [8.0, -3.4, 11.0],
+      "rotation": [0, 12, 0],
+      "collider": false,
+      "scale": [1.4, 1.4, 1.4],
+      "tint": [70, 80, 104, 255]
+    },
+    {
+      "name": "clara_agua",
+      "model": "models/clara.obj",
+      "texture": "textures/pj_fe_clara.png",
+      "position": [-7.0, 0.08, 13.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "glitch": 0.5,
+      "showIf": {
+        "all": [{ "flag": "en_barca" }, { "not": { "flag": "clara_agua_vista" } }]
+      },
+      "seen": {
+        "range": 26,
+        "angle": 6,
+        "do": [
+          { "play_sound": "audio/risa_nina.wav", "at": "clara_agua", "volume": 0.9, "radius": 18 },
+          { "set_flag": "clara_agua_vista" }
+        ]
+      }
+    },
+    {
+      "name": "camino_0",
+      "model": "models/sendero.obj",
+      "position": [0.0, 0, -37.0],
+      "rotation": [0, -180.0, 0],
+      "scale": [1, 1, 0.9],
+      "collider": false,
+      "layer": 1,
+      "tint": [130, 116, 100, 255]
+    },
+    {
+      "name": "camino_1",
+      "model": "models/sendero.obj",
+      "position": [0.0, 0, -25.83],
+      "rotation": [0, -180.0, 0],
+      "scale": [1, 1, 0.9],
+      "collider": false,
+      "layer": 1,
+      "tint": [130, 116, 100, 255]
+    },
+    {
+      "name": "camino_2",
+      "model": "models/sendero.obj",
+      "position": [0.0, 0, -14.67],
+      "rotation": [0, -180.0, 0],
+      "scale": [1, 1, 0.9],
+      "collider": false,
+      "layer": 1,
+      "tint": [130, 116, 100, 255]
+    },
+    {
+      "name": "farolillo_0",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-3.54, 0.12, 2.37],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.53,
+      "slide": { "offset": [-2.19, 0, -0.43], "period": 35.49, "phase": 0.96 },
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 90],
+        "radius": 4.5,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farolillo_1",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [4.6, 0.12, 3.59],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.69,
+      "slide": { "offset": [1.71, 0, -0.2], "period": 21.18, "phase": 0.1 }
+    },
+    {
+      "name": "farolillo_2",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [8.78, 0.12, 12.37],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.58,
+      "slide": { "offset": [0.62, 0, 0.12], "period": 21.29, "phase": 0.21 }
+    },
+    {
+      "name": "farolillo_3",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-7.64, 0.12, 4.01],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.48,
+      "slide": { "offset": [0.83, 0, -0.6], "period": 27.58, "phase": 0.27 }
+    },
+    {
+      "name": "farolillo_4",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [16.86, 0.12, 8.12],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.8,
+      "slide": { "offset": [1.23, 0, 0.97], "period": 31.53, "phase": 0.28 }
+    },
+    {
+      "name": "farolillo_5",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-4.17, 0.12, 6.31],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.35,
+      "slide": { "offset": [-1.52, 0, 0.05], "period": 29.05, "phase": 0.49 }
+    },
+    {
+      "name": "farolillo_6",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-11.9, 0.12, 14.33],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.46,
+      "slide": { "offset": [-0.13, 0, 0.44], "period": 24.11, "phase": 0.43 },
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 90],
+        "radius": 4.5,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farolillo_7",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [11.12, 0.12, 5.56],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.13,
+      "slide": { "offset": [1.57, 0, -0.77], "period": 33.79, "phase": 0.86 }
+    },
+    {
+      "name": "farolillo_8",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-10.46, 0.12, 11.9],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.08,
+      "slide": { "offset": [1.81, 0, -0.58], "period": 33.75, "phase": 0.61 }
+    },
+    {
+      "name": "farolillo_9",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [14.92, 0.12, 5.56],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.7,
+      "slide": { "offset": [0.84, 0, 0.23], "period": 38.59, "phase": 0.09 }
+    },
+    {
+      "name": "farolillo_10",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-5.87, 0.12, 16.77],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.9,
+      "slide": { "offset": [-1.99, 0, -1.25], "period": 28.75, "phase": 0.7 }
+    },
+    {
+      "name": "farolillo_11",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-10.73, 0.12, 6.79],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.7,
+      "slide": { "offset": [0.52, 0, 0.78], "period": 34.03, "phase": 0.62 }
+    },
+    {
+      "name": "farolillo_12",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [1.89, 0.12, 16.69],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.52,
+      "slide": { "offset": [0.98, 0, -0.52], "period": 35.54, "phase": 0.21 },
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 90],
+        "radius": 4.5,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farolillo_13",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [17.1, 0.12, 14.51],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.58,
+      "slide": { "offset": [1.78, 0, 0.81], "period": 23.01, "phase": 0.86 }
+    },
+    {
+      "name": "farolillo_14",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [6.62, 0.12, 3.76],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.03,
+      "slide": { "offset": [-0.8, 0, -1.17], "period": 29.66, "phase": 0.99 }
+    },
+    {
+      "name": "farolillo_15",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-12.73, 0.12, 6.5],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.39,
+      "slide": { "offset": [0.99, 0, -0.33], "period": 26.98, "phase": 0.87 }
+    },
+    {
+      "name": "farolillo_16",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-4.82, 0.12, 8.4],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.88,
+      "slide": { "offset": [1.01, 0, 1.26], "period": 35.29, "phase": 0.92 }
+    },
+    {
+      "name": "farolillo_17",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [6.85, 0.12, 1.6],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.44,
+      "slide": { "offset": [-0.43, 0, 0.84], "period": 28.84, "phase": 0.35 }
+    },
+    {
+      "name": "farolillo_18",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-6.24, 0.12, 4.34],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.51,
+      "slide": { "offset": [-0.55, 0, 0.28], "period": 23.86, "phase": 0.34 },
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 90],
+        "radius": 4.5,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farolillo_19",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-9.41, 0.12, 15.56],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.86,
+      "slide": { "offset": [0.54, 0, -0.56], "period": 20.67, "phase": 0.3 }
+    },
+    {
+      "name": "farolillo_20",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-11.23, 0.12, 11.88],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.21,
+      "slide": { "offset": [-0.5, 0, 0.8], "period": 26.44, "phase": 0.85 }
+    },
+    {
+      "name": "farolillo_21",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [7.49, 0.12, -1.48],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.74,
+      "slide": { "offset": [2.25, 0, -0.59], "period": 32.7, "phase": 0.38 }
+    },
+    {
+      "name": "farolillo_22",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [17.67, 0.12, 6.64],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.22,
+      "slide": { "offset": [1.03, 0, 1.31], "period": 39.6, "phase": 0.13 }
+    },
+    {
+      "name": "farolillo_23",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [18.45, 0.12, 2.07],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.46,
+      "slide": { "offset": [1.82, 0, 1.32], "period": 24.57, "phase": 0.78 }
+    },
+    {
+      "name": "farolillo_24",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [6.26, 0.12, 3.71],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.9,
+      "slide": { "offset": [-1.1, 0, 0.4], "period": 21.88, "phase": 0.36 },
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 90],
+        "radius": 4.5,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farolillo_25",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-6.04, 0.12, 9.82],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.28,
+      "slide": { "offset": [0.62, 0, -1.13], "period": 38.75, "phase": 0.38 }
+    },
+    {
+      "name": "farolillo_26",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-7.64, 0.12, -0.82],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.86,
+      "slide": { "offset": [2.34, 0, 0.16], "period": 24.29, "phase": 0.46 }
+    },
+    {
+      "name": "farolillo_27",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [8.53, 0.12, 11.52],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.38,
+      "slide": { "offset": [-1.6, 0, 1.01], "period": 32.54, "phase": 0.75 }
+    },
+    {
+      "name": "farolillo_28",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [16.22, 0.12, 11.6],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.78,
+      "slide": { "offset": [2.22, 0, -0.56], "period": 23.82, "phase": 0.2 }
+    },
+    {
+      "name": "farolillo_29",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [19.99, 0.12, 7.23],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.35,
+      "slide": { "offset": [-1.01, 0, -0.34], "period": 27.35, "phase": 0.78 }
+    },
+    {
+      "name": "farolillo_30",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [13.83, 0.12, 15.2],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.34,
+      "slide": { "offset": [-0.68, 0, -1.47], "period": 31.5, "phase": 0.55 },
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 90],
+        "radius": 4.5,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farolillo_31",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-15.96, 0.12, 7.25],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.56,
+      "slide": { "offset": [-0.02, 0, 0.22], "period": 25.91, "phase": 0.26 }
+    },
+    {
+      "name": "farolillo_32",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [2.92, 0.12, 0.71],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.92,
+      "slide": { "offset": [2.26, 0, 1.05], "period": 23.67, "phase": 0.95 }
+    },
+    {
+      "name": "farolillo_33",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-5.27, 0.12, 8.94],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.64,
+      "slide": { "offset": [0.21, 0, -0.12], "period": 36.61, "phase": 0.36 }
+    },
+    {
+      "name": "farolillo_34",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [7.79, 0.12, 15.95],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.55,
+      "slide": { "offset": [-0.69, 0, 1.12], "period": 37.72, "phase": 0.09 }
+    },
+    {
+      "name": "farolillo_35",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-10.22, 0.12, 10.9],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.12,
+      "slide": { "offset": [-2.01, 0, 1.07], "period": 33.05, "phase": 0.37 }
+    },
+    {
+      "name": "farolillo_36",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [-6.28, 0.12, 11.0],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.28,
+      "slide": { "offset": [-0.97, 0, -0.37], "period": 25.79, "phase": 0.31 },
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 90],
+        "radius": 4.5,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farolillo_37",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [7.73, 0.12, 6.79],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.62,
+      "slide": { "offset": [-1.92, 0, -0.85], "period": 39.01, "phase": 0.8 }
+    },
+    {
+      "name": "farolillo_38",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [9.08, 0.12, -0.51],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.98,
+      "slide": { "offset": [1.23, 0, -0.68], "period": 25.3, "phase": 0.94 }
+    },
+    {
+      "name": "farolillo_39",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.5, 0.5],
+      "position": [18.44, 0.12, 16.24],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.53,
+      "slide": { "offset": [-1.03, 0, 1.3], "period": 24.16, "phase": 0.14 }
+    },
+    {
+      "name": "farolillo_tuyo",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.45, 0.45],
+      "position": [0.55, 0.47, 5.7],
+      "collider": false,
+      "tint": [70, 60, 60, 255]
+    },
+    {
+      "name": "sauce_0",
+      "model": "models/sauce.obj",
+      "position": [-15.0, 0, -6.0],
+      "rotation": [0, 200, 0],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "sauce_1",
+      "model": "models/sauce.obj",
+      "position": [16.0, 0, -6.5],
+      "rotation": [0, 140, 0],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "sauce_2",
+      "model": "models/sauce.obj",
+      "position": [-25.0, 0, 8.0],
+      "rotation": [0, 260, 0],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "sauce_3",
+      "model": "models/sauce.obj",
+      "position": [28.8, 0, 14.0],
+      "rotation": [0, 80, 0],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "sauce_4",
+      "model": "models/sauce.obj",
+      "position": [-12.0, 0, 25.0],
+      "rotation": [0, 20, 0],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "sauce_5",
+      "model": "models/sauce.obj",
+      "position": [14.0, 0, 26.0],
+      "rotation": [0, 330, 0],
+      "tint": [150, 150, 170, 255]
+    },
+    {
+      "name": "roca_0",
+      "model": "models/rocas_orilla.obj",
+      "position": [-16.99, 0, 13.43],
+      "rotation": [0, 157, 0],
+      "scale": [0.81, 0.81, 0.81]
+    },
+    {
+      "name": "roca_1",
+      "model": "models/rocas_orilla.obj",
+      "position": [5.95, 0, 21.64],
+      "rotation": [0, 341, 0],
+      "scale": [1.18, 1.18, 1.18]
+    },
+    {
+      "name": "roca_2",
+      "model": "models/rocas_orilla.obj",
+      "position": [27.63, 0, 11.75],
+      "rotation": [0, 142, 0],
+      "scale": [0.88, 0.88, 0.88]
+    },
+    {
+      "name": "roca_3",
+      "model": "models/rocas_orilla.obj",
+      "position": [-17.42, 0, 3.18],
+      "rotation": [0, 322, 0],
+      "scale": [0.9, 0.9, 0.9]
+    },
+    {
+      "name": "roca_4",
+      "model": "models/rocas_orilla.obj",
+      "position": [-7.38, 0, 19.72],
+      "rotation": [0, 38, 0],
+      "scale": [1.22, 1.22, 1.22]
+    },
+    {
+      "name": "roca_5",
+      "model": "models/rocas_orilla.obj",
+      "position": [-13.16, 0, -0.93],
+      "rotation": [0, 347, 0],
+      "scale": [1.17, 1.17, 1.17]
+    },
+    {
+      "name": "roca_6",
+      "model": "models/rocas_orilla.obj",
+      "position": [28.51, 0, 8.73],
+      "rotation": [0, 358, 0],
+      "scale": [1.15, 1.15, 1.15]
+    },
+    {
+      "name": "roca_7",
+      "model": "models/rocas_orilla.obj",
+      "position": [14.26, 0, -4.52],
+      "rotation": [0, 64, 0],
+      "scale": [0.95, 0.95, 0.95]
+    },
+    {
+      "name": "roca_8",
+      "model": "models/rocas_orilla.obj",
+      "position": [15.88, 0, -4.07],
+      "rotation": [0, 223, 0],
+      "scale": [0.85, 0.85, 0.85]
+    },
+    {
+      "name": "roca_9",
+      "model": "models/rocas_orilla.obj",
+      "position": [26.42, 0, 13.65],
+      "rotation": [0, 343, 0],
+      "scale": [1.2, 1.2, 1.2]
+    },
+    {
+      "name": "roca_10",
+      "model": "models/rocas_orilla.obj",
+      "position": [11.76, 0, 21.05],
+      "rotation": [0, 258, 0],
+      "scale": [1.19, 1.19, 1.19]
+    },
+    {
+      "name": "roca_12",
+      "model": "models/rocas_orilla.obj",
+      "position": [20.47, 0, -2.26],
+      "rotation": [0, 146, 0],
+      "scale": [0.89, 0.89, 0.89]
+    },
+    {
+      "name": "roca_13",
+      "model": "models/rocas_orilla.obj",
+      "position": [-14.85, 0, 0.34],
+      "rotation": [0, 173, 0],
+      "scale": [1.02, 1.02, 1.02]
+    },
+    {
+      "name": "roca_14",
+      "model": "models/rocas_orilla.obj",
+      "position": [28.54, 0, 8.35],
+      "rotation": [0, 291, 0],
+      "scale": [1.24, 1.24, 1.24]
+    },
+    {
+      "name": "roca_15",
+      "model": "models/rocas_orilla.obj",
+      "position": [19.8, 0, -2.58],
+      "rotation": [0, 349, 0],
+      "scale": [0.92, 0.92, 0.92]
+    },
+    {
+      "name": "junco_0",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.71, 0.79],
+      "position": [13.8, 0, -3.09],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_1",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.63, 0.7],
+      "position": [-6.48, 0, 20.78],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_2",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.82, 0.91],
+      "position": [8.42, 0, 22.15],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_3",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.06, 1.18],
+      "position": [24.98, 0, 3.5],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_4",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.95, 1.06],
+      "position": [8.12, 0, -6.64],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_5",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.87, 0.96],
+      "position": [-10.47, 0, -1.81],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_6",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.11, 1.24],
+      "position": [-10.2, 0, 17.12],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_7",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.79, 0.88],
+      "position": [-12.48, 0, -2.09],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_8",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.84, 0.93],
+      "position": [-17.23, 0, 11.81],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_9",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.04, 1.16],
+      "position": [6.68, 0, -6.36],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_10",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.1, 1.23],
+      "position": [-20.99, 0, 9.94],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_11",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.89, 0.99],
+      "position": [14.41, 0, 21.99],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_12",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.06, 1.18],
+      "position": [-17.65, 0, 14.67],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_13",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.77, 0.85],
+      "position": [-11.62, 0, 19.85],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_14",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.65, 0.72],
+      "position": [29.62, 0, 8.49],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_15",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.65, 0.72],
+      "position": [24.27, 0, -1.06],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_16",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.79, 0.88],
+      "position": [-11.34, 0, -3.6],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_17",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.65, 0.73],
+      "position": [25.94, 0, 4.04],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_18",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.84, 0.93],
+      "position": [19.5, 0, 16.83],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_19",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.66, 0.74],
+      "position": [3.76, 0, 21.46],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_20",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.87, 0.97],
+      "position": [-14.92, 0, 0.95],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_21",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.7, 0.78],
+      "position": [17.74, 0, -2.42],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_22",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.76, 0.84],
+      "position": [-11.72, 0, 17.43],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_23",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.11],
+      "position": [-6.96, 0, 19.91],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_24",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.11],
+      "position": [20.02, 0, -2.14],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_25",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.92, 1.02],
+      "position": [-5.21, 0, 19.42],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_26",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.09, 1.22],
+      "position": [25.79, 0, -0.69],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_27",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.15, 1.27],
+      "position": [21.9, 0, 15.5],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_28",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.02, 1.14],
+      "position": [25.1, 0, 2.2],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_29",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.02, 1.13],
+      "position": [19.78, 0, 19.3],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_30",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.12, 1.24],
+      "position": [-13.21, 0, 14.92],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_31",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.98, 1.09],
+      "position": [30.37, 0, 5.57],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_32",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.13, 1.26],
+      "position": [29.23, 0, 7.72],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_33",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.7, 0.77],
+      "position": [28.23, 0, 3.36],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_34",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.03, 1.15],
+      "position": [27.12, 0, 13.22],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_35",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.1, 1.22],
+      "position": [-11.07, 0, -0.16],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_36",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.05, 1.16],
+      "position": [16.17, 0, -4.05],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_37",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.13, 1.26],
+      "position": [26.4, 0, 11.79],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_38",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.04, 1.15],
+      "position": [-9.93, 0, -0.76],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_39",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.98, 1.08],
+      "position": [-2.5, 0, 20.74],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_40",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.12, 1.24],
+      "position": [-16.1, 0, 17.47],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_41",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.07, 1.19],
+      "position": [26.12, 0, 15.37],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_42",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.7, 0.78],
+      "position": [-2.62, 0, 21.29],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_43",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.87, 0.97],
+      "position": [16.46, 0, -4.48],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_44",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.14, 1.26],
+      "position": [29.0, 0, 10.77],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_45",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.63, 0.7],
+      "position": [25.52, 0, 16.8],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_46",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.03, 1.14],
+      "position": [26.35, 0, 6.31],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_47",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.11],
+      "position": [21.44, 0, 16.56],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_48",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.83, 0.93],
+      "position": [7.93, 0, 20.95],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_49",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.76, 0.84],
+      "position": [27.01, 0, 1.17],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_50",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.69, 0.76],
+      "position": [-21.89, 0, 7.31],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_51",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.97, 1.08],
+      "position": [24.43, 0, -2.23],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_52",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.77, 0.86],
+      "position": [16.25, 0, -4.84],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_53",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.65, 0.73],
+      "position": [-13.95, 0, 17.06],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_54",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.8, 0.89],
+      "position": [-15.24, 0, 3.58],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_55",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.8, 0.89],
+      "position": [14.45, 0, -4.61],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_56",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.08, 1.21],
+      "position": [-13.17, 0, -0.8],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_57",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.14, 1.27],
+      "position": [-21.1, 0, 8.65],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_58",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.14, 1.27],
+      "position": [18.42, 0, -1.67],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_59",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.82, 0.91],
+      "position": [-19.53, 0, 10.99],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_60",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.71, 0.79],
+      "position": [20.71, 0, 19.19],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_61",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.84, 0.93],
+      "position": [24.72, 0, 1.07],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_62",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.68, 0.76],
+      "position": [13.99, 0, 21.9],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_63",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.13, 1.26],
+      "position": [-12.84, 0, 19.18],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_64",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.07, 1.18],
+      "position": [-12.28, 0, -1.39],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_65",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.74, 0.82],
+      "position": [7.04, 0, 20.07],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_66",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.01, 1.12],
+      "position": [11.81, 0, -4.12],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_67",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.96, 1.06],
+      "position": [-14.6, 0, 18.26],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_68",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.78, 0.87],
+      "position": [11.13, 0, -4.08],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_69",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.02, 1.13],
+      "position": [7.48, 0, 21.37],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_70",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.11, 1.23],
+      "position": [27.41, 0, 5.74],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_71",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.84, 0.93],
+      "position": [31.03, 0, 10.54],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_72",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.92, 1.02],
+      "position": [15.08, 0, 21.11],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_73",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.87, 0.97],
+      "position": [-17.13, 0, 5.15],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_74",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.16, 1.29],
+      "position": [-18.35, 0, 9.09],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_75",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.98, 1.08],
+      "position": [7.57, 0, 22.34],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_76",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.12, 1.25],
+      "position": [17.35, 0, -2.82],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_77",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.86, 0.95],
+      "position": [28.34, 0, 12.43],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_78",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.89, 0.99],
+      "position": [14.24, 0, 19.77],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_79",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.64, 0.71],
+      "position": [-7.3, 0, 18.22],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_80",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.16, 1.28],
+      "position": [10.9, 0, -3.7],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_81",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.75, 0.83],
+      "position": [15.64, 0, -4.77],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_82",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.03, 1.15],
+      "position": [30.27, 0, 12.58],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_83",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.9, 1.0],
+      "position": [-5.06, 0, -3.7],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_84",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.07, 1.19],
+      "position": [14.47, 0, 19.74],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_85",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.83, 0.93],
+      "position": [-20.35, 0, 5.24],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_86",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.74, 0.82],
+      "position": [4.0, 0, -5.95],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_87",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.06, 1.18],
+      "position": [3.05, 0, 20.44],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_88",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.96, 1.07],
+      "position": [5.13, 0, -6.51],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_89",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.93, 1.04],
+      "position": [-16.61, 0, 5.05],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_90",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.67, 0.74],
+      "position": [26.62, 0, 14.59],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_91",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.99, 1.1],
+      "position": [3.19, 0, 21.19],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_92",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.89, 0.99],
+      "position": [21.71, 0, -0.94],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_93",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.8, 0.89],
+      "position": [-16.95, 0, 2.08],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_94",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.7, 0.78],
+      "position": [3.3, 0, 21.91],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_95",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.02, 1.13],
+      "position": [23.06, 0, -0.96],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_96",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.79, 0.88],
+      "position": [-14.39, 0, 15.4],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_97",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.8, 0.89],
+      "position": [-18.17, 0, 14.92],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_98",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.04, 1.15],
+      "position": [-7.27, 0, -2.79],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_99",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.85, 0.95],
+      "position": [18.95, 0, -4.5],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_100",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.1, 1.22],
+      "position": [-7.38, 0, -2.77],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_101",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.78, 0.87],
+      "position": [-14.09, 0, 14.76],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_102",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.79, 0.88],
+      "position": [22.44, 0, -1.14],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_103",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.71, 0.78],
+      "position": [-1.93, 0, 20.41],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_104",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.83, 0.92],
+      "position": [8.24, 0, 20.77],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_105",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.77, 0.86],
+      "position": [-14.83, 0, 15.69],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_106",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.14, 1.27],
+      "position": [5.14, 0, -4.69],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_107",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.99, 1.1],
+      "position": [13.44, 0, 20.84],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_108",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.67, 0.74],
+      "position": [-15.51, 0, 14.79],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_109",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.63, 0.7],
+      "position": [-9.19, 0, 19.45],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_110",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.66, 0.74],
+      "position": [-11.71, 0, -3.94],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_111",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.09, 1.21],
+      "position": [-7.32, 0, -5.32],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_112",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.98, 1.09],
+      "position": [4.22, 0, -5.26],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_113",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.89, 0.99],
+      "position": [24.2, 0, -2.45],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_114",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.08, 1.2],
+      "position": [28.15, 0, 2.05],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_115",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.83, 0.92],
+      "position": [28.41, 0, 9.97],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_116",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.83, 0.92],
+      "position": [25.23, 0, 15.01],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_117",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.84, 0.93],
+      "position": [30.96, 0, 7.06],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_118",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.88, 0.98],
+      "position": [-16.41, 0, 4.59],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_119",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.94, 1.05],
+      "position": [26.14, 0, -0.71],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_120",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.85, 0.94],
+      "position": [28.76, 0, 9.75],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_121",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.91, 1.01],
+      "position": [12.04, 0, -6.12],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_122",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.05, 1.17],
+      "position": [-21.41, 0, 9.27],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_123",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.89, 0.99],
+      "position": [28.3, 0, 5.72],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_124",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.77, 0.85],
+      "position": [-20.65, 0, 12.41],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_125",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.83, 0.92],
+      "position": [27.52, 0, 13.31],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_126",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.77, 0.85],
+      "position": [27.14, 0, 8.68],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_127",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.12, 1.25],
+      "position": [-8.01, 0, 19.45],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_128",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.75, 0.84],
+      "position": [15.9, 0, -3.54],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_129",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.75, 0.83],
+      "position": [-11.45, 0, -3.43],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_130",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.66, 0.74],
+      "position": [6.27, 0, -4.97],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_131",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.68, 0.75],
+      "position": [-18.36, 0, 11.21],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_132",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.81, 0.9],
+      "position": [26.93, 0, 11.45],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_133",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.13, 1.25],
+      "position": [6.77, 0, 22.14],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_134",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.07, 1.19],
+      "position": [-11.3, 0, -3.36],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_135",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.83, 0.92],
+      "position": [27.03, 0, 14.5],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_136",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.08, 1.19],
+      "position": [-3.33, 0, 19.13],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_137",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.66, 0.73],
+      "position": [11.75, 0, 20.46],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_138",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.98, 1.09],
+      "position": [24.8, 0, 15.2],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_139",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.1, 1.22],
+      "position": [30.12, 0, 9.4],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_140",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.86, 0.95],
+      "position": [22.37, 0, -2.35],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_141",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.83, 0.93],
+      "position": [3.62, 0, -4.82],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_142",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.73, 0.81],
+      "position": [12.33, 0, 20.34],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_143",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.65, 0.73],
+      "position": [-8.71, 0, -1.79],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_144",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.73, 0.81],
+      "position": [-20.39, 0, 7.74],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_145",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.69, 0.76],
+      "position": [26.78, 0, 1.81],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_146",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.01, 1.12],
+      "position": [-16.33, 0, -0.71],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_147",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.83, 0.92],
+      "position": [9.77, 0, -6.72],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_148",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.17, 1.3],
+      "position": [-11.75, 0, -3.61],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_149",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.01, 1.12],
+      "position": [-14.6, 0, 2.6],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_150",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.02, 1.14],
+      "position": [26.48, 0, 8.97],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_151",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.72, 0.8],
+      "position": [-4.87, 0, -3.34],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_152",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.87, 0.96],
+      "position": [-19.67, 0, 13.67],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_153",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.87, 0.97],
+      "position": [3.26, 0, 21.73],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_154",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.84, 0.94],
+      "position": [27.4, 0, 9.34],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_155",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.64, 0.71],
+      "position": [12.19, 0, -4.65],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_156",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.66, 0.73],
+      "position": [12.24, 0, 21.01],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_157",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.94, 1.04],
+      "position": [11.13, 0, 22.59],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_158",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.99, 1.1],
+      "position": [28.5, 0, 11.74],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_159",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.83, 0.92],
+      "position": [27.71, 0, 4.44],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_160",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.81, 0.9],
+      "position": [19.91, 0, 19.85],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_161",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.9, 1.01],
+      "position": [-1.87, 0, 20.34],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_162",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.98, 1.09],
+      "position": [-16.32, 0, 12.35],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_163",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.05, 1.17],
+      "position": [5.69, 0, -4.04],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_164",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.15, 1.28],
+      "position": [-8.81, 0, -3.14],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_165",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.91, 1.01],
+      "position": [9.46, 0, -6.73],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_166",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.73, 0.81],
+      "position": [-4.49, 0, 19.21],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_167",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.15, 1.28],
+      "position": [14.07, 0, 20.51],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_168",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.86, 0.95],
+      "position": [-15.87, 0, 14.25],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_169",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.98, 1.09],
+      "position": [-10.8, 0, -2.18],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_170",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.92, 1.02],
+      "position": [19.03, 0, 18.5],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_171",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.11],
+      "position": [3.91, 0, 21.05],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_172",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.11, 1.24],
+      "position": [-16.5, 0, 2.51],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_173",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.05, 1.17],
+      "position": [23.89, 0, -1.84],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_174",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.71, 0.79],
+      "position": [-11.25, 0, -3.65],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_175",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.63, 0.71],
+      "position": [-17.56, 0, 16.21],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_176",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.03, 1.14],
+      "position": [20.13, 0, -2.33],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_177",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.89, 0.98],
+      "position": [12.61, 0, 21.36],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_178",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.87, 0.97],
+      "position": [-19.3, 0, 7.03],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_179",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.11, 1.23],
+      "position": [-8.09, 0, -4.75],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_180",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.8, 0.89],
+      "position": [-16.36, 0, -0.62],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_181",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.82, 0.91],
+      "position": [18.14, 0, -2.5],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_182",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.94, 1.04],
+      "position": [-14.95, 0, -0.9],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_183",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.08, 1.2],
+      "position": [12.5, 0, 21.61],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_184",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.13, 1.25],
+      "position": [16.7, 0, 19.16],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_185",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.16, 1.29],
+      "position": [26.8, 0, -0.5],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_186",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.87, 0.97],
+      "position": [-8.14, 0, 20.73],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_187",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.89, 0.99],
+      "position": [17.44, 0, 19.2],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_188",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.72, 0.8],
+      "position": [-19.59, 0, 13.88],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_189",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.66, 0.73],
+      "position": [28.78, 0, 10.17],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_190",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.89, 0.99],
+      "position": [-12.26, 0, 0.14],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_191",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.91, 1.01],
+      "position": [-12.33, 0, -2.67],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_192",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.01, 1.12],
+      "position": [-13.34, 0, 0.83],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_193",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.65, 0.72],
+      "position": [4.02, 0, 21.32],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_194",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.72, 0.8],
+      "position": [6.19, 0, -6.41],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_195",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.83, 0.92],
+      "position": [23.49, 0, 16.78],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_196",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.05, 1.16],
+      "position": [7.67, 0, 20.64],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_197",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.77, 0.86],
+      "position": [-6.24, 0, -3.49],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_198",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.69, 0.77],
+      "position": [3.98, 0, -5.69],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_199",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.72, 0.8],
+      "position": [23.71, 0, 17.55],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_200",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.09, 1.21],
+      "position": [-21.96, 0, 8.57],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_201",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.65, 0.73],
+      "position": [-19.53, 0, 9.02],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_202",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.73, 0.82],
+      "position": [30.67, 0, 5.37],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_203",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.87, 0.96],
+      "position": [3.44, 0, -4.0],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_204",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.14, 1.27],
+      "position": [-15.73, 0, -0.67],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_205",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.68, 0.76],
+      "position": [21.89, 0, 18.34],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_206",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.67, 0.74],
+      "position": [-18.48, 0, 6.3],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_207",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.7, 0.77],
+      "position": [19.18, 0, -4.49],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_208",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.83, 0.92],
+      "position": [4.13, 0, 22.23],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_209",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.82, 0.91],
+      "position": [12.95, 0, -3.76],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_210",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.93, 1.03],
+      "position": [-3.69, 0, -5.84],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_211",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.12, 1.25],
+      "position": [30.32, 0, 8.48],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_212",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.71, 0.79],
+      "position": [24.23, 0, 2.23],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_213",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.76, 0.85],
+      "position": [11.03, 0, -4.32],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_214",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.82, 0.91],
+      "position": [22.7, 0, 17.63],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_215",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.83, 0.92],
+      "position": [3.96, 0, 21.75],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_216",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.93, 1.03],
+      "position": [27.0, 0, 12.77],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_217",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.97, 1.08],
+      "position": [-5.73, 0, -2.44],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_218",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.99, 1.1],
+      "position": [-18.78, 0, 15.13],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_219",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.97, 1.07],
+      "position": [-16.48, 0, 8.94],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_220",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.72, 0.8],
+      "position": [-18.66, 0, 5.02],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_221",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.94, 1.04],
+      "position": [10.05, 0, 20.19],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_222",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.8, 0.89],
+      "position": [-13.96, 0, -1.26],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_223",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.15, 1.28],
+      "position": [28.31, 0, 4.52],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_224",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.95, 1.06],
+      "position": [-15.05, 0, 0.74],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_225",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.12, 1.24],
+      "position": [-4.16, 0, -4.1],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_226",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.96, 1.06],
+      "position": [13.11, 0, 19.65],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_227",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.72, 0.8],
+      "position": [-12.26, 0, 16.35],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_228",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.81, 0.9],
+      "position": [28.29, 0, 5.39],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_229",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.65, 0.72],
+      "position": [29.9, 0, 8.52],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_230",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.86, 0.96],
+      "position": [21.46, 0, 18.06],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_231",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.15, 1.28],
+      "position": [15.22, 0, -3.74],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_232",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.79, 0.88],
+      "position": [-12.09, 0, 17.99],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_233",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.65, 0.72],
+      "position": [-5.95, 0, -5.41],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_234",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.65, 0.72],
+      "position": [-9.5, 0, 18.23],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_235",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.78, 0.87],
+      "position": [29.83, 0, 9.47],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_236",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.04, 1.15],
+      "position": [26.68, 0, 11.16],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_237",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.69, 0.76],
+      "position": [-20.61, 0, 7.55],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_238",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.17, 1.3],
+      "position": [-19.5, 0, 13.8],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_239",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.64, 0.71],
+      "position": [-20.15, 0, 4.47],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_240",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.65, 0.73],
+      "position": [30.16, 0, 8.41],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_241",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.99, 1.1],
+      "position": [20.75, 0, 20.2],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_242",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.12, 1.24],
+      "position": [28.69, 0, 2.68],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_243",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.07, 1.19],
+      "position": [-15.53, 0, 13.47],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_244",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.67, 0.75],
+      "position": [-16.88, 0, 9.17],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_245",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.05, 1.17],
+      "position": [15.44, 0, 20.55],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_246",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.66, 0.74],
+      "position": [-17.87, 0, 15.88],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_247",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.72, 0.8],
+      "position": [18.03, 0, 19.37],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_248",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.01, 1.13],
+      "position": [21.07, 0, -0.14],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_249",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.94, 1.05],
+      "position": [-6.53, 0, 19.02],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_250",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.72, 0.8],
+      "position": [30.57, 0, 8.08],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_251",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.01, 1.12],
+      "position": [8.77, 0, -6.35],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_252",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.06, 1.18],
+      "position": [-11.38, 0, -3.6],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_253",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.17, 1.3],
+      "position": [-16.14, 0, 12.85],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_254",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.72, 0.8],
+      "position": [-11.31, 0, -2.62],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_255",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.12, 1.25],
+      "position": [27.06, 0, 11.01],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_256",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.91, 1.01],
+      "position": [-4.57, 0, -3.91],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_257",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.1, 1.22],
+      "position": [9.8, 0, 22.9],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_258",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.97, 1.07],
+      "position": [5.67, 0, -6.13],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_259",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.1, 1.22],
+      "position": [-11.61, 0, 17.27],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_260",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.77, 0.86],
+      "position": [28.12, 0, 11.44],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_261",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.76, 0.85],
+      "position": [-16.49, 0, -0.09],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_262",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.87, 0.96],
+      "position": [-14.14, 0, 16.87],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_263",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.05, 1.16],
+      "position": [17.91, 0, -5.13],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_264",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.79, 0.88],
+      "position": [16.12, 0, -3.81],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_265",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.65, 0.72],
+      "position": [27.32, 0, 8.01],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_266",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.64, 0.72],
+      "position": [-5.28, 0, 22.01],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_267",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.74, 0.82],
+      "position": [3.48, 0, -4.06],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_268",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.88, 0.98],
+      "position": [-18.11, 0, 4.59],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_269",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.97, 1.08],
+      "position": [16.7, 0, -5.12],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_270",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.75, 0.83],
+      "position": [15.15, 0, -5.99],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_271",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.91, 1.01],
+      "position": [-3.5, 0, 19.81],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_272",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.89, 0.98],
+      "position": [24.05, 0, -1.52],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_273",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.88, 0.98],
+      "position": [10.73, 0, -5.75],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_274",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.64, 0.71],
+      "position": [20.63, 0, -2.45],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_275",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.84, 0.94],
+      "position": [-13.36, 0, -3.02],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_276",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.7, 0.77],
+      "position": [-17.71, 0, 14.84],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_277",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.69, 0.77],
+      "position": [-16.84, 0, 10.86],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_278",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.65, 0.72],
+      "position": [19.56, 0, -1.19],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_279",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.85, 0.94],
+      "position": [-8.4, 0, -4.38],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_280",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.82, 0.91],
+      "position": [4.1, 0, -5.22],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_281",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.88, 0.98],
+      "position": [-9.79, 0, -1.84],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_282",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.93, 1.04],
+      "position": [5.76, 0, -5.21],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_283",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.72, 0.8],
+      "position": [-16.37, 0, 5.84],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_284",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.73, 0.82],
+      "position": [-19.51, 0, 12.86],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_285",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.79, 0.88],
+      "position": [-15.81, 0, 4.05],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_286",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.92, 1.02],
+      "position": [-16.62, 0, 2.31],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_287",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.81, 0.9],
+      "position": [7.53, 0, -5.56],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_288",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.64, 0.71],
+      "position": [-17.47, 0, 13.13],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_289",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.95, 1.06],
+      "position": [-15.9, 0, 15.53],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_290",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.71, 0.79],
+      "position": [21.45, 0, -0.76],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_291",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.78, 0.86],
+      "position": [-17.02, 0, 10.41],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_292",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.65, 0.72],
+      "position": [6.95, 0, 22.7],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_293",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.64, 0.71],
+      "position": [26.28, 0, 5.56],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_294",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.06, 1.17],
+      "position": [7.66, 0, 20.44],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_295",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.84, 0.93],
+      "position": [-4.42, 0, 19.18],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_296",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.04, 1.16],
+      "position": [4.22, 0, -5.66],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_297",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.69, 0.77],
+      "position": [28.76, 0, 10.09],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_298",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.0, 1.11],
+      "position": [-17.45, 0, 14.02],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_299",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.95, 1.06],
+      "position": [-20.62, 0, 4.01],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_300",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.11, 1.23],
+      "position": [30.55, 0, 3.79],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_301",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.93, 1.03],
+      "position": [3.45, 0, -6.64],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_302",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.84, 0.94],
+      "position": [20.17, 0, -4.37],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_303",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.69, 0.77],
+      "position": [21.64, 0, 18.76],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_304",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.93, 1.04],
+      "position": [12.11, 0, -3.73],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_305",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.97, 1.08],
+      "position": [9.69, 0, -4.43],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_306",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.84, 0.93],
+      "position": [17.16, 0, -5.42],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_307",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.66, 0.74],
+      "position": [-19.05, 0, 7.9],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_308",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.75, 0.83],
+      "position": [3.41, 0, -6.79],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_309",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.84, 0.93],
+      "position": [19.43, 0, 20.07],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_310",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.85, 0.94],
+      "position": [-18.34, 0, 2.89],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_311",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.86, 0.95],
+      "position": [17.71, 0, 20.37],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_312",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.73, 0.81],
+      "position": [3.3, 0, 22.55],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_313",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.03, 1.15],
+      "position": [-6.52, 0, -4.79],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_314",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.69, 0.76],
+      "position": [-13.55, 0, -0.46],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_315",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.82, 0.91],
+      "position": [0.95, 0, 20.95],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_316",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.1, 1.23],
+      "position": [26.42, 0, 14.82],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_317",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.69, 0.76],
+      "position": [16.54, 0, 18.85],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_318",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.17, 1.3],
+      "position": [-17.75, 0, 4.96],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_319",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.07, 1.19],
+      "position": [5.73, 0, 22.95],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_320",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.92, 1.03],
+      "position": [17.07, 0, -1.91],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_321",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.65, 0.73],
+      "position": [12.94, 0, 19.4],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_322",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.14, 1.27],
+      "position": [19.88, 0, 17.63],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_323",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.11, 1.24],
+      "position": [12.08, 0, 21.26],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_324",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.89, 0.98],
+      "position": [14.31, 0, -4.5],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_325",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.82, 0.91],
+      "position": [-14.94, 0, 16.98],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_326",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.04, 1.16],
+      "position": [19.74, 0, -0.61],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_327",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.14, 1.26],
+      "position": [15.84, 0, -5.59],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_328",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.76, 0.85],
+      "position": [30.22, 0, 4.9],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_329",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.16, 1.29],
+      "position": [13.57, 0, -5.8],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_330",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.02, 1.13],
+      "position": [27.61, 0, 15.35],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_331",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.87, 0.96],
+      "position": [14.9, 0, -4.08],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_332",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.02, 1.13],
+      "position": [8.87, 0, 20.62],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_333",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.72, 0.8],
+      "position": [18.22, 0, 20.01],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_334",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.75, 0.84],
+      "position": [-9.16, 0, 20.34],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_335",
+      "sprite": "textures/spr_hierba.png",
+      "size": [0.93, 1.03],
+      "position": [-18.24, 0, 10.03],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "junco_336",
+      "sprite": "textures/spr_hierba.png",
+      "size": [1.05, 1.17],
+      "position": [-19.24, 0, 5.73],
+      "collider": false,
+      "tint": [110, 124, 120, 255]
+    },
+    {
+      "name": "flores_1",
+      "model": "models/flores_campo.obj",
+      "position": [8.89, 0, -18.21],
+      "rotation": [0, 342, 0],
+      "collider": false,
+      "tint": [150, 150, 180, 255]
+    },
+    {
+      "name": "flores_3",
+      "model": "models/flores_campo.obj",
+      "position": [-21.16, 0, 3.27],
+      "rotation": [0, 163, 0],
+      "collider": false,
+      "tint": [150, 150, 180, 255]
+    },
+    {
+      "name": "flores_5",
+      "model": "models/flores_campo.obj",
+      "position": [-20.61, 0, -13.73],
+      "rotation": [0, 34, 0],
+      "collider": false,
+      "tint": [150, 150, 180, 255]
+    },
+    {
+      "name": "flores_6",
+      "model": "models/flores_campo.obj",
+      "position": [2.66, 0, -14.22],
+      "rotation": [0, 269, 0],
+      "collider": false,
+      "tint": [150, 150, 180, 255]
+    },
+    {
+      "name": "flores_7",
+      "model": "models/flores_campo.obj",
+      "position": [-9.94, 0, -29.83],
+      "rotation": [0, 7, 0],
+      "collider": false,
+      "tint": [150, 150, 180, 255]
+    },
+    {
+      "name": "flores_8",
+      "model": "models/flores_campo.obj",
+      "position": [21.36, 0, -14.2],
+      "rotation": [0, 144, 0],
+      "collider": false,
+      "tint": [150, 150, 180, 255]
+    },
+    {
+      "name": "flores_9",
+      "model": "models/flores_campo.obj",
+      "position": [-19.8, 0, -0.72],
+      "rotation": [0, 134, 0],
+      "collider": false,
+      "tint": [150, 150, 180, 255]
+    },
+    {
+      "name": "flores_12",
+      "model": "models/flores_campo.obj",
+      "position": [-20.21, 0, 7.5],
+      "rotation": [0, 346, 0],
+      "collider": false,
+      "tint": [150, 150, 180, 255]
+    },
+    {
+      "name": "flores_14",
+      "model": "models/flores_campo.obj",
+      "position": [-3.14, 0, 24.95],
+      "rotation": [0, 44, 0],
+      "collider": false,
+      "tint": [150, 150, 180, 255]
+    },
+    {
+      "name": "flores_16",
+      "model": "models/flores_campo.obj",
+      "position": [8.48, 0, -28.55],
+      "rotation": [0, 71, 0],
+      "collider": false,
+      "tint": [150, 150, 180, 255]
+    },
+    {
+      "name": "luciernagas_0",
+      "sprite": "textures/spr_luciernagas.png",
+      "size": [1.4, 1.4],
+      "position": [14.84, 1.05, 24.48],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.8
+    },
+    {
+      "name": "luciernagas_1",
+      "sprite": "textures/spr_luciernagas.png",
+      "size": [1.4, 1.4],
+      "position": [-9.31, 0.65, 2.36],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.8
+    },
+    {
+      "name": "luciernagas_2",
+      "sprite": "textures/spr_luciernagas.png",
+      "size": [1.4, 1.4],
+      "position": [-8.12, 1.03, -6.18],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.8
+    },
+    {
+      "name": "luciernagas_3",
+      "sprite": "textures/spr_luciernagas.png",
+      "size": [1.4, 1.4],
+      "position": [20.75, 0.81, 2.18],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.8
+    },
+    {
+      "name": "luciernagas_4",
+      "sprite": "textures/spr_luciernagas.png",
+      "size": [1.4, 1.4],
+      "position": [17.31, 1.18, 20.74],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.8
+    },
+    {
+      "name": "luciernagas_5",
+      "sprite": "textures/spr_luciernagas.png",
+      "size": [1.4, 1.4],
+      "position": [19.6, 1.33, 21.23],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.8
+    },
+    {
+      "name": "luciernagas_6",
+      "sprite": "textures/spr_luciernagas.png",
+      "size": [1.4, 1.4],
+      "position": [16.19, 0.7, 3.87],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.8
+    },
+    {
+      "name": "luciernagas_7",
+      "sprite": "textures/spr_luciernagas.png",
+      "size": [1.4, 1.4],
+      "position": [12.64, 1.3, 21.43],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.8
+    },
+    {
+      "name": "luciernagas_8",
+      "sprite": "textures/spr_luciernagas.png",
+      "size": [1.4, 1.4],
+      "position": [-18.47, 1.0, -4.15],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.8
+    },
+    {
+      "name": "luciernagas_9",
+      "sprite": "textures/spr_luciernagas.png",
+      "size": [1.4, 1.4],
+      "position": [6.44, 0.51, -5.46],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.8
+    },
+    {
+      "name": "luciernagas_10",
+      "sprite": "textures/spr_luciernagas.png",
+      "size": [1.4, 1.4],
+      "position": [-7.22, 0.65, -4.91],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.8
+    },
+    {
+      "name": "luciernagas_11",
+      "sprite": "textures/spr_luciernagas.png",
+      "size": [1.4, 1.4],
+      "position": [22.57, 1.25, 9.8],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.8
+    },
+    {
+      "name": "luciernagas_12",
+      "sprite": "textures/spr_luciernagas.png",
+      "size": [1.4, 1.4],
+      "position": [11.93, 0.52, 7.58],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.8
+    },
+    {
+      "name": "luciernagas_13",
+      "sprite": "textures/spr_luciernagas.png",
+      "size": [1.4, 1.4],
+      "position": [13.88, 0.67, -4.13],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.8
+    }
+  ],
+  "triggers": [
+    {
+      "name": "al_deposito",
+      "position": [0, 0, -35.4],
+      "size": [8, 3, 1.0],
+      "do": [
+        { "play_sound": "audio/hojas.wav", "volume": 0.6 },
+        { "goto_scene": "scenes/feria_vieja.json", "position": [6.6, 0, 29.0], "yaw": 0 }
+      ]
+    },
+    {
+      "name": "campana",
+      "position": [0.0, 0, -1.5],
+      "size": [3, 3, 1.0],
+      "once": true,
+      "do": [
+        { "play_sound": "audio/campana_rota.wav", "at": "campanario_hundido", "volume": 0.8, "radius": 40 }
+      ]
+    }
+  ],
+  "emitters": []
+}

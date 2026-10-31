@@ -1,0 +1,18 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "senal_fuente" } },
+      "lines": [
+        "Tomas agua.",
+        "Salada.",
+        "Un muchacho que pasa se encoge de hombros:\n\"Desde el lunes. Dice el del agua que son las tuberias\"."
+      ],
+      "do": [
+        { "set_flag": "senal_fuente" },
+        { "add_flag": "senales" },
+        { "play_sound": "audio/susurros.wav", "volume": 0.2 }
+      ]
+    },
+    { "lines": ["Salada. Y un poco mas fria que antes."] }
+  ]
+}

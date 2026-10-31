@@ -12,7 +12,7 @@
       "if": { "flag": "fe_zapato" },
       "once": true,
       "key": "zapato",
-      "lines": ["Un zapato en el tiovivo? Ay, hijo.\nEn la fiesta siempre se pierde algo."]
+      "lines": ["Un zapato en el carrusel? Ay, hijo.\nEn la fiesta siempre se pierde algo."]
     },
     { "lines": ["El viento trae el olor del trigo.\nHuele a pan, verdad?"] }
   ]

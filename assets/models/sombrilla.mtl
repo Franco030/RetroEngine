@@ -1,0 +1,9 @@
+# RetroEngine: sombrilla
+
+newmtl lamina_libre
+Kd 1.000000 1.000000 1.000000
+d 1.000000
+
+newmtl mat_pintura_blanca
+d 1.000000
+map_Kd ../textures/mat_pintura_blanca.png

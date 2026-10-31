@@ -1588,7 +1588,7 @@ void EditorApp::InspectEntity(Json& e) {
 
   if (theme::Section(ICON_FA_FILM "  Animacion",
                      e.contains("spin") || e.contains("idle") || e.contains("facePlayer") ||
-                         e.contains("slide") || e.contains("attach") || e.contains("smoke"))) {
+                         e.contains("slide") || e.contains("arrive") || e.contains("attach") || e.contains("smoke"))) {
     if (!sprite) // un sprite siempre mira a la camara: girar, mecerse o mirar no le hacen nada
       FieldVec3("Giro (grados/s)", e, nullptr, "spin", {0.0f, 0.0f, 0.0f}, 0.5f);
 
@@ -1658,6 +1658,20 @@ void EditorApp::InspectEntity(Json& e) {
       FieldVec3("Hasta (desplazamiento)", e, "slide", "offset", {1.0f, 0.0f, 0.0f}, 0.05f, false);
       FieldFloat("Ida y vuelta (s)", e, "slide", "period", 4.0f, 0.05f, 0.1f, 120.0f, false);
       FieldFloat("Desfase (0-1)", e, "slide", "phase", 0.0f, 0.01f, 0.0f, 1.0f);
+    }
+    bool llega = e.contains("arrive");
+    if (ImGui::Checkbox("Llega al aparecer", &llega)) {
+      BeginChange(0);
+      if (llega)
+        e["arrive"] = Json::object({{"offset", Vec3Json({-40.0f, 0.0f, 0.0f})}, {"seconds", 6.0}, {"brake", 0.5}});
+      else
+        e.erase("arrive");
+      MarkChanged(0);
+    }
+    if (llega && e.contains("arrive")) {
+      FieldVec3("Desde (desplazamiento)", e, "arrive", "offset", {-40.0f, 0.0f, 0.0f}, 0.1f, false);
+      FieldFloat("Duracion (s)", e, "arrive", "seconds", 6.0f, 0.05f, 0.1f, 60.0f, false);
+      FieldFloat("Frenada (0-1)", e, "arrive", "brake", 0.5f, 0.01f, 0.01f, 1.0f);
     }
 
     bool mira = e.contains("facePlayer");
@@ -1813,7 +1827,7 @@ void EditorApp::InspectEntity(Json& e) {
   for (auto it = e.begin(); it != e.end(); ++it) {
     if (IsOneOf(it.key(), {"name", "visible", "model", "sprite", "size", "emissive", "texture",
                            "wrap", "position", "rotation", "scale", "tint", "spin", "collider",
-                           "light", "sound", "showIf", "glitch", "interact", "seen", "slide",
+                           "light", "sound", "showIf", "glitch", "interact", "seen", "slide", "arrive",
                            "attach", "smoke", "frames", "fps", "layer", "idle", "facePlayer",
                            "fog"})) {
       continue;

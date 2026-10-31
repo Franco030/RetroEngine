@@ -4,7 +4,7 @@
       "once": true,
       "lines": ["Las lagrimas rojas estan frescas.\nLa piedra de debajo, seca desde hace siglos."]
     },
-    { "once": true, "lines": ["Al mirarla otra vez, las lagrimas\nhan bajado un poco mas."] },
+    { "once": true, "lines": ["Al mirarla otra vez, las lagrimas\nbajaron un poco mas."] },
     { "lines": ["Mejor no mirarla mucho."] }
   ]
 }

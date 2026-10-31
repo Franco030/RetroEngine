@@ -68,6 +68,8 @@ public:
 
   Entity& Add(std::unique_ptr<Entity> entity);
   Entity* Find(const std::string& name);
+  // behind_player: la deja a la espalda de quien esta en 'feet' mirando a 'yawDegrees', mirandole.
+  void PlaceBehind(Entity& entity, Vector3 feet, float yawDegrees, float distance, float side) const;
   bool Remove(const std::string& name);
 
   void Clear() noexcept {
@@ -126,7 +128,8 @@ public:
 
   // Entidades con "seen": añade a 'fired' las acciones de las que se acaban de ver (o de dejar de
   // mirar) desde 'eye' mirando hacia 'forward' (unitaria).
-  void UpdateSight(Vector3 eye, Vector3 forward, std::vector<Action>& fired);
+  void UpdateSight(Vector3 eye, Vector3 forward, const GameState& state,
+                   std::vector<Action>& fired);
 
 private:
   // Si alguna entidad solida (que no sea 'self') corta el rayo antes de 'distance'.

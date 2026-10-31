@@ -15,7 +15,7 @@
         { "title_screen": true },
         {
           "goto_scene": "scenes/feria.json",
-          "dark": 21,
+          "dark": 20,
           "lines": [
             "",
             "Caes hacia atras, dentro del arbol.",

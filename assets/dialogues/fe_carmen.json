@@ -12,7 +12,7 @@
       "if": { "flag": "fe_billete" },
       "once": true,
       "key": "billete",
-      "lines": ["Un billete con tu nombre? Sera de la rifa.\nAqui la rifa siempre le toca a un forastero."]
+      "lines": ["Un boleto con tu nombre? Sera de la rifa.\nAqui la rifa siempre le toca a un forastero."]
     },
     { "lines": ["Pan de la fiesta. Lleva anis.\nComo cuando era niña."] }
   ]

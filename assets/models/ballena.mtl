@@ -1,0 +1,5 @@
+# RetroEngine: ballena
+
+newmtl mat_hueso
+d 1.000000
+map_Kd ../textures/mat_hueso.png

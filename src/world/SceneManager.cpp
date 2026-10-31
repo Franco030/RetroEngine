@@ -498,15 +498,26 @@ void SceneManager::Draw() {
 std::optional<SceneManager::Card> SceneManager::CurrentCard() const {
   if (phase_ != Phase::Dark || interlude_.lines.empty())
     return std::nullopt;
-  const std::size_t count = interlude_.lines.size();
-  const float slot = interlude_.seconds / static_cast<float>(count);
-  const std::size_t i = std::min(static_cast<std::size_t>(darkTime_ / slot), count - 1);
-  const std::string& text = interlude_.lines[i];
-  if (text.empty()) // una frase vacia es un rato de silencio
-    return std::nullopt;
-  const float t = darkTime_ - static_cast<float>(i) * slot;
-  const float edge = std::min(0.9f, slot * 0.3f); // aparece y se apaga despacio
-  return Card{text, std::clamp(std::min(t, slot - t) / edge, 0.0f, 1.0f)};
+  // Una frase vacia es un rato de silencio, mas corto que el tiempo de leer una de verdad.
+  constexpr float kSilence = 0.35f;
+  auto weight = [](const std::string& s) { return s.empty() ? kSilence : 1.0f; };
+  float total = 0.0f;
+  for (const std::string& line : interlude_.lines)
+    total += weight(line);
+  const float unit = interlude_.seconds / total;
+  float start = 0.0f;
+  for (const std::string& text : interlude_.lines) {
+    const float slot = weight(text) * unit;
+    if (darkTime_ < start + slot || &text == &interlude_.lines.back()) {
+      if (text.empty())
+        return std::nullopt;
+      const float t = darkTime_ - start;
+      const float edge = std::min(0.9f, slot * 0.3f); // aparece y se apaga despacio
+      return Card{text, std::clamp(std::min(t, slot - t) / edge, 0.0f, 1.0f)};
+    }
+    start += slot;
+  }
+  return std::nullopt;
 }
 
 void SceneManager::DrawFade() const {

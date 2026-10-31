@@ -1,0 +1,22 @@
+{
+  "entries": [
+    {
+      "lines": [
+        "Te sientas. Tu traje de baño todavia gotea; no te acuerdas de habertelo puesto.",
+        "Por la ventanilla, la cupula de la iglesia en medio del mar, y una campana.\nComo en la laguna. Exactamente como en la laguna.",
+        "Proxima parada: HOZ DEL CUERVO, donde nadie duerme."
+      ],
+      "do": [
+        { "set_flag": "capitulo3_tren" },
+        { "title_screen": true },
+        {
+          "goto_scene": "scenes/salinas_fin.json",
+          "position": [-6.2, 0.3, 0.6],
+          "yaw": 270,
+          "dark": 8,
+          "lines": ["", "Continuara.", ""]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "if": { "flag": "maniquis", "op": "==", "value": 0 },
+      "lines": ["Un maniqui con traje de baño a rayas, de espaldas a la tienda.", "Es de tu talla."]
+    },
+    {
+      "if": { "flag": "maniquis", "op": "==", "value": 1 },
+      "lines": ["Hace rato estaba de espaldas.\nNo tiene cara."]
+    },
+    { "lines": ["Juras que estaba mas lejos."] }
+  ]
+}

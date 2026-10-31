@@ -1,0 +1,36 @@
+{
+  "speaker": "Inmaculada, la alcaldesa",
+  "entries": [
+    {
+      "if": { "flag": "senales", "op": ">=", "value": 6 },
+      "once": true,
+      "key": "hora",
+      "lines": [
+        "Ahi estas! Ya es hora. Ten tu cubeta.",
+        "Hace 61 años se fue el mar. Cada año lo esperamos en el puerto, con una cubeta, por si regresa.",
+        "Y nunca regresa! Por eso es tan divertido.",
+        "Tu vas a ser nuestro Bañista: al final del muelle, en primera fila. Es un honor.\nSiempre le toca a un forastero."
+      ],
+      "do": [
+        { "set_flag": "s_cubo" },
+        {
+          "goto_scene": "scenes/salinas_pleamar.json",
+          "position": [0, 3.0, 6.5],
+          "yaw": 0,
+          "dark": 12,
+          "lines": ["", "La tarde se pasa muy rapido en Salinas.", "Todo el pueblo baja por la calle, cantando.", ""]
+        }
+      ]
+    },
+    {
+      "once": true,
+      "key": "hola",
+      "lines": [
+        "El forastero! Que gusto, que gusto! Ya temiamos que este año no viniera ninguno.",
+        "Pide lo que quieras, aqui nada se paga: invita el pueblo.",
+        "En la noche, Fiesta de la Vuelta. Tu nada mas disfruta. Luego te busco."
+      ]
+    },
+    { "lines": ["Todavia es temprano. Pasea, come, que te vean.\nCuando sea hora te doy tu cubeta."] }
+  ]
+}

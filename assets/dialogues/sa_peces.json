@@ -1,0 +1,18 @@
+{
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Doce pescados en hielo. Todos muertos.",
+        "Mueves un poco la cabeza.\nDoce ojos se mueven contigo."
+      ],
+      "do": [{ "play_sound": "audio/chapoteo.wav", "volume": 0.6 }]
+    },
+    {
+      "once": true,
+      "key": "boquea",
+      "lines": ["Uno abre la boca.", "Te haces el disimulado.\nEl tambien."]
+    },
+    { "lines": ["Te siguen con la mirada. Muy fresco, todo."] }
+  ]
+}

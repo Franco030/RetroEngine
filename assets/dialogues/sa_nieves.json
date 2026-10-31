@@ -1,0 +1,14 @@
+{
+  "speaker": "Nieves",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Hola, guapo! Tengo tres sabores: sal, sal con limon y mas sal.",
+        "Ten. Invita el pueblo.",
+        "Si. Sabe a mar.\nAqui es lo mas parecido a echarse un chapuzon."
+      ]
+    },
+    { "lines": ["Te gusto? A nadie le gusta. Es tradicion."] }
+  ]
+}

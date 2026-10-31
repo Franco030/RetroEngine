@@ -1,0 +1,57 @@
+# RetroEngine: casa_azotea
+
+newmtl mat_azulejo
+d 1.000000
+map_Kd ../textures/mat_azulejo.png
+
+newmtl mat_cal
+d 1.000000
+map_Kd ../textures/mat_cal.png
+
+newmtl mat_contraventana
+d 1.000000
+map_Kd ../textures/mat_contraventana.png
+
+newmtl mat_flor_blanca
+d 1.000000
+map_Kd ../textures/mat_flor_blanca.png
+
+newmtl mat_flor_roja
+d 1.000000
+map_Kd ../textures/mat_flor_roja.png
+
+newmtl mat_hojas
+d 1.000000
+map_Kd ../textures/mat_hojas.png
+
+newmtl mat_madera_gris
+d 1.000000
+map_Kd ../textures/mat_madera_gris.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png
+
+newmtl mat_pintura_azul
+d 1.000000
+map_Kd ../textures/mat_pintura_azul.png
+
+newmtl mat_pintura_blanca
+d 1.000000
+map_Kd ../textures/mat_pintura_blanca.png
+
+newmtl mat_puerta_azul
+d 1.000000
+map_Kd ../textures/mat_puerta_azul.png
+
+newmtl mat_tejas
+d 1.000000
+map_Kd ../textures/mat_tejas.png
+
+newmtl mat_toldo_azul
+d 1.000000
+map_Kd ../textures/mat_toldo_azul.png
+
+newmtl mat_ventana
+d 1.000000
+map_Kd ../textures/mat_ventana.png

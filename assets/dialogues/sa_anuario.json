@@ -1,0 +1,20 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "senal_anuario" } },
+      "lines": [
+        "ANUARIO DE MAREAS. Sesenta y un años de la misma palabra: BAJAMAR.",
+        "Te vas a la primera pagina. Letra de otro siglo:\n\"Naufragan nueve barcos. El pueblo se reune en la plaza y pide que se vaya.\"",
+        "\"Se fue.\"",
+        "\"El mar presta, no regala. Volvera a cobrar cuando se le deba un dia por cada ahogado.\"",
+        "Abajo, sumas a lapiz. Muchas. Un dia al año, nueve hombres, multiplicar...\nEl resultado es la fecha de hoy."
+      ],
+      "do": [
+        { "set_flag": "senal_anuario" },
+        { "add_flag": "senales" },
+        { "play_sound": "audio/susurros.wav", "volume": 0.2 }
+      ]
+    },
+    { "lines": ["\"El mar presta, no regala.\"\nLa suma sale. Ya la hiciste dos veces."] }
+  ]
+}

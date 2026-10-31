@@ -1,0 +1,25 @@
+# RetroEngine: sala_grande
+
+newmtl mat_ajedrez
+d 1.000000
+map_Kd ../textures/mat_ajedrez.png
+
+newmtl mat_azulejo
+d 1.000000
+map_Kd ../textures/mat_azulejo.png
+
+newmtl mat_cal
+d 1.000000
+map_Kd ../textures/mat_cal.png
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_puerta_azul
+d 1.000000
+map_Kd ../textures/mat_puerta_azul.png
+
+newmtl mat_ventana_luz
+d 1.000000
+map_Kd ../textures/mat_ventana_luz.png

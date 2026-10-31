@@ -1,0 +1,25 @@
+# RetroEngine: portico
+
+newmtl lamina_libre
+Kd 1.000000 1.000000 1.000000
+d 1.000000
+
+newmtl mat_azulejo
+d 1.000000
+map_Kd ../textures/mat_azulejo.png
+
+newmtl mat_cal
+d 1.000000
+map_Kd ../textures/mat_cal.png
+
+newmtl mat_madera_gris
+d 1.000000
+map_Kd ../textures/mat_madera_gris.png
+
+newmtl mat_pintura_azul
+d 1.000000
+map_Kd ../textures/mat_pintura_azul.png
+
+newmtl mat_tejas
+d 1.000000
+map_Kd ../textures/mat_tejas.png

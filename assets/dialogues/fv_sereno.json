@@ -1,0 +1,20 @@
+{
+  "speaker": "El velador",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Alto. Ah... eres tu. Ya decia yo.",
+        "Aqui no se tira nada, forastero. Se guarda.\nPor si hace falta otra vez.",
+        "Cada quince años se cambia todo: los toldos, la rueda, los focos.\nTodo menos la cancion."
+      ]
+    },
+    {
+      "if": { "flag": "fv_gira" },
+      "once": true,
+      "key": "gira",
+      "lines": ["El carrusel? Yo no oi nada.", "...Si gira, no lo mires mucho.\nLuego cuesta dejar de verlo."]
+    },
+    { "lines": ["Si vas a la laguna, por el sur, saluda a Remedios.\nY no cuentes los farolitos."] }
+  ]
+}

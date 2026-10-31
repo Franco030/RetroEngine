@@ -1,0 +1,20 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "senal_raya" } },
+      "lines": [
+        "Blanco. Blanco. Barcos. Blanco.",
+        "Y al final de todo, donde se acaba el mundo, una raya azul.",
+        "Quitas el ojo. Lo vuelves a poner.\nLa raya esta un poco mas gorda."
+      ],
+      "do": [
+        { "set_flag": "senal_raya" },
+        { "add_flag": "senales" },
+        { "play_sound": "audio/susurros.wav", "volume": 0.2 }
+      ]
+    },
+    {
+      "lines": ["La raya. Si la miras fijamente, parece quieta.\nSi miras cualquier otra cosa, se acerca."]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "speaker": "Angel, jefe de estacion",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Bienvenido a Salinas! Tu eres el forastero, verdad? Se te nota en la cara de susto.",
+        "Llegas justo. Hoy es la Fiesta de la Vuelta.",
+        "El tren? Sale a las 23:40. Sale siempre. De regreso no va: nada mas sigue."
+      ]
+    },
+    { "lines": ["Puntual como la marea, decimos aqui.\nEs un chiste. Ya lo vas a entender."] }
+  ]
+}

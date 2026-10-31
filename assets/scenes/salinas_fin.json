@@ -1,0 +1,1542 @@
+{
+  "player": { "position": [-6.2, 0.3, 0.6], "yaw": 270 },
+  "bounds": { "min": [-16, -13.6], "max": [16, 1.7] },
+  "background": [18, 22, 52],
+  "fog": { "start": 30, "end": 190 },
+  "light": { "direction": [0.3, -0.7, -0.5], "ambient": 0.34, "sun": 0.34 },
+  "panorama": {
+    "model": "models/panorama_salinas.obj",
+    "tint": [52, 58, 96],
+    "haze": 0.4,
+    "y": 0,
+    "sun": { "texture": "textures/spr_luna.png", "yaw": 200, "pitch": 28, "size": 56 }
+  },
+  "audio": {
+    "music": { "file": "audio/musica_salinas_fin_v2.wav", "volume": 0.55 },
+    "ambient": { "file": "audio/mar_amb.wav", "volume": 0.4 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.16
+    },
+    "fade": 5
+  },
+  "entities": [
+    {
+      "name": "loma",
+      "model": "models/loma_estacion.obj",
+      "position": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "anden",
+      "model": "models/anden.obj",
+      "position": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "caseta",
+      "model": "models/caseta_estacion.obj",
+      "position": [-3, 0, -3.6],
+      "rotation": [0, 0, 0],
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cartel_estacion",
+      "model": "models/letrero.obj",
+      "position": [-1.4, 2.55, -1.8],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_s_estacion.png",
+      "collider": false,
+      "scale": [0.7, 0.7, 1],
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cartel_estacion_2",
+      "model": "models/letrero.obj",
+      "position": [4.0, 2.4, 0.0],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_s_estacion.png",
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "poste_est_1",
+      "model": "models/mastil.obj",
+      "position": [3.1, 0.3, 0.0],
+      "rotation": [0, 0, 0],
+      "scale": [0.8, 0.46, 0.8],
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "poste_est_2",
+      "model": "models/mastil.obj",
+      "position": [4.9, 0.3, 0.0],
+      "rotation": [0, 0, 0],
+      "scale": [0.8, 0.46, 0.8],
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "banco",
+      "model": "models/banco.obj",
+      "position": [-9.0, 0.3, -1.2],
+      "rotation": [0, 0, 0],
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "maceta_0",
+      "model": "models/maceta.obj",
+      "position": [-6.2, 0.3, -1.4],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "maceta_1",
+      "model": "models/maceta.obj",
+      "position": [0.2, 0.3, -1.4],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "locomotora",
+      "model": "models/locomotora.obj",
+      "position": [6.0, 0.16, 3.6],
+      "rotation": [0, 0, 0],
+      "smoke": {
+        "texture": "textures/spr_vapor.png",
+        "offset": [1.6, 3.7, 0],
+        "rate": 3,
+        "life": 3.0,
+        "rise": 1.0,
+        "size": [0.5, 2.2]
+      }
+    },
+    {
+      "name": "vagon_0",
+      "model": "models/vagon.obj",
+      "position": [-3.8, 0.16, 3.6],
+      "rotation": [0, 0, 0],
+      "interact": {
+        "prompt": "Subir al tren",
+        "range": 3.2,
+        "box": { "min": [3.8, 0.4, -1.5], "max": [4.5, 3.0, 1.5] },
+        "do": [{ "dialogue": "sa_subir_fin" }]
+      }
+    },
+    {
+      "name": "vagon_1",
+      "model": "models/vagon.obj",
+      "position": [-13.6, 0.16, 3.6],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "escalinata",
+      "model": "models/escalinata_alta.obj",
+      "position": [9.0, 0, -14.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "arco_cerro",
+      "model": "models/portico.obj",
+      "position": [9.0, 0, -13.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "texture": "textures/lam_s_a_estacion.png"
+    },
+    { "name": "via_0", "model": "models/via.obj", "position": [-240, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_0",
+      "model": "models/viaducto.obj",
+      "position": [-240, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_1", "model": "models/via.obj", "position": [-220, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_1",
+      "model": "models/viaducto.obj",
+      "position": [-220, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_2", "model": "models/via.obj", "position": [-200, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_2",
+      "model": "models/viaducto.obj",
+      "position": [-200, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_3", "model": "models/via.obj", "position": [-180, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_3",
+      "model": "models/viaducto.obj",
+      "position": [-180, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_4", "model": "models/via.obj", "position": [-160, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_4",
+      "model": "models/viaducto.obj",
+      "position": [-160, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_5", "model": "models/via.obj", "position": [-140, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_5",
+      "model": "models/viaducto.obj",
+      "position": [-140, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_6", "model": "models/via.obj", "position": [-120, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_6",
+      "model": "models/viaducto.obj",
+      "position": [-120, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_7", "model": "models/via.obj", "position": [-100, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_7",
+      "model": "models/viaducto.obj",
+      "position": [-100, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_8", "model": "models/via.obj", "position": [-80, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_8",
+      "model": "models/viaducto.obj",
+      "position": [-80, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_9", "model": "models/via.obj", "position": [-60, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_9",
+      "model": "models/viaducto.obj",
+      "position": [-60, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_10", "model": "models/via.obj", "position": [-40, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_10",
+      "model": "models/viaducto.obj",
+      "position": [-40, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_11", "model": "models/via.obj", "position": [-20, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_11",
+      "model": "models/viaducto.obj",
+      "position": [-20, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_12", "model": "models/via.obj", "position": [0, 0, 3.6], "rotation": [0, 0, 0] },
+    { "name": "via_13", "model": "models/via.obj", "position": [20, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_13",
+      "model": "models/viaducto.obj",
+      "position": [20, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_14", "model": "models/via.obj", "position": [40, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_14",
+      "model": "models/viaducto.obj",
+      "position": [40, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_15", "model": "models/via.obj", "position": [60, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_15",
+      "model": "models/viaducto.obj",
+      "position": [60, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_16", "model": "models/via.obj", "position": [80, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_16",
+      "model": "models/viaducto.obj",
+      "position": [80, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_17", "model": "models/via.obj", "position": [100, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_17",
+      "model": "models/viaducto.obj",
+      "position": [100, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_18", "model": "models/via.obj", "position": [120, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_18",
+      "model": "models/viaducto.obj",
+      "position": [120, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_19", "model": "models/via.obj", "position": [140, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_19",
+      "model": "models/viaducto.obj",
+      "position": [140, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_20", "model": "models/via.obj", "position": [160, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_20",
+      "model": "models/viaducto.obj",
+      "position": [160, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_21", "model": "models/via.obj", "position": [180, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_21",
+      "model": "models/viaducto.obj",
+      "position": [180, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_22", "model": "models/via.obj", "position": [200, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_22",
+      "model": "models/viaducto.obj",
+      "position": [200, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_23", "model": "models/via.obj", "position": [220, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_23",
+      "model": "models/viaducto.obj",
+      "position": [220, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    { "name": "via_24", "model": "models/via.obj", "position": [240, 0, 3.6], "rotation": [0, 0, 0] },
+    {
+      "name": "viaducto_24",
+      "model": "models/viaducto.obj",
+      "position": [240, -0.02, 3.6],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_0_0",
+      "model": "models/valla.obj",
+      "position": [-16.4, 0, -3.4],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_2_0",
+      "model": "models/valla.obj",
+      "position": [16.4, 0, -3.4],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_0_1",
+      "model": "models/valla.obj",
+      "position": [-16.4, 0, -5.6],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_2_1",
+      "model": "models/valla.obj",
+      "position": [16.4, 0, -5.6],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_0_2",
+      "model": "models/valla.obj",
+      "position": [-16.4, 0, -7.8],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_2_2",
+      "model": "models/valla.obj",
+      "position": [16.4, 0, -7.8],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_0_3",
+      "model": "models/valla.obj",
+      "position": [-16.4, 0, -10.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_2_3",
+      "model": "models/valla.obj",
+      "position": [16.4, 0, -10.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_0_4",
+      "model": "models/valla.obj",
+      "position": [-16.4, 0, -12.2],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_2_4",
+      "model": "models/valla.obj",
+      "position": [16.4, 0, -12.2],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_n_0",
+      "model": "models/valla.obj",
+      "position": [-15.2, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_n_1",
+      "model": "models/valla.obj",
+      "position": [-13.0, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_n_2",
+      "model": "models/valla.obj",
+      "position": [-10.8, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_n_3",
+      "model": "models/valla.obj",
+      "position": [-8.6, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_n_4",
+      "model": "models/valla.obj",
+      "position": [-6.4, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_n_5",
+      "model": "models/valla.obj",
+      "position": [-4.2, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_n_6",
+      "model": "models/valla.obj",
+      "position": [-2.0, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_n_7",
+      "model": "models/valla.obj",
+      "position": [0.2, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_n_8",
+      "model": "models/valla.obj",
+      "position": [2.4, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_n_9",
+      "model": "models/valla.obj",
+      "position": [4.6, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_n_10",
+      "model": "models/valla.obj",
+      "position": [13.2, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "cerca_n_11",
+      "model": "models/valla.obj",
+      "position": [15.4, 0, -13.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [150, 160, 200, 255]
+    },
+    {
+      "name": "mar",
+      "model": { "type": "plane", "size": 900, "subdivisions": 30, "tiles": 360 },
+      "texture": "textures/mat_mar_noche.png",
+      "wrap": "repeat",
+      "position": [0, -3.0, -60],
+      "collider": false
+    },
+    {
+      "name": "nico",
+      "model": "models/fotografo.obj",
+      "texture": "textures/pj_fe_nico.png",
+      "position": [-4.4, 0.3, 0.4],
+      "rotation": [0, 90, 0],
+      "idle": { "bob": 0.012, "sway": 1.4, "speed": 1.7 },
+      "facePlayer": { "range": 5.0, "turnSpeed": 120 },
+      "interact": { "prompt": "Hablar", "range": 2.4, "do": [{ "dialogue": "sa_nico_fin" }] }
+    },
+    {
+      "name": "faro_lejos",
+      "model": "models/faro.obj",
+      "position": [-27.0, -13.5, -171.8],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "fog": false,
+      "tint": [110, 120, 160, 255],
+      "light": {
+        "offset": [0, 21.4, 0],
+        "color": [255, 230, 170],
+        "radius": 34,
+        "intensity": 1.4,
+        "flicker": 0.5,
+        "flickerRate": 0.5
+      }
+    },
+    {
+      "name": "campana",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-9.0, 0.0, -102.5],
+      "sound": { "file": "audio/campana_rota.wav", "volume": 0.6, "radius": 130, "minDistance": 20 }
+    },
+    {
+      "name": "lejos_iglesia",
+      "model": "models/iglesia_blanca.obj",
+      "position": [-15.0, -10.5, -109.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "fog": false,
+      "tint": [96, 112, 158, 255]
+    },
+    {
+      "name": "farolillo_0",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-30.84, -2.95, -47.93],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.53,
+      "slide": { "offset": [-2.63, 0, -0.58], "period": 39.09, "phase": 0.96 },
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 90],
+        "radius": 6,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farolillo_1",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-29.91, -2.95, -99.98],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.69,
+      "slide": { "offset": [2.05, 0, -0.27], "period": 23.47, "phase": 0.1 }
+    },
+    {
+      "name": "farolillo_2",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-32.55, -2.95, -82.29],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.52,
+      "slide": { "offset": [2.96, 0, -1.46], "period": 39.19, "phase": 0.7 }
+    },
+    {
+      "name": "farolillo_3",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-39.71, -2.95, -156.13],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.07,
+      "slide": { "offset": [0.24, 0, -1.4], "period": 25.01, "phase": 0.58 }
+    },
+    {
+      "name": "farolillo_4",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [57.77, -2.95, -68.43],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.69,
+      "slide": { "offset": [-1.82, 0, 0.67], "period": 27.23, "phase": 0.44 }
+    },
+    {
+      "name": "farolillo_5",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-0.57, -2.95, 20.61],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.91,
+      "slide": { "offset": [-0.43, 0, 0.99], "period": 39.79, "phase": 0.62 }
+    },
+    {
+      "name": "farolillo_7",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-70.42, -2.95, -35.53],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.47,
+      "slide": { "offset": [0.1, 0, 0.01], "period": 31.69, "phase": 0.23 },
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 90],
+        "radius": 6,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farolillo_8",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [7.44, -2.95, -107.9],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.86,
+      "slide": { "offset": [0.89, 0, -0.89], "period": 30.37, "phase": 0.93 }
+    },
+    {
+      "name": "farolillo_9",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [84.95, -2.95, -98.76],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.77,
+      "slide": { "offset": [0.97, 0, 1.26], "period": 25.85, "phase": 0.72 }
+    },
+    {
+      "name": "farolillo_10",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [36.37, -2.95, -104.96],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.5,
+      "slide": { "offset": [-1.43, 0, 0.6], "period": 35.0, "phase": 0.86 }
+    },
+    {
+      "name": "farolillo_12",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-56.9, -2.95, -127.6],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.22,
+      "slide": { "offset": [2.03, 0, -0.38], "period": 28.63, "phase": 0.67 }
+    },
+    {
+      "name": "farolillo_13",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-75.5, -2.95, -113.71],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.33,
+      "slide": { "offset": [-0.8, 0, 1.35], "period": 32.06, "phase": 0.1 }
+    },
+    {
+      "name": "farolillo_14",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [61.85, -2.95, -39.29],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.19,
+      "slide": { "offset": [-1.46, 0, -0.19], "period": 28.65, "phase": 0.6 },
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 90],
+        "radius": 6,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farolillo_15",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [14.52, -2.95, -149.17],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.07,
+      "slide": { "offset": [2.88, 0, 1.67], "period": 33.03, "phase": 0.83 }
+    },
+    {
+      "name": "farolillo_18",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [16.1, -2.95, -42.77],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.7,
+      "slide": { "offset": [-2.7, 0, -0.69], "period": 41.33, "phase": 0.75 }
+    },
+    {
+      "name": "farolillo_19",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [97.6, -2.95, -79.64],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.28,
+      "slide": { "offset": [-1.63, 0, 1.43], "period": 26.87, "phase": 0.09 }
+    },
+    {
+      "name": "farolillo_20",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-20.03, -2.95, -110.24],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.03,
+      "slide": { "offset": [-0.97, 0, -1.55], "period": 32.73, "phase": 0.99 }
+    },
+    {
+      "name": "farolillo_21",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-16.17, -2.95, -83.24],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.67,
+      "slide": { "offset": [2.48, 0, -1.12], "period": 24.92, "phase": 0.44 },
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 90],
+        "radius": 6,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farolillo_22",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [47.05, -2.95, -82.34],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.82,
+      "slide": { "offset": [-2.21, 0, 0.8], "period": 29.34, "phase": 0.41 }
+    },
+    {
+      "name": "farolillo_23",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [45.81, -2.95, -109.07],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.92,
+      "slide": { "offset": [-0.09, 0, 0.81], "period": 42.11, "phase": 0.79 }
+    },
+    {
+      "name": "farolillo_24",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [74.71, -2.95, -103.67],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.56,
+      "slide": { "offset": [2.31, 0, -0.35], "period": 38.69, "phase": 0.49 }
+    },
+    {
+      "name": "farolillo_25",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-22.17, -2.95, -29.36],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.7,
+      "slide": { "offset": [2.63, 0, -0.44], "period": 34.22, "phase": 0.27 }
+    },
+    {
+      "name": "farolillo_26",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-15.79, -2.95, -31.13],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.42,
+      "slide": { "offset": [-1.28, 0, 1.16], "period": 31.32, "phase": 0.61 }
+    },
+    {
+      "name": "farolillo_27",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-4.09, -2.95, -39.48],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.63,
+      "slide": { "offset": [-1.96, 0, 1.09], "period": 25.88, "phase": 0.65 }
+    },
+    {
+      "name": "farolillo_28",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [63.39, -2.95, -67.09],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.27,
+      "slide": { "offset": [-0.7, 0, 1.41], "period": 22.25, "phase": 0.86 },
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 90],
+        "radius": 6,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farolillo_29",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-49.2, -2.95, -72.03],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.14,
+      "slide": { "offset": [-2.19, 0, -0.46], "period": 42.78, "phase": 0.3 }
+    },
+    {
+      "name": "farolillo_30",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-17.06, -2.95, -116.08],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.46,
+      "slide": { "offset": [-0.31, 0, 0.93], "period": 36.95, "phase": 0.94 }
+    },
+    {
+      "name": "farolillo_31",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [43.03, -2.95, -73.92],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.49,
+      "slide": { "offset": [-1.37, 0, -1.26], "period": 40.73, "phase": 0.94 }
+    },
+    {
+      "name": "farolillo_33",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-21.96, -2.95, -108.56],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.9,
+      "slide": { "offset": [-1.32, 0, 0.53], "period": 24.23, "phase": 0.36 }
+    },
+    {
+      "name": "farolillo_34",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [33.94, -2.95, -64.67],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.71,
+      "slide": { "offset": [0.42, 0, 1.08], "period": 34.99, "phase": 0.12 }
+    },
+    {
+      "name": "farolillo_35",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [58.58, -2.95, -88.43],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.66,
+      "slide": { "offset": [-2.04, 0, -0.11], "period": 43.23, "phase": 0.55 },
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 90],
+        "radius": 6,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farolillo_37",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-15.93, -2.95, -137.87],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.38,
+      "slide": { "offset": [-1.92, 0, 1.35], "period": 35.86, "phase": 0.75 }
+    },
+    {
+      "name": "farolillo_38",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [37.25, -2.95, -53.42],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.9,
+      "slide": { "offset": [-2.92, 0, 1.47], "period": 35.32, "phase": 0.42 }
+    },
+    {
+      "name": "farolillo_39",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [53.88, -2.95, -86.75],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.57,
+      "slide": { "offset": [-1.83, 0, 1.82], "period": 31.29, "phase": 0.11 }
+    },
+    {
+      "name": "farolillo_41",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-65.49, -2.95, -32.11],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.34,
+      "slide": { "offset": [1.66, 0, -1.61], "period": 28.72, "phase": 0.01 }
+    },
+    {
+      "name": "farolillo_42",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-40.48, -2.95, -112.88],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.39,
+      "slide": { "offset": [-0.17, 0, -0.98], "period": 31.88, "phase": 0.57 },
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 90],
+        "radius": 6,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farolillo_43",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-18.82, -2.95, -36.15],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.99,
+      "slide": { "offset": [-1.68, 0, 0.05], "period": 42.83, "phase": 0.85 }
+    },
+    {
+      "name": "farolillo_44",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [4.45, -2.95, 25.99],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.42,
+      "slide": { "offset": [-2.38, 0, -0.48], "period": 32.87, "phase": 0.31 }
+    },
+    {
+      "name": "farolillo_45",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-47.91, -2.95, -85.36],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.38,
+      "slide": { "offset": [-0.82, 0, 0.71], "period": 39.34, "phase": 0.25 }
+    },
+    {
+      "name": "farolillo_47",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [33.42, -2.95, -88.63],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.57,
+      "slide": { "offset": [0.67, 0, 0.64], "period": 22.34, "phase": 0.86 }
+    },
+    {
+      "name": "farolillo_48",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-12.0, -2.95, -117.64],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.38,
+      "slide": { "offset": [0.13, 0, -0.57], "period": 34.77, "phase": 0.06 }
+    },
+    {
+      "name": "farolillo_50",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-19.79, -2.95, -32.36],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.15,
+      "slide": { "offset": [-0.28, 0, -0.81], "period": 22.78, "phase": 0.22 }
+    },
+    {
+      "name": "farolillo_51",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [90.1, -2.95, -93.63],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.19,
+      "slide": { "offset": [-1.96, 0, 0.22], "period": 37.91, "phase": 0.27 }
+    },
+    {
+      "name": "farolillo_52",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-37.92, -2.95, 12.93],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.49,
+      "slide": { "offset": [1.9, 0, -1.05], "period": 27.06, "phase": 0.93 }
+    },
+    {
+      "name": "farolillo_53",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [2.62, -2.95, -36.33],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.81,
+      "slide": { "offset": [-1.16, 0, -1.13], "period": 43.86, "phase": 0.67 }
+    },
+    {
+      "name": "farolillo_54",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-41.56, -2.95, -87.76],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.43,
+      "slide": { "offset": [0.34, 0, 0.52], "period": 23.49, "phase": 0.85 }
+    },
+    {
+      "name": "farolillo_55",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [97.7, -2.95, -24.12],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.51,
+      "slide": { "offset": [1.47, 0, -1.97], "period": 36.79, "phase": 0.87 }
+    },
+    {
+      "name": "farolillo_56",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [45.39, -2.95, -99.8],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.36,
+      "slide": { "offset": [-0.38, 0, -1.5], "period": 35.0, "phase": 0.82 },
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 90],
+        "radius": 6,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farolillo_57",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [22.75, -2.95, -106.92],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.91,
+      "slide": { "offset": [-0.6, 0, -0.56], "period": 28.78, "phase": 0.18 }
+    },
+    {
+      "name": "farolillo_58",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-32.12, -2.95, -97.89],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.27,
+      "slide": { "offset": [-0.0, 0, 1.48], "period": 40.61, "phase": 0.68 }
+    },
+    {
+      "name": "farolillo_59",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-56.53, -2.95, -31.0],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.83,
+      "slide": { "offset": [0.39, 0, 0.5], "period": 32.96, "phase": 0.64 }
+    },
+    {
+      "name": "farolillo_60",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [33.36, -2.95, -63.32],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.42,
+      "slide": { "offset": [-0.77, 0, -0.89], "period": 29.45, "phase": 0.31 }
+    },
+    {
+      "name": "farolillo_61",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [67.92, -2.95, -18.06],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.2,
+      "slide": { "offset": [2.4, 0, -1.02], "period": 43.11, "phase": 0.7 }
+    },
+    {
+      "name": "farolillo_63",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-16.47, -2.95, -154.84],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.96,
+      "slide": { "offset": [0.31, 0, 1.94], "period": 22.18, "phase": 0.75 },
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 90],
+        "radius": 6,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farolillo_64",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-7.92, -2.95, -93.43],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.82,
+      "slide": { "offset": [-0.45, 0, 0.33], "period": 34.77, "phase": 0.37 }
+    },
+    {
+      "name": "farolillo_65",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [20.77, -2.95, -155.7],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.02,
+      "slide": { "offset": [-1.57, 0, 0.6], "period": 42.44, "phase": 0.56 }
+    },
+    {
+      "name": "farolillo_66",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-27.41, -2.95, -26.91],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.01,
+      "slide": { "offset": [-1.55, 0, 0.8], "period": 26.11, "phase": 0.02 }
+    },
+    {
+      "name": "farolillo_67",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-10.52, -2.95, -94.65],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.91,
+      "slide": { "offset": [-2.17, 0, 0.03], "period": 23.28, "phase": 0.11 }
+    },
+    {
+      "name": "farolillo_68",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [103.79, -2.95, -61.56],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.27,
+      "slide": { "offset": [1.8, 0, 0.15], "period": 22.4, "phase": 0.87 }
+    },
+    {
+      "name": "farolillo_69",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [24.59, -2.95, -95.03],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.39,
+      "slide": { "offset": [-2.11, 0, 0.11], "period": 32.24, "phase": 0.22 }
+    },
+    {
+      "name": "farolillo_70",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [58.23, -2.95, -121.94],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.52,
+      "slide": { "offset": [1.02, 0, -0.23], "period": 35.46, "phase": 0.23 },
+      "light": {
+        "offset": [0, 0.3, 0],
+        "color": [255, 170, 90],
+        "radius": 6,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 3
+      }
+    },
+    {
+      "name": "farolillo_71",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [7.34, -2.95, -159.8],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.48,
+      "slide": { "offset": [1.7, 0, -0.78], "period": 35.63, "phase": 0.66 }
+    },
+    {
+      "name": "farolillo_72",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-37.84, -2.95, -69.01],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.3,
+      "slide": { "offset": [2.03, 0, -1.35], "period": 34.63, "phase": 0.82 }
+    },
+    {
+      "name": "farolillo_73",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-10.84, -2.95, -33.84],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.01,
+      "slide": { "offset": [-3.0, 0, -1.46], "period": 37.17, "phase": 0.72 }
+    },
+    {
+      "name": "farolillo_74",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-89.7, -2.95, -81.46],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.31,
+      "slide": { "offset": [-2.11, 0, 1.06], "period": 41.38, "phase": 0.18 }
+    },
+    {
+      "name": "farolillo_75",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [57.67, -2.95, -140.47],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.25,
+      "slide": { "offset": [1.48, 0, 0.33], "period": 24.81, "phase": 0.98 }
+    },
+    {
+      "name": "farolillo_76",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-14.89, -2.95, -86.14],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.24,
+      "slide": { "offset": [-0.09, 0, -1.26], "period": 24.9, "phase": 0.61 }
+    },
+    {
+      "name": "farolillo_78",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [20.42, -2.95, -163.31],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.18,
+      "slide": { "offset": [2.75, 0, 1.69], "period": 26.79, "phase": 0.05 }
+    },
+    {
+      "name": "farolillo_80",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-50.99, -2.95, -81.31],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.54,
+      "slide": { "offset": [0.6, 0, 1.23], "period": 43.35, "phase": 0.15 }
+    },
+    {
+      "name": "farolillo_81",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-50.51, -2.95, -58.49],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.02,
+      "slide": { "offset": [2.75, 0, -1.89], "period": 43.64, "phase": 0.77 }
+    },
+    {
+      "name": "farolillo_82",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [9.28, -2.95, -120.88],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.47,
+      "slide": { "offset": [2.26, 0, 0.45], "period": 24.94, "phase": 0.96 }
+    },
+    {
+      "name": "farolillo_83",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [80.64, -2.95, -114.87],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.6,
+      "slide": { "offset": [-1.53, 0, -0.92], "period": 28.03, "phase": 0.14 }
+    },
+    {
+      "name": "farolillo_85",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [25.99, -2.95, -112.69],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 3.0,
+      "slide": { "offset": [-1.4, 0, 0.32], "period": 32.65, "phase": 0.5 }
+    },
+    {
+      "name": "farolillo_86",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [-34.16, -2.95, -124.76],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.62,
+      "slide": { "offset": [0.52, 0, -0.72], "period": 23.7, "phase": 0.56 }
+    },
+    {
+      "name": "farolillo_87",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [58.65, -2.95, -91.69],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.8,
+      "slide": { "offset": [0.24, 0, 1.08], "period": 32.01, "phase": 0.16 }
+    },
+    {
+      "name": "farolillo_88",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [24.64, -2.95, -146.56],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.44,
+      "slide": { "offset": [2.16, 0, 0.65], "period": 37.81, "phase": 0.4 }
+    },
+    {
+      "name": "farolillo_89",
+      "sprite": "textures/spr_farolillo.png",
+      "size": [0.9, 0.9],
+      "position": [42.08, -2.95, -89.54],
+      "emissive": true,
+      "collider": false,
+      "frames": 4,
+      "fps": 2.52,
+      "slide": { "offset": [2.3, 0, -1.97], "period": 27.22, "phase": 0.29 }
+    }
+  ],
+  "triggers": [
+    {
+      "name": "escalera_agua",
+      "position": [9.0, 0, -13.2],
+      "size": [5, 3, 1],
+      "once": true,
+      "do": [
+        {
+          "message": "La escalera sigue bajando, y se mete al agua.\nAbajo, muy abajo, se alcanza a ver la calle.",
+          "seconds": 5
+        }
+      ]
+    }
+  ],
+  "emitters": [],
+  "autoCollide": true,
+  "camera": { "position": [-6.2, 1.7, 0.6], "target": [0, 1.5, 0], "fov": 60 }
+}

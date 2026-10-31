@@ -1,0 +1,21 @@
+{
+  "speaker": "Doña Perpetua",
+  "entries": [
+    {
+      "if": { "flag": "b_shh" },
+      "once": true,
+      "key": "shh",
+      "lines": ["Esa tabla lleva rechinando desde 1954.", "Y yo llevo callandola desde 1955."]
+    },
+    {
+      "once": true,
+      "key": "hola",
+      "lines": [
+        "(En un susurro) Forastero. Bienvenido. Aqui se habla asi.",
+        "(En un susurro) El Anuario de mareas esta en el atril, al fondo. No lo vaya a mojar.",
+        "(En un susurro) Es un chiste.\n(En un susurro) Hago uno al año."
+      ]
+    },
+    { "lines": ["Shh."] }
+  ]
+}

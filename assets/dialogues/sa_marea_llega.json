@@ -1,0 +1,32 @@
+{
+  "entries": [
+    {
+      "lines": [
+        "La raya ya no es una raya.",
+        "Detras de ti, nadie grita. Nadie corre.\nEl pueblo entero sonrie, con su cubeta.",
+        "El agua te moja los pies. Esta tibia.",
+        "Inmaculada, a lo lejos, dice algo. Lo dicen todos a la vez:\n\"Gracias, forastero\"."
+      ],
+      "do": [
+        { "play_sound": "audio/ola_llega.wav", "volume": 1.0 },
+        { "set_flag": "capitulo3_fin" },
+        { "title_screen": true },
+        {
+          "goto_scene": "scenes/salinas_fin.json",
+          "position": [-6.2, 0.3, 0.6],
+          "yaw": 270,
+          "dark": 26,
+          "lines": [
+            "",
+            "El agua sigue subiendo. Una cubeta pasa flotando.",
+            "La banda sigue tocando, un rato, debajo.",
+            "Todavia no, dice una voz de niña.",
+            "Alguien te agarra de la manga y jala, y jala.",
+            "Nico.",
+            ""
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "pista_espantapajaros" } },
+      "lines": [
+        "Lleva una chamarra de verdad, gastada en los codos.\nEn el bolsillo, una brujula.",
+        "Los cuentas: seis. Seis espantapajaros a lo largo del camino.",
+        "Seis. Como la partida que fue a buscar a Clara al bosque\ny no volvio.",
+        "Ninguno tiene cara. Pero todos miran hacia la feria."
+      ],
+      "do": [{ "set_flag": "pista_espantapajaros" }, { "add_flag": "pistas" }]
+    },
+    { "lines": ["La cabeza de saco gira despacio.\nNo hay viento."] }
+  ]
+}

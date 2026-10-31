@@ -1,0 +1,21 @@
+{
+  "speaker": "Blas",
+  "entries": [
+    {
+      "if": { "not": { "flag": "senal_balsa" } },
+      "lines": [
+        "Buenos dias! Aqui, al sol, juntando lo unico que nos dejo.",
+        "Ten una torta. Invita el pueblo.",
+        "Mira aquella laguna. La vacie ayer, y hoy ya esta llena.\nY la de al lado, y la otra.",
+        "No es agua de lluvia. Y no entra por las compuertas.\nSube por el suelo. Como si el suelo sudara."
+      ],
+      "do": [
+        { "set_flag": "senal_balsa" },
+        { "add_flag": "senales" },
+        { "play_sound": "audio/susurros.wav", "volume": 0.2 },
+        { "set_flag": "s_bocadillo" }
+      ]
+    },
+    { "lines": ["Buena sal, este año. La mejor en sesenta. Un poco humeda."] }
+  ]
+}

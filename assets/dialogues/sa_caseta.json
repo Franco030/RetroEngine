@@ -1,0 +1,36 @@
+{
+  "entries": [
+    {
+      "once": true,
+      "key": "a",
+      "lines": ["El letrero dice OCUPADO. Tocas la puerta."],
+      "do": [
+        { "play_sound": "audio/voz_ocupado.wav", "volume": 1.0 },
+        { "message": "-- OCUPADO!", "seconds": 2 }
+      ]
+    },
+    {
+      "once": true,
+      "key": "b",
+      "lines": ["Disculpa. Vuelves a tocar. Es que aqui no hay nadie en kilometros."],
+      "do": [
+        { "play_sound": "audio/voz_ocupado.wav", "volume": 1.0 },
+        { "message": "-- QUE ESTA OCUPADO, OIGA!", "seconds": 2.5 }
+      ]
+    },
+    {
+      "if": { "not": { "flag": "senal_mojada" } },
+      "lines": [
+        "Tocas otra vez. Nada. Abres.",
+        "Vacio. Nada mas el gancho, y un traje de baño escurriendo.",
+        "Unas huellas mojadas salen del vestidor y se van.\nHacia el sur. Descalzas."
+      ],
+      "do": [
+        { "set_flag": "senal_mojada" },
+        { "add_flag": "senales" },
+        { "play_sound": "audio/susurros.wav", "volume": 0.2 }
+      ]
+    },
+    { "lines": ["Sigue escurriendo.\nDesde adentro, muy bajito:\n\"...ocupado.\""] }
+  ]
+}

@@ -1,0 +1,13 @@
+# RetroEngine: palmera
+
+newmtl mat_hojas
+d 1.000000
+map_Kd ../textures/mat_hojas.png
+
+newmtl mat_hojas_claras
+d 1.000000
+map_Kd ../textures/mat_hojas_claras.png
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png

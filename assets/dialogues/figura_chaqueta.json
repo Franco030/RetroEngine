@@ -4,9 +4,9 @@
       "once": true,
       "lines": [
         "Una figura de ramas mas grande que las otras.",
-        "Lleva puesta la chaqueta naranja de la partida.\nEn el bolsillo pone RUIZ."
+        "Lleva puesta la chamarra naranja de la partida.\nEn el bolsillo pone RUIZ."
       ]
     },
-    { "lines": ["La chaqueta le queda grande a las ramas."] }
+    { "lines": ["La chamarra le queda grande a las ramas."] }
   ]
 }

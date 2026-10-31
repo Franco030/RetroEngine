@@ -1,0 +1,14 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "pista_cuaderno" } },
+      "lines": [
+        "Tu mochila. Llena de espigas, como si llevara aqui toda una cosecha.",
+        "Adentro, tu cuaderno. Las ultimas paginas estan escritas con tu letra.\nNo recuerdas haberlas escrito.",
+        "Un dibujo de una rueda de la fortuna. Debajo, apretando mucho el lapiz:\n\"otra vez no\"."
+      ],
+      "do": [{ "set_flag": "pista_cuaderno" }, { "add_flag": "pistas" }]
+    },
+    { "lines": ["\"otra vez no\".\nLa letra es la tuya. La mano no."] }
+  ]
+}

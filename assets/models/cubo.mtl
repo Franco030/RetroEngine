@@ -1,0 +1,9 @@
+# RetroEngine: cubo
+
+newmtl lamina_libre
+Kd 1.000000 1.000000 1.000000
+d 1.000000
+
+newmtl mat_metal
+d 1.000000
+map_Kd ../textures/mat_metal.png

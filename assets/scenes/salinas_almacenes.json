@@ -1,0 +1,242 @@
+{
+  "player": { "position": [0, 0, 2.6], "yaw": 0 },
+  "bounds": { "min": [-4.7, -3.9], "max": [4.7, 3.9] },
+  "background": [232, 228, 214],
+  "fog": { "start": 14, "end": 50 },
+  "light": { "direction": [-0.2, -1, 0.1], "ambient": 0.68, "sun": 0.42 },
+  "lights": [{ "position": [0, 2.3, 0], "color": [255, 236, 200], "radius": 10, "intensity": 0.7 }],
+  "audio": {
+    "music": { "file": "audio/musica_salinas_museo_v2.wav", "volume": 0.42 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.26
+    },
+    "fade": 1.5
+  },
+  "entities": [
+    {
+      "name": "sala",
+      "model": "models/interior_casa.obj",
+      "position": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "scale": [1.6, 1, 1.6],
+      "tint": [255, 248, 236, 255],
+      "interact": {
+        "prompt": "Salir",
+        "range": 3.0,
+        "box": { "min": [-0.8, 0, 2.2], "max": [0.8, 2.4, 2.65] },
+        "do": [
+          { "play_sound": "audio/campanilla.wav", "volume": 0.5 },
+          { "goto_scene": "scenes/salinas.json", "position": [-11.4, 0, 11.0], "yaw": 0 }
+        ]
+      }
+    },
+    {
+      "name": "mostrador",
+      "model": "models/mostrador.obj",
+      "position": [-2.4, 0, -1.8],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "fermin",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_fermin.png",
+      "position": [-2.4, 0, -2.9],
+      "rotation": [0, 0, 0],
+      "idle": { "bob": 0.012, "sway": 1.4, "speed": 1.7 },
+      "facePlayer": { "range": 5.0, "turnSpeed": 120 },
+      "interact": { "prompt": "Hablar", "range": 3.2, "do": [{ "dialogue": "sa_fermin" }] }
+    },
+    {
+      "name": "estante_0",
+      "model": "models/estante_tienda.obj",
+      "position": [-3.0, 0, -3.84],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "estante_1",
+      "model": "models/estante_tienda.obj",
+      "position": [-1.6, 0, -3.84],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "estante_2",
+      "model": "models/estante_tienda.obj",
+      "position": [0.0, 0, -3.84],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "barril_0",
+      "model": "models/barril.obj",
+      "position": [-4.2, 0, 1.6],
+      "rotation": [0, 0, 0]
+    },
+    { "name": "saco_0", "model": "models/caja.obj", "position": [-4.2, 0, 2.8], "rotation": [0, 20, 0] },
+    {
+      "name": "espejo",
+      "model": "models/lamina.obj",
+      "position": [4.7, 1.5, -3.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "texture": "textures/mat_salmuera.png",
+      "scale": [1.1, 2.4, 1]
+    },
+    {
+      "name": "gato_barril",
+      "model": "models/gato.obj",
+      "position": [-4.2, 0.9, 1.6],
+      "rotation": [0, 60, 0],
+      "collider": false,
+      "tint": [226, 140, 60, 255],
+      "interact": {
+        "prompt": "Acariciar",
+        "range": 2.2,
+        "do": [{ "dialogue": "sa_gato" }],
+        "box": { "min": [-0.3, 0, -0.3], "max": [0.3, 0.5, 0.3] }
+      }
+    },
+    {
+      "name": "tarima",
+      "model": "models/peana.obj",
+      "position": [3.0, -0.18, -3.1],
+      "rotation": [0, 0, 0],
+      "scale": [2.9, 1, 1.0],
+      "collider": false
+    },
+    {
+      "name": "maniqui_espalda_0",
+      "model": "models/maniqui.obj",
+      "position": [1.9, 0.12, -3.1],
+      "rotation": [0, 180, 0],
+      "showIf": { "flag": "maniquis", "op": "==", "value": 0 },
+      "collider": false,
+      "interact": { "prompt": "Mirar", "range": 2.8, "do": [{ "dialogue": "sa_maniqui" }] }
+    },
+    {
+      "name": "maniqui_frente_0",
+      "model": "models/maniqui.obj",
+      "position": [1.9, 0.12, -3.1],
+      "rotation": [0, -10, 0],
+      "showIf": { "flag": "maniquis", "op": "==", "value": 1 },
+      "collider": false,
+      "interact": { "prompt": "Mirar", "range": 2.8, "do": [{ "dialogue": "sa_maniqui" }] }
+    },
+    {
+      "name": "maniqui_final_0",
+      "model": "models/maniqui.obj",
+      "position": [1.9, 0.12, -3.1],
+      "rotation": [0, -10, 0],
+      "showIf": { "flag": "maniquis", "op": ">=", "value": 3 },
+      "collider": false,
+      "interact": { "prompt": "Mirar", "range": 2.8, "do": [{ "dialogue": "sa_maniqui" }] }
+    },
+    {
+      "name": "maniqui_detras_0",
+      "model": "models/maniqui.obj",
+      "position": [-0.1, 0, -0.1],
+      "rotation": [0, 0, 0],
+      "showIf": { "flag": "maniquis", "op": "==", "value": 2 },
+      "collider": false,
+      "facePlayer": { "range": 30, "turnSpeed": 90 }
+    },
+    {
+      "name": "maniqui_espalda_1",
+      "model": "models/maniqui.obj",
+      "position": [3.0, 0.12, -3.1],
+      "rotation": [0, 180, 0],
+      "showIf": { "flag": "maniquis", "op": "==", "value": 0 },
+      "collider": false,
+      "interact": { "prompt": "Mirar", "range": 2.8, "do": [{ "dialogue": "sa_maniqui" }] }
+    },
+    {
+      "name": "maniqui_frente_1",
+      "model": "models/maniqui.obj",
+      "position": [3.0, 0.12, -3.1],
+      "rotation": [0, -18, 0],
+      "showIf": { "flag": "maniquis", "op": "==", "value": 1 },
+      "collider": false,
+      "interact": { "prompt": "Mirar", "range": 2.8, "do": [{ "dialogue": "sa_maniqui" }] },
+      "seen": {
+        "range": 14,
+        "angle": 34,
+        "awayAngle": 100,
+        "away": [
+          { "set_flag": "maniquis", "value": 2 },
+          { "behind_player": "maniqui_detras_0", "distance": 2.1, "side": -1.0 },
+          { "behind_player": "maniqui_detras_1", "distance": 1.8 },
+          { "behind_player": "maniqui_detras_2", "distance": 2.1, "side": 1.0 },
+          { "play_sound": "audio/crujido.wav", "at": "maniqui_detras_1", "volume": 0.9, "radius": 10 }
+        ]
+      }
+    },
+    {
+      "name": "maniqui_final_1",
+      "model": "models/maniqui.obj",
+      "position": [3.0, 0.12, -3.1],
+      "rotation": [0, -18, 0],
+      "showIf": { "flag": "maniquis", "op": ">=", "value": 3 },
+      "collider": false,
+      "interact": { "prompt": "Mirar", "range": 2.8, "do": [{ "dialogue": "sa_maniqui" }] }
+    },
+    {
+      "name": "maniqui_detras_1",
+      "model": "models/maniqui.obj",
+      "position": [1.0, 0, -0.1],
+      "rotation": [0, 0, 0],
+      "showIf": { "flag": "maniquis", "op": "==", "value": 2 },
+      "collider": false,
+      "facePlayer": { "range": 30, "turnSpeed": 90 },
+      "seen": {
+        "range": 14,
+        "angle": 42,
+        "awayAngle": 100,
+        "do": [
+          { "play_sound": "audio/susto_piano.wav", "volume": 0.7 },
+          { "scare": "maniqui_detras_1", "speed": 16, "fov": 30 },
+          { "message": "Don Fermin: Ay, disculpe. Les cae bien la gente nueva.", "seconds": 4 }
+        ],
+        "away": [{ "set_flag": "maniquis", "value": 3 }]
+      }
+    },
+    {
+      "name": "maniqui_espalda_2",
+      "model": "models/maniqui.obj",
+      "position": [4.1, 0.12, -3.1],
+      "rotation": [0, 180, 0],
+      "showIf": { "flag": "maniquis", "op": "==", "value": 0 },
+      "collider": false,
+      "interact": { "prompt": "Mirar", "range": 2.8, "do": [{ "dialogue": "sa_maniqui" }] }
+    },
+    {
+      "name": "maniqui_frente_2",
+      "model": "models/maniqui.obj",
+      "position": [4.1, 0.12, -3.1],
+      "rotation": [0, -26, 0],
+      "showIf": { "flag": "maniquis", "op": "==", "value": 1 },
+      "collider": false,
+      "interact": { "prompt": "Mirar", "range": 2.8, "do": [{ "dialogue": "sa_maniqui" }] }
+    },
+    {
+      "name": "maniqui_final_2",
+      "model": "models/maniqui.obj",
+      "position": [4.1, 0.12, -3.1],
+      "rotation": [0, -26, 0],
+      "showIf": { "flag": "maniquis", "op": ">=", "value": 3 },
+      "collider": false,
+      "interact": { "prompt": "Mirar", "range": 2.8, "do": [{ "dialogue": "sa_maniqui" }] }
+    },
+    {
+      "name": "maniqui_detras_2",
+      "model": "models/maniqui.obj",
+      "position": [2.1, 0, -0.1],
+      "rotation": [0, 0, 0],
+      "showIf": { "flag": "maniquis", "op": "==", "value": 2 },
+      "collider": false,
+      "facePlayer": { "range": 30, "turnSpeed": 90 }
+    }
+  ],
+  "triggers": [],
+  "emitters": [],
+  "autoCollide": true,
+  "camera": { "position": [0, 1.7, 2.6], "target": [0, 1.5, 0], "fov": 60 }
+}

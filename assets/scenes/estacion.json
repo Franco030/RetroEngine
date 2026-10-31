@@ -2,7 +2,7 @@
   "camera": { "position": [0, 3.2, 12.0], "target": [0, 1.4, 0.0], "fov": 60 },
   "player": { "position": [0, 0, 26.0], "yaw": 0 },
   "autoCollide": true,
-  "bounds": { "min": [-26, -7], "max": [26, 32] },
+  "bounds": { "min": [-26, -1.7], "max": [26, 32] },
   "background": [30, 30, 52],
   "fog": { "start": 8, "end": 50, "mist": 0.5, "mistHeight": 0.8, "mistColor": [74, 72, 96] },
   "light": { "direction": [-0.3, -0.6, -0.5], "ambient": 0.26, "sun": 0.28 },
@@ -71,7 +71,7 @@
     {
       "name": "reloj",
       "model": "models/lamina.obj",
-      "position": [-6.1, 2.3, 5.72],
+      "position": [-6.1, 1.7, 5.72],
       "rotation": [0, 0, 0],
       "texture": "textures/lam_reloj.png",
       "collider": false,
@@ -143,7 +143,6 @@
       "showIf": {
         "all": [{ "flag": "tren_llega" }, { "not": { "flag": "capitulo2_fin" } }]
       },
-      "glitch": 1.2,
       "light": { "offset": [2.8, 1.9, 0], "color": [255, 230, 170], "radius": 12, "intensity": 1.4 },
       "smoke": {
         "texture": "textures/spr_vapor.png",
@@ -153,7 +152,21 @@
         "rise": 1.6,
         "size": [0.6, 2.6],
         "tint": [214, 214, 220, 255]
-      }
+      },
+      "arrive": { "offset": [-120.0, 0, 0], "seconds": 7.6, "brake": 0.42 }
+    },
+    {
+      "name": "foco_tren",
+      "sprite": "textures/spr_sol.png",
+      "size": [1.3, 1.3],
+      "position": [13.15, 1.2, -3.5],
+      "emissive": true,
+      "fog": false,
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "tren_llega" }, { "not": { "flag": "capitulo2_fin" } }]
+      },
+      "arrive": { "offset": [-120.0, 0, 0], "seconds": 7.6, "brake": 0.42 }
     },
     {
       "name": "clara_estacion",
@@ -183,13 +196,33 @@
       "showIf": {
         "all": [{ "flag": "tren_llega" }, { "not": { "flag": "capitulo2_fin" } }]
       },
-      "glitch": 1.2,
       "interact": {
         "prompt": "Subir al tren",
         "range": 3.0,
         "box": { "min": [3.6, 0, 1.0], "max": [4.6, 3.0, 1.6] },
         "do": [{ "dialogue": "subir_tren" }]
-      }
+      },
+      "arrive": { "offset": [-120.0, 0, 0], "seconds": 7.6, "brake": 0.42 }
+    },
+    {
+      "name": "vagon_2",
+      "model": "models/vagon.obj",
+      "position": [-11.3, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "showIf": {
+        "all": [{ "flag": "tren_llega" }, { "not": { "flag": "capitulo2_fin" } }]
+      },
+      "arrive": { "offset": [-120.0, 0, 0], "seconds": 7.6, "brake": 0.42 }
+    },
+    {
+      "name": "vagon_3",
+      "model": "models/vagon.obj",
+      "position": [-21.1, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "showIf": {
+        "all": [{ "flag": "tren_llega" }, { "not": { "flag": "capitulo2_fin" } }]
+      },
+      "arrive": { "offset": [-120.0, 0, 0], "seconds": 7.6, "brake": 0.42 }
     },
     {
       "name": "nico",
@@ -222,6 +255,174 @@
       "name": "via_2",
       "model": "models/via.obj",
       "position": [20.0, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_0",
+      "model": "models/via.obj",
+      "position": [-160, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_1",
+      "model": "models/via.obj",
+      "position": [-140, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_2",
+      "model": "models/via.obj",
+      "position": [-120, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_3",
+      "model": "models/via.obj",
+      "position": [-100, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_4",
+      "model": "models/via.obj",
+      "position": [-80, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_5",
+      "model": "models/via.obj",
+      "position": [-60, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_6",
+      "model": "models/via.obj",
+      "position": [-40, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_7",
+      "model": "models/via.obj",
+      "position": [40, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_8",
+      "model": "models/via.obj",
+      "position": [60, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_9",
+      "model": "models/via.obj",
+      "position": [80, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_10",
+      "model": "models/via.obj",
+      "position": [-300, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_11",
+      "model": "models/via.obj",
+      "position": [-280, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_12",
+      "model": "models/via.obj",
+      "position": [-260, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_13",
+      "model": "models/via.obj",
+      "position": [-240, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_14",
+      "model": "models/via.obj",
+      "position": [-220, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_15",
+      "model": "models/via.obj",
+      "position": [-200, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_16",
+      "model": "models/via.obj",
+      "position": [-180, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_17",
+      "model": "models/via.obj",
+      "position": [100, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_18",
+      "model": "models/via.obj",
+      "position": [120, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_19",
+      "model": "models/via.obj",
+      "position": [140, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_20",
+      "model": "models/via.obj",
+      "position": [160, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_21",
+      "model": "models/via.obj",
+      "position": [180, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_22",
+      "model": "models/via.obj",
+      "position": [200, 0, -3.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "via_lejos_23",
+      "model": "models/via.obj",
+      "position": [220, 0, -3.5],
       "rotation": [0, 0, 0],
       "collider": false
     },
@@ -376,14 +577,6 @@
       "position": [-2.06, 0, -27.5],
       "collider": false,
       "tint": [147, 133, 115, 255]
-    },
-    {
-      "name": "trigo_19",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.1, 1.15],
-      "position": [-19.31, 0, -4.28],
-      "collider": false,
-      "tint": [138, 124, 106, 255]
     },
     {
       "name": "trigo_20",
@@ -784,14 +977,6 @@
       "position": [-26.5, 0, -27.68],
       "collider": false,
       "tint": [140, 126, 108, 255]
-    },
-    {
-      "name": "trigo_70",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.35, 1.42],
-      "position": [-31.82, 0, -4.63],
-      "collider": false,
-      "tint": [132, 118, 100, 255]
     },
     {
       "name": "trigo_71",
@@ -1330,14 +1515,6 @@
       "tint": [136, 122, 104, 255]
     },
     {
-      "name": "trigo_138",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.37, 1.45],
-      "position": [-39.44, 0, -3.73],
-      "collider": false,
-      "tint": [130, 116, 98, 255]
-    },
-    {
       "name": "trigo_139",
       "sprite": "textures/spr_trigo.png",
       "size": [1.18, 1.24],
@@ -1394,14 +1571,6 @@
       "tint": [138, 124, 106, 255]
     },
     {
-      "name": "trigo_146",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.5, 1.57],
-      "position": [30.67, 0, -3.13],
-      "collider": false,
-      "tint": [135, 121, 103, 255]
-    },
-    {
       "name": "trigo_147",
       "sprite": "textures/spr_trigo.png",
       "size": [1.26, 1.33],
@@ -1416,14 +1585,6 @@
       "position": [29.86, 0, 20.77],
       "collider": false,
       "tint": [141, 127, 109, 255]
-    },
-    {
-      "name": "trigo_149",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.32, 1.39],
-      "position": [-34.3, 0, -1.02],
-      "collider": false,
-      "tint": [136, 122, 104, 255]
     },
     {
       "name": "trigo_150",
@@ -1578,14 +1739,6 @@
       "tint": [127, 113, 95, 255]
     },
     {
-      "name": "trigo_169",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.28, 1.35],
-      "position": [-36.23, 0, -2.81],
-      "collider": false,
-      "tint": [150, 136, 118, 255]
-    },
-    {
       "name": "trigo_170",
       "sprite": "textures/spr_trigo.png",
       "size": [1.15, 1.21],
@@ -1624,14 +1777,6 @@
       "position": [29.17, 0, 27.75],
       "collider": false,
       "tint": [127, 113, 95, 255]
-    },
-    {
-      "name": "trigo_175",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.23, 1.29],
-      "position": [27.83, 0, -6.11],
-      "collider": false,
-      "tint": [138, 124, 106, 255]
     },
     {
       "name": "trigo_176",
@@ -1904,14 +2049,6 @@
       "position": [28.99, 0, 11.54],
       "collider": false,
       "tint": [134, 120, 102, 255]
-    },
-    {
-      "name": "trigo_210",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.1, 1.16],
-      "position": [36.35, 0, -1.71],
-      "collider": false,
-      "tint": [138, 124, 106, 255]
     },
     {
       "name": "trigo_211",
@@ -2330,14 +2467,6 @@
       "tint": [128, 114, 96, 255]
     },
     {
-      "name": "trigo_263",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.32, 1.38],
-      "position": [-29.6, 0, -3.66],
-      "collider": false,
-      "tint": [134, 120, 102, 255]
-    },
-    {
       "name": "trigo_264",
       "sprite": "textures/spr_trigo.png",
       "size": [1.45, 1.53],
@@ -2442,14 +2571,6 @@
       "tint": [139, 125, 107, 255]
     },
     {
-      "name": "trigo_277",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.26, 1.33],
-      "position": [22.67, 0, -1.68],
-      "collider": false,
-      "tint": [135, 121, 103, 255]
-    },
-    {
       "name": "trigo_278",
       "sprite": "textures/spr_trigo.png",
       "size": [1.41, 1.49],
@@ -2504,14 +2625,6 @@
       "position": [-12.6, 0, -29.54],
       "collider": false,
       "tint": [143, 129, 111, 255]
-    },
-    {
-      "name": "trigo_285",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.49, 1.57],
-      "position": [-21.24, 0, -3.39],
-      "collider": false,
-      "tint": [139, 125, 107, 255]
     },
     {
       "name": "trigo_286",
@@ -2688,14 +2801,6 @@
       "position": [-34.8, 0, 24.78],
       "collider": false,
       "tint": [146, 132, 114, 255]
-    },
-    {
-      "name": "trigo_308",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.46, 1.53],
-      "position": [-27.74, 0, -1.86],
-      "collider": false,
-      "tint": [129, 115, 97, 255]
     },
     {
       "name": "trigo_309",
@@ -3106,14 +3211,6 @@
       "tint": [141, 127, 109, 255]
     },
     {
-      "name": "trigo_360",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.46, 1.53],
-      "position": [32.92, 0, -1.86],
-      "collider": false,
-      "tint": [139, 125, 107, 255]
-    },
-    {
       "name": "trigo_361",
       "sprite": "textures/spr_trigo.png",
       "size": [1.39, 1.47],
@@ -3264,14 +3361,6 @@
       "position": [-8.51, 0, 28.24],
       "collider": false,
       "tint": [127, 113, 95, 255]
-    },
-    {
-      "name": "trigo_380",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.45, 1.53],
-      "position": [35.75, 0, -3.76],
-      "collider": false,
-      "tint": [143, 129, 111, 255]
     },
     {
       "name": "trigo_381",
@@ -3482,14 +3571,6 @@
       "tint": [130, 116, 98, 255]
     },
     {
-      "name": "trigo_407",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.41, 1.49],
-      "position": [-33.91, 0, -5.98],
-      "collider": false,
-      "tint": [127, 113, 95, 255]
-    },
-    {
       "name": "trigo_408",
       "sprite": "textures/spr_trigo.png",
       "size": [1.27, 1.34],
@@ -3568,14 +3649,6 @@
       "position": [-14.77, 0, 22.56],
       "collider": false,
       "tint": [129, 115, 97, 255]
-    },
-    {
-      "name": "trigo_418",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.11, 1.17],
-      "position": [28.14, 0, -1.9],
-      "collider": false,
-      "tint": [126, 112, 94, 255]
     },
     {
       "name": "trigo_419",
@@ -3690,14 +3763,6 @@
       "tint": [133, 119, 101, 255]
     },
     {
-      "name": "trigo_433",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.24, 1.31],
-      "position": [-33.15, 0, -5.86],
-      "collider": false,
-      "tint": [128, 114, 96, 255]
-    },
-    {
       "name": "trigo_434",
       "sprite": "textures/spr_trigo.png",
       "size": [1.2, 1.26],
@@ -3810,14 +3875,6 @@
       "tint": [140, 126, 108, 255]
     },
     {
-      "name": "trigo_448",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.27, 1.34],
-      "position": [30.45, 0, -5.52],
-      "collider": false,
-      "tint": [138, 124, 106, 255]
-    },
-    {
       "name": "trigo_449",
       "sprite": "textures/spr_trigo.png",
       "size": [1.15, 1.21],
@@ -3904,14 +3961,6 @@
       "position": [9.94, 0, 24.12],
       "collider": false,
       "tint": [138, 124, 106, 255]
-    },
-    {
-      "name": "trigo_460",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.36, 1.43],
-      "position": [31.04, 0, -0.92],
-      "collider": false,
-      "tint": [132, 118, 100, 255]
     },
     {
       "name": "trigo_461",
@@ -4074,14 +4123,6 @@
       "tint": [128, 114, 96, 255]
     },
     {
-      "name": "trigo_481",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.12, 1.18],
-      "position": [19.94, 0, -1.92],
-      "collider": false,
-      "tint": [140, 126, 108, 255]
-    },
-    {
       "name": "trigo_482",
       "sprite": "textures/spr_trigo.png",
       "size": [1.13, 1.19],
@@ -4154,14 +4195,6 @@
       "tint": [127, 113, 95, 255]
     },
     {
-      "name": "trigo_491",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.15, 1.21],
-      "position": [-29.71, 0, -1.85],
-      "collider": false,
-      "tint": [135, 121, 103, 255]
-    },
-    {
       "name": "trigo_492",
       "sprite": "textures/spr_trigo.png",
       "size": [1.26, 1.33],
@@ -4170,28 +4203,12 @@
       "tint": [130, 116, 98, 255]
     },
     {
-      "name": "trigo_493",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.35, 1.42],
-      "position": [39.53, 0, -1.88],
-      "collider": false,
-      "tint": [149, 135, 117, 255]
-    },
-    {
       "name": "trigo_494",
       "sprite": "textures/spr_trigo.png",
       "size": [1.5, 1.58],
       "position": [14.48, 0, 36.11],
       "collider": false,
       "tint": [145, 131, 113, 255]
-    },
-    {
-      "name": "trigo_495",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.24, 1.3],
-      "position": [-28.13, 0, -4.05],
-      "collider": false,
-      "tint": [132, 118, 100, 255]
     },
     {
       "name": "trigo_496",
@@ -4216,14 +4233,6 @@
       "position": [29.41, 0, -15.51],
       "collider": false,
       "tint": [150, 136, 118, 255]
-    },
-    {
-      "name": "trigo_499",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.29, 1.35],
-      "position": [18.58, 0, -5.73],
-      "collider": false,
-      "tint": [130, 116, 98, 255]
     },
     {
       "name": "trigo_500",
@@ -4282,28 +4291,12 @@
       "tint": [138, 124, 106, 255]
     },
     {
-      "name": "trigo_507",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.48, 1.56],
-      "position": [35.9, 0, -4.07],
-      "collider": false,
-      "tint": [141, 127, 109, 255]
-    },
-    {
       "name": "trigo_508",
       "sprite": "textures/spr_trigo.png",
       "size": [1.19, 1.25],
       "position": [35.55, 0, -24.7],
       "collider": false,
       "tint": [134, 120, 102, 255]
-    },
-    {
-      "name": "trigo_509",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.22, 1.28],
-      "position": [-32.78, 0, -3.5],
-      "collider": false,
-      "tint": [137, 123, 105, 255]
     },
     {
       "name": "trigo_510",
@@ -4328,14 +4321,6 @@
       "position": [-36.84, 0, 38.14],
       "collider": false,
       "tint": [143, 129, 111, 255]
-    },
-    {
-      "name": "trigo_513",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.34, 1.41],
-      "position": [-39.64, 0, -3.91],
-      "collider": false,
-      "tint": [142, 128, 110, 255]
     },
     {
       "name": "trigo_514",
@@ -4378,28 +4363,12 @@
       "tint": [143, 129, 111, 255]
     },
     {
-      "name": "trigo_519",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.1, 1.16],
-      "position": [-26.43, 0, -2.01],
-      "collider": false,
-      "tint": [135, 121, 103, 255]
-    },
-    {
       "name": "trigo_520",
       "sprite": "textures/spr_trigo.png",
       "size": [1.41, 1.48],
       "position": [-16.53, 0, -23.77],
       "collider": false,
       "tint": [149, 135, 117, 255]
-    },
-    {
-      "name": "trigo_521",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.33, 1.4],
-      "position": [36.25, 0, -2.37],
-      "collider": false,
-      "tint": [138, 124, 106, 255]
     },
     {
       "name": "trigo_522",
@@ -4528,14 +4497,6 @@
       "position": [-23.96, 0, 17.42],
       "collider": false,
       "tint": [139, 125, 107, 255]
-    },
-    {
-      "name": "trigo_538",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.4, 1.47],
-      "position": [38.47, 0, -3.5],
-      "collider": false,
-      "tint": [143, 129, 111, 255]
     },
     {
       "name": "trigo_539",
@@ -5010,14 +4971,6 @@
       "tint": [147, 133, 115, 255]
     },
     {
-      "name": "trigo_598",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.2, 1.26],
-      "position": [-37.7, 0, -2.66],
-      "collider": false,
-      "tint": [141, 127, 109, 255]
-    },
-    {
       "name": "trigo_599",
       "sprite": "textures/spr_trigo.png",
       "size": [1.48, 1.56],
@@ -5034,36 +4987,12 @@
       "tint": [139, 125, 107, 255]
     },
     {
-      "name": "trigo_601",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.25, 1.32],
-      "position": [-23.04, 0, -3.17],
-      "collider": false,
-      "tint": [145, 131, 113, 255]
-    },
-    {
-      "name": "trigo_602",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.33, 1.4],
-      "position": [-30.32, 0, -4.37],
-      "collider": false,
-      "tint": [133, 119, 101, 255]
-    },
-    {
       "name": "trigo_603",
       "sprite": "textures/spr_trigo.png",
       "size": [1.26, 1.33],
       "position": [38.28, 0, 20.91],
       "collider": false,
       "tint": [139, 125, 107, 255]
-    },
-    {
-      "name": "trigo_604",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.39, 1.46],
-      "position": [37.53, 0, -1.35],
-      "collider": false,
-      "tint": [143, 129, 111, 255]
     },
     {
       "name": "trigo_605",
@@ -5160,14 +5089,6 @@
       "position": [22.31, 0, 32.75],
       "collider": false,
       "tint": [146, 132, 114, 255]
-    },
-    {
-      "name": "trigo_617",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.42, 1.49],
-      "position": [34.63, 0, -3.95],
-      "collider": false,
-      "tint": [150, 136, 118, 255]
     },
     {
       "name": "trigo_618",
@@ -5438,22 +5359,6 @@
       "sprite": "textures/spr_trigo.png",
       "size": [1.42, 1.5],
       "position": [-16.43, 0, 38.5],
-      "collider": false,
-      "tint": [148, 134, 116, 255]
-    },
-    {
-      "name": "trigo_652",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.37, 1.45],
-      "position": [19.65, 0, -2.93],
-      "collider": false,
-      "tint": [147, 133, 115, 255]
-    },
-    {
-      "name": "trigo_653",
-      "sprite": "textures/spr_trigo.png",
-      "size": [1.24, 1.3],
-      "position": [-25.71, 0, -1.59],
       "collider": false,
       "tint": [148, 134, 116, 255]
     },
@@ -5783,8 +5688,8 @@
       "do": [
         { "play_sound": "audio/tren.wav", "volume": 1.0 },
         { "set_flag": "tren_llega" },
-        { "look_at": "locomotora", "speed": 2.0 },
-        { "message": "Una luz entre el trigo. El tren de las 23:40.", "seconds": 4 }
+        { "look_at": [-55, 1.6, -3.5], "speed": 2.5 },
+        { "message": "Una luz entre el trigo. El tren de las 23:40.", "seconds": 7.5 }
       ]
     },
     {

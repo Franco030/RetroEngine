@@ -1,0 +1,13 @@
+# RetroEngine: peana
+
+newmtl mat_dorado
+d 1.000000
+map_Kd ../textures/mat_dorado.png
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_marmol
+d 1.000000
+map_Kd ../textures/mat_marmol.png

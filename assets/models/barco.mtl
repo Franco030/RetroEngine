@@ -1,0 +1,29 @@
+# RetroEngine: barco
+
+newmtl lamina_libre
+Kd 1.000000 1.000000 1.000000
+d 1.000000
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_madera_gris
+d 1.000000
+map_Kd ../textures/mat_madera_gris.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png
+
+newmtl mat_pintura_azul
+d 1.000000
+map_Kd ../textures/mat_pintura_azul.png
+
+newmtl mat_pintura_blanca
+d 1.000000
+map_Kd ../textures/mat_pintura_blanca.png
+
+newmtl mat_ventana
+d 1.000000
+map_Kd ../textures/mat_ventana.png

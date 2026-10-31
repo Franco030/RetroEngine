@@ -16,7 +16,7 @@
       "if": { "flag": "organo_susto_fin" },
       "once": true,
       "lines": [
-        "Te veo palido. Has estado en la capilla?",
+        "Te veo palido. Estuviste en la capilla?",
         "Que raro. Yo no me he movido de aqui\nen toda la noche."
       ]
     },

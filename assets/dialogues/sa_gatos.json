@@ -1,0 +1,19 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "s_gatos" } },
+      "lines": [
+        "Un gato. Ni te pela. Mira fijamente hacia el sur.",
+        "Hay otro, ahi. Y otro.\nTodos los gatos de la plaza miran al sur. Ninguno parpadea."
+      ],
+      "do": [
+        { "set_flag": "s_gatos" },
+        { "add_flag": "senales" },
+        { "set_flag": "senal_gatos" },
+        { "play_sound": "audio/maullido.wav", "volume": 0.9 },
+        { "message": "Voltean todos a la vez. Hacia ti.", "seconds": 3 }
+      ]
+    },
+    { "lines": ["Te miran. Todos."] }
+  ]
+}

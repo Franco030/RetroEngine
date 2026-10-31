@@ -4,7 +4,7 @@
       "if": { "not": { "flag": "ah_nombre" } },
       "lines": [
         "Entre las raices hay zapatos de niño.\nCientos.",
-        "Dentro del tronco, nombres tallados.\nFechas. Uno por generacion.",
+        "Adentro del tronco, nombres tallados.\nFechas. Uno por generacion.",
         "El ultimo esta recien hecho.\nTodavia caen virutas.",
         "No es el de Clara.",
         "Es el tuyo."

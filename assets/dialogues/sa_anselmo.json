@@ -1,0 +1,13 @@
+{
+  "speaker": "El buzo",
+  "entries": [
+    {
+      "lines": [
+        "Disculpe. No ha visto el baño?",
+        "Soy Anselmo, el guia. Traigo el traje puesto desde agosto: se me atoro la rosca.",
+        "Ya voy mejorando. Ya veo con un ojo."
+      ],
+      "do": [{ "set_flag": "buzo", "value": 4 }]
+    }
+  ]
+}

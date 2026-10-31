@@ -1,0 +1,12 @@
+{
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Un flamenco parado en una pata. Te mira con un ojo.",
+        "Saca la otra pata del agua.\nLa trae mojada hasta aqui: ayer la laguna no llegaba tan alto."
+      ]
+    },
+    { "lines": ["Cambia de pata.\nEs lo mas emocionante que va a pasar."] }
+  ]
+}

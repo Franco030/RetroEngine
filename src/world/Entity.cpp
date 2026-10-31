@@ -120,6 +120,24 @@ void Entity::Update(float dt, Vector3 focus) {
     transform.position = Vector3Add(slide->base, Vector3Scale(slide->offset, k));
   }
 
+  if (arrive && arriveTime_ >= 0.0f) {
+    arriveTime_ += dt;
+    const float u = arriveTime_ / arrive->seconds;
+    if (u >= 1.0f) {
+      transform.position = arrive->base;
+      arriveTime_ = -1.0f;
+    } else {
+      // lo que falta del recorrido (1 a 0): recta a velocidad constante y frenada uniforme
+      const float b = arrive->brake;
+      const float cruise = 1.0f - b;
+      const float total = cruise + b * 0.5f;
+      const float left = u < cruise ? 1.0f - u / total : (1.0f - u) * (1.0f - u) / (2.0f * b * total);
+      const float speed = u < cruise ? 1.0f : (1.0f - u) / b;
+      transform.position = Vector3Add(arrive->base, Vector3Scale(arrive->offset, left));
+      transform.position.y += std::sin(arriveTime_ * 31.0f) * 0.012f * speed; // el traqueteo
+    }
+  }
+
   if (idle) {
     idleTime_ += dt;
     const float t = idleTime_ * idle->speed * 3.0f + idle->phase;
@@ -144,6 +162,10 @@ void SetDepthBias(const Shader& shader, float bias) {
 
 
 void Entity::SetShown(bool shown) {
+  if (arrive && shownKnown_ && shown && !shown_) {
+    arriveTime_ = 0.0f;
+    transform.position = Vector3Add(arrive->base, arrive->offset);
+  }
   if (glitch <= 0.0f || !shownKnown_) {
     visible = shown;
     shown_ = shown;

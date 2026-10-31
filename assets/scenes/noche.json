@@ -418,36 +418,12 @@
       "tint": [170, 185, 230, 255]
     },
     {
-      "name": "bosque_aldea_arbol_3",
-      "model": "models/arbol_pino_alto.obj",
-      "position": [-5.53, 0, -9.77],
-      "rotation": [0, 91.9, 0],
-      "scale": [0.86, 0.86, 0.86],
-      "tint": [170, 185, 230, 255]
-    },
-    {
       "name": "bosque_aldea_arbol_4",
       "model": "models/arbol_pino.obj",
       "position": [5.07, 0, -9.53],
       "rotation": [0, 306.0, 0],
       "scale": [0.91, 0.91, 0.91],
       "tint": [170, 185, 230, 255]
-    },
-    {
-      "name": "bosque_aldea_arbol_5",
-      "model": "models/arbol_roble_2.obj",
-      "position": [-7.19, 0, -10.47],
-      "rotation": [0, 40.9, 0],
-      "scale": [0.95, 0.95, 0.95],
-      "tint": [110, 120, 170, 255]
-    },
-    {
-      "name": "bosque_aldea_arbol_6",
-      "model": "models/arbol_roble_2.obj",
-      "position": [6.96, 0, -10.05],
-      "rotation": [0, 353.7, 0],
-      "scale": [0.85, 0.85, 0.85],
-      "tint": [110, 120, 170, 255]
     },
     {
       "name": "bosque_aldea_arbol_7",
@@ -1133,14 +1109,6 @@
       "position": [10.4, 0, -7.27],
       "rotation": [0, 324.2, 0],
       "scale": [0.9, 0.9, 0.9],
-      "tint": [110, 120, 170, 255]
-    },
-    {
-      "name": "bosque_cementerio_arbol_5",
-      "model": "models/arbol_roble_2.obj",
-      "position": [9.92, 0, 7.28],
-      "rotation": [0, 202.6, 0],
-      "scale": [0.98, 0.98, 0.98],
       "tint": [110, 120, 170, 255]
     },
     {
@@ -1890,14 +1858,6 @@
       "rotation": [0, 28.1, 0],
       "scale": [0.95, 0.95, 0.95],
       "tint": [110, 120, 170, 255]
-    },
-    {
-      "name": "bosque_demo_arbol_4",
-      "model": "models/arbol_pino_alto.obj",
-      "position": [-7.2, 0, 9.56],
-      "rotation": [0, 311.4, 0],
-      "scale": [0.98, 0.98, 0.98],
-      "tint": [170, 185, 230, 255]
     },
     {
       "name": "bosque_demo_arbol_5",

@@ -1,0 +1,13 @@
+# RetroEngine: malecon
+
+newmtl mat_cal
+d 1.000000
+map_Kd ../textures/mat_cal.png
+
+newmtl mat_losa
+d 1.000000
+map_Kd ../textures/mat_losa.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png

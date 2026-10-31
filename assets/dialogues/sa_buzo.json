@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "if": { "flag": "buzo", "op": "==", "value": 0 },
+      "lines": [
+        "\"Traje de buzo, 1920. Cobre y lona. Favor de no tocar.\"",
+        "Por el vidrio no se ve nada.\nEsta empañado. Por adentro."
+      ],
+      "do": [{ "set_flag": "buzo", "value": 1 }]
+    },
+    { "lines": ["Sigue empañado."] }
+  ]
+}

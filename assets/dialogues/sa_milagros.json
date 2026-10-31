@@ -1,0 +1,21 @@
+{
+  "speaker": "Milagros",
+  "entries": [
+    {
+      "if": { "not": { "flag": "senal_pescado" } },
+      "lines": [
+        "Fresquecito, corazon! Sardina, robalo y un huachinango que da gloria. Pescado hoy en la mañana.",
+        "Que donde? Pues en el mar.",
+        "...",
+        "Ay, mira, no se.\nCada mañana aparece en las cajas, mojado.",
+        "Antes salia una o dos veces al año. Esta semana, diario.\nNo le digas a nadie, que me hunden el negocio."
+      ],
+      "do": [
+        { "set_flag": "senal_pescado" },
+        { "add_flag": "senales" },
+        { "play_sound": "audio/susurros.wav", "volume": 0.2 }
+      ]
+    },
+    { "lines": ["Llevate una sardina, invita el pueblo.\nNo la mires mucho, que se ponen nerviosas."] }
+  ]
+}

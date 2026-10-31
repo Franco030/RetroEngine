@@ -1,0 +1,22 @@
+{
+  "speaker": "Don Fermin",
+  "entries": [
+    {
+      "if": { "not": { "flag": "senal_banador" } },
+      "lines": [
+        "Pase, pase. Abarrotes a la izquierda, trajes de baño a la derecha.\nEl suyo ya esta listo.",
+        "Su medida? Oh, no hace falta tomarla. Ya esta apuntada.",
+        "Mire: a rayas, de lana, con su nombre bordado.",
+        "Lo mando hacer mi abuelo. Hace 61 años.\nCon su nombre, si. Que curioso, verdad?",
+        "Invita el pueblo."
+      ],
+      "do": [
+        { "set_flag": "senal_banador" },
+        { "add_flag": "senales" },
+        { "play_sound": "audio/susurros.wav", "volume": 0.2 },
+        { "set_flag": "maniquis", "value": 1 }
+      ]
+    },
+    { "lines": ["Le queda pintado. Siempre le queda."] }
+  ]
+}

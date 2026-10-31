@@ -1,0 +1,13 @@
+# RetroEngine: telescopio
+
+newmtl mat_cobre
+d 1.000000
+map_Kd ../textures/mat_cobre.png
+
+newmtl mat_dorado
+d 1.000000
+map_Kd ../textures/mat_dorado.png
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png

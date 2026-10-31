@@ -1,0 +1,13 @@
+# RetroEngine: flamenco
+
+newmtl mat_algodon
+d 1.000000
+map_Kd ../textures/mat_algodon.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png
+
+newmtl mat_plumas_rosas
+d 1.000000
+map_Kd ../textures/mat_plumas_rosas.png

@@ -1,0 +1,252 @@
+{
+  "player": { "position": [0, 0, 5.2], "yaw": 0 },
+  "bounds": { "min": [-8.8, -6.8], "max": [8.8, 6.8] },
+  "background": [232, 228, 214],
+  "fog": { "start": 18, "end": 70 },
+  "light": { "direction": [-0.2, -1, 0.1], "ambient": 0.68, "sun": 0.42 },
+  "lights": [{ "position": [0, 4.6, 0], "color": [255, 244, 220], "radius": 14, "intensity": 0.6 }],
+  "audio": {
+    "music": { "file": "audio/musica_salinas_biblioteca_v2.wav", "volume": 0.5 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.3
+    },
+    "fade": 1.5
+  },
+  "entities": [
+    {
+      "name": "sala",
+      "model": "models/sala_grande.obj",
+      "position": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "tint": [250, 244, 230, 255],
+      "interact": {
+        "prompt": "Salir",
+        "range": 3.0,
+        "box": { "min": [-0.9, 0, 6.5], "max": [0.9, 2.7, 7.1] },
+        "do": [{ "goto_scene": "scenes/salinas.json", "position": [-15.0, 0, 2.0], "yaw": -90 }]
+      }
+    },
+    {
+      "name": "mostrador",
+      "model": "models/mostrador.obj",
+      "position": [-5.2, 0, 4.2],
+      "rotation": [0, 180, 0]
+    },
+    {
+      "name": "gato_mostrador",
+      "model": "models/gato_tumbado.obj",
+      "position": [-4.4, 1.06, 4.2],
+      "rotation": [0, 150, 0],
+      "collider": false,
+      "tint": [40, 38, 42, 255]
+    },
+    {
+      "name": "perpetua",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_perpetua.png",
+      "position": [-5.2, 0, 3.2],
+      "rotation": [0, 0, 0],
+      "idle": { "bob": 0.012, "sway": 1.4, "speed": 1.7 },
+      "facePlayer": { "range": 5.0, "turnSpeed": 120 },
+      "interact": { "prompt": "Hablar", "range": 3.0, "do": [{ "dialogue": "sa_perpetua" }] },
+      "showIf": {
+        "any": [{ "not": { "flag": "b_cruje" } }, { "flag": "b_shh" }]
+      }
+    },
+    {
+      "name": "perpetua_detras",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_perpetua.png",
+      "position": [2.1, 0, -0.5],
+      "rotation": [0, 90, 0],
+      "idle": { "bob": 0.012, "sway": 1.4, "speed": 1.7 },
+      "facePlayer": { "range": 30, "turnSpeed": 600 },
+      "showIf": {
+        "all": [{ "flag": "b_cruje" }, { "not": { "flag": "b_shh" } }]
+      },
+      "seen": {
+        "range": 16,
+        "angle": 24,
+        "do": [
+          { "play_sound": "audio/shh.wav", "volume": 1.0 },
+          { "scare": "perpetua_detras", "speed": 24, "fov": 28 },
+          { "message": "Doña Perpetua: Shhhh.", "seconds": 2.5 }
+        ],
+        "away": [{ "set_flag": "b_shh" }]
+      }
+    },
+    {
+      "name": "silencio",
+      "model": "models/letrero.obj",
+      "position": [0, 4.2, -6.9],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_s_silencio.png",
+      "collider": false,
+      "scale": [1.5, 1.5, 1]
+    },
+    {
+      "name": "silencio_2",
+      "model": "models/letrero.obj",
+      "position": [-5.2, 2.6, 6.84],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_s_silencio.png",
+      "collider": false,
+      "scale": [0.8, 0.8, 1]
+    },
+    {
+      "name": "atril",
+      "model": "models/atril.obj",
+      "position": [0, 0, -5.2],
+      "rotation": [0, 0, 0],
+      "collider": { "min": [-0.35, 0, -0.25], "max": [0.35, 1.2, 0.25] },
+      "interact": {
+        "prompt": "Leer el Anuario",
+        "range": 2.4,
+        "do": [{ "dialogue": "sa_anuario" }],
+        "box": { "min": [-0.5, 0.6, -0.4], "max": [0.5, 1.4, 0.4] }
+      }
+    },
+    {
+      "name": "anuario",
+      "model": "models/lamina.obj",
+      "position": [0, 1.22, -5.2],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "texture": "textures/lam_s_anuario.png",
+      "scale": [0.5, 0.5, 1]
+    },
+    {
+      "name": "escalera",
+      "model": "models/escalera_mano.obj",
+      "position": [-6.6, 0, -3.2],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "scale": [1, 0.82, 1]
+    },
+    {
+      "name": "cabra",
+      "model": "models/cabra.obj",
+      "position": [6.8, 0, -3.5],
+      "rotation": [0, -90, 0],
+      "idle": { "bob": 0.008, "sway": 2, "speed": 2 },
+      "interact": { "prompt": "Mirar", "range": 2.4, "do": [{ "dialogue": "sa_cabra_lee" }] }
+    },
+    {
+      "name": "mesa_lectura",
+      "model": "models/mesa_larga.obj",
+      "position": [5.2, 0, 4.4],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "vecino_lee",
+      "model": "models/anciano.obj",
+      "position": [5.2, 0, 3.0],
+      "rotation": [0, 0, 0],
+      "texture": "textures/pj_fe_fermin.png",
+      "idle": { "bob": 0.004, "sway": 0.4, "speed": 0.6 },
+      "interact": { "prompt": "Hablar", "range": 2.2, "do": [{ "dialogue": "sa_lector" }] }
+    },
+    {
+      "name": "estante_0",
+      "model": "models/estante_alto.obj",
+      "position": [-7.0, 0, 1.2],
+      "rotation": [0, 0, 0],
+      "interact": { "prompt": "Tomar un libro", "range": 2.4, "do": [{ "dialogue": "sa_libro_0" }] }
+    },
+    {
+      "name": "estante_1",
+      "model": "models/estante_alto.obj",
+      "position": [-4.0, 0, 1.2],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "estante_2",
+      "model": "models/estante_alto.obj",
+      "position": [4.0, 0, 1.2],
+      "rotation": [0, 0, 0],
+      "interact": { "prompt": "Tomar un libro", "range": 2.4, "do": [{ "dialogue": "sa_libro_1" }] }
+    },
+    {
+      "name": "estante_3",
+      "model": "models/estante_alto.obj",
+      "position": [7.0, 0, 1.2],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "estante_4",
+      "model": "models/estante_alto.obj",
+      "position": [-7.0, 0, -1.9],
+      "rotation": [0, 0, 0],
+      "interact": { "prompt": "Tomar un libro", "range": 2.4, "do": [{ "dialogue": "sa_libro_2" }] }
+    },
+    {
+      "name": "estante_5",
+      "model": "models/estante_alto.obj",
+      "position": [-4.0, 0, -1.9],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "estante_6",
+      "model": "models/estante_alto.obj",
+      "position": [4.0, 0, -1.9],
+      "rotation": [0, 0, 0],
+      "interact": { "prompt": "Tomar un libro", "range": 2.4, "do": [{ "dialogue": "sa_libro_3" }] }
+    },
+    {
+      "name": "estante_7",
+      "model": "models/estante_alto.obj",
+      "position": [7.0, 0, -1.9],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "estante_8",
+      "model": "models/estante_alto.obj",
+      "position": [-7.0, 0, -5.0],
+      "rotation": [0, 0, 0],
+      "interact": { "prompt": "Tomar un libro", "range": 2.4, "do": [{ "dialogue": "sa_libro_4" }] }
+    },
+    {
+      "name": "estante_9",
+      "model": "models/estante_alto.obj",
+      "position": [-4.0, 0, -5.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "estante_10",
+      "model": "models/estante_alto.obj",
+      "position": [4.0, 0, -5.0],
+      "rotation": [0, 0, 0],
+      "interact": { "prompt": "Tomar un libro", "range": 2.4, "do": [{ "dialogue": "sa_libro_5" }] }
+    },
+    {
+      "name": "estante_11",
+      "model": "models/estante_alto.obj",
+      "position": [7.0, 0, -5.0],
+      "rotation": [0, 0, 0]
+    }
+  ],
+  "triggers": [
+    {
+      "name": "tabla",
+      "position": [4.4, 0, -0.35],
+      "size": [1.6, 3, 2.0],
+      "once": true,
+      "do": [
+        { "play_sound": "audio/crujido.wav", "volume": 1.0 },
+        { "message": "La tabla cruje muchisimo.", "seconds": 2.2 },
+        { "set_flag": "b_cruje" }
+      ]
+    },
+    {
+      "name": "tabla_2",
+      "position": [-4.4, 0, -0.35],
+      "size": [1.6, 3, 2.0],
+      "once": true,
+      "do": [{ "play_sound": "audio/crujido.wav", "volume": 0.6 }]
+    }
+  ],
+  "emitters": [],
+  "autoCollide": true,
+  "camera": { "position": [0, 1.7, 5.2], "target": [0, 1.5, 0], "fov": 60 }
+}

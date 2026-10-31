@@ -1,0 +1,5 @@
+# RetroEngine: monton_sal
+
+newmtl mat_sal
+d 1.000000
+map_Kd ../textures/mat_sal.png

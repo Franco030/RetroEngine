@@ -1,0 +1,9 @@
+# RetroEngine: hamaca
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_toldo_azul
+d 1.000000
+map_Kd ../textures/mat_toldo_azul.png

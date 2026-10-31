@@ -97,9 +97,9 @@ struct TitleScreen {};
 
 // Montarse en algo que se mueve (el tiovivo, la noria): el jugador va pegado a la entidad en el
 // punto 'seat' (coordenadas del mundo AL SUBIR: luego gira y sube con ella) y puede mirar pero
-// no andar. Baja con E, o a los 'seconds' (0 = solo con E), en 'exit' (o donde estaba). Mientras
-// va montado, 'flag' vale 1 (para que algo solo se vea desde arriba). Al bajar puede abrir el
-// dialogo 'after'.
+// no andar. Baja con E, o a los 'seconds' (0 = solo con E), en 'exit' (o donde estaba); con
+// 'locked', E no baja y hay que esperar a los 'seconds'. Mientras va montado, 'flag' vale 1 (para
+// que algo solo se vea desde arriba). Al bajar puede abrir el dialogo 'after'.
 struct Ride {
   std::string entity;
   Vector3 seat{0.0f, 0.0f, 0.0f};
@@ -107,6 +107,7 @@ struct Ride {
   float seconds = 0.0f;
   std::string flag;
   std::string after;
+  bool locked = false;
 };
 
 // Tiro al blanco: el jugador se queda en 'position' mirando a 'yaw' y dispara (clic o E) a las
@@ -121,13 +122,22 @@ struct Shooting {
   std::string after;
 };
 
+// Pone la entidad a la espalda del jugador, a 'distance' metros, 'side' metros a su derecha y
+// mirandole, dentro de los limites de la escena y sin meterla en nada solido (si no cabe, mas
+// cerca). Para los sustos: lo que no estaba ahi cuando miraste.
+struct BehindPlayer {
+  std::string entity;
+  float distance = 2.4f;
+  float side = 0.0f;
+};
+
 } // namespace action
 
 using Action =
     std::variant<action::GotoScene, action::Teleport, action::SetFlag, action::AddFlag,
                  action::Message, action::PlaySound, action::PlayMusic, action::StopMusic,
                  action::StartDialogue, action::LookAt, action::Scare, action::LockMovement,
-                 action::TitleScreen, action::Ride, action::Shooting>;
+                 action::TitleScreen, action::Ride, action::Shooting, action::BehindPlayer>;
 
 enum class CompareOp { Eq, Ne, Lt, Le, Gt, Ge };
 
@@ -161,6 +171,7 @@ struct Sight {
   float range = 15.0f;
   float angle = 20.0f;     // para "la ves": cerca del centro de la vista
   float awayAngle = 75.0f; // para "dejas de mirarla": fuera de pantalla (mas que el campo de vision)
+  std::vector<Condition> conditions; // mientras no se cumplan, mirarla no cuenta
   std::vector<Action> onSeen;
   std::vector<Action> onLookAway;
   bool seen = false;    // ya la vio (se ejecuto onSeen)

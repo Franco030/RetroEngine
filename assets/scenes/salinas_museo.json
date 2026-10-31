@@ -1,0 +1,199 @@
+{
+  "player": { "position": [0, 0, 5.2], "yaw": 0 },
+  "bounds": { "min": [-8.8, -6.8], "max": [8.8, 6.8] },
+  "background": [232, 228, 214],
+  "fog": { "start": 18, "end": 70 },
+  "light": { "direction": [-0.2, -1, 0.1], "ambient": 0.68, "sun": 0.42 },
+  "lights": [{ "position": [0, 4.6, 0], "color": [220, 240, 255], "radius": 14, "intensity": 0.6 }],
+  "audio": {
+    "music": { "file": "audio/musica_salinas_museo_v2.wav", "volume": 0.5 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.26
+    },
+    "fade": 1.5
+  },
+  "entities": [
+    {
+      "name": "sala",
+      "model": "models/sala_grande.obj",
+      "position": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "tint": [236, 244, 250, 255],
+      "interact": {
+        "prompt": "Salir",
+        "range": 3.0,
+        "box": { "min": [-0.9, 0, 6.5], "max": [0.9, 2.7, 7.1] },
+        "do": [{ "goto_scene": "scenes/salinas.json", "position": [16.6, 0, 8.0], "yaw": 90 }]
+      }
+    },
+    {
+      "name": "tiburon",
+      "model": "models/Low Poly Shark Model.obj",
+      "position": [0.6, 3.1, -0.6],
+      "rotation": [0, 0, 0],
+      "scale": [2.6, 2.6, 2.6],
+      "collider": false,
+      "texture": "textures/mat_pez.png",
+      "tint": [150, 170, 190, 255],
+      "facePlayer": { "range": 12, "turnSpeed": 14 },
+      "interact": {
+        "prompt": "Mirar",
+        "range": 5.5,
+        "do": [{ "dialogue": "sa_tiburon" }],
+        "box": { "min": [-1.0, -0.2, -0.7], "max": [2.0, 0.9, 0.7] }
+      }
+    },
+    { "name": "barca", "model": "models/barca.obj", "position": [-5.6, 0, 3.6], "rotation": [0, 80, 0] },
+    {
+      "name": "ancla",
+      "model": "models/ancla.obj",
+      "position": [6.6, 0, 4.2],
+      "rotation": [0, 200, 0],
+      "interact": { "prompt": "Mirar", "range": 2.6, "do": [{ "dialogue": "sa_ancla" }] }
+    },
+    { "name": "boya", "model": "models/boya.obj", "position": [7.0, 0, -5.2], "rotation": [0, 0, 0] },
+    {
+      "name": "nasa_0",
+      "model": "models/nasa.obj",
+      "position": [-7.6, 0, -5.4],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "red",
+      "model": "models/red_pesca.obj",
+      "position": [0, 0, -6.2],
+      "rotation": [0, 0, 0],
+      "scale": [1.2, 1.1, 1]
+    },
+    {
+      "name": "vitrina_0",
+      "model": "models/vitrina.obj",
+      "position": [-5.6, 0, -2.0],
+      "rotation": [0, 0, 0],
+      "interact": { "prompt": "Mirar", "range": 2.4, "do": [{ "dialogue": "sa_vitrina" }] }
+    },
+    {
+      "name": "vitrina_1",
+      "model": "models/vitrina.obj",
+      "position": [5.6, 0, -2.0],
+      "rotation": [0, 0, 0],
+      "interact": { "prompt": "Mirar", "range": 2.4, "do": [{ "dialogue": "sa_vitrina_2" }] }
+    },
+    {
+      "name": "barometro",
+      "model": "models/lamina.obj",
+      "position": [8.92, 2.2, 1.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "texture": "textures/lam_reloj.png",
+      "scale": [0.8, 1.06, 1],
+      "interact": {
+        "prompt": "Mirar el barometro",
+        "range": 3.0,
+        "do": [{ "dialogue": "sa_barometro" }],
+        "box": { "min": [-0.6, -0.6, 0.0], "max": [0.6, 0.6, 0.6] }
+      }
+    },
+    {
+      "name": "foto_mar",
+      "model": "models/lamina.obj",
+      "position": [-8.92, 2.2, -1.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "texture": "textures/lam_s_foto.png",
+      "scale": [1.3, 1.3, 1],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 3.0,
+        "do": [{ "dialogue": "sa_foto" }],
+        "box": { "min": [-0.8, -0.6, 0.0], "max": [0.8, 0.6, 0.6] }
+      }
+    },
+    {
+      "name": "gato_barca",
+      "model": "models/gato.obj",
+      "position": [-5.7, 0.2, 3.8],
+      "rotation": [0, 110, 0],
+      "collider": false,
+      "tint": [240, 236, 228, 255]
+    },
+    { "name": "peana", "model": "models/peana.obj", "position": [0.0, 0, -4.4], "rotation": [0, 0, 0] },
+    {
+      "name": "buzo_expuesto",
+      "model": "models/buzo.obj",
+      "position": [0.0, 0.3, -4.4],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "showIf": { "flag": "buzo", "op": "==", "value": 0 },
+      "interact": { "prompt": "Mirar", "range": 3.0, "do": [{ "dialogue": "sa_buzo" }] }
+    },
+    {
+      "name": "buzo_leido",
+      "model": "models/buzo.obj",
+      "position": [0.0, 0.3, -4.4],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "showIf": { "flag": "buzo", "op": "==", "value": 1 },
+      "interact": { "prompt": "Mirar", "range": 3.0, "do": [{ "dialogue": "sa_buzo" }] },
+      "seen": {
+        "range": 30,
+        "angle": 40,
+        "awayAngle": 110,
+        "away": [
+          { "set_flag": "buzo", "value": 2 },
+          { "play_sound": "audio/pisada_buzo.wav", "at": "peana", "volume": 0.45, "radius": 20 }
+        ]
+      }
+    },
+    {
+      "name": "hueco",
+      "model": { "type": "plane", "size": 0.5 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0.0, 1.2, -4.4],
+      "showIf": { "flag": "buzo", "op": "==", "value": 2 },
+      "seen": {
+        "range": 30,
+        "angle": 14,
+        "do": [
+          { "behind_player": "buzo_detras", "distance": 2.6 },
+          { "set_flag": "buzo", "value": 3 },
+          { "play_sound": "audio/pisada_buzo.wav", "at": "buzo_detras", "volume": 1.0, "radius": 16 },
+          { "message": "El pedestal esta vacio.", "seconds": 3 }
+        ]
+      }
+    },
+    {
+      "name": "buzo_detras",
+      "model": "models/buzo.obj",
+      "position": [-1.8, 0, -3.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "showIf": { "flag": "buzo", "op": ">=", "value": 3 },
+      "facePlayer": { "range": 40, "turnSpeed": 90 },
+      "sound": { "file": "audio/respira_buzo.wav", "volume": 0.55, "radius": 9, "minDistance": 1.5 },
+      "interact": {
+        "prompt": "Hablar",
+        "range": 2.6,
+        "do": [{ "dialogue": "sa_anselmo_2" }],
+        "if": { "flag": "buzo", "op": ">=", "value": 4 }
+      },
+      "seen": {
+        "range": 30,
+        "angle": 42,
+        "if": { "flag": "buzo", "op": "==", "value": 3 },
+        "do": [
+          { "play_sound": "audio/susto_piano.wav", "volume": 0.7 },
+          { "scare": "buzo_detras", "speed": 16, "fov": 26 },
+          { "dialogue": "sa_anselmo" }
+        ]
+      }
+    }
+  ],
+  "triggers": [],
+  "emitters": [],
+  "autoCollide": true,
+  "camera": { "position": [0, 1.7, 5.2], "target": [0, 1.5, 0], "fov": 60 }
+}

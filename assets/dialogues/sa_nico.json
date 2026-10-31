@@ -1,0 +1,33 @@
+{
+  "speaker": "Nico",
+  "entries": [
+    {
+      "if": { "flag": "senales", "op": ">=", "value": 6 },
+      "lines": [
+        "{señales} cosas raras, y todas apuntan al mismo lado.",
+        "La alcaldesa te andaba buscando.\nDice que ya es hora. Hora de que, no me dijo."
+      ]
+    },
+    {
+      "if": { "flag": "senales", "op": ">=", "value": 3 },
+      "lines": [
+        "Llevas {señales} cosas que no cuadran.\nYo llevo veinte fotos de gente feliz.",
+        "Las estoy revelando. Salen todos mirando al mismo lado."
+      ]
+    },
+    {
+      "once": true,
+      "key": "hola",
+      "lines": [
+        "Mira esto. MIRA esto. Sol, gatos, un pueblo entero sonriendo.",
+        "Despues de Ventosa esperaba otra cosa.\nCasi me ofende.",
+        "Yo tomo fotos. Tu pregunta. Si algo no cuadra, me avisas."
+      ]
+    },
+    {
+      "lines": [
+        "Date una vuelta. Biblioteca, museo, el puerto, las salinas.\nAqui todos quieren platicar contigo. Demasiado, diria yo."
+      ]
+    }
+  ]
+}

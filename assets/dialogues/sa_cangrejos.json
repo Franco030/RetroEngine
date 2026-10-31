@@ -1,0 +1,18 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "senal_cangrejos" } },
+      "lines": [
+        "Cangrejos. Rojos, vivos, cientos. En la sal seca no vive nada.",
+        "Vienen del sur y caminan hacia el pueblo, de lado, con prisa.",
+        "Uno se detiene. Te mira.\nSigue."
+      ],
+      "do": [
+        { "set_flag": "senal_cangrejos" },
+        { "add_flag": "senales" },
+        { "play_sound": "audio/susurros.wav", "volume": 0.2 }
+      ]
+    },
+    { "lines": ["Siguen llegando."] }
+  ]
+}

@@ -1,0 +1,17 @@
+# RetroEngine: kiosco_musica
+
+newmtl mat_cal
+d 1.000000
+map_Kd ../textures/mat_cal.png
+
+newmtl mat_dorado
+d 1.000000
+map_Kd ../textures/mat_dorado.png
+
+newmtl mat_pintura_blanca
+d 1.000000
+map_Kd ../textures/mat_pintura_blanca.png
+
+newmtl mat_toldo_azul
+d 1.000000
+map_Kd ../textures/mat_toldo_azul.png

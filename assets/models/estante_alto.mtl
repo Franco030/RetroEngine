@@ -1,0 +1,41 @@
+# RetroEngine: estante_alto
+
+newmtl mat_flor_amarilla
+d 1.000000
+map_Kd ../textures/mat_flor_amarilla.png
+
+newmtl mat_flor_morada
+d 1.000000
+map_Kd ../textures/mat_flor_morada.png
+
+newmtl mat_hojas
+d 1.000000
+map_Kd ../textures/mat_hojas.png
+
+newmtl mat_lona
+d 1.000000
+map_Kd ../textures/mat_lona.png
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_madera_gris
+d 1.000000
+map_Kd ../textures/mat_madera_gris.png
+
+newmtl mat_pintura_azul
+d 1.000000
+map_Kd ../textures/mat_pintura_azul.png
+
+newmtl mat_tela_morada
+d 1.000000
+map_Kd ../textures/mat_tela_morada.png
+
+newmtl mat_tela_roja
+d 1.000000
+map_Kd ../textures/mat_tela_roja.png
+
+newmtl mat_toldo_azul
+d 1.000000
+map_Kd ../textures/mat_toldo_azul.png

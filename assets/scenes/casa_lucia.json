@@ -17,7 +17,7 @@
   },
   "entities": [
     {
-      "name": "habitacion",
+      "interact": { "prompt": "Salir", "range": 2.8, "box": {"min": [-0.8, 0, 2.2], "max": [0.8, 2.4, 2.65]}, "do": [ { "play_sound": "audio/portazo.wav", "volume": 0.25 }, { "goto_scene": "scenes/feria.json", "position": [-20.4, 0, -5.1], "yaw": -90 } ] }, "name": "habitacion",
       "model": "models/interior_casa.obj",
       "position": [0, 0, 0],
       "rotation": [0, 0, 0]
@@ -149,16 +149,6 @@
       }
     }
   ],
-  "triggers": [
-    {
-      "name": "salir",
-      "position": [0, 0, 2.35],
-      "size": [1.4, 3, 0.3],
-      "do": [
-        { "play_sound": "audio/portazo.wav", "volume": 0.25 },
-        { "goto_scene": "scenes/feria.json", "position": [-20.4, 0, -5.1], "yaw": -90 }
-      ]
-    }
-  ],
+  "triggers": [],
   "emitters": []
 }

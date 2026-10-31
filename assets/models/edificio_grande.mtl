@@ -1,0 +1,25 @@
+# RetroEngine: edificio_grande
+
+newmtl mat_cal
+d 1.000000
+map_Kd ../textures/mat_cal.png
+
+newmtl mat_losa
+d 1.000000
+map_Kd ../textures/mat_losa.png
+
+newmtl mat_marmol
+d 1.000000
+map_Kd ../textures/mat_marmol.png
+
+newmtl mat_puerta_azul
+d 1.000000
+map_Kd ../textures/mat_puerta_azul.png
+
+newmtl mat_tejas
+d 1.000000
+map_Kd ../textures/mat_tejas.png
+
+newmtl mat_ventana
+d 1.000000
+map_Kd ../textures/mat_ventana.png

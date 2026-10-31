@@ -1,0 +1,14 @@
+{
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Al fondo, agua quieta. En el agua, la luna.",
+        "Y una cara asomada.",
+        "Te apartas. Cuando vuelves a mirar,\nsolo esta la tuya."
+      ],
+      "do": [{ "play_sound": "audio/susurros.wav", "volume": 0.6 }]
+    },
+    { "lines": ["Agua quieta. Tu reflejo.\nTarda un poco en moverse cuando te mueves."] }
+  ]
+}

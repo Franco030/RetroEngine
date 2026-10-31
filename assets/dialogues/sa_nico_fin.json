@@ -1,0 +1,20 @@
+{
+  "speaker": "Nico",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "No hables. Respira.",
+        "Te saque por el malecon, hasta aqui arriba. No me preguntes como. Una niña descalza te agarro de la mano, y luego ya no estaba.",
+        "Cuenta los farolitos.\nNo, mejor no los cuentes.",
+        "Son vecinos. En la madrugada alguien va a poner uno mas por ti, y se va a equivocar.\nTodavia no."
+      ]
+    },
+    {
+      "lines": [
+        "El tren se quedo aqui. Dice el fogonero que no sabe por que.\nSube cuando quieras.",
+        "En las fotos de esta tarde sale el mar. Detras de todos.\nYa estaba ahi."
+      ]
+    }
+  ]
+}

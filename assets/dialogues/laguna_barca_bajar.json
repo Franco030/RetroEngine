@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "if": {
+        "all": [{ "flag": "clara_agua_vista" }, { "not": { "flag": "pista_barca" } }]
+      },
+      "lines": [
+        "La barca no se ha movido. La cuerda sigue atada al muelle.",
+        "Pero en el agua, entre los farolitos, habia una niña de pie.\nDescalza.",
+        "No se hundia."
+      ],
+      "do": [{ "set_flag": "pista_barca" }, { "add_flag": "pistas" }]
+    },
+    { "lines": ["Los farolitos pasan junto a la barca\ny se van, despacio, hacia la torre."] }
+  ]
+}

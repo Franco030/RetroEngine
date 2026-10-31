@@ -1,0 +1,14 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "fv_tiovivo_visto" } },
+      "lines": [
+        "Un carrusel viejo. La pintura de los caballos se cae a escamas.",
+        "Los espejos del centro estan negros.\nNo tiene motor. Lo quitaron hace años.",
+        "Uno de los caballos es pequeño, para un niño."
+      ],
+      "do": [{ "set_flag": "fv_tiovivo_visto" }]
+    },
+    { "lines": ["Quieto. Completamente quieto."] }
+  ]
+}

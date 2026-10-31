@@ -83,21 +83,50 @@ static void HandleDebugKeys(retro::RetroEngine& engine) {
     engine.Post().SetParams(q);
 }
 
+// Una linea de texto ya partida. 'start' es su posicion dentro del texto original.
+struct TextLine {
+  std::string text;
+  std::size_t start;
+};
+
+// Parte 'text' en lineas de 'maxWidth' como mucho: respeta los saltos que trae y corta en los
+// espacios. Una palabra que no cabe sola se queda entera.
+static std::vector<TextLine> WrapText(const retro::Ui& ui, const std::string& text, float size,
+                                      float maxWidth) {
+  std::vector<TextLine> lines;
+  std::size_t begin = 0;
+  while (true) {
+    const std::size_t end = std::min(text.find('\n', begin), text.size());
+    while (ui.TextWidth(text.substr(begin, end - begin), size) > maxWidth) {
+      std::size_t cut = std::string::npos;
+      for (std::size_t sp = text.find(' ', begin); sp < end; sp = text.find(' ', sp + 1)) {
+        if (ui.TextWidth(text.substr(begin, sp - begin), size) > maxWidth)
+          break;
+        cut = sp;
+      }
+      if (cut == std::string::npos)
+        break;
+      lines.push_back({text.substr(begin, cut - begin), begin});
+      begin = cut + 1;
+    }
+    lines.push_back({text.substr(begin, end - begin), begin});
+    if (end == text.size())
+      return lines;
+    begin = end + 1;
+  }
+}
+
 // Frase del negro entre escenas (goto_scene "lines"): centrada en la pantalla, en un blanco
 // calido que aparece y se apaga con 'alpha'.
 static void DrawCard(const retro::Ui& ui, std::string_view text, float alpha) {
-  constexpr float kSize = 11.0f, kLineH = 14.0f;
+  constexpr float kSize = 11.0f, kLineH = 14.0f, kMargin = 14.0f;
   const auto a = static_cast<unsigned char>(alpha * 255.0f);
-  const auto count = static_cast<float>(std::count(text.begin(), text.end(), '\n') + 1);
-  float y = (ui.Height() - count * kLineH) * 0.5f;
-  std::size_t start = 0;
-  while (start <= text.size()) {
-    const std::size_t nl = std::min(text.find('\n', start), text.size());
-    const std::string line(text.substr(start, nl - start));
-    ui.Text(line, (ui.Width() - ui.TextWidth(line, kSize)) * 0.5f, y, kSize,
+  const std::vector<TextLine> lines = WrapText(ui, std::string(text), kSize, ui.Width() - 2.0f * kMargin);
+  float y = (ui.Height() - static_cast<float>(lines.size()) * kLineH) * 0.5f;
+  for (const TextLine& line : lines) {
+    ui.Text(line.text, (ui.Width() - ui.TextWidth(line.text, kSize)) * 0.5f, y, kSize,
             Color{226, 214, 196, a}, false);
     y += kLineH;
-    start = nl + 1;
   }
 }
 
@@ -107,21 +136,9 @@ static void DrawCard(const retro::Ui& ui, std::string_view text, float alpha) {
 // y, con 'more', un triangulo que parpadea al final: E pasa de pagina.
 static void DrawSubtitle(const retro::Ui& ui, const std::string& text, std::size_t visible,
                          const std::string& speaker, bool more) {
-  struct Line {
-    std::string text;
-    std::size_t start; // posicion de la linea dentro de 'text'
-  };
-  std::vector<Line> lines;
-  std::size_t start = 0;
-  while (true) {
-    const std::size_t nl = text.find('\n', start);
-    lines.push_back({text.substr(start, nl == std::string::npos ? nl : nl - start), start});
-    if (nl == std::string::npos)
-      break;
-    start = nl + 1;
-  }
+  constexpr float kSize = 11.0f, kLineH = 13.0f, kBorde = 0.75f, kMargin = 12.0f;
+  const std::vector<TextLine> lines = WrapText(ui, text, kSize, ui.Width() - 2.0f * kMargin);
 
-  constexpr float kSize = 11.0f, kLineH = 13.0f, kBorde = 0.75f;
   auto outlined = [&](const std::string& s, float x, float y, float size, Color color) {
     for (int dx = -1; dx <= 1; ++dx) { // contorno: el mismo texto en negro alrededor
       for (int dy = -1; dy <= 1; ++dy) {
@@ -370,6 +387,7 @@ int main(int argc, char** argv) {
       float seconds = 0.0f;
       std::string flag;
       std::string after; // dialogo al terminar
+      bool locked = false; // no se baja con E: hay que esperar a 'seconds'
       float age = 0.0f;
     };
     std::optional<Riding> riding;
@@ -850,7 +868,8 @@ int main(int argc, char** argv) {
                 player.PlaceFeet(Vector3Transform(riding->local, e->transform.ToMatrix()));
               player.UpdateLook();
               const bool timeUp = riding->seconds > 0.0f && riding->age >= riding->seconds;
-              const bool getOff = IsKeyPressed(KEY_E) && riding->age > 0.8f && !reading;
+              const bool getOff =
+                  IsKeyPressed(KEY_E) && riding->age > 0.8f && !reading && !riding->locked;
               if (!e || timeUp || getOff) {
                 eUsed = getOff;
                 player.PlaceFeet(riding->exit);
@@ -925,7 +944,7 @@ int main(int argc, char** argv) {
               s->UpdateTriggers(player.Feet(), cfg.radius, cfg.height, state, firedActions);
               // lo que se ve: entidades con "seen" en el centro de la vista
               const Vector3 eye = camera.Position();
-              s->UpdateSight(eye, Vector3Normalize(Vector3Subtract(camera.Target(), eye)),
+              s->UpdateSight(eye, Vector3Normalize(Vector3Subtract(camera.Target(), eye)), state,
                              firedActions);
               runner.Run(firedActions);
             }
@@ -982,7 +1001,7 @@ int main(int argc, char** argv) {
               const Matrix inv = MatrixInvert(e->transform.ToMatrix());
               riding = Riding{r->entity, Vector3Transform(r->seat, inv),
                               r->exit.value_or(player.Feet()), r->seconds, r->flag, r->after,
-                              0.0f};
+                              r->locked, 0.0f};
               if (!r->flag.empty())
                 state.Set(r->flag, 1);
             } else {
@@ -1075,7 +1094,7 @@ int main(int argc, char** argv) {
                     4, h - 12.0f, 8.0f, RAYWHITE);
           }
 
-          if (screen == Screen::Playing && riding) {
+          if (screen == Screen::Playing && riding && !riding->locked) {
             const char* hint = "E: bajar";
             ui.Text(hint, (w - ui.TextWidth(hint, 9.0f)) * 0.5f, h - 16.0f, 9.0f,
                     Color{230, 214, 180, 220});

@@ -1,0 +1,16 @@
+{
+  "speaker": "Matias",
+  "entries": [
+    {
+      "if": { "not": { "flag": "pista_molinero" } },
+      "lines": [
+        "Bonito, eh? Gira solo. Siempre ha girado solo.",
+        "Mi padre lo paro una vez. Le puso una viga entre las aspas.\nEl año en que el forastero se escapo.",
+        "Ese año no hubo cosecha. Ni fiesta. Ni niños.",
+        "Al siguiente vino otro forastero, y el molino volvio a girar.\nY mi padre ya no estaba."
+      ],
+      "do": [{ "set_flag": "pista_molinero" }, { "add_flag": "pistas" }]
+    },
+    { "lines": ["El viento es un regalo, forastero.\nNo preguntes quien lo paga."] }
+  ]
+}

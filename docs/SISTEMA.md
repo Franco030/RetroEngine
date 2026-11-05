@@ -189,6 +189,14 @@ Para cada vértice:
 
    Por eso los polígonos "saltan" de píxel en píxel al moverse, como en la PS1. Con la tecla 1
    la rejilla pasa a 4096x4096 y el efecto desaparece.
+
+   El salto solo se ve, no cuenta para la profundidad. Cada vértice se mueve por su cuenta (hasta
+   medio píxel) y, en ángulos rasantes, eso bastaba para que una ventana, una puerta o un
+   letrero a pocos centímetros de su pared se metieran en ella y parpadearan. El vertex shader
+   pasa cuánto movió cada vértice (`fragSnap`, en píxeles), y los fragment shaders escriben la
+   profundidad que tendría la superficie sin moverse:
+   `gl_FragDepth = z + dFdx(z) * fragSnap.x + dFdy(z) * fragSnap.y`. Las caras en el mismo plano
+   siguen parpadeando: eso se arregla en el modelo.
 4. Se pasan las UV con **perspectiva correcta**. No se imita el mapeo afín de la PS1 (UV
    interpoladas en pantalla): doblaba las texturas de los polígonos grandes vistos de cerca.
 

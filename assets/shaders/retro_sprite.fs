@@ -3,6 +3,7 @@
 in vec2 fragTexCoord;
 noperspective in vec4 fragColor;
 in float fragDepth;
+noperspective in vec2 fragSnap;
 in float fragWorldY;
 in vec2 fragWorldXZ;
 
@@ -46,6 +47,9 @@ const float BAYER4[16] = float[16](
     15.0,  7.0, 13.0,  5.0);
 
 void main() {
+    // La profundidad de donde estaria la superficie sin el temblor del snapping: lo que esta pegado
+    // a una pared (ventanas, puertas, letreros) tiembla por su cuenta, pero nunca se mete en ella.
+    gl_FragDepth = gl_FragCoord.z + dFdx(gl_FragCoord.z) * fragSnap.x + dFdy(gl_FragCoord.z) * fragSnap.y;
     if (fragWorldY > clipY) discard;
     vec4 texel = texture(texture0, fragTexCoord) * fragColor;
     if (texel.a < 0.5) discard;

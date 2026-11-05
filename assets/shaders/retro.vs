@@ -30,6 +30,9 @@ noperspective out vec3 fragLight;            // luz del vertice, interpolada en 
 
 // Profundidad de vista = w de clip space. Se mide ANTES del snapping.
 out float fragDepth;
+// Cuanto movio el snapping este vertice, en pixeles: el fragment shader corrige con eso la
+// profundidad, para que el temblor no haga que una puerta o un letrero se metan en su pared.
+noperspective out vec2 fragSnap;
 // Altura de mundo (para el corte de techos del editor: clipY en los fragment shaders).
 out float fragWorldY;
 out vec2 fragWorldXZ; // para los bancos de la neblina baja
@@ -66,11 +69,13 @@ void main() {
     vec4 pos  = mvp * vec4(vertexPosition, 1.0);
     fragDepth = pos.w;
 
+    fragSnap = vec2(0.0);
     if (pos.w > 0.0001) {
-        vec2 grid = snapResolution * 0.5;
-        vec2 ndc  = pos.xy / pos.w;
-        ndc       = floor(ndc * grid + 0.5) / grid;
-        pos.xy    = ndc * pos.w;
+        vec2 grid    = snapResolution * 0.5;
+        vec2 ndc     = pos.xy / pos.w;
+        vec2 snapped = floor(ndc * grid + 0.5) / grid;
+        fragSnap     = (snapped - ndc) * grid;
+        pos.xy       = snapped * pos.w;
     }
     pos.z -= depthBias * pos.w;
 

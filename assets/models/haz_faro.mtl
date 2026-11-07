@@ -1,0 +1,5 @@
+# RetroEngine: haz_faro
+
+newmtl mat_bombilla
+d 1.000000
+map_Kd ../textures/mat_bombilla.png

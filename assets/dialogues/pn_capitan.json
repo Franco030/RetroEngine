@@ -1,0 +1,30 @@
+{
+  "speaker": "El capitan",
+  "entries": [
+    {
+      "if": { "flag": "pn_llave" },
+      "lines": ["La verja del dique, al este. El faro esta al final.", "Cuando el faro alumbra, el barco sale."]
+    },
+    {
+      "if": { "flag": "pn_lista", "op": ">=", "value": 7 },
+      "lines": [
+        "La carta, el zapato, las fotos.",
+        "Solo falta la luz del faro. El farero se fue hace años.",
+        "Tome: la llave de la verja del dique.",
+        "Suba usted. Enciendalo."
+      ],
+      "do": [{ "set_flag": "pn_llave" }]
+    },
+    {
+      "once": true,
+      "key": "hola",
+      "lines": [
+        "Capitania. ¿Llegada o salida?",
+        "Aqui todos llegan. Nadie sale hasta que el libro se cierre.",
+        "Antes del barco falta: una carta, un zapato, seis fotos y la luz del faro.",
+        "¿Usted? Usted no esta en el libro.\nTodavia no."
+      ]
+    },
+    { "lines": ["Lo que falta lo dice el libro, en el atril."] }
+  ]
+}

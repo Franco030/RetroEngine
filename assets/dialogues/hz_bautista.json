@@ -1,0 +1,34 @@
+{
+  "speaker": "Bautista, relojero",
+  "entries": [
+    {
+      "if": { "flag": "reloj" },
+      "lines": ["Tic. Tac.", "Ya camina. Ahora si va a llegar la hora.\nGracias. De verdad."]
+    },
+    {
+      "if": { "flag": "lleva", "op": "==", "value": 2 },
+      "lines": ["Esa es. La de mi padre.", "Dame. Doce vueltas, ni una mas.", "...", "Tic."],
+      "do": [
+        { "play_sound": "audio/cuerda.wav", "volume": 1.0 },
+        { "set_flag": "lleva", "value": 0 },
+        { "set_flag": "reloj" },
+        { "add_flag": "lista", "amount": 2 }
+      ]
+    },
+    {
+      "once": true,
+      "key": "hola",
+      "lines": [
+        "Pase. No se fije en el ruido: aqui ya no hace ruido nada.",
+        "El de la torre se paro a las 3:11, hace nueve noches.\nSi no camina, la hora no llega. Y si no llega, no nos vamos nunca.",
+        "Le falta cuerda. La llave la tenia mi padre. Dormia... duerme en el dormitorio comunal, del otro lado de la grieta.",
+        "Ya no se puede cruzar. El puente se cayo hace cuarenta años.\nMi padre decia que con los ojos cerrados todavia se ve."
+      ]
+    },
+    {
+      "lines": [
+        "El dormitorio, del otro lado. Debajo de su almohada.\nCon los ojos cerrados, decia mi padre. Yo nunca me atrevi."
+      ]
+    }
+  ]
+}

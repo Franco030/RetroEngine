@@ -1,0 +1,9 @@
+# RetroEngine: roca_refugio
+
+newmtl mat_piedra_musgo
+d 1.000000
+map_Kd ../textures/mat_piedra_musgo.png
+
+newmtl mat_roca
+d 1.000000
+map_Kd ../textures/mat_roca.png

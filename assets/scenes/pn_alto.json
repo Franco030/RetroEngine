@@ -1,0 +1,5659 @@
+{
+  "player": { "position": [15.0, 34.0, 45.0], "yaw": 180 },
+  "bounds": { "min": [-58.0, 41.3], "max": [58.0, 138.0] },
+  "background": [12, 14, 18],
+  "fog": { "start": 20, "end": 190, "mist": 0.3, "mistHeight": 2.5, "mistColor": [40, 44, 52] },
+  "light": { "direction": [0.3, -0.8, 0.3], "ambient": 0.5, "sun": 0.12 },
+  "panorama": { "model": "models/panorama_niebla.obj", "tint": [255, 255, 255], "haze": 0.55, "y": 6.0 },
+  "weather": {
+    "rain": 1.0,
+    "sound": "audio/lluvia.wav",
+    "volume": 0.22,
+    "thunder": { "every": [10, 24], "sounds": ["audio/trueno_1.wav", "audio/trueno_2.wav", "audio/trueno_3.wav"] },
+    "fogBank": {
+      "every": [120, 240],
+      "seconds": 15,
+      "fade": 4,
+      "start": 1.5,
+      "end": 13,
+      "color": [62, 66, 74],
+      "mist": 0.55,
+      "sound": "audio/viento.wav",
+      "volume": 0.45
+    }
+  },
+  "photo": { "if": { "flag": "pn_camara" }, "cooldown": 1.6 },
+  "audio": {
+    "music": { "file": "audio/musica_pn_alto_v2.wav", "volume": 0.5 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.25
+    },
+    "fade": 3
+  },
+  "entities": [
+    {
+      "name": "suelo_alto_o",
+      "model": { "type": "plane", "size": [75.0, 101.5], "subdivisions": 25, "tiles": [41.67, 56.39] },
+      "texture": "textures/mat_adoquin_mojado.png",
+      "wrap": "repeat",
+      "position": [-24.5, 34.0, 91.25],
+      "tint": [150, 150, 156, 255],
+      "collider": { "min": [-37.5, -34.0, -50.75], "max": [37.5, 0, 50.75] }
+    },
+    {
+      "name": "suelo_alto_e",
+      "model": { "type": "plane", "size": [45.0, 101.5], "subdivisions": 25, "tiles": [25.0, 56.39] },
+      "texture": "textures/mat_adoquin_mojado.png",
+      "wrap": "repeat",
+      "position": [39.5, 34.0, 91.25],
+      "tint": [150, 150, 156, 255],
+      "collider": { "min": [-22.5, -34.0, -50.75], "max": [22.5, 0, 50.75] }
+    },
+    {
+      "name": "suelo_alto_n",
+      "model": { "type": "plane", "size": [4.0, 5.1], "subdivisions": 1, "tiles": [2.22, 2.83] },
+      "texture": "textures/mat_adoquin_mojado.png",
+      "wrap": "repeat",
+      "position": [15.0, 34.0, 43.05],
+      "tint": [150, 150, 156, 255],
+      "collider": { "min": [-2.0, -34.0, -2.55], "max": [2.0, 0, 2.55] }
+    },
+    {
+      "name": "suelo_alto_s",
+      "model": { "type": "plane", "size": [4.0, 90.4], "subdivisions": 22, "tiles": [2.22, 50.22] },
+      "texture": "textures/mat_adoquin_mojado.png",
+      "wrap": "repeat",
+      "position": [15.0, 34.0, 96.8],
+      "tint": [150, 150, 156, 255],
+      "collider": { "min": [-2.0, -34.0, -45.2], "max": [2.0, 0, 45.2] }
+    },
+    {
+      "name": "bajada",
+      "model": "models/bajada_alto.obj",
+      "position": [15.0, 34.0, 51.6],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_pn_arco_puerto.png"
+    },
+    {
+      "name": "luz_bajada",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [16.0, 35.9, 48.7],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 180, 110],
+        "radius": 7,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "mar",
+      "model": { "type": "plane", "size": [840, 900], "subdivisions": 225, "tiles": [140.0, 150.0] },
+      "texture": "textures/mat_mar_tormenta.png",
+      "wrap": "repeat",
+      "position": [0.0, 4.5, -450.0],
+      "tint": [150, 160, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "pretil_0",
+      "model": "models/valla.obj",
+      "position": [-59.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_1",
+      "model": "models/valla.obj",
+      "position": [-57.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_2",
+      "model": "models/valla.obj",
+      "position": [-55.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_3",
+      "model": "models/valla.obj",
+      "position": [-53.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_4",
+      "model": "models/valla.obj",
+      "position": [-51.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_5",
+      "model": "models/valla.obj",
+      "position": [-49.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_6",
+      "model": "models/valla.obj",
+      "position": [-47.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_7",
+      "model": "models/valla.obj",
+      "position": [-45.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_8",
+      "model": "models/valla.obj",
+      "position": [-43.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_9",
+      "model": "models/valla.obj",
+      "position": [-41.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_10",
+      "model": "models/valla.obj",
+      "position": [-39.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_11",
+      "model": "models/valla.obj",
+      "position": [-37.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_12",
+      "model": "models/valla.obj",
+      "position": [-35.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_13",
+      "model": "models/valla.obj",
+      "position": [-33.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_14",
+      "model": "models/valla.obj",
+      "position": [-31.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_15",
+      "model": "models/valla.obj",
+      "position": [-29.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_16",
+      "model": "models/valla.obj",
+      "position": [-27.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_17",
+      "model": "models/valla.obj",
+      "position": [-25.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_18",
+      "model": "models/valla.obj",
+      "position": [-23.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_19",
+      "model": "models/valla.obj",
+      "position": [-21.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_20",
+      "model": "models/valla.obj",
+      "position": [-19.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_21",
+      "model": "models/valla.obj",
+      "position": [-17.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_22",
+      "model": "models/valla.obj",
+      "position": [-15.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_23",
+      "model": "models/valla.obj",
+      "position": [-13.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_24",
+      "model": "models/valla.obj",
+      "position": [-11.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_25",
+      "model": "models/valla.obj",
+      "position": [-9.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_26",
+      "model": "models/valla.obj",
+      "position": [-7.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_27",
+      "model": "models/valla.obj",
+      "position": [-5.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_28",
+      "model": "models/valla.obj",
+      "position": [-3.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_29",
+      "model": "models/valla.obj",
+      "position": [-1.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_30",
+      "model": "models/valla.obj",
+      "position": [1.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_31",
+      "model": "models/valla.obj",
+      "position": [3.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_32",
+      "model": "models/valla.obj",
+      "position": [5.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_33",
+      "model": "models/valla.obj",
+      "position": [7.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_34",
+      "model": "models/valla.obj",
+      "position": [9.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_35",
+      "model": "models/valla.obj",
+      "position": [11.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_36",
+      "model": "models/valla.obj",
+      "position": [13.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_37",
+      "model": "models/valla.obj",
+      "position": [15.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_38",
+      "model": "models/valla.obj",
+      "position": [17.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_39",
+      "model": "models/valla.obj",
+      "position": [19.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_40",
+      "model": "models/valla.obj",
+      "position": [21.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_41",
+      "model": "models/valla.obj",
+      "position": [23.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_42",
+      "model": "models/valla.obj",
+      "position": [25.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_43",
+      "model": "models/valla.obj",
+      "position": [27.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_44",
+      "model": "models/valla.obj",
+      "position": [29.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_45",
+      "model": "models/valla.obj",
+      "position": [31.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_46",
+      "model": "models/valla.obj",
+      "position": [33.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_47",
+      "model": "models/valla.obj",
+      "position": [35.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_48",
+      "model": "models/valla.obj",
+      "position": [37.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_49",
+      "model": "models/valla.obj",
+      "position": [39.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_50",
+      "model": "models/valla.obj",
+      "position": [41.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_51",
+      "model": "models/valla.obj",
+      "position": [43.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_52",
+      "model": "models/valla.obj",
+      "position": [45.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_53",
+      "model": "models/valla.obj",
+      "position": [47.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_54",
+      "model": "models/valla.obj",
+      "position": [49.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_55",
+      "model": "models/valla.obj",
+      "position": [51.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_56",
+      "model": "models/valla.obj",
+      "position": [53.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_57",
+      "model": "models/valla.obj",
+      "position": [55.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_58",
+      "model": "models/valla.obj",
+      "position": [57.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_59",
+      "model": "models/valla.obj",
+      "position": [59.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "pretil_60",
+      "model": "models/valla.obj",
+      "position": [61.0, 34.0, 40.9],
+      "rotation": [0, 0, 0],
+      "tint": [120, 120, 124, 255]
+    },
+    {
+      "name": "catalejo",
+      "model": "models/telescopio.obj",
+      "position": [6.0, 34.0, 41.6],
+      "rotation": [0, 0, 0],
+      "interact": { "prompt": "Mirar por el catalejo", "range": 2.4, "do": [{ "dialogue": "pn_catalejo" }] }
+    },
+    {
+      "name": "banco_mirador",
+      "model": "models/banco.obj",
+      "position": [-4.0, 34.0, 41.8],
+      "rotation": [0, 180, 0]
+    },
+    {
+      "name": "casa_alto_o_0",
+      "model": "models/casa_niebla_alta.obj",
+      "position": [3.6, 34.0, 52],
+      "rotation": [0, 90, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "casa_alto_e_0",
+      "model": "models/casa_niebla_ancha.obj",
+      "position": [26.5, 34.0, 52],
+      "rotation": [0, -90, 0],
+      "tint": [160, 150, 140, 255]
+    },
+    {
+      "name": "casa_alto_o_1",
+      "model": "models/casa_niebla_alta.obj",
+      "position": [3.6, 34.0, 59],
+      "rotation": [0, 90, 0],
+      "tint": [130, 126, 120, 255]
+    },
+    {
+      "name": "casa_alto_e_1",
+      "model": "models/casa_niebla.obj",
+      "position": [26.5, 34.0, 59],
+      "rotation": [0, -90, 0],
+      "tint": [120, 128, 136, 255]
+    },
+    {
+      "name": "casa_alto_o_2",
+      "model": "models/casa_niebla.obj",
+      "position": [3.6, 34.0, 66],
+      "rotation": [0, 90, 0],
+      "tint": [160, 150, 140, 255]
+    },
+    {
+      "name": "casa_alto_e_2",
+      "model": "models/casa_niebla_ancha.obj",
+      "position": [26.5, 34.0, 66],
+      "rotation": [0, -90, 0],
+      "tint": [170, 166, 160, 255]
+    },
+    {
+      "name": "casa_alto_o_3",
+      "model": "models/casa_niebla.obj",
+      "position": [3.6, 34.0, 73],
+      "rotation": [0, 90, 0],
+      "tint": [120, 128, 136, 255]
+    },
+    {
+      "name": "casa_alto_e_3",
+      "model": "models/casa_niebla.obj",
+      "position": [26.5, 34.0, 73],
+      "rotation": [0, -90, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "casa_alto_o_4",
+      "model": "models/casa_niebla_alta.obj",
+      "position": [3.6, 34.0, 80],
+      "rotation": [0, 90, 0],
+      "tint": [170, 166, 160, 255]
+    },
+    {
+      "name": "casa_alto_e_4",
+      "model": "models/casa_niebla_ancha.obj",
+      "position": [26.5, 34.0, 80],
+      "rotation": [0, -90, 0],
+      "tint": [130, 126, 120, 255]
+    },
+    {
+      "name": "casa_alto_o_5",
+      "model": "models/casa_niebla.obj",
+      "position": [3.6, 34.0, 87],
+      "rotation": [0, 90, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "casa_alto_e_5",
+      "model": "models/casa_niebla_ancha.obj",
+      "position": [26.5, 34.0, 87],
+      "rotation": [0, -90, 0],
+      "tint": [160, 150, 140, 255]
+    },
+    {
+      "name": "casa_alto_o_0_cerca_0",
+      "model": "models/valla.obj",
+      "position": [-3.8, 34.0, 53.02],
+      "rotation": [0, 90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.025, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_0_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [-0.35, 34.0, 54.05],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_0_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [-2.65, 34.0, 54.05],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_0_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [-0.35, 34.0, 49.95],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_0_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [-2.65, 34.0, 49.95],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_0_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [-1.73, 34.0, 52.0],
+      "rotation": [0, 90, 0],
+      "scale": [0.5454545454545454, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_0_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [-2.01, 36.28, 52.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "scale": [0.5142857142857142, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_0_barril_0",
+      "model": "models/barril.obj",
+      "position": [0.35, 34.0, 53.53],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "casa_alto_o_0_barril_1",
+      "model": "models/barril.obj",
+      "position": [0.25, 34.0, 52.78],
+      "rotation": [0, 115, 0]
+    },
+    {
+      "name": "casa_alto_o_0_barril_caja",
+      "model": "models/caja.obj",
+      "position": [-0.45, 34.0, 53.13],
+      "rotation": [0, 80, 0]
+    },
+    {
+      "name": "casa_alto_o_0_barca",
+      "model": "models/barca.obj",
+      "position": [-0.65, 34.42, 50.87],
+      "rotation": [0, 180, 180],
+      "tint": [110, 100, 90, 255]
+    },
+    {
+      "name": "casa_alto_e_0_cerca_0",
+      "model": "models/valla.obj",
+      "position": [34.0, 34.0, 49.77],
+      "rotation": [0, -90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.1166666666666667, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_0_cerca_2",
+      "model": "models/valla.obj",
+      "position": [34.0, 34.0, 54.23],
+      "rotation": [0, -90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.1166666666666667, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_0_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [30.55, 34.0, 48.65],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_0_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [32.85, 34.0, 48.65],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_0_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [30.55, 34.0, 55.35],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_0_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [32.85, 34.0, 55.35],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_0_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [31.93, 34.0, 52.0],
+      "rotation": [0, -90, 0],
+      "scale": [0.9393939393939394, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_0_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [32.21, 36.28, 52.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "scale": [0.8857142857142858, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_0_lena",
+      "model": "models/tronco.obj",
+      "position": [29.85, 34.0, 50.16],
+      "rotation": [0, -90, 0],
+      "scale": [0.6, 0.8, 0.8]
+    },
+    {
+      "name": "casa_alto_e_0_lena_b",
+      "model": "models/tronco.obj",
+      "position": [29.9, 34.55, 50.16],
+      "rotation": [0, -86, 0],
+      "scale": [0.55, 0.7, 0.7]
+    },
+    {
+      "name": "casa_alto_e_0_hacha",
+      "model": "models/caja.obj",
+      "position": [30.6, 34.0, 49.96],
+      "rotation": [0, -70, 0],
+      "scale": [0.7, 0.7, 0.7]
+    },
+    {
+      "name": "casa_alto_e_0_banca",
+      "model": "models/banco.obj",
+      "position": [29.85, 34.0, 53.84],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "casa_alto_e_0_maceta",
+      "model": "models/maceta.obj",
+      "position": [29.85, 34.0, 54.99],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "casa_alto_o_1_cerca_0",
+      "model": "models/valla.obj",
+      "position": [-3.8, 34.0, 60.02],
+      "rotation": [0, 90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.025, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_1_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [-0.35, 34.0, 61.05],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_1_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [-2.65, 34.0, 61.05],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_1_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [-0.35, 34.0, 56.95],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_1_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [-2.65, 34.0, 56.95],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_1_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [-1.73, 34.0, 59.0],
+      "rotation": [0, 90, 0],
+      "scale": [0.5454545454545454, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_1_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [-2.01, 36.28, 59.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "scale": [0.5142857142857142, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_1_barril_0",
+      "model": "models/barril.obj",
+      "position": [0.35, 34.0, 60.53],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "casa_alto_o_1_barril_1",
+      "model": "models/barril.obj",
+      "position": [0.25, 34.0, 59.78],
+      "rotation": [0, 115, 0]
+    },
+    {
+      "name": "casa_alto_o_1_barril_caja",
+      "model": "models/caja.obj",
+      "position": [-0.45, 34.0, 60.13],
+      "rotation": [0, 80, 0]
+    },
+    {
+      "name": "casa_alto_o_1_lena",
+      "model": "models/tronco.obj",
+      "position": [0.35, 34.0, 57.87],
+      "rotation": [0, 90, 0],
+      "scale": [0.6, 0.8, 0.8]
+    },
+    {
+      "name": "casa_alto_o_1_lena_b",
+      "model": "models/tronco.obj",
+      "position": [0.3, 34.55, 57.87],
+      "rotation": [0, 94, 0],
+      "scale": [0.55, 0.7, 0.7]
+    },
+    {
+      "name": "casa_alto_o_1_hacha",
+      "model": "models/caja.obj",
+      "position": [-0.4, 34.0, 57.67],
+      "rotation": [0, 110, 0],
+      "scale": [0.7, 0.7, 0.7]
+    },
+    {
+      "name": "casa_alto_e_1_cerca_0",
+      "model": "models/valla.obj",
+      "position": [33.9, 34.0, 57.83],
+      "rotation": [0, -90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.175, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_1_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [30.45, 34.0, 56.65],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_1_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [32.75, 34.0, 56.65],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_1_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [30.45, 34.0, 61.35],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_1_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [32.75, 34.0, 61.35],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_1_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [31.83, 34.0, 59.0],
+      "rotation": [0, -90, 0],
+      "scale": [0.6363636363636365, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_1_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [32.11, 36.28, 59.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "scale": [0.6, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_1_banca",
+      "model": "models/banco.obj",
+      "position": [29.75, 34.0, 57.71],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "casa_alto_e_1_maceta",
+      "model": "models/maceta.obj",
+      "position": [29.75, 34.0, 56.56],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "casa_alto_e_1_barca",
+      "model": "models/barca.obj",
+      "position": [30.75, 34.42, 60.29],
+      "rotation": [0, 0, 180],
+      "tint": [110, 100, 90, 255]
+    },
+    {
+      "name": "casa_alto_o_2_cerca_0",
+      "model": "models/valla.obj",
+      "position": [-3.8, 34.0, 67.17],
+      "rotation": [0, 90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.175, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_2_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [-0.35, 34.0, 68.35],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_2_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [-2.65, 34.0, 68.35],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_2_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [-0.35, 34.0, 63.65],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_2_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [-2.65, 34.0, 63.65],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_2_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [-1.73, 34.0, 66.0],
+      "rotation": [0, 90, 0],
+      "scale": [0.6363636363636365, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_2_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [-2.01, 36.28, 66.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "scale": [0.6, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_2_lena",
+      "model": "models/tronco.obj",
+      "position": [0.35, 34.0, 67.29],
+      "rotation": [0, 90, 0],
+      "scale": [0.6, 0.8, 0.8]
+    },
+    {
+      "name": "casa_alto_o_2_lena_b",
+      "model": "models/tronco.obj",
+      "position": [0.3, 34.55, 67.29],
+      "rotation": [0, 94, 0],
+      "scale": [0.55, 0.7, 0.7]
+    },
+    {
+      "name": "casa_alto_o_2_hacha",
+      "model": "models/caja.obj",
+      "position": [-0.4, 34.0, 67.49],
+      "rotation": [0, 110, 0],
+      "scale": [0.7, 0.7, 0.7]
+    },
+    {
+      "name": "casa_alto_o_2_bote_0",
+      "model": "models/cubo.obj",
+      "position": [0.35, 34.0, 64.96],
+      "rotation": [0, 90, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "tint": [90, 96, 100, 255]
+    },
+    {
+      "name": "casa_alto_o_2_bote_1",
+      "model": "models/cubo.obj",
+      "position": [0.3, 34.0, 64.41],
+      "rotation": [0, 120, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "tint": [90, 96, 100, 255]
+    },
+    {
+      "name": "casa_alto_o_2_bote_caja",
+      "model": "models/caja.obj",
+      "position": [-0.4, 34.0, 64.61],
+      "rotation": [0, 102, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    {
+      "name": "casa_alto_e_2_cerca_0",
+      "model": "models/valla.obj",
+      "position": [34.0, 34.0, 63.77],
+      "rotation": [0, -90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.1166666666666667, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_2_cerca_2",
+      "model": "models/valla.obj",
+      "position": [34.0, 34.0, 68.23],
+      "rotation": [0, -90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.1166666666666667, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_2_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [30.55, 34.0, 62.65],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_2_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [32.85, 34.0, 62.65],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_2_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [30.55, 34.0, 69.35],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_2_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [32.85, 34.0, 69.35],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_2_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [31.93, 34.0, 66.0],
+      "rotation": [0, -90, 0],
+      "scale": [0.9393939393939394, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_2_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [32.21, 36.28, 66.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "scale": [0.8857142857142858, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_2_banca",
+      "model": "models/banco.obj",
+      "position": [29.85, 34.0, 64.16],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "casa_alto_e_2_maceta",
+      "model": "models/maceta.obj",
+      "position": [29.85, 34.0, 63.01],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "casa_alto_e_2_gato",
+      "model": "models/gato_tumbado.obj",
+      "position": [29.83, 34.47, 64.46],
+      "rotation": [0, -20, 0],
+      "collider": false
+    },
+    {
+      "name": "casa_alto_e_2_bote_0",
+      "model": "models/cubo.obj",
+      "position": [29.85, 34.0, 67.59],
+      "rotation": [0, -90, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "tint": [90, 96, 100, 255]
+    },
+    {
+      "name": "casa_alto_e_2_bote_1",
+      "model": "models/cubo.obj",
+      "position": [29.9, 34.0, 68.14],
+      "rotation": [0, -60, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "tint": [90, 96, 100, 255]
+    },
+    {
+      "name": "casa_alto_e_2_bote_caja",
+      "model": "models/caja.obj",
+      "position": [30.6, 34.0, 67.94],
+      "rotation": [0, -78, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    {
+      "name": "casa_alto_o_3_cerca_0",
+      "model": "models/valla.obj",
+      "position": [-3.8, 34.0, 74.17],
+      "rotation": [0, 90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.175, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_3_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [-0.35, 34.0, 75.35],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_3_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [-2.65, 34.0, 75.35],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_3_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [-0.35, 34.0, 70.65],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_3_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [-2.65, 34.0, 70.65],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_3_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [-1.73, 34.0, 73.0],
+      "rotation": [0, 90, 0],
+      "scale": [0.6363636363636365, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_3_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [-2.01, 36.28, 73.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "scale": [0.6, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_3_nasa_0",
+      "model": "models/nasa.obj",
+      "position": [0.35, 34.0, 74.64],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "casa_alto_o_3_nasa_1",
+      "model": "models/nasa.obj",
+      "position": [0.35, 34.0, 73.94],
+      "rotation": [0, 105, 0]
+    },
+    {
+      "name": "casa_alto_o_3_nasa_2",
+      "model": "models/nasa.obj",
+      "position": [0.35, 34.55, 74.29],
+      "rotation": [0, 80, 0]
+    },
+    {
+      "name": "casa_alto_o_3_nasa_caja",
+      "model": "models/caja.obj",
+      "position": [-0.5, 34.0, 74.29],
+      "rotation": [0, 95, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    {
+      "name": "casa_alto_o_3_lena",
+      "model": "models/tronco.obj",
+      "position": [0.35, 34.0, 71.71],
+      "rotation": [0, 90, 0],
+      "scale": [0.6, 0.8, 0.8]
+    },
+    {
+      "name": "casa_alto_o_3_lena_b",
+      "model": "models/tronco.obj",
+      "position": [0.3, 34.55, 71.71],
+      "rotation": [0, 94, 0],
+      "scale": [0.55, 0.7, 0.7]
+    },
+    {
+      "name": "casa_alto_o_3_hacha",
+      "model": "models/caja.obj",
+      "position": [-0.4, 34.0, 71.51],
+      "rotation": [0, 110, 0],
+      "scale": [0.7, 0.7, 0.7]
+    },
+    {
+      "name": "casa_alto_e_3_cerca_0",
+      "model": "models/valla.obj",
+      "position": [33.9, 34.0, 71.83],
+      "rotation": [0, -90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.175, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_3_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [30.45, 34.0, 70.65],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_3_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [32.75, 34.0, 70.65],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_3_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [30.45, 34.0, 75.35],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_3_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [32.75, 34.0, 75.35],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_3_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [31.83, 34.0, 73.0],
+      "rotation": [0, -90, 0],
+      "scale": [0.6363636363636365, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_3_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [32.11, 36.28, 73.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "scale": [0.6, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_3_banca",
+      "model": "models/banco.obj",
+      "position": [29.75, 34.0, 71.71],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "casa_alto_e_3_maceta",
+      "model": "models/maceta.obj",
+      "position": [29.75, 34.0, 70.56],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "casa_alto_e_3_barca",
+      "model": "models/barca.obj",
+      "position": [30.75, 34.42, 74.29],
+      "rotation": [0, 0, 180],
+      "tint": [110, 100, 90, 255]
+    },
+    {
+      "name": "casa_alto_o_4_cerca_0",
+      "model": "models/valla.obj",
+      "position": [-3.8, 34.0, 81.03],
+      "rotation": [0, 90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.025, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_4_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [-0.35, 34.0, 82.05],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_4_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [-2.65, 34.0, 82.05],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_4_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [-0.35, 34.0, 77.95],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_4_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [-2.65, 34.0, 77.95],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_4_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [-1.73, 34.0, 80.0],
+      "rotation": [0, 90, 0],
+      "scale": [0.5454545454545454, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_4_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [-2.01, 36.28, 80.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "scale": [0.5142857142857142, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_4_barca",
+      "model": "models/barca.obj",
+      "position": [-0.65, 34.42, 81.13],
+      "rotation": [0, 180, 180],
+      "tint": [110, 100, 90, 255]
+    },
+    {
+      "name": "casa_alto_o_4_banca",
+      "model": "models/banco.obj",
+      "position": [0.35, 34.0, 78.87],
+      "rotation": [0, 270, 0]
+    },
+    {
+      "name": "casa_alto_o_4_maceta",
+      "model": "models/maceta.obj",
+      "position": [0.35, 34.0, 77.72],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "casa_alto_e_4_cerca_0",
+      "model": "models/valla.obj",
+      "position": [34.0, 34.0, 77.77],
+      "rotation": [0, -90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.1166666666666667, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_4_cerca_2",
+      "model": "models/valla.obj",
+      "position": [34.0, 34.0, 82.23],
+      "rotation": [0, -90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.1166666666666667, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_4_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [30.55, 34.0, 76.65],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_4_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [32.85, 34.0, 76.65],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_4_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [30.55, 34.0, 83.35],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_4_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [32.85, 34.0, 83.35],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_4_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [31.93, 34.0, 80.0],
+      "rotation": [0, -90, 0],
+      "scale": [0.9393939393939394, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_4_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [32.21, 36.28, 80.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "scale": [0.8857142857142858, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_4_lena",
+      "model": "models/tronco.obj",
+      "position": [29.85, 34.0, 78.16],
+      "rotation": [0, -90, 0],
+      "scale": [0.6, 0.8, 0.8]
+    },
+    {
+      "name": "casa_alto_e_4_lena_b",
+      "model": "models/tronco.obj",
+      "position": [29.9, 34.55, 78.16],
+      "rotation": [0, -86, 0],
+      "scale": [0.55, 0.7, 0.7]
+    },
+    {
+      "name": "casa_alto_e_4_hacha",
+      "model": "models/caja.obj",
+      "position": [30.6, 34.0, 77.96],
+      "rotation": [0, -70, 0],
+      "scale": [0.7, 0.7, 0.7]
+    },
+    {
+      "name": "casa_alto_e_4_nasa_0",
+      "model": "models/nasa.obj",
+      "position": [29.85, 34.0, 81.49],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "casa_alto_e_4_nasa_1",
+      "model": "models/nasa.obj",
+      "position": [29.85, 34.0, 82.19],
+      "rotation": [0, -75, 0]
+    },
+    {
+      "name": "casa_alto_e_4_nasa_2",
+      "model": "models/nasa.obj",
+      "position": [29.85, 34.55, 81.84],
+      "rotation": [0, -100, 0]
+    },
+    {
+      "name": "casa_alto_e_4_nasa_caja",
+      "model": "models/caja.obj",
+      "position": [30.7, 34.0, 81.84],
+      "rotation": [0, -85, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    {
+      "name": "casa_alto_o_5_cerca_0",
+      "model": "models/valla.obj",
+      "position": [-3.8, 34.0, 88.17],
+      "rotation": [0, 90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.175, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_5_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [-0.35, 34.0, 89.35],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_5_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [-2.65, 34.0, 89.35],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_5_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [-0.35, 34.0, 84.65],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_5_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [-2.65, 34.0, 84.65],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_5_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [-1.73, 34.0, 87.0],
+      "rotation": [0, 90, 0],
+      "scale": [0.6363636363636365, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_5_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [-2.01, 36.28, 87.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "scale": [0.6, 1, 1]
+    },
+    {
+      "name": "casa_alto_o_5_lena",
+      "model": "models/tronco.obj",
+      "position": [0.35, 34.0, 88.29],
+      "rotation": [0, 90, 0],
+      "scale": [0.6, 0.8, 0.8]
+    },
+    {
+      "name": "casa_alto_o_5_lena_b",
+      "model": "models/tronco.obj",
+      "position": [0.3, 34.55, 88.29],
+      "rotation": [0, 94, 0],
+      "scale": [0.55, 0.7, 0.7]
+    },
+    {
+      "name": "casa_alto_o_5_hacha",
+      "model": "models/caja.obj",
+      "position": [-0.4, 34.0, 88.49],
+      "rotation": [0, 110, 0],
+      "scale": [0.7, 0.7, 0.7]
+    },
+    {
+      "name": "casa_alto_o_5_barca",
+      "model": "models/barca.obj",
+      "position": [-0.65, 34.42, 85.71],
+      "rotation": [0, 180, 180],
+      "tint": [110, 100, 90, 255]
+    },
+    {
+      "name": "casa_alto_e_5_cerca_0",
+      "model": "models/valla.obj",
+      "position": [34.0, 34.0, 84.77],
+      "rotation": [0, -90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.1166666666666667, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_5_cerca_2",
+      "model": "models/valla.obj",
+      "position": [34.0, 34.0, 89.23],
+      "rotation": [0, -90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.1166666666666667, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_5_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [30.55, 34.0, 83.65],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_5_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [32.85, 34.0, 83.65],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_5_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [30.55, 34.0, 90.35],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_5_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [32.85, 34.0, 90.35],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_5_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [31.93, 34.0, 87.0],
+      "rotation": [0, -90, 0],
+      "scale": [0.9393939393939394, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_5_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [32.21, 36.28, 87.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "scale": [0.8857142857142858, 1, 1]
+    },
+    {
+      "name": "casa_alto_e_5_barca",
+      "model": "models/barca.obj",
+      "position": [30.85, 34.42, 85.16],
+      "rotation": [0, 0, 180],
+      "tint": [110, 100, 90, 255]
+    },
+    {
+      "name": "casa_alto_e_5_bote_0",
+      "model": "models/cubo.obj",
+      "position": [29.85, 34.0, 88.59],
+      "rotation": [0, -90, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "tint": [90, 96, 100, 255]
+    },
+    {
+      "name": "casa_alto_e_5_bote_1",
+      "model": "models/cubo.obj",
+      "position": [29.9, 34.0, 89.14],
+      "rotation": [0, -60, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "tint": [90, 96, 100, 255]
+    },
+    {
+      "name": "casa_alto_e_5_bote_caja",
+      "model": "models/caja.obj",
+      "position": [30.6, 34.0, 88.94],
+      "rotation": [0, -78, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    {
+      "name": "cobertizo_e_0",
+      "model": "models/cobertizo.obj",
+      "position": [54.5, 34.0, 58.0],
+      "rotation": [0, -90, 0],
+      "tint": [120, 116, 110, 255]
+    },
+    {
+      "name": "cobertizo_e_1",
+      "model": "models/cobertizo.obj",
+      "position": [54.5, 34.0, 80.0],
+      "rotation": [0, -90, 0],
+      "tint": [120, 116, 110, 255]
+    },
+    {
+      "name": "carreta_e",
+      "model": "models/carreta.obj",
+      "position": [46.0, 34.0, 70.0],
+      "rotation": [0, 20, 0]
+    },
+    {
+      "name": "lena_e_0",
+      "model": "models/tronco.obj",
+      "position": [56.5, 34.0, 69.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "lena_e_1",
+      "model": "models/tronco.obj",
+      "position": [56.5, 34.6, 69.2],
+      "rotation": [0, 92, 0]
+    },
+    {
+      "name": "carreta_o",
+      "model": "models/carreta.obj",
+      "position": [-9.0, 34.0, 58.0],
+      "rotation": [0, -30, 0]
+    },
+    {
+      "name": "lena_o_0",
+      "model": "models/tronco.obj",
+      "position": [-12.0, 34.0, 84.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "lena_o_1",
+      "model": "models/tronco.obj",
+      "position": [-12.0, 34.6, 84.2],
+      "rotation": [0, 88, 0]
+    },
+    {
+      "name": "farol_alto_0",
+      "model": "models/farol.obj",
+      "position": [11.5, 34.0, 50],
+      "rotation": [0, 0, 0],
+      "light": {
+        "offset": [0, 3.0, 0],
+        "color": [255, 190, 120],
+        "radius": 11,
+        "intensity": 0.8,
+        "flicker": 0.2,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "farol_alto_1",
+      "model": "models/farol.obj",
+      "position": [18.5, 34.0, 66],
+      "rotation": [0, 0, 0],
+      "light": {
+        "offset": [0, 3.0, 0],
+        "color": [255, 190, 120],
+        "radius": 11,
+        "intensity": 0.8,
+        "flicker": 0.2,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "farol_alto_2",
+      "model": "models/farol.obj",
+      "position": [11.5, 34.0, 82],
+      "rotation": [0, 0, 0],
+      "light": {
+        "offset": [0, 3.0, 0],
+        "color": [255, 190, 120],
+        "radius": 11,
+        "intensity": 0.8,
+        "flicker": 0.2,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "farol_alto_3",
+      "model": "models/farol.obj",
+      "position": [18.5, 34.0, 96],
+      "rotation": [0, 0, 0],
+      "light": {
+        "offset": [0, 3.0, 0],
+        "color": [255, 190, 120],
+        "radius": 11,
+        "intensity": 0.8,
+        "flicker": 0.2,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "santuario",
+      "model": "models/santuario.obj",
+      "position": [0.0, 34.0, 120.0],
+      "rotation": [0, 180, 0],
+      "tint": [170, 170, 176, 255]
+    },
+    {
+      "name": "cartel_santuario",
+      "model": "models/letrero.obj",
+      "position": [0.0, 40.6, 103.8],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_santuario.png",
+      "collider": false,
+      "scale": [1.1, 1.1, 1]
+    },
+    {
+      "name": "puerta_santuario",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0.0, 34.0, 103.9],
+      "interact": {
+        "prompt": "Entrar",
+        "range": 3.0,
+        "do": [{ "goto_scene": "scenes/pn_santuario.json", "position": [0, 0, 14.0], "yaw": 0 }],
+        "box": { "min": [-1.3, 0, -1.3], "max": [1.3, 2.4, 1.3] }
+      }
+    },
+    {
+      "name": "casa_plaza_e_0",
+      "model": "models/casa_niebla_alta.obj",
+      "position": [34.0, 34.0, 100],
+      "rotation": [0, -90, 0],
+      "tint": [130, 126, 120, 255]
+    },
+    {
+      "name": "casa_plaza_o_0",
+      "model": "models/casa_niebla.obj",
+      "position": [-24.0, 34.0, 100],
+      "rotation": [0, 90, 0],
+      "tint": [120, 128, 136, 255]
+    },
+    {
+      "name": "casa_plaza_e_1",
+      "model": "models/casa_niebla_alta.obj",
+      "position": [34.0, 34.0, 107],
+      "rotation": [0, -90, 0],
+      "tint": [160, 150, 140, 255]
+    },
+    {
+      "name": "casa_plaza_o_1",
+      "model": "models/casa_niebla_alta.obj",
+      "position": [-24.0, 34.0, 107],
+      "rotation": [0, 90, 0],
+      "tint": [170, 166, 160, 255]
+    },
+    {
+      "name": "casa_plaza_e_2",
+      "model": "models/casa_niebla_alta.obj",
+      "position": [34.0, 34.0, 114],
+      "rotation": [0, -90, 0],
+      "tint": [120, 128, 136, 255]
+    },
+    {
+      "name": "casa_plaza_o_2",
+      "model": "models/casa_niebla.obj",
+      "position": [-24.0, 34.0, 114],
+      "rotation": [0, 90, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "casa_plaza_e_3",
+      "model": "models/casa_niebla_alta.obj",
+      "position": [34.0, 34.0, 121],
+      "rotation": [0, -90, 0],
+      "tint": [170, 166, 160, 255]
+    },
+    {
+      "name": "casa_plaza_o_3",
+      "model": "models/casa_niebla_alta.obj",
+      "position": [-24.0, 34.0, 121],
+      "rotation": [0, 90, 0],
+      "tint": [130, 126, 120, 255]
+    },
+    {
+      "name": "casa_plaza_e_4",
+      "model": "models/casa_niebla_ancha.obj",
+      "position": [34.0, 34.0, 128],
+      "rotation": [0, -90, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "casa_plaza_o_4",
+      "model": "models/casa_niebla.obj",
+      "position": [-24.0, 34.0, 128],
+      "rotation": [0, 90, 0],
+      "tint": [160, 150, 140, 255]
+    },
+    {
+      "name": "casa_plaza_e_5",
+      "model": "models/casa_niebla.obj",
+      "position": [34.0, 34.0, 135],
+      "rotation": [0, -90, 0],
+      "tint": [130, 126, 120, 255]
+    },
+    {
+      "name": "casa_plaza_o_5",
+      "model": "models/casa_niebla.obj",
+      "position": [-24.0, 34.0, 135],
+      "rotation": [0, 90, 0],
+      "tint": [120, 128, 136, 255]
+    },
+    {
+      "name": "casa_plaza_e_0_cerca_0",
+      "model": "models/valla.obj",
+      "position": [41.4, 34.0, 98.97],
+      "rotation": [0, -90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.025, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_0_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [37.95, 34.0, 97.95],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_0_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [40.25, 34.0, 97.95],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_0_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [37.95, 34.0, 102.05],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_0_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [40.25, 34.0, 102.05],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_0_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [39.33, 34.0, 100.0],
+      "rotation": [0, -90, 0],
+      "scale": [0.5454545454545454, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_0_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [39.61, 36.28, 100.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "scale": [0.5142857142857142, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_0_barca",
+      "model": "models/barca.obj",
+      "position": [38.25, 34.42, 98.87],
+      "rotation": [0, 0, 180],
+      "tint": [110, 100, 90, 255]
+    },
+    {
+      "name": "casa_plaza_e_0_barril_0",
+      "model": "models/barril.obj",
+      "position": [37.25, 34.0, 100.73],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "casa_plaza_e_0_barril_1",
+      "model": "models/barril.obj",
+      "position": [37.35, 34.0, 101.48],
+      "rotation": [0, -65, 0]
+    },
+    {
+      "name": "casa_plaza_e_0_barril_caja",
+      "model": "models/caja.obj",
+      "position": [38.05, 34.0, 101.13],
+      "rotation": [0, -100, 0]
+    },
+    {
+      "name": "casa_plaza_o_0_cerca_0",
+      "model": "models/valla.obj",
+      "position": [-31.4, 34.0, 101.17],
+      "rotation": [0, 90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.175, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_0_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [-27.95, 34.0, 102.35],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_0_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [-30.25, 34.0, 102.35],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_0_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [-27.95, 34.0, 97.65],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_0_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [-30.25, 34.0, 97.65],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_0_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [-29.33, 34.0, 100.0],
+      "rotation": [0, 90, 0],
+      "scale": [0.6363636363636365, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_0_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [-29.61, 36.28, 100.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "scale": [0.6, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_0_bote_0",
+      "model": "models/cubo.obj",
+      "position": [-27.25, 34.0, 101.54],
+      "rotation": [0, 90, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "tint": [90, 96, 100, 255]
+    },
+    {
+      "name": "casa_plaza_o_0_bote_1",
+      "model": "models/cubo.obj",
+      "position": [-27.3, 34.0, 100.99],
+      "rotation": [0, 120, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "tint": [90, 96, 100, 255]
+    },
+    {
+      "name": "casa_plaza_o_0_bote_caja",
+      "model": "models/caja.obj",
+      "position": [-28.0, 34.0, 101.19],
+      "rotation": [0, 102, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    {
+      "name": "casa_plaza_o_0_banca",
+      "model": "models/banco.obj",
+      "position": [-27.25, 34.0, 98.71],
+      "rotation": [0, 270, 0]
+    },
+    {
+      "name": "casa_plaza_o_0_maceta",
+      "model": "models/maceta.obj",
+      "position": [-27.25, 34.0, 97.56],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "casa_plaza_e_1_cerca_0",
+      "model": "models/valla.obj",
+      "position": [41.4, 34.0, 105.97],
+      "rotation": [0, -90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.025, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_1_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [37.95, 34.0, 104.95],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_1_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [40.25, 34.0, 104.95],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_1_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [37.95, 34.0, 109.05],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_1_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [40.25, 34.0, 109.05],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_1_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [39.33, 34.0, 107.0],
+      "rotation": [0, -90, 0],
+      "scale": [0.5454545454545454, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_1_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [39.61, 36.28, 107.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "scale": [0.5142857142857142, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_1_barca",
+      "model": "models/barca.obj",
+      "position": [38.25, 34.42, 105.87],
+      "rotation": [0, 0, 180],
+      "tint": [110, 100, 90, 255]
+    },
+    {
+      "name": "casa_plaza_e_1_barril_0",
+      "model": "models/barril.obj",
+      "position": [37.25, 34.0, 107.73],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "casa_plaza_e_1_barril_1",
+      "model": "models/barril.obj",
+      "position": [37.35, 34.0, 108.48],
+      "rotation": [0, -65, 0]
+    },
+    {
+      "name": "casa_plaza_e_1_barril_caja",
+      "model": "models/caja.obj",
+      "position": [38.05, 34.0, 108.13],
+      "rotation": [0, -100, 0]
+    },
+    {
+      "name": "casa_plaza_o_1_cerca_0",
+      "model": "models/valla.obj",
+      "position": [-31.4, 34.0, 108.03],
+      "rotation": [0, 90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.025, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_1_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [-27.95, 34.0, 109.05],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_1_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [-30.25, 34.0, 109.05],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_1_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [-27.95, 34.0, 104.95],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_1_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [-30.25, 34.0, 104.95],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_1_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [-29.33, 34.0, 107.0],
+      "rotation": [0, 90, 0],
+      "scale": [0.5454545454545454, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_1_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [-29.61, 36.28, 107.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "scale": [0.5142857142857142, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_1_barril_0",
+      "model": "models/barril.obj",
+      "position": [-27.25, 34.0, 108.53],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "casa_plaza_o_1_barril_1",
+      "model": "models/barril.obj",
+      "position": [-27.35, 34.0, 107.78],
+      "rotation": [0, 115, 0]
+    },
+    {
+      "name": "casa_plaza_o_1_barril_caja",
+      "model": "models/caja.obj",
+      "position": [-28.05, 34.0, 108.13],
+      "rotation": [0, 80, 0]
+    },
+    {
+      "name": "casa_plaza_o_1_bote_0",
+      "model": "models/cubo.obj",
+      "position": [-27.25, 34.0, 106.12],
+      "rotation": [0, 90, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "tint": [90, 96, 100, 255]
+    },
+    {
+      "name": "casa_plaza_o_1_bote_1",
+      "model": "models/cubo.obj",
+      "position": [-27.3, 34.0, 105.57],
+      "rotation": [0, 120, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "tint": [90, 96, 100, 255]
+    },
+    {
+      "name": "casa_plaza_o_1_bote_caja",
+      "model": "models/caja.obj",
+      "position": [-28.0, 34.0, 105.77],
+      "rotation": [0, 102, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    {
+      "name": "casa_plaza_e_2_cerca_0",
+      "model": "models/valla.obj",
+      "position": [41.4, 34.0, 112.97],
+      "rotation": [0, -90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.025, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_2_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [37.95, 34.0, 111.95],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_2_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [40.25, 34.0, 111.95],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_2_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [37.95, 34.0, 116.05],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_2_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [40.25, 34.0, 116.05],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_2_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [39.33, 34.0, 114.0],
+      "rotation": [0, -90, 0],
+      "scale": [0.5454545454545454, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_2_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [39.61, 36.28, 114.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "scale": [0.5142857142857142, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_2_bote_0",
+      "model": "models/cubo.obj",
+      "position": [37.25, 34.0, 112.62],
+      "rotation": [0, -90, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "tint": [90, 96, 100, 255]
+    },
+    {
+      "name": "casa_plaza_e_2_bote_1",
+      "model": "models/cubo.obj",
+      "position": [37.3, 34.0, 113.17],
+      "rotation": [0, -60, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "tint": [90, 96, 100, 255]
+    },
+    {
+      "name": "casa_plaza_e_2_bote_caja",
+      "model": "models/caja.obj",
+      "position": [38.0, 34.0, 112.97],
+      "rotation": [0, -78, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    {
+      "name": "casa_plaza_e_2_nasa_0",
+      "model": "models/nasa.obj",
+      "position": [37.25, 34.0, 114.78],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "casa_plaza_e_2_nasa_1",
+      "model": "models/nasa.obj",
+      "position": [37.25, 34.0, 115.48],
+      "rotation": [0, -75, 0]
+    },
+    {
+      "name": "casa_plaza_e_2_nasa_2",
+      "model": "models/nasa.obj",
+      "position": [37.25, 34.55, 115.13],
+      "rotation": [0, -100, 0]
+    },
+    {
+      "name": "casa_plaza_e_2_nasa_caja",
+      "model": "models/caja.obj",
+      "position": [38.1, 34.0, 115.13],
+      "rotation": [0, -85, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    {
+      "name": "casa_plaza_o_2_cerca_0",
+      "model": "models/valla.obj",
+      "position": [-31.4, 34.0, 115.17],
+      "rotation": [0, 90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.175, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_2_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [-27.95, 34.0, 116.35],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_2_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [-30.25, 34.0, 116.35],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_2_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [-27.95, 34.0, 111.65],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_2_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [-30.25, 34.0, 111.65],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_2_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [-29.33, 34.0, 114.0],
+      "rotation": [0, 90, 0],
+      "scale": [0.6363636363636365, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_2_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [-29.61, 36.28, 114.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "scale": [0.6, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_2_barca",
+      "model": "models/barca.obj",
+      "position": [-28.25, 34.42, 115.29],
+      "rotation": [0, 180, 180],
+      "tint": [110, 100, 90, 255]
+    },
+    {
+      "name": "casa_plaza_o_2_lena",
+      "model": "models/tronco.obj",
+      "position": [-27.25, 34.0, 112.71],
+      "rotation": [0, 90, 0],
+      "scale": [0.6, 0.8, 0.8]
+    },
+    {
+      "name": "casa_plaza_o_2_lena_b",
+      "model": "models/tronco.obj",
+      "position": [-27.3, 34.55, 112.71],
+      "rotation": [0, 94, 0],
+      "scale": [0.55, 0.7, 0.7]
+    },
+    {
+      "name": "casa_plaza_o_2_hacha",
+      "model": "models/caja.obj",
+      "position": [-28.0, 34.0, 112.51],
+      "rotation": [0, 110, 0],
+      "scale": [0.7, 0.7, 0.7]
+    },
+    {
+      "name": "casa_plaza_e_3_cerca_0",
+      "model": "models/valla.obj",
+      "position": [41.4, 34.0, 119.97],
+      "rotation": [0, -90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.025, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_3_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [37.95, 34.0, 118.95],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_3_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [40.25, 34.0, 118.95],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_3_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [37.95, 34.0, 123.05],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_3_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [40.25, 34.0, 123.05],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_3_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [39.33, 34.0, 121.0],
+      "rotation": [0, -90, 0],
+      "scale": [0.5454545454545454, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_3_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [39.61, 36.28, 121.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "scale": [0.5142857142857142, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_3_barca",
+      "model": "models/barca.obj",
+      "position": [38.25, 34.42, 119.87],
+      "rotation": [0, 0, 180],
+      "tint": [110, 100, 90, 255]
+    },
+    {
+      "name": "casa_plaza_e_3_lena",
+      "model": "models/tronco.obj",
+      "position": [37.25, 34.0, 122.13],
+      "rotation": [0, -90, 0],
+      "scale": [0.6, 0.8, 0.8]
+    },
+    {
+      "name": "casa_plaza_e_3_lena_b",
+      "model": "models/tronco.obj",
+      "position": [37.3, 34.55, 122.13],
+      "rotation": [0, -86, 0],
+      "scale": [0.55, 0.7, 0.7]
+    },
+    {
+      "name": "casa_plaza_e_3_hacha",
+      "model": "models/caja.obj",
+      "position": [38.0, 34.0, 122.33],
+      "rotation": [0, -70, 0],
+      "scale": [0.7, 0.7, 0.7]
+    },
+    {
+      "name": "casa_plaza_o_3_cerca_0",
+      "model": "models/valla.obj",
+      "position": [-31.4, 34.0, 122.03],
+      "rotation": [0, 90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.025, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_3_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [-27.95, 34.0, 123.05],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_3_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [-30.25, 34.0, 123.05],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_3_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [-27.95, 34.0, 118.95],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_3_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [-30.25, 34.0, 118.95],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_3_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [-29.33, 34.0, 121.0],
+      "rotation": [0, 90, 0],
+      "scale": [0.5454545454545454, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_3_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [-29.61, 36.28, 121.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "scale": [0.5142857142857142, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_3_barril_0",
+      "model": "models/barril.obj",
+      "position": [-27.25, 34.0, 122.53],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "casa_plaza_o_3_barril_1",
+      "model": "models/barril.obj",
+      "position": [-27.35, 34.0, 121.78],
+      "rotation": [0, 115, 0]
+    },
+    {
+      "name": "casa_plaza_o_3_barril_caja",
+      "model": "models/caja.obj",
+      "position": [-28.05, 34.0, 122.13],
+      "rotation": [0, 80, 0]
+    },
+    {
+      "name": "casa_plaza_o_3_nasa_0",
+      "model": "models/nasa.obj",
+      "position": [-27.25, 34.0, 120.22],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "casa_plaza_o_3_nasa_1",
+      "model": "models/nasa.obj",
+      "position": [-27.25, 34.0, 119.52],
+      "rotation": [0, 105, 0]
+    },
+    {
+      "name": "casa_plaza_o_3_nasa_2",
+      "model": "models/nasa.obj",
+      "position": [-27.25, 34.55, 119.87],
+      "rotation": [0, 80, 0]
+    },
+    {
+      "name": "casa_plaza_o_3_nasa_caja",
+      "model": "models/caja.obj",
+      "position": [-28.1, 34.0, 119.87],
+      "rotation": [0, 95, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    {
+      "name": "casa_plaza_e_4_cerca_0",
+      "model": "models/valla.obj",
+      "position": [41.5, 34.0, 125.77],
+      "rotation": [0, -90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.1166666666666667, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_4_cerca_2",
+      "model": "models/valla.obj",
+      "position": [41.5, 34.0, 130.23],
+      "rotation": [0, -90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.1166666666666667, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_4_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [38.05, 34.0, 124.65],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_4_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [40.35, 34.0, 124.65],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_4_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [38.05, 34.0, 131.35],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_4_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [40.35, 34.0, 131.35],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_4_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [39.43, 34.0, 128.0],
+      "rotation": [0, -90, 0],
+      "scale": [0.9393939393939394, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_4_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [39.71, 36.28, 128.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "scale": [0.8857142857142858, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_4_nasa_0",
+      "model": "models/nasa.obj",
+      "position": [37.35, 34.0, 125.81],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "casa_plaza_e_4_nasa_1",
+      "model": "models/nasa.obj",
+      "position": [37.35, 34.0, 126.51],
+      "rotation": [0, -75, 0]
+    },
+    {
+      "name": "casa_plaza_e_4_nasa_2",
+      "model": "models/nasa.obj",
+      "position": [37.35, 34.55, 126.16],
+      "rotation": [0, -100, 0]
+    },
+    {
+      "name": "casa_plaza_e_4_nasa_caja",
+      "model": "models/caja.obj",
+      "position": [38.2, 34.0, 126.16],
+      "rotation": [0, -85, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    {
+      "name": "casa_plaza_e_4_banca",
+      "model": "models/banco.obj",
+      "position": [37.35, 34.0, 129.84],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "casa_plaza_e_4_maceta",
+      "model": "models/maceta.obj",
+      "position": [37.35, 34.0, 130.99],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "casa_plaza_o_4_cerca_0",
+      "model": "models/valla.obj",
+      "position": [-31.4, 34.0, 129.18],
+      "rotation": [0, 90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.175, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_4_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [-27.95, 34.0, 130.35],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_4_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [-30.25, 34.0, 130.35],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_4_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [-27.95, 34.0, 125.65],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_4_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [-30.25, 34.0, 125.65],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_4_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [-29.33, 34.0, 128.0],
+      "rotation": [0, 90, 0],
+      "scale": [0.6363636363636365, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_4_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [-29.61, 36.28, 128.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "scale": [0.6, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_4_lena",
+      "model": "models/tronco.obj",
+      "position": [-27.25, 34.0, 129.29],
+      "rotation": [0, 90, 0],
+      "scale": [0.6, 0.8, 0.8]
+    },
+    {
+      "name": "casa_plaza_o_4_lena_b",
+      "model": "models/tronco.obj",
+      "position": [-27.3, 34.55, 129.29],
+      "rotation": [0, 94, 0],
+      "scale": [0.55, 0.7, 0.7]
+    },
+    {
+      "name": "casa_plaza_o_4_hacha",
+      "model": "models/caja.obj",
+      "position": [-28.0, 34.0, 129.49],
+      "rotation": [0, 110, 0],
+      "scale": [0.7, 0.7, 0.7]
+    },
+    {
+      "name": "casa_plaza_o_4_bote_0",
+      "model": "models/cubo.obj",
+      "position": [-27.25, 34.0, 126.96],
+      "rotation": [0, 90, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "tint": [90, 96, 100, 255]
+    },
+    {
+      "name": "casa_plaza_o_4_bote_1",
+      "model": "models/cubo.obj",
+      "position": [-27.3, 34.0, 126.41],
+      "rotation": [0, 120, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "tint": [90, 96, 100, 255]
+    },
+    {
+      "name": "casa_plaza_o_4_bote_caja",
+      "model": "models/caja.obj",
+      "position": [-28.0, 34.0, 126.61],
+      "rotation": [0, 102, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    {
+      "name": "casa_plaza_e_5_cerca_0",
+      "model": "models/valla.obj",
+      "position": [41.4, 34.0, 133.82],
+      "rotation": [0, -90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.175, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_5_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [37.95, 34.0, 132.65],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_5_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [40.25, 34.0, 132.65],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_5_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [37.95, 34.0, 137.35],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_5_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [40.25, 34.0, 137.35],
+      "rotation": [0, 0, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_5_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [39.33, 34.0, 135.0],
+      "rotation": [0, -90, 0],
+      "scale": [0.6363636363636365, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_5_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [39.61, 36.28, 135.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "scale": [0.6, 1, 1]
+    },
+    {
+      "name": "casa_plaza_e_5_nasa_0",
+      "model": "models/nasa.obj",
+      "position": [37.25, 34.0, 133.36],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "casa_plaza_e_5_nasa_1",
+      "model": "models/nasa.obj",
+      "position": [37.25, 34.0, 134.06],
+      "rotation": [0, -75, 0]
+    },
+    {
+      "name": "casa_plaza_e_5_nasa_2",
+      "model": "models/nasa.obj",
+      "position": [37.25, 34.55, 133.71],
+      "rotation": [0, -100, 0]
+    },
+    {
+      "name": "casa_plaza_e_5_nasa_caja",
+      "model": "models/caja.obj",
+      "position": [38.1, 34.0, 133.71],
+      "rotation": [0, -85, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    {
+      "name": "casa_plaza_e_5_lena",
+      "model": "models/tronco.obj",
+      "position": [37.25, 34.0, 136.29],
+      "rotation": [0, -90, 0],
+      "scale": [0.6, 0.8, 0.8]
+    },
+    {
+      "name": "casa_plaza_e_5_lena_b",
+      "model": "models/tronco.obj",
+      "position": [37.3, 34.55, 136.29],
+      "rotation": [0, -86, 0],
+      "scale": [0.55, 0.7, 0.7]
+    },
+    {
+      "name": "casa_plaza_e_5_hacha",
+      "model": "models/caja.obj",
+      "position": [38.0, 34.0, 136.49],
+      "rotation": [0, -70, 0],
+      "scale": [0.7, 0.7, 0.7]
+    },
+    {
+      "name": "casa_plaza_o_5_cerca_0",
+      "model": "models/valla.obj",
+      "position": [-31.4, 34.0, 136.18],
+      "rotation": [0, 90, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.175, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_5_lado_-1_0",
+      "model": "models/valla.obj",
+      "position": [-27.95, 34.0, 137.35],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_5_lado_-1_1",
+      "model": "models/valla.obj",
+      "position": [-30.25, 34.0, 137.35],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_5_lado_1_0",
+      "model": "models/valla.obj",
+      "position": [-27.95, 34.0, 132.65],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_5_lado_1_1",
+      "model": "models/valla.obj",
+      "position": [-30.25, 34.0, 132.65],
+      "rotation": [0, 180, 0],
+      "tint": [140, 136, 130, 255],
+      "scale": [1.15, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_5_tendedero",
+      "model": "models/tendedero.obj",
+      "position": [-29.33, 34.0, 135.0],
+      "rotation": [0, 90, 0],
+      "scale": [0.6363636363636365, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_5_ropa",
+      "model": "models/ropa_tendida.obj",
+      "position": [-29.61, 36.28, 135.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "scale": [0.6, 1, 1]
+    },
+    {
+      "name": "casa_plaza_o_5_bote_0",
+      "model": "models/cubo.obj",
+      "position": [-27.25, 34.0, 136.54],
+      "rotation": [0, 90, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "tint": [90, 96, 100, 255]
+    },
+    {
+      "name": "casa_plaza_o_5_bote_1",
+      "model": "models/cubo.obj",
+      "position": [-27.3, 34.0, 135.99],
+      "rotation": [0, 120, 0],
+      "scale": [1.6, 1.6, 1.6],
+      "tint": [90, 96, 100, 255]
+    },
+    {
+      "name": "casa_plaza_o_5_bote_caja",
+      "model": "models/caja.obj",
+      "position": [-28.0, 34.0, 136.19],
+      "rotation": [0, 102, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    {
+      "name": "casa_plaza_o_5_banca",
+      "model": "models/banco.obj",
+      "position": [-27.25, 34.0, 133.71],
+      "rotation": [0, 270, 0]
+    },
+    {
+      "name": "casa_plaza_o_5_maceta",
+      "model": "models/maceta.obj",
+      "position": [-27.25, 34.0, 132.56],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "cobertizo_p_0",
+      "model": "models/cobertizo.obj",
+      "position": [54.5, 34.0, 108.0],
+      "rotation": [0, -90, 0],
+      "tint": [120, 116, 110, 255]
+    },
+    {
+      "name": "cobertizo_p_1",
+      "model": "models/cobertizo.obj",
+      "position": [54.5, 34.0, 128.0],
+      "rotation": [0, -90, 0],
+      "tint": [120, 116, 110, 255]
+    },
+    {
+      "name": "cobertizo_p_2",
+      "model": "models/cobertizo.obj",
+      "position": [-54.5, 34.0, 108.0],
+      "rotation": [0, 90, 0],
+      "tint": [120, 116, 110, 255]
+    },
+    {
+      "name": "cobertizo_p_3",
+      "model": "models/cobertizo.obj",
+      "position": [-54.5, 34.0, 128.0],
+      "rotation": [0, 90, 0],
+      "tint": [120, 116, 110, 255]
+    },
+    {
+      "name": "carreta_p",
+      "model": "models/carreta.obj",
+      "position": [46.0, 34.0, 118.0],
+      "rotation": [0, -70, 0]
+    },
+    {
+      "name": "pozo_p",
+      "model": "models/pozo_tapado.obj",
+      "position": [-44.0, 34.0, 118.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "roca_n_0",
+      "model": "models/monte_a.obj",
+      "position": [-60, 30.0, 140.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [80, 80, 88, 255]
+    },
+    {
+      "name": "roca_n_1",
+      "model": "models/monte_b.obj",
+      "position": [-38, 30.0, 140.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [80, 80, 88, 255]
+    },
+    {
+      "name": "roca_n_2",
+      "model": "models/monte_c.obj",
+      "position": [-16, 30.0, 140.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [80, 80, 88, 255]
+    },
+    {
+      "name": "roca_n_3",
+      "model": "models/monte_a.obj",
+      "position": [6, 30.0, 140.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [80, 80, 88, 255]
+    },
+    {
+      "name": "roca_n_4",
+      "model": "models/monte_b.obj",
+      "position": [28, 30.0, 140.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [80, 80, 88, 255]
+    },
+    {
+      "name": "roca_n_5",
+      "model": "models/monte_c.obj",
+      "position": [50, 30.0, 140.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [80, 80, 88, 255]
+    },
+    {
+      "name": "roca_o_0",
+      "model": "models/monte_b.obj",
+      "position": [-60.0, 30.0, 52],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [80, 80, 88, 255]
+    },
+    {
+      "name": "roca_e_0",
+      "model": "models/monte_c.obj",
+      "position": [60.0, 30.0, 52],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "tint": [80, 80, 88, 255]
+    },
+    {
+      "name": "roca_o_1",
+      "model": "models/monte_c.obj",
+      "position": [-60.0, 30.0, 74],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [80, 80, 88, 255]
+    },
+    {
+      "name": "roca_e_1",
+      "model": "models/monte_a.obj",
+      "position": [60.0, 30.0, 74],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "tint": [80, 80, 88, 255]
+    },
+    {
+      "name": "roca_o_2",
+      "model": "models/monte_a.obj",
+      "position": [-60.0, 30.0, 96],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [80, 80, 88, 255]
+    },
+    {
+      "name": "roca_e_2",
+      "model": "models/monte_b.obj",
+      "position": [60.0, 30.0, 96],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "tint": [80, 80, 88, 255]
+    },
+    {
+      "name": "roca_o_3",
+      "model": "models/monte_b.obj",
+      "position": [-60.0, 30.0, 118],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [80, 80, 88, 255]
+    },
+    {
+      "name": "roca_e_3",
+      "model": "models/monte_c.obj",
+      "position": [60.0, 30.0, 118],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "tint": [80, 80, 88, 255]
+    },
+    {
+      "name": "roca_o_4",
+      "model": "models/monte_c.obj",
+      "position": [-60.0, 30.0, 140],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [80, 80, 88, 255]
+    },
+    {
+      "name": "roca_e_4",
+      "model": "models/monte_a.obj",
+      "position": [60.0, 30.0, 140],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "tint": [80, 80, 88, 255]
+    },
+    {
+      "name": "pozo_plaza",
+      "model": "models/pozo.obj",
+      "position": [22.0, 34.0, 104.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_plaza_0",
+      "model": "models/banco.obj",
+      "position": [26.0, 34.0, 112.0],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "banco_plaza_1",
+      "model": "models/banco.obj",
+      "position": [-16.0, 34.0, 112.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "farol_plaza_0",
+      "model": "models/farol.obj",
+      "position": [22.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "light": {
+        "offset": [0, 3.0, 0],
+        "color": [255, 190, 120],
+        "radius": 11,
+        "intensity": 0.8,
+        "flicker": 0.2,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "farol_plaza_1",
+      "model": "models/farol.obj",
+      "position": [-14.0, 34.0, 100.0],
+      "rotation": [0, 0, 0],
+      "light": {
+        "offset": [0, 3.0, 0],
+        "color": [255, 190, 120],
+        "radius": 11,
+        "intensity": 0.8,
+        "flicker": 0.2,
+        "flickerRate": 4
+      }
+    },
+    {
+      "name": "figura_torre",
+      "model": "models/hombre_alto.obj",
+      "position": [-11.3, 62.6, 106.8],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" }
+    },
+    {
+      "name": "valla_cem_0_50",
+      "model": "models/valla.obj",
+      "position": [-55.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_0_96",
+      "model": "models/valla.obj",
+      "position": [-55.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_1_50",
+      "model": "models/valla.obj",
+      "position": [-53.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_1_96",
+      "model": "models/valla.obj",
+      "position": [-53.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_2_50",
+      "model": "models/valla.obj",
+      "position": [-51.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_2_96",
+      "model": "models/valla.obj",
+      "position": [-51.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_3_50",
+      "model": "models/valla.obj",
+      "position": [-49.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_3_96",
+      "model": "models/valla.obj",
+      "position": [-49.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_4_50",
+      "model": "models/valla.obj",
+      "position": [-47.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_4_96",
+      "model": "models/valla.obj",
+      "position": [-47.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_5_50",
+      "model": "models/valla.obj",
+      "position": [-45.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_5_96",
+      "model": "models/valla.obj",
+      "position": [-45.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_6_50",
+      "model": "models/valla.obj",
+      "position": [-43.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_6_96",
+      "model": "models/valla.obj",
+      "position": [-43.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_7_50",
+      "model": "models/valla.obj",
+      "position": [-41.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_7_96",
+      "model": "models/valla.obj",
+      "position": [-41.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_8_50",
+      "model": "models/valla.obj",
+      "position": [-39.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_8_96",
+      "model": "models/valla.obj",
+      "position": [-39.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_9_50",
+      "model": "models/valla.obj",
+      "position": [-37.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_9_96",
+      "model": "models/valla.obj",
+      "position": [-37.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_10_50",
+      "model": "models/valla.obj",
+      "position": [-35.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_10_96",
+      "model": "models/valla.obj",
+      "position": [-35.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_11_50",
+      "model": "models/valla.obj",
+      "position": [-33.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_11_96",
+      "model": "models/valla.obj",
+      "position": [-33.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_12_50",
+      "model": "models/valla.obj",
+      "position": [-31.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_12_96",
+      "model": "models/valla.obj",
+      "position": [-31.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_13_50",
+      "model": "models/valla.obj",
+      "position": [-29.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_13_96",
+      "model": "models/valla.obj",
+      "position": [-29.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_14_50",
+      "model": "models/valla.obj",
+      "position": [-27.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_14_96",
+      "model": "models/valla.obj",
+      "position": [-27.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_15_50",
+      "model": "models/valla.obj",
+      "position": [-25.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_15_96",
+      "model": "models/valla.obj",
+      "position": [-25.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_16_50",
+      "model": "models/valla.obj",
+      "position": [-23.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_16_96",
+      "model": "models/valla.obj",
+      "position": [-23.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_17_50",
+      "model": "models/valla.obj",
+      "position": [-21.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_17_96",
+      "model": "models/valla.obj",
+      "position": [-21.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_18_50",
+      "model": "models/valla.obj",
+      "position": [-19.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_18_96",
+      "model": "models/valla.obj",
+      "position": [-19.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_19_50",
+      "model": "models/valla.obj",
+      "position": [-17.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_19_96",
+      "model": "models/valla.obj",
+      "position": [-17.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_20_50",
+      "model": "models/valla.obj",
+      "position": [-15.0, 34.0, 50.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_20_96",
+      "model": "models/valla.obj",
+      "position": [-15.0, 34.0, 96.0],
+      "rotation": [0, 0, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_0",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 51.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_0",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 51.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_1",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 53.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_1",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 53.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_2",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 55.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_2",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 55.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_3",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 57.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_3",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 57.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_4",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 59.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_4",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 59.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_5",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 61.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_5",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 61.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_6",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 63.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_6",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 63.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_7",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 65.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_7",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 65.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_8",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 67.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_8",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 67.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_9",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 69.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_10",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 71.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_11",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 73.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_12",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 75.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_13",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 77.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_13",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 77.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_14",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 79.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_14",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 79.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_15",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 81.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_15",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 81.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_16",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 83.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_16",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 83.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_17",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 85.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_17",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 85.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_18",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 87.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_18",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 87.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_19",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 89.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_19",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 89.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_20",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 91.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_20",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 91.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_21",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 93.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_21",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 93.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_o_22",
+      "model": "models/valla.obj",
+      "position": [-56.0, 34.0, 95.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "valla_cem_e_22",
+      "model": "models/valla.obj",
+      "position": [-16.0, 34.0, 95.0],
+      "rotation": [0, 90, 0],
+      "tint": [60, 60, 64, 255]
+    },
+    {
+      "name": "tumba_0",
+      "model": "models/tumba_abierta.obj",
+      "position": [-22, 34.0, 82],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_0",
+      "model": "models/lapida_niebla.obj",
+      "position": [-22, 34.0, 80.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o0.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_1",
+      "model": "models/tumba_abierta.obj",
+      "position": [-42, 34.0, 76],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_1",
+      "model": "models/lapida_niebla.obj",
+      "position": [-42, 34.0, 74.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o1.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_2",
+      "model": "models/tumba_abierta.obj",
+      "position": [-52, 34.0, 56],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_2",
+      "model": "models/lapida_niebla.obj",
+      "position": [-52, 34.0, 54.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o2.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_3",
+      "model": "models/tumba_abierta.obj",
+      "position": [-37, 34.0, 68],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_3",
+      "model": "models/lapida_niebla.obj",
+      "position": [-37, 34.0, 66.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o3.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_4",
+      "model": "models/tumba_abierta.obj",
+      "position": [-52, 34.0, 68],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_4",
+      "model": "models/lapida_niebla.obj",
+      "position": [-52, 34.0, 66.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o4.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_5",
+      "model": "models/tumba_abierta.obj",
+      "position": [-47, 34.0, 82],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_5",
+      "model": "models/lapida_niebla.obj",
+      "position": [-47, 34.0, 80.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o5.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_6",
+      "model": "models/tumba_abierta.obj",
+      "position": [-27, 34.0, 82],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_6",
+      "model": "models/lapida_niebla.obj",
+      "position": [-27, 34.0, 80.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o6.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_7",
+      "model": "models/tumba_abierta.obj",
+      "position": [-37, 34.0, 56],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_7",
+      "model": "models/lapida_niebla.obj",
+      "position": [-37, 34.0, 54.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o7.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_8",
+      "model": "models/tumba_abierta.obj",
+      "position": [-22, 34.0, 56],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_8",
+      "model": "models/lapida_niebla.obj",
+      "position": [-22, 34.0, 54.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o8.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_9",
+      "model": "models/tumba_abierta.obj",
+      "position": [-32, 34.0, 62],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_9",
+      "model": "models/lapida_niebla.obj",
+      "position": [-32, 34.0, 60.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o9.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_10",
+      "model": "models/tumba_abierta.obj",
+      "position": [-42, 34.0, 62],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_10",
+      "model": "models/lapida_niebla.obj",
+      "position": [-42, 34.0, 60.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o0.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_11",
+      "model": "models/tumba_abierta.obj",
+      "position": [-42, 34.0, 68],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_11",
+      "model": "models/lapida_niebla.obj",
+      "position": [-42, 34.0, 66.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o1.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_12",
+      "model": "models/tumba_abierta.obj",
+      "position": [-47, 34.0, 56],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_12",
+      "model": "models/lapida_niebla.obj",
+      "position": [-47, 34.0, 54.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o2.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_13",
+      "model": "models/tumba_abierta.obj",
+      "position": [-27, 34.0, 68],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_13",
+      "model": "models/lapida_niebla.obj",
+      "position": [-27, 34.0, 66.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o3.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_14",
+      "model": "models/tumba_abierta.obj",
+      "position": [-27, 34.0, 62],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_14",
+      "model": "models/lapida_niebla.obj",
+      "position": [-27, 34.0, 60.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o4.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_15",
+      "model": "models/tumba_abierta.obj",
+      "position": [-27, 34.0, 56],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_15",
+      "model": "models/lapida_niebla.obj",
+      "position": [-27, 34.0, 54.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o5.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_16",
+      "model": "models/tumba_abierta.obj",
+      "position": [-52, 34.0, 62],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_16",
+      "model": "models/lapida_niebla.obj",
+      "position": [-52, 34.0, 60.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o6.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_17",
+      "model": "models/tumba_abierta.obj",
+      "position": [-42, 34.0, 56],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_17",
+      "model": "models/lapida_niebla.obj",
+      "position": [-42, 34.0, 54.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o7.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_18",
+      "model": "models/tumba_abierta.obj",
+      "position": [-32, 34.0, 68],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_18",
+      "model": "models/lapida_niebla.obj",
+      "position": [-32, 34.0, 66.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o8.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_19",
+      "model": "models/tumba_abierta.obj",
+      "position": [-42, 34.0, 82],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_19",
+      "model": "models/lapida_niebla.obj",
+      "position": [-42, 34.0, 80.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o9.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_20",
+      "model": "models/tumba_abierta.obj",
+      "position": [-52, 34.0, 76],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_20",
+      "model": "models/lapida_niebla.obj",
+      "position": [-52, 34.0, 74.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o0.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_21",
+      "model": "models/tumba_abierta.obj",
+      "position": [-52, 34.0, 82],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_21",
+      "model": "models/lapida_niebla.obj",
+      "position": [-52, 34.0, 80.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o1.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_22",
+      "model": "models/tumba_abierta.obj",
+      "position": [-22, 34.0, 68],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_22",
+      "model": "models/lapida_niebla.obj",
+      "position": [-22, 34.0, 66.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o2.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_23",
+      "model": "models/tumba_abierta.obj",
+      "position": [-32, 34.0, 82],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_23",
+      "model": "models/lapida_niebla.obj",
+      "position": [-32, 34.0, 80.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o3.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_24",
+      "model": "models/tumba_abierta.obj",
+      "position": [-47, 34.0, 68],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_24",
+      "model": "models/lapida_niebla.obj",
+      "position": [-47, 34.0, 66.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o4.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_25",
+      "model": "models/tumba_abierta.obj",
+      "position": [-32, 34.0, 56],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_25",
+      "model": "models/lapida_niebla.obj",
+      "position": [-32, 34.0, 54.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o5.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_26",
+      "model": "models/tumba_abierta.obj",
+      "position": [-37, 34.0, 76],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_26",
+      "model": "models/lapida_niebla.obj",
+      "position": [-37, 34.0, 74.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o6.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_27",
+      "model": "models/tumba_abierta.obj",
+      "position": [-37, 34.0, 82],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_27",
+      "model": "models/lapida_niebla.obj",
+      "position": [-37, 34.0, 80.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o7.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_28",
+      "model": "models/tumba_abierta.obj",
+      "position": [-22, 34.0, 76],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_28",
+      "model": "models/lapida_niebla.obj",
+      "position": [-22, 34.0, 74.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o8.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_29",
+      "model": "models/tumba_abierta.obj",
+      "position": [-47, 34.0, 76],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_29",
+      "model": "models/lapida_niebla.obj",
+      "position": [-47, 34.0, 74.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_o9.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba" }] }
+    },
+    {
+      "name": "tumba_p0",
+      "model": "models/tumba_abierta.obj",
+      "position": [-47, 34.0, 88.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_p0",
+      "model": "models/lapida_niebla.obj",
+      "position": [-47, 34.0, 86.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_p0.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba_partida" }] }
+    },
+    {
+      "name": "tumba_p1",
+      "model": "models/tumba_abierta.obj",
+      "position": [-42, 34.0, 88.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_p1",
+      "model": "models/lapida_niebla.obj",
+      "position": [-42, 34.0, 86.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_p1.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba_partida" }] }
+    },
+    {
+      "name": "tumba_p2",
+      "model": "models/tumba_abierta.obj",
+      "position": [-37, 34.0, 88.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_p2",
+      "model": "models/lapida_niebla.obj",
+      "position": [-37, 34.0, 86.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_p2.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba_partida" }] }
+    },
+    {
+      "name": "tumba_p3",
+      "model": "models/tumba_abierta.obj",
+      "position": [-32, 34.0, 88.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_p3",
+      "model": "models/lapida_niebla.obj",
+      "position": [-32, 34.0, 86.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_p3.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba_partida" }] }
+    },
+    {
+      "name": "tumba_p4",
+      "model": "models/tumba_abierta.obj",
+      "position": [-27, 34.0, 88.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_p4",
+      "model": "models/lapida_niebla.obj",
+      "position": [-27, 34.0, 86.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_p4.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba_partida" }] }
+    },
+    {
+      "name": "tumba_p5",
+      "model": "models/tumba_abierta.obj",
+      "position": [-22, 34.0, 88.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_p5",
+      "model": "models/lapida_niebla.obj",
+      "position": [-22, 34.0, 86.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_p5.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba_partida" }] }
+    },
+    {
+      "name": "tumba_tuya",
+      "model": "models/tumba_abierta.obj",
+      "position": [-52.0, 34.0, 88.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "tint": [110, 108, 104, 255]
+    },
+    {
+      "name": "lapida_tuya",
+      "model": "models/lapida_niebla.obj",
+      "position": [-52.0, 34.0, 86.7],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_tumba_tuya.png",
+      "interact": { "prompt": "Leer", "range": 2.4, "do": [{ "dialogue": "pn_tumba_tuya" }] }
+    },
+    {
+      "name": "sepulturero",
+      "model": "models/sepulturero.obj",
+      "position": [-54.0, 34.0, 84.5],
+      "rotation": [0, 40, 0],
+      "texture": "textures/pj_sepulturero.png",
+      "interact": { "prompt": "Hablar", "range": 2.8, "do": [{ "dialogue": "pn_sepulturero" }] },
+      "sound": { "file": "audio/pala.wav", "volume": 0.6, "radius": 18, "minDistance": 2 }
+    },
+    {
+      "name": "figura_tumba",
+      "model": "models/hombre_alto.obj",
+      "position": [-52.0, 34.0, 60.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "pn_tumba" }, { "flag": "flash" }] },
+      "facePlayer": { "range": 30, "turnSpeed": 900 },
+      "seen": {
+        "range": 14,
+        "angle": 40,
+        "if": {
+          "all": [{ "flag": "pn_tumba" }, { "flag": "flash" }, { "not": { "flag": "pn_tumba_vista" } }]
+        },
+        "do": [
+          { "play_sound": "audio/susto_espalda.wav", "volume": 0.9 },
+          {
+            "message": "En la foto, detras de ti, alguien leia tu nombre por encima de tu hombro.",
+            "seconds": 4
+          },
+          { "set_flag": "pn_tumba_vista" },
+          { "wait": 2.0 },
+          { "set_flag": "pn_tumba", "value": 0 }
+        ]
+      }
+    },
+    {
+      "name": "dormida_cem",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_dormida.png",
+      "position": [-37.0, 34.0, 74.6],
+      "rotation": [0, 0, 0],
+      "idle": { "bob": 0.006, "sway": 0.8, "speed": 0.9 },
+      "interact": { "prompt": "Hablar", "range": 2.6, "do": [{ "dialogue": "pn_dormida_cem" }] }
+    },
+    {
+      "name": "velas_cem_0",
+      "model": "models/velas_grupo.obj",
+      "position": [-41.2, 34.0, 64.4],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_cem_0",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-41.2, 34.5, 64.4],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 160, 80],
+        "radius": 6,
+        "intensity": 0.8,
+        "flicker": 0.4,
+        "flickerRate": 6
+      }
+    },
+    {
+      "name": "velas_cem_1",
+      "model": "models/velas_grupo.obj",
+      "position": [-26.2, 34.0, 80.4],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_cem_1",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-26.2, 34.5, 80.4],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 160, 80],
+        "radius": 6,
+        "intensity": 0.8,
+        "flicker": 0.4,
+        "flickerRate": 6
+      }
+    },
+    {
+      "name": "velas_cem_2",
+      "model": "models/velas_grupo.obj",
+      "position": [-46.2, 34.0, 56.4],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_cem_2",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-46.2, 34.5, 56.4],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 160, 80],
+        "radius": 6,
+        "intensity": 0.8,
+        "flicker": 0.4,
+        "flickerRate": 6
+      }
+    },
+    {
+      "name": "v_casa_0",
+      "model": "models/casa_niebla_ancha.obj",
+      "position": [-54.0, 6.0, 24.5],
+      "rotation": [0, 180, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "v_casa_1",
+      "model": "models/casa_niebla.obj",
+      "position": [-47.0, 6.0, 24.4],
+      "rotation": [0, 180, 0],
+      "tint": [130, 126, 120, 255]
+    },
+    {
+      "name": "v_capitania",
+      "model": "models/capitania.obj",
+      "position": [-38.0, 6.0, 26.0],
+      "rotation": [0, 180, 0],
+      "tint": [160, 150, 140, 255],
+      "texture": "textures/lam_pn_reloj.png"
+    },
+    {
+      "name": "v_casa_2",
+      "model": "models/casa_niebla_alta.obj",
+      "position": [-29.0, 6.0, 24.4],
+      "rotation": [0, 180, 0],
+      "tint": [120, 128, 136, 255]
+    },
+    {
+      "name": "v_casa_3",
+      "model": "models/casa_niebla.obj",
+      "position": [-24.0, 6.0, 24.4],
+      "rotation": [0, 180, 0],
+      "tint": [170, 166, 160, 255]
+    },
+    {
+      "name": "v_taberna",
+      "model": "models/taberna.obj",
+      "position": [-14.0, 6.0, 25.7],
+      "rotation": [0, 180, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "v_casa_4",
+      "model": "models/casa_niebla_alta.obj",
+      "position": [-5.0, 6.0, 24.4],
+      "rotation": [0, 180, 0],
+      "tint": [130, 126, 120, 255]
+    },
+    {
+      "name": "v_perdidos",
+      "model": "models/perdidos.obj",
+      "position": [2.0, 6.0, 25.2],
+      "rotation": [0, 180, 0],
+      "tint": [160, 150, 140, 255]
+    },
+    {
+      "name": "v_casa_5",
+      "model": "models/casa_niebla.obj",
+      "position": [9.0, 6.0, 24.4],
+      "rotation": [0, 180, 0],
+      "tint": [120, 128, 136, 255]
+    },
+    {
+      "name": "v_casa_6",
+      "model": "models/casa_niebla_ancha.obj",
+      "position": [21.0, 6.0, 24.5],
+      "rotation": [0, 180, 0],
+      "tint": [170, 166, 160, 255]
+    },
+    {
+      "name": "v_casa_7",
+      "model": "models/casa_niebla_alta.obj",
+      "position": [28.0, 6.0, 24.4],
+      "rotation": [0, 180, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "v_conservera",
+      "model": "models/conservera.obj",
+      "position": [46.0, 6.0, 31.0],
+      "rotation": [0, 180, 0],
+      "tint": [130, 126, 120, 255]
+    },
+    {
+      "name": "v_casa_8",
+      "model": "models/casa_niebla.obj",
+      "position": [63.0, 6.0, 24.4],
+      "rotation": [0, 180, 0],
+      "tint": [160, 150, 140, 255]
+    },
+    {
+      "name": "v_casa_9",
+      "model": "models/casa_niebla_alta.obj",
+      "position": [69.0, 6.0, 24.4],
+      "rotation": [0, 180, 0],
+      "tint": [120, 128, 136, 255]
+    },
+    {
+      "name": "v_escalera",
+      "model": "models/escalera_piedra.obj",
+      "position": [15.0, 6.0, 22.0],
+      "rotation": [0, 180, 0]
+    },
+    {
+      "name": "v_arco_escalera",
+      "model": "models/arco_escalera.obj",
+      "position": [15.0, 6.0, 21.6],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_arco_alto.png"
+    },
+    {
+      "name": "v_paso_roca",
+      "model": "models/paso_roca.obj",
+      "position": [15.0, 12.6, 37.6],
+      "rotation": [0, 180, 0],
+      "tint": [120, 120, 128, 255]
+    },
+    {
+      "name": "v_luz_arco_0",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [13.05, 8.4, 21.1],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 180, 110],
+        "radius": 6,
+        "intensity": 0.8,
+        "flicker": 0.15,
+        "flickerRate": 4
+      }
+    },
+    {
+      "name": "v_luz_arco_1",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [16.95, 8.4, 21.1],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 180, 110],
+        "radius": 6,
+        "intensity": 0.8,
+        "flicker": 0.15,
+        "flickerRate": 6
+      }
+    },
+    {
+      "name": "v_luz_paso",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [13.8, 15.7, 37.3],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 180, 110],
+        "radius": 6,
+        "intensity": 0.8,
+        "flicker": 0.2,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "v_acantilado_s_0",
+      "model": "models/roca_pared.obj",
+      "position": [-88.0, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_1",
+      "model": "models/roca_pared.obj",
+      "position": [-66.0, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_2",
+      "model": "models/roca_pared.obj",
+      "position": [-44.0, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_3",
+      "model": "models/roca_pared.obj",
+      "position": [-22.0, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_4",
+      "model": "models/roca_pared.obj",
+      "position": [0.6, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_5",
+      "model": "models/roca_pared.obj",
+      "position": [29.4, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_6",
+      "model": "models/roca_pared.obj",
+      "position": [51.4, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_7",
+      "model": "models/roca_pared.obj",
+      "position": [73.4, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_8",
+      "model": "models/roca_pared.obj",
+      "position": [95.4, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_paso",
+      "model": "models/roca_pared.obj",
+      "position": [15.0, 18.5, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255],
+      "scale": [0.21, 0.3522727272727273, 1.0]
+    },
+    {
+      "name": "v_acantilado_o_0",
+      "model": "models/monte_a.obj",
+      "position": [-82.6, 2.0, -4],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_o_1",
+      "model": "models/monte_b.obj",
+      "position": [-82.6, 2.0, 16],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_o_2",
+      "model": "models/monte_c.obj",
+      "position": [-82.6, 2.0, 36],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_e_0",
+      "model": "models/monte_b.obj",
+      "position": [90.0, 2.0, 9.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_e_1",
+      "model": "models/monte_c.obj",
+      "position": [86.0, 2.0, 26],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_e_2",
+      "model": "models/monte_a.obj",
+      "position": [86.0, 2.0, 46],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_malecon_0",
+      "model": "models/malecon_niebla.obj",
+      "position": [-86, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_malecon_1",
+      "model": "models/malecon_niebla.obj",
+      "position": [-66, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_malecon_2",
+      "model": "models/malecon_niebla.obj",
+      "position": [-46, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_malecon_3",
+      "model": "models/malecon_niebla.obj",
+      "position": [-26, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_malecon_4",
+      "model": "models/malecon_niebla.obj",
+      "position": [-6, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_malecon_5",
+      "model": "models/malecon_niebla.obj",
+      "position": [14, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_malecon_6",
+      "model": "models/malecon_niebla.obj",
+      "position": [34, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_malecon_7",
+      "model": "models/malecon_niebla.obj",
+      "position": [54, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_malecon_fin",
+      "model": "models/malecon_niebla.obj",
+      "position": [71.0, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "scale": [0.62, 1.0, 1.0]
+    },
+    {
+      "name": "v_muro_este_0",
+      "model": "models/muro_piedra.obj",
+      "position": [76.8, 6.0, 9.6],
+      "rotation": [0, 90, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "v_muro_este_1",
+      "model": "models/muro_piedra.obj",
+      "position": [76.8, 6.0, 19.6],
+      "rotation": [0, 90, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "v_muro_este_2",
+      "model": "models/muro_piedra.obj",
+      "position": [76.8, 6.0, 29.6],
+      "rotation": [0, 90, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "v_muro_este_3",
+      "model": "models/muro_piedra.obj",
+      "position": [76.8, 6.0, 39.6],
+      "rotation": [0, 90, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "v_tunel",
+      "model": "models/tunel.obj",
+      "position": [-81.6, 6.0, 14.0],
+      "rotation": [0, 90, 0],
+      "tint": [110, 110, 116, 255]
+    },
+    {
+      "name": "v_via_0",
+      "model": "models/via.obj",
+      "position": [-76.0, 6.0, 14.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_via_1",
+      "model": "models/via.obj",
+      "position": [-56.0, 6.0, 14.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_tope",
+      "model": "models/tope_via.obj",
+      "position": [-46.4, 6.0, 14.0],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "v_locomotora",
+      "model": "models/locomotora.obj",
+      "position": [-52.0, 6.16, 14.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_vagon_0",
+      "model": "models/vagon.obj",
+      "position": [-61.7, 6.16, 14.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_vagon_1",
+      "model": "models/vagon.obj",
+      "position": [-71.4, 6.16, 14.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_anden",
+      "model": "models/anden.obj",
+      "position": [-60.0, 6.0, 10.9],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_caseta",
+      "model": "models/caseta_estacion.obj",
+      "position": [-66.0, 6.0, 5.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_cartel_estacion_poste",
+      "model": "models/poste_letrero.obj",
+      "position": [-58.0, 6.0, 9.0],
+      "rotation": [0, 0, 0],
+      "scale": [1.0, 1.0, 1.0]
+    },
+    {
+      "name": "v_cartel_estacion",
+      "model": "models/letrero.obj",
+      "position": [-58.0, 8.3, 9.0],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_pn_estacion.png",
+      "collider": false,
+      "scale": [1.0, 1.0, 1]
+    },
+    {
+      "name": "v_cartel_estacion_b",
+      "model": "models/letrero.obj",
+      "position": [-58.0, 8.3, 8.97],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_estacion.png",
+      "collider": false,
+      "scale": [1.0, 1.0, 1]
+    },
+    {
+      "name": "v_muelle_1",
+      "model": "models/embarcadero.obj",
+      "position": [-20.0, 6.0, 0.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_muelle_2",
+      "model": "models/embarcadero.obj",
+      "position": [20.0, 6.0, 0.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_muelle_2b",
+      "model": "models/embarcadero.obj",
+      "position": [20.0, 6.0, -24.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_vapor",
+      "model": "models/vapor.obj",
+      "position": [13.0, 7.1, -26.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "v_cartel_espere_poste",
+      "model": "models/poste_letrero.obj",
+      "position": [20.0, 6.0, -1.0],
+      "rotation": [0, 0, 0],
+      "scale": [0.7, 1.0, 1.0]
+    },
+    {
+      "name": "v_cartel_espere",
+      "model": "models/letrero.obj",
+      "position": [20.0, 8.3, -1.0],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_pn_espere.png",
+      "collider": false,
+      "scale": [0.7, 0.7, 1]
+    },
+    {
+      "name": "v_cartel_espere_b",
+      "model": "models/letrero.obj",
+      "position": [20.0, 8.3, -1.03],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_espere.png",
+      "collider": false,
+      "scale": [0.7, 0.7, 1]
+    },
+    {
+      "name": "v_cartel_equipaje_poste",
+      "model": "models/poste_letrero.obj",
+      "position": [21.6, 6.0, -29.0],
+      "rotation": [0, -90, 0],
+      "scale": [0.55, 1.0, 1.0]
+    },
+    {
+      "name": "v_cartel_equipaje",
+      "model": "models/letrero.obj",
+      "position": [21.6, 8.3, -29.0],
+      "rotation": [0, -90, 0],
+      "texture": "textures/lam_pn_equipaje.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1]
+    },
+    {
+      "name": "v_barca_0",
+      "model": "models/barca.obj",
+      "position": [-30, 4.45, -4],
+      "rotation": [0, 13.29886760005354, 0],
+      "collider": false
+    },
+    {
+      "name": "v_barca_1",
+      "model": "models/barca.obj",
+      "position": [-26.5, 4.45, -9],
+      "rotation": [0, 7.909976486362737, 0],
+      "collider": false
+    },
+    {
+      "name": "v_barca_2",
+      "model": "models/barca.obj",
+      "position": [-11, 4.45, -6],
+      "rotation": [0, 27.09156082955144, 0],
+      "collider": false
+    },
+    {
+      "name": "v_barca_3",
+      "model": "models/barca.obj",
+      "position": [2, 4.45, -9],
+      "rotation": [0, -19.156741364368944, 0],
+      "collider": false
+    },
+    {
+      "name": "v_barca_4",
+      "model": "models/barca.obj",
+      "position": [30, 4.45, -5],
+      "rotation": [0, -26.651608682533805, 0],
+      "collider": false
+    },
+    {
+      "name": "v_barca_5",
+      "model": "models/barca.obj",
+      "position": [-50, 4.45, -6],
+      "rotation": [0, 12.716287251942923, 0],
+      "collider": false
+    },
+    {
+      "name": "v_boya_0",
+      "model": "models/boya.obj",
+      "position": [-45, 3.9, -45],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_boya_1",
+      "model": "models/boya.obj",
+      "position": [5, 3.9, -70],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_boya_2",
+      "model": "models/boya.obj",
+      "position": [45, 3.9, -40],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_lonja",
+      "model": "models/lonja.obj",
+      "position": [-36.0, 6.0, 10.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_caja_lonja_0",
+      "model": "models/caja.obj",
+      "position": [-38.5, 6.0, 8.6],
+      "rotation": [0, 15, 0]
+    },
+    {
+      "name": "v_caja_lonja_1",
+      "model": "models/caja.obj",
+      "position": [-38.2, 6.6, 8.7],
+      "rotation": [0, 40, 0]
+    },
+    {
+      "name": "v_red_lonja",
+      "model": "models/red_pesca.obj",
+      "position": [-33.0, 6.0, 12.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_campana",
+      "model": "models/campana_niebla.obj",
+      "position": [60.0, 6.0, 5.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_farol_0",
+      "model": "models/farol.obj",
+      "position": [-60, 6.0, 3.6],
+      "rotation": [0, 0, 0],
+      "light": {
+        "offset": [0, 3.0, 0],
+        "color": [255, 190, 120],
+        "radius": 12,
+        "intensity": 0.9,
+        "flicker": 0.12,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "v_farol_1",
+      "model": "models/farol.obj",
+      "position": [-44, 6.0, 3.6],
+      "rotation": [0, 0, 0],
+      "light": {
+        "offset": [0, 3.0, 0],
+        "color": [255, 190, 120],
+        "radius": 12,
+        "intensity": 0.9,
+        "flicker": 0.12,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "v_farol_2",
+      "model": "models/farol.obj",
+      "position": [-28, 6.0, 3.6],
+      "rotation": [0, 0, 0],
+      "tint": [70, 70, 76, 255]
+    },
+    {
+      "name": "v_farol_3",
+      "model": "models/farol.obj",
+      "position": [-12, 6.0, 3.6],
+      "rotation": [0, 0, 0],
+      "light": {
+        "offset": [0, 3.0, 0],
+        "color": [255, 190, 120],
+        "radius": 12,
+        "intensity": 0.9,
+        "flicker": 0.12,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "v_farol_4",
+      "model": "models/farol.obj",
+      "position": [4, 6.0, 3.6],
+      "rotation": [0, 0, 0],
+      "light": {
+        "offset": [0, 3.0, 0],
+        "color": [255, 190, 120],
+        "radius": 12,
+        "intensity": 0.9,
+        "flicker": 0.12,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "v_farol_5",
+      "model": "models/farol.obj",
+      "position": [20, 6.0, 3.6],
+      "rotation": [0, 0, 0],
+      "light": {
+        "offset": [0, 3.0, 0],
+        "color": [255, 190, 120],
+        "radius": 12,
+        "intensity": 0.9,
+        "flicker": 0.12,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "v_farol_6",
+      "model": "models/farol.obj",
+      "position": [36, 6.0, 3.6],
+      "rotation": [0, 0, 0],
+      "tint": [70, 70, 76, 255]
+    },
+    {
+      "name": "v_farol_7",
+      "model": "models/farol.obj",
+      "position": [52, 6.0, 3.6],
+      "rotation": [0, 0, 0],
+      "light": {
+        "offset": [0, 3.0, 0],
+        "color": [255, 190, 120],
+        "radius": 12,
+        "intensity": 0.9,
+        "flicker": 0.12,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "v_farol_8",
+      "model": "models/farol.obj",
+      "position": [68, 6.0, 3.6],
+      "rotation": [0, 0, 0],
+      "light": {
+        "offset": [0, 3.0, 0],
+        "color": [255, 190, 120],
+        "radius": 12,
+        "intensity": 0.9,
+        "flicker": 0.12,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "v_luz_taberna",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-12.4, 7.8, 20.5],
+      "light": { "offset": [0, 0, 0], "color": [255, 170, 90], "radius": 9, "intensity": 1.1 }
+    },
+    {
+      "name": "v_luz_capitania",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-38.0, 8.0, 21.0],
+      "light": { "offset": [0, 0, 0], "color": [220, 220, 255], "radius": 7, "intensity": 0.7 }
+    },
+    {
+      "name": "v_cartel_capitania",
+      "model": "models/letrero.obj",
+      "position": [-38.0, 9.2, 21.88],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_capitania.png",
+      "collider": false,
+      "scale": [0.7, 0.7, 1]
+    },
+    {
+      "name": "v_cartel_taberna",
+      "model": "models/letrero.obj",
+      "position": [-11.4, 9.0, 21.88],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_taberna.png",
+      "collider": false,
+      "scale": [0.6, 0.6, 1]
+    },
+    {
+      "name": "v_cartel_perdidos",
+      "model": "models/letrero.obj",
+      "position": [3.4, 9.15, 21.88],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_perdidos.png",
+      "collider": false,
+      "scale": [0.85, 0.85, 1]
+    },
+    {
+      "name": "v_cartel_conservas",
+      "model": "models/letrero.obj",
+      "position": [46.0, 11.6, 21.88],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_conservas.png",
+      "collider": false,
+      "scale": [1.3, 1.3, 1]
+    },
+    {
+      "name": "v_puerta_capitania",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-38.0, 6.0, 21.9]
+    },
+    {
+      "name": "v_puerta_taberna",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-11.4, 6.0, 21.9]
+    },
+    {
+      "name": "v_puerta_perdidos",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0.1, 6.0, 21.9]
+    },
+    {
+      "name": "v_puerta_conservera",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [46.0, 6.0, 21.9]
+    },
+    {
+      "name": "v_luz_conservera_0",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [49.4, 9.7, 21.55],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 190, 120],
+        "radius": 8,
+        "intensity": 0.9,
+        "flicker": 0.15,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "v_luz_conservera_1",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [42.6, 9.7, 21.55],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 190, 120],
+        "radius": 8,
+        "intensity": 0.9,
+        "flicker": 0.15,
+        "flickerRate": 6
+      }
+    },
+    {
+      "name": "v_luz_pilar_dique_0",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [74.5, 10.45, -0.5],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 190, 120],
+        "radius": 7,
+        "intensity": 0.9,
+        "flicker": 0.15,
+        "flickerRate": 4
+      }
+    },
+    {
+      "name": "v_luz_pilar_dique_1",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [74.5, 10.45, 4.5],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 190, 120],
+        "radius": 7,
+        "intensity": 0.9,
+        "flicker": 0.15,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "v_cartel_dique_poste",
+      "model": "models/poste_letrero.obj",
+      "position": [72.0, 6.0, 6.6],
+      "rotation": [0, -90, 0],
+      "scale": [0.6, 1.0, 1.0]
+    },
+    {
+      "name": "v_cartel_dique",
+      "model": "models/letrero.obj",
+      "position": [72.0, 8.3, 6.6],
+      "rotation": [0, -90, 0],
+      "texture": "textures/lam_pn_dique.png",
+      "collider": false,
+      "scale": [0.6, 0.6, 1]
+    },
+    {
+      "name": "v_escalera_varadero",
+      "model": "models/escalera_muelle.obj",
+      "position": [-60.6, 6.0, 0.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_cartel_varadero_poste",
+      "model": "models/poste_letrero.obj",
+      "position": [-59.4, 6.0, 1.6],
+      "rotation": [0, 0, 0],
+      "scale": [0.6, 1.0, 1.0]
+    },
+    {
+      "name": "v_cartel_varadero",
+      "model": "models/letrero.obj",
+      "position": [-59.4, 8.3, 1.6],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_pn_varadero.png",
+      "collider": false,
+      "scale": [0.6, 0.6, 1]
+    },
+    {
+      "name": "v_cartel_varadero_b",
+      "model": "models/letrero.obj",
+      "position": [-59.4, 8.3, 1.57],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_varadero.png",
+      "collider": false,
+      "scale": [0.6, 0.6, 1]
+    },
+    {
+      "name": "v_pasarela_varadero",
+      "model": "models/embarcadero.obj",
+      "position": [-63.3, 4.85, -1.2],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "v_cueva_varadero",
+      "model": "models/cueva_varadero.obj",
+      "position": [-80.5, 4.85, -1.2],
+      "rotation": [0, 90, 0],
+      "texture": "textures/lam_pn_varadero.png",
+      "tint": [110, 110, 118, 255]
+    },
+    {
+      "name": "v_luz_cueva",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-79.9, 7.6, -2.5],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 170, 100],
+        "radius": 7,
+        "intensity": 0.9,
+        "flicker": 0.5,
+        "flickerRate": 7
+      }
+    },
+    {
+      "name": "v_dique_0",
+      "model": "models/dique_tramo.obj",
+      "position": [86.0, 6.0, 2.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "v_dique_1",
+      "model": "models/dique_tramo.obj",
+      "position": [106.0, 6.0, 2.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "v_dique_2",
+      "model": "models/dique_tramo.obj",
+      "position": [118.0, 6.0, -10.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_dique_3",
+      "model": "models/dique_tramo.obj",
+      "position": [118.0, 6.0, -30.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_dique_4",
+      "model": "models/dique_tramo.obj",
+      "position": [128.0, 6.0, -42.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "v_dique_5",
+      "model": "models/dique_tramo.obj",
+      "position": [140.0, 6.0, -54.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_dique_6",
+      "model": "models/dique_tramo.obj",
+      "position": [140.0, 6.0, -76.5],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_dique_esquina_0",
+      "model": "models/dique_esquina.obj",
+      "position": [118.0, 6.0, 2.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_dique_esquina_0_pretil_0",
+      "model": "models/pretil_dique.obj",
+      "position": [120.38, 6.0, 2.3],
+      "rotation": [0, 0, 0],
+      "scale": [1.0, 1.0, 0.8846153846153845]
+    },
+    {
+      "name": "v_dique_esquina_0_pretil_1",
+      "model": "models/pretil_dique.obj",
+      "position": [118.3, 6.0, 4.38],
+      "rotation": [0, 90, 0],
+      "scale": [1.0, 1.0, 0.8846153846153845]
+    },
+    {
+      "name": "v_dique_esquina_1",
+      "model": "models/dique_esquina.obj",
+      "position": [118.0, 6.0, -42.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_dique_esquina_1_pretil_0",
+      "model": "models/pretil_dique.obj",
+      "position": [115.62, 6.0, -42.3],
+      "rotation": [0, 0, 0],
+      "scale": [1.0, 1.0, 0.8846153846153845]
+    },
+    {
+      "name": "v_dique_esquina_1_pretil_1",
+      "model": "models/pretil_dique.obj",
+      "position": [116.7, 6.0, -44.38],
+      "rotation": [0, 90, 0],
+      "scale": [1.0, 1.0, 0.5]
+    },
+    {
+      "name": "v_dique_esquina_2",
+      "model": "models/dique_esquina.obj",
+      "position": [140.0, 6.0, -42.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_dique_esquina_2_pretil_0",
+      "model": "models/pretil_dique.obj",
+      "position": [142.38, 6.0, -41.7],
+      "rotation": [0, 0, 0],
+      "scale": [1.0, 1.0, 0.8846153846153845]
+    },
+    {
+      "name": "v_dique_esquina_2_pretil_1",
+      "model": "models/pretil_dique.obj",
+      "position": [140.3, 6.0, -39.62],
+      "rotation": [0, 90, 0],
+      "scale": [1.0, 1.0, 0.8846153846153845]
+    },
+    {
+      "name": "v_pretil_verja_0",
+      "model": "models/pretil_dique.obj",
+      "position": [75.35, 6.0, -0.28],
+      "rotation": [0, 90, 0],
+      "scale": [1.0, 1.0, 0.25]
+    },
+    {
+      "name": "v_pretil_verja_1",
+      "model": "models/pretil_dique.obj",
+      "position": [75.35, 6.0, 4.28],
+      "rotation": [0, 90, 0],
+      "scale": [1.0, 1.0, 0.25]
+    },
+    {
+      "name": "v_dique_final",
+      "model": "models/dique_tramo.obj",
+      "position": [140.0, 6.0, -92.0],
+      "rotation": [0, 0, 0],
+      "scale": [1.0, 1.0, 0.56]
+    },
+    {
+      "name": "v_isla",
+      "model": "models/isla_faro.obj",
+      "position": [140.0, 6.0, -110.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_faro",
+      "model": "models/faro_niebla.obj",
+      "position": [140.0, 6.0, -110.0],
+      "rotation": [0, 0, 0]
+    }
+  ],
+  "triggers": [
+    {
+      "name": "salir_cem",
+      "position": [-14.0, 34.0, 71.0],
+      "size": [2, 3, 8],
+      "on": "exit",
+      "if": { "flag": "pn_tumba" },
+      "do": [{ "set_flag": "pn_tumba", "value": 0 }]
+    },
+    {
+      "name": "al_puerto",
+      "position": [15.0, 31.3, 46.5],
+      "size": [3, 3, 1.2],
+      "on": "enter",
+      "do": [{ "goto_scene": "scenes/pn_puerto.json", "position": [15.0, 13.5, 39.4], "yaw": 0 }]
+    },
+    {
+      "name": "caer_alto",
+      "position": [0, 0, 90],
+      "size": [200, 30.0, 200],
+      "on": "enter",
+      "do": [{ "teleport": [15.0, 34.0, 53.2], "yaw": 180 }]
+    }
+  ],
+  "emitters": [],
+  "autoCollide": true,
+  "camera": { "position": [15.0, 35.7, 45.0], "target": [15.0, 35.5, 40.0], "fov": 60 }
+}

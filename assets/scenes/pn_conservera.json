@@ -1,0 +1,728 @@
+{
+  "player": { "position": [0, 0, 7.6], "yaw": 0 },
+  "bounds": { "min": [-12.8, -8.8], "max": [44.0, 8.8] },
+  "light": { "direction": [-0.2, -1, 0.1], "ambient": 0.3, "sun": 0.0 },
+  "fog": { "start": 6, "end": 34 },
+  "weather": {
+    "rain": 1.0,
+    "indoor": true,
+    "sound": "audio/lluvia_dentro.wav",
+    "volume": 0.28,
+    "thunder": { "every": [6, 13], "sounds": ["audio/trueno_1.wav", "audio/trueno_2.wav", "audio/trueno_3.wav"] }
+  },
+  "audio": {
+    "music": { "file": "audio/musica_pn_conservera_v2.wav", "volume": 0.5 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.35
+    },
+    "fade": 2
+  },
+  "entities": [
+    {
+      "name": "sala",
+      "model": "models/conservera_dentro.obj",
+      "position": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "tint": [170, 170, 170, 255]
+    },
+    {
+      "name": "salida",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0, 0, 8.6],
+      "interact": {
+        "prompt": "Salir",
+        "range": 3.0,
+        "do": [{ "goto_scene": "scenes/pn_puerto.json", "position": [46.0, 6.0, 20.0], "yaw": 0 }],
+        "box": { "min": [-1.2, 0, -0.4], "max": [1.2, 2.6, 0.4] }
+      }
+    },
+    {
+      "name": "cinta_0",
+      "model": "models/cinta.obj",
+      "position": [-4.0, 0, -6.6],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "cinta_1",
+      "model": "models/cinta.obj",
+      "position": [6.0, 0, -6.6],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "foco_salida",
+      "model": "models/foco_colgante.obj",
+      "position": [0.0, 7.5, 7.4],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_salida",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0.0, 4.9, 7.4],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [230, 220, 200],
+        "radius": 6,
+        "intensity": 0.7,
+        "flicker": 0.1,
+        "flickerRate": 3
+      },
+      "showIf": { "not": { "flag": "pn_apagon" } }
+    },
+    {
+      "name": "maquinas",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0, 1.0, -6.6],
+      "showIf": { "not": { "flag": "pn_apagon" } },
+      "sound": { "file": "audio/maquinas.wav", "volume": 0.6, "radius": 26, "minDistance": 4 }
+    },
+    {
+      "name": "frigorifica",
+      "model": "models/puerta_frigorifica.obj",
+      "position": [0, 0, -8.8],
+      "rotation": [0, 0, 0],
+      "tint": [200, 206, 210, 255]
+    },
+    {
+      "name": "puerta_fria",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0, 0, -8.2],
+      "interact": {
+        "prompt": "Abrir la camara fria",
+        "range": 3.0,
+        "do": [{ "play_sound": "audio/reja.wav", "volume": 0.6 }, { "teleport": [40.0, 0, 1.6], "yaw": 0 }],
+        "box": { "min": [-1.1, 0, -0.4], "max": [1.1, 2.8, 0.4] }
+      }
+    },
+    {
+      "name": "mesa_0",
+      "model": "models/mesa_conservera.obj",
+      "position": [-7.0, 0, -3.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "operario_0_0",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_operario.png",
+      "position": [-7.8, 0, -2.25],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "showIf": { "not": { "flag": "pn_apagon" } },
+      "idle": { "bob": 0.004, "sway": 0.4, "speed": 1.6 }
+    },
+    {
+      "name": "operario_0_1",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_operario.png",
+      "position": [-6.2, 0, -2.25],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "showIf": { "not": { "flag": "pn_apagon" } },
+      "idle": { "bob": 0.004, "sway": 0.4, "speed": 1.6 }
+    },
+    {
+      "name": "mesa_1",
+      "model": "models/mesa_conservera.obj",
+      "position": [0.0, 0, -3.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "operario_1_0",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_operario.png",
+      "position": [-0.8, 0, -2.25],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "showIf": { "not": { "flag": "pn_apagon" } },
+      "idle": { "bob": 0.004, "sway": 0.4, "speed": 1.6 }
+    },
+    {
+      "name": "operario_1_1",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_operario.png",
+      "position": [0.8, 0, -2.25],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "showIf": { "not": { "flag": "pn_apagon" } },
+      "idle": { "bob": 0.004, "sway": 0.4, "speed": 1.6 }
+    },
+    {
+      "name": "mesa_2",
+      "model": "models/mesa_conservera.obj",
+      "position": [7.0, 0, -3.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "operario_2_0",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_operario.png",
+      "position": [6.2, 0, -2.25],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "showIf": { "not": { "flag": "pn_apagon" } },
+      "idle": { "bob": 0.004, "sway": 0.4, "speed": 1.6 }
+    },
+    {
+      "name": "operario_2_1",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_operario.png",
+      "position": [7.8, 0, -2.25],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "showIf": { "not": { "flag": "pn_apagon" } },
+      "idle": { "bob": 0.004, "sway": 0.4, "speed": 1.6 }
+    },
+    {
+      "name": "mesa_3",
+      "model": "models/mesa_conservera.obj",
+      "position": [-7.0, 0, 1.5],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "operario_3_0",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_operario.png",
+      "position": [-7.8, 0, 2.25],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "showIf": { "not": { "flag": "pn_apagon" } },
+      "idle": { "bob": 0.004, "sway": 0.4, "speed": 1.6 }
+    },
+    {
+      "name": "operario_3_1",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_operario.png",
+      "position": [-6.2, 0, 2.25],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "showIf": { "not": { "flag": "pn_apagon" } },
+      "idle": { "bob": 0.004, "sway": 0.4, "speed": 1.6 }
+    },
+    {
+      "name": "mesa_4",
+      "model": "models/mesa_conservera.obj",
+      "position": [0.0, 0, 1.5],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "operario_4_0",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_operario.png",
+      "position": [-0.8, 0, 2.25],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "showIf": { "not": { "flag": "pn_apagon" } },
+      "idle": { "bob": 0.004, "sway": 0.4, "speed": 1.6 }
+    },
+    {
+      "name": "operario_4_1",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_operario.png",
+      "position": [0.8, 0, 2.25],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "showIf": { "not": { "flag": "pn_apagon" } },
+      "idle": { "bob": 0.004, "sway": 0.4, "speed": 1.6 }
+    },
+    {
+      "name": "mesa_5",
+      "model": "models/mesa_conservera.obj",
+      "position": [7.0, 0, 1.5],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "operario_5_0",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_operario.png",
+      "position": [6.2, 0, 2.25],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "showIf": { "not": { "flag": "pn_apagon" } },
+      "idle": { "bob": 0.004, "sway": 0.4, "speed": 1.6 }
+    },
+    {
+      "name": "operario_5_1",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_operario.png",
+      "position": [7.8, 0, 2.25],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "showIf": { "not": { "flag": "pn_apagon" } },
+      "idle": { "bob": 0.004, "sway": 0.4, "speed": 1.6 }
+    },
+    {
+      "name": "foco_0",
+      "model": "models/foco_colgante.obj",
+      "position": [-7, 7.5, -5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_foco_0",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-7, 5.0, -5],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [210, 220, 255],
+        "radius": 9,
+        "intensity": 0.95,
+        "flicker": 0.5,
+        "flickerRate": 7
+      },
+      "showIf": { "not": { "flag": "pn_apagon" } }
+    },
+    {
+      "name": "foco_1",
+      "model": "models/foco_colgante.obj",
+      "position": [0, 7.5, -5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_foco_1",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0, 5.0, -5],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [210, 220, 255],
+        "radius": 9,
+        "intensity": 0.95,
+        "flicker": 0.85,
+        "flickerRate": 8
+      },
+      "showIf": { "not": { "flag": "pn_apagon" } }
+    },
+    {
+      "name": "foco_2",
+      "model": "models/foco_colgante.obj",
+      "position": [7, 7.5, -5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_foco_2",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [7, 5.0, -5],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [210, 220, 255],
+        "radius": 9,
+        "intensity": 0.95,
+        "flicker": 0.85,
+        "flickerRate": 9
+      },
+      "showIf": { "not": { "flag": "pn_apagon" } }
+    },
+    {
+      "name": "foco_3",
+      "model": "models/foco_colgante.obj",
+      "position": [-7, 7.5, 0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_foco_3",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-7, 5.0, 0],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [210, 220, 255],
+        "radius": 9,
+        "intensity": 0.95,
+        "flicker": 0.5,
+        "flickerRate": 10
+      },
+      "showIf": { "not": { "flag": "pn_apagon" } }
+    },
+    {
+      "name": "foco_4",
+      "model": "models/foco_colgante.obj",
+      "position": [0, 7.5, 0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_foco_4",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0, 5.0, 0],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [210, 220, 255],
+        "radius": 9,
+        "intensity": 0.95,
+        "flicker": 0.85,
+        "flickerRate": 11
+      },
+      "showIf": { "not": { "flag": "pn_apagon" } }
+    },
+    {
+      "name": "foco_5",
+      "model": "models/foco_colgante.obj",
+      "position": [7, 7.5, 0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_foco_5",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [7, 5.0, 0],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [210, 220, 255],
+        "radius": 9,
+        "intensity": 0.95,
+        "flicker": 0.85,
+        "flickerRate": 12
+      },
+      "showIf": { "not": { "flag": "pn_apagon" } }
+    },
+    {
+      "name": "foco_6",
+      "model": "models/foco_colgante.obj",
+      "position": [-7, 7.5, 5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_foco_6",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-7, 5.0, 5],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [210, 220, 255],
+        "radius": 9,
+        "intensity": 0.95,
+        "flicker": 0.5,
+        "flickerRate": 13
+      },
+      "showIf": { "not": { "flag": "pn_apagon" } }
+    },
+    {
+      "name": "foco_7",
+      "model": "models/foco_colgante.obj",
+      "position": [0, 7.5, 5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_foco_7",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0, 5.0, 5],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [210, 220, 255],
+        "radius": 9,
+        "intensity": 0.95,
+        "flicker": 0.85,
+        "flickerRate": 14
+      },
+      "showIf": { "not": { "flag": "pn_apagon" } }
+    },
+    {
+      "name": "foco_8",
+      "model": "models/foco_colgante.obj",
+      "position": [7, 7.5, 5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_foco_8",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [7, 5.0, 5],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [210, 220, 255],
+        "radius": 9,
+        "intensity": 0.95,
+        "flicker": 0.85,
+        "flickerRate": 15
+      },
+      "showIf": { "not": { "flag": "pn_apagon" } }
+    },
+    {
+      "name": "frente_lejos_0",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_operario_muerto.png",
+      "position": [-5.0, 0.0, -1.0],
+      "rotation": [0, -3.121076002846099, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "pn_apagon" }, { "flag": "flash" }, { "not": { "flag": "pn_cv_cerca" } }]
+      },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "frente_lejos_1",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_operario_muerto.png",
+      "position": [4.0, 0.0, -1.5],
+      "rotation": [0, 3.0172872985932955, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "pn_apagon" }, { "flag": "flash" }, { "not": { "flag": "pn_cv_cerca" } }]
+      },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "frente_lejos_2",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_operario_muerto.png",
+      "position": [-1.5, 0.0, 2.5],
+      "rotation": [0, 9.811641604447793, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "pn_apagon" }, { "flag": "flash" }, { "not": { "flag": "pn_cv_cerca" } }]
+      },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "frente_lejos_3",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_operario_muerto.png",
+      "position": [2.5, 0.0, 3.5],
+      "rotation": [0, 1.218831402241758, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "pn_apagon" }, { "flag": "flash" }, { "not": { "flag": "pn_cv_cerca" } }]
+      },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "frente_lejos_4",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_operario_muerto.png",
+      "position": [-6.0, 0.0, 4.5],
+      "rotation": [0, 0.9833732550969323, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "pn_apagon" }, { "flag": "flash" }, { "not": { "flag": "pn_cv_cerca" } }]
+      },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "frente_lejos_5",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_operario_muerto.png",
+      "position": [6.5, 0.0, 5.0],
+      "rotation": [0, -2.4687701513049376, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "pn_apagon" }, { "flag": "flash" }, { "not": { "flag": "pn_cv_cerca" } }]
+      },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "frente_cerca_0",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_operario_muerto.png",
+      "position": [-2.0, 0.0, 5.0],
+      "rotation": [0, -9.524015178462822, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "pn_apagon" }, { "flag": "flash" }, { "flag": "pn_cv_cerca" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "frente_cerca_1",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_operario_muerto.png",
+      "position": [1.6, 0.0, 5.5],
+      "rotation": [0, -8.280665500742153, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "pn_apagon" }, { "flag": "flash" }, { "flag": "pn_cv_cerca" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "frente_cerca_2",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_operario_muerto.png",
+      "position": [-0.6, 0.0, 6.6],
+      "rotation": [0, -2.361815652358203, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "pn_apagon" }, { "flag": "flash" }, { "flag": "pn_cv_cerca" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "frente_cerca_3",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_operario_muerto.png",
+      "position": [0.9, 0.0, 7.4],
+      "rotation": [0, -6.673723783432377, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "pn_apagon" }, { "flag": "flash" }, { "flag": "pn_cv_cerca" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "frente_cerca_4",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_operario_muerto.png",
+      "position": [-3.0, 0.0, 6.8],
+      "rotation": [0, -5.359616557405195, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "pn_apagon" }, { "flag": "flash" }, { "flag": "pn_cv_cerca" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "frente_cerca_5",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_operario_muerto.png",
+      "position": [3.2, 0.0, 6.6],
+      "rotation": [0, -5.718730113315506, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "pn_apagon" }, { "flag": "flash" }, { "flag": "pn_cv_cerca" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "operario_espalda",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_operario_muerto.png",
+      "position": [0, 0, -50],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "emissive": true,
+      "tint": [190, 196, 200, 255],
+      "showIf": { "all": [{ "flag": "pn_apagon" }, { "flag": "pn_cv_detras" }] },
+      "seen": {
+        "range": 10,
+        "angle": 35,
+        "if": { "not": { "flag": "pn_cv_visto" } },
+        "do": [
+          { "set_flag": "pn_cv_visto" },
+          { "play_sound": "audio/susto_espalda.wav", "volume": 0.9 },
+          { "scare": "operario_espalda", "speed": 24, "fov": 28 },
+          { "message": "Te estaba siguiendo. Pegado a ti, a oscuras.", "seconds": 3 },
+          { "wait": 3.2 },
+          { "set_flag": "pn_cv_detras", "value": 0 }
+        ]
+      }
+    },
+    {
+      "name": "fria",
+      "model": "models/camara_fria.obj",
+      "position": [40.0, 0.0, 0.0],
+      "rotation": [0, 0, 0],
+      "tint": [170, 190, 200, 255]
+    },
+    {
+      "name": "ganchos",
+      "model": "models/ganchos.obj",
+      "position": [40.0, 0, -1.2],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "frigorifica_dentro",
+      "model": "models/puerta_frigorifica.obj",
+      "position": [40.0, 0, 2.5],
+      "rotation": [0, 180, 0],
+      "tint": [200, 206, 210, 255]
+    },
+    {
+      "name": "luz_fria",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [40.0, 2.6, 0],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [190, 220, 255],
+        "radius": 6,
+        "intensity": 0.8,
+        "flicker": 0.6,
+        "flickerRate": 9
+      },
+      "showIf": { "not": { "flag": "pn_apagon" } }
+    },
+    {
+      "name": "puerta_fria_salir",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [40.0, 0, 2.4],
+      "interact": {
+        "prompt": "Salir de la camara",
+        "range": 2.6,
+        "do": [{ "teleport": [0, 0, -7.4], "yaw": 180 }],
+        "box": { "min": [-0.8, 0, -0.3], "max": [0.8, 2.4, 0.3] }
+      }
+    },
+    {
+      "name": "zapato",
+      "model": "models/zapatitos.obj",
+      "position": [40.6, 0, -1.6],
+      "rotation": [0, 40, 0],
+      "collider": false,
+      "scale": [0.6, 0.6, 0.6],
+      "tint": [230, 70, 60, 255],
+      "showIf": { "not": { "flag": "pn_zapato_tomado" } },
+      "interact": { "prompt": "Recoger", "range": 2.2, "do": [{ "dialogue": "pn_zapato" }] }
+    }
+  ],
+  "triggers": [
+    {
+      "name": "a_oscuras",
+      "position": [16.0, 0, 0],
+      "size": [60, 4, 20],
+      "on": "stay",
+      "if": { "flag": "pn_apagon" },
+      "do": [{ "ambient": 0.02, "seconds": 0.0 }]
+    },
+    {
+      "name": "mitad",
+      "position": [0, 0, 2.0],
+      "size": [26, 3, 1.5],
+      "on": "enter",
+      "if": {
+        "all": [{ "flag": "pn_apagon" }, { "not": { "flag": "pn_cv_cerca" } }]
+      },
+      "do": [{ "set_flag": "pn_cv_cerca" }]
+    },
+    {
+      "name": "detras",
+      "position": [0, 0, 6.0],
+      "size": [26, 3, 1.5],
+      "on": "enter",
+      "if": {
+        "all": [{ "flag": "pn_apagon" }, { "not": { "flag": "pn_cv_visto" } }]
+      },
+      "do": [
+        { "play_sound": "audio/pasos_detras.wav", "volume": 0.8 },
+        { "wait": 1.4 },
+        { "behind_player": "operario_espalda", "distance": 1.4 },
+        { "set_flag": "pn_cv_detras" },
+        { "message": "Pasos detras de ti. Mojados.", "seconds": 3 }
+      ]
+    }
+  ],
+  "background": [6, 6, 8],
+  "photo": { "if": { "flag": "pn_camara" }, "cooldown": 1.6 },
+  "emitters": [],
+  "autoCollide": true,
+  "camera": { "position": [0, 1.7, 7.6], "target": [0, 1.5, 2.5999999999999996], "fov": 60 }
+}

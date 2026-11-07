@@ -1,0 +1,37 @@
+# RetroEngine: perdidos
+
+newmtl mat_cal_sucia
+d 1.000000
+map_Kd ../textures/mat_cal_sucia.png
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_piedra_mojada
+d 1.000000
+map_Kd ../textures/mat_piedra_mojada.png
+
+newmtl mat_pizarra
+d 1.000000
+map_Kd ../textures/mat_pizarra.png
+
+newmtl mat_puerta
+d 1.000000
+map_Kd ../textures/mat_puerta.png
+
+newmtl mat_tablas_negras
+d 1.000000
+map_Kd ../textures/mat_tablas_negras.png
+
+newmtl mat_toldo
+d 1.000000
+map_Kd ../textures/mat_toldo.png
+
+newmtl mat_ventana
+d 1.000000
+map_Kd ../textures/mat_ventana.png
+
+newmtl mat_ventana_luz
+d 1.000000
+map_Kd ../textures/mat_ventana_luz.png

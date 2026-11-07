@@ -1,0 +1,13 @@
+# RetroEngine: dique_tramo
+
+newmtl mat_granito
+d 1.000000
+map_Kd ../textures/mat_granito.png
+
+newmtl mat_piedra_mojada
+d 1.000000
+map_Kd ../textures/mat_piedra_mojada.png
+
+newmtl mat_piedra_musgo
+d 1.000000
+map_Kd ../textures/mat_piedra_musgo.png

@@ -1,0 +1,27 @@
+{
+  "speaker": "Nico",
+  "entries": [
+    {
+      "lines": ["Quietos todos. Nadie cierre los ojos.", "Uno.", "Dos.", "Tres."],
+      "do": [
+        { "play_sound": "audio/flash.wav", "volume": 1.0 },
+        { "add_flag": "lista", "amount": 8 },
+        { "set_flag": "reloj", "value": 2 },
+        { "stop_music": true, "fade": 1.0 },
+        {
+          "goto_scene": "scenes/hoz_viento.json",
+          "position": [-17.5, 40.0, -3.2],
+          "yaw": 0,
+          "dark": 14,
+          "lines": [
+            "",
+            "El flash te deja una mancha blanca en los ojos.",
+            "Cuando se borra, el reloj marca las 3:13.",
+            "Y sopla.",
+            ""
+          ]
+        }
+      ]
+    }
+  ]
+}

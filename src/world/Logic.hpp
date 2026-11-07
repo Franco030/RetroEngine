@@ -20,6 +20,8 @@ struct GotoScene {
   std::optional<float> yaw;
   float dark = 0.0f;              // segundos en negro con la escena nueva ya cargada
   std::vector<std::string> lines; // frases que aparecen una tras otra en ese negro
+  std::string music;               // si no esta vacia: suena en el negro (la escena, al acabar)
+  float musicVolume = 0.7f;
 };
 
 struct Teleport {
@@ -131,13 +133,47 @@ struct BehindPlayer {
   float side = 0.0f;
 };
 
+// Cambia el tiempo de la escena (su "weather"): 'rain' (0..1) en 'fade' segundos (casi 0: deja de
+// llover de golpe) y 'storm' enciende o apaga los relampagos sueltos. Lo que no se da, sigue igual.
+struct SetWeather {
+  std::optional<float> rain;
+  float fade = 1.0f;
+  std::optional<bool> storm;
+};
+
+// Un relampago ahora (aunque no haya tormenta): el destello, la bandera "relampago" y el trueno a
+// los 'thunderDelay' segundos (0: encima).
+struct Lightning {
+  float thunderDelay = 0.4f;
+};
+
+// La niebla pasa a 'start'..'end' en 'seconds' segundos (como "fog" de la escena).
+struct SetFog {
+  float start = 10.0f;
+  float end = 26.0f;
+  float seconds = 2.0f;
+};
+
+// La luz ambiente de la escena pasa a 'value' (0..1) en 'seconds': un apagon, o que vuelva la luz.
+struct SetAmbient {
+  float value = 0.35f;
+  float seconds = 0.5f;
+};
+
+// Espera 'seconds' antes de seguir con el resto de la lista (lo que viene detras se ejecuta despues).
+// Si se cambia de escena mientras tanto, lo que faltaba se olvida.
+struct Wait {
+  float seconds = 1.0f;
+};
+
 } // namespace action
 
 using Action =
     std::variant<action::GotoScene, action::Teleport, action::SetFlag, action::AddFlag,
                  action::Message, action::PlaySound, action::PlayMusic, action::StopMusic,
                  action::StartDialogue, action::LookAt, action::Scare, action::LockMovement,
-                 action::TitleScreen, action::Ride, action::Shooting, action::BehindPlayer>;
+                 action::TitleScreen, action::Ride, action::Shooting, action::BehindPlayer,
+                 action::SetWeather, action::Lightning, action::SetFog, action::Wait, action::SetAmbient>;
 
 enum class CompareOp { Eq, Ne, Lt, Le, Gt, Ge };
 
@@ -171,11 +207,25 @@ struct Sight {
   float range = 15.0f;
   float angle = 20.0f;     // para "la ves": cerca del centro de la vista
   float awayAngle = 75.0f; // para "dejas de mirarla": fuera de pantalla (mas que el campo de vision)
+  float hold = 0.0f;       // segundos que hay que tenerla delante, seguidos, para que cuente
+  float held = 0.0f;       // los que lleva
   std::vector<Condition> conditions; // mientras no se cumplan, mirarla no cuenta
   std::vector<Action> onSeen;
   std::vector<Action> onLookAway;
   bool seen = false;    // ya la vio (se ejecuto onSeen)
   bool away = false;    // ya aparto la vista (se ejecuto onLookAway)
+};
+
+// "near": estar cerca, mire donde mire (oirla). Tras 'after' segundos seguidos a menos de 'range' m
+// (en horizontal), la bandera 'flag' vale 1; tras 'forget' segundos lejos, vuelve a 0.
+struct Near {
+  float range = 5.0f;
+  float after = 2.0f;
+  float forget = 5.0f;
+  std::string flag;
+  float inside = 0.0f;  // segundos seguidos cerca
+  float outside = 0.0f; // segundos seguidos lejos
+  bool on = false;
 };
 
 // Lo que ocurre al pulsar E sobre una entidad

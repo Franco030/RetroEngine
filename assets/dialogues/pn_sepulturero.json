@@ -1,0 +1,15 @@
+{
+  "entries": [
+    {
+      "once": true,
+      "key": "hola",
+      "lines": [
+        "El sepulturero. El del bosque. Cava sin levantar la cabeza.",
+        "\"Otra alma perdida...\"",
+        "\"No. Usted no. Esta no es para usted.\"",
+        "\"Todavia no.\""
+      ]
+    },
+    { "lines": ["Sigue cavando. La tierra no se mueve."] }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "entries": [
+    {
+      "if": { "flag": "pn_zapato_ok" },
+      "lines": [
+        "Por el catalejo: el faro, apagado.",
+        "Abajo, junto a la puerta, una niña con zapatos rojos. Te esta mirando."
+      ]
+    },
+    {
+      "lines": [
+        "Por el catalejo: el faro, apagado, en su isla.",
+        "Y el dique hasta alla, que se pierde en la niebla."
+      ]
+    }
+  ]
+}

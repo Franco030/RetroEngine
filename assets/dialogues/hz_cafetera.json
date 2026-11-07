@@ -1,0 +1,8 @@
+{
+  "entries": [
+    {
+      "lines": ["Tomas un cafe de pie. Amargo, recalentado nueve noches.", "Te despierta un poco."],
+      "do": [{ "play_sound": "audio/taza.wav", "volume": 0.8 }]
+    }
+  ]
+}

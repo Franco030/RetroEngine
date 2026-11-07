@@ -1,0 +1,14 @@
+{
+  "entries": [
+    {
+      "if": { "flag": "reloj" },
+      "lines": ["Las 3:12. Camina.", "Alguien en la plaza aplaude, despacio, una sola vez."]
+    },
+    {
+      "lines": [
+        "El reloj de la torre: las 3:11.",
+        "Arriba, en la veleta, un cuervo de hierro.\nEs el unico que queda."
+      ]
+    }
+  ]
+}

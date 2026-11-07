@@ -96,6 +96,7 @@ public:
   std::vector<BoxCollider> colliders;
   std::optional<Interaction> interact;
   std::optional<Sight> sight;
+  std::optional<Near> near;
   std::optional<EntityLight> light;
   std::optional<EntitySound> sound;
 

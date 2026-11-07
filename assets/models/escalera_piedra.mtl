@@ -1,0 +1,5 @@
+# RetroEngine: escalera_piedra
+
+newmtl mat_piedra_mojada
+d 1.000000
+map_Kd ../textures/mat_piedra_mojada.png

@@ -1,0 +1,41 @@
+{
+  "speaker": "Nico",
+  "entries": [
+    {
+      "if": { "flag": "pn_seis_ok" },
+      "lines": [
+        "Ahi estan, los seis.",
+        "Y detras... todos. Cada vez que la miro salen mas.",
+        "Quedate la camara. A mi ya no me sale nadie en las fotos. A ti si."
+      ]
+    },
+    {
+      "if": { "flag": "pn_seis_fotos" },
+      "lines": [
+        "Dame el carrete.",
+        "Nico se mete en el cuarto de atras. Tarda mucho.",
+        "Cuando sale no dice nada. Deja la foto en la mesa."
+      ],
+      "do": [{ "set_flag": "pn_seis_ok" }, { "add_flag": "pn_lista", "amount": 4 }]
+    },
+    {
+      "if": { "flag": "pn_varadero_abierto" },
+      "lines": [
+        "El varadero. La escalera del muelle, al oeste, pasando la estacion.",
+        "Despacio, con Ctrl. Y no le des con el flash a lo que no es."
+      ]
+    },
+    {
+      "lines": [
+        "Una carta, un zapato, el faro... y seis fotos. Eso dice el libro, ¿no?",
+        "Las fotos son mias. Los seis de la partida. Los que fueron a buscar a Clara al bosque.",
+        "No volvieron. Estan abajo, en el varadero, donde ya no hay luz. Siguen buscandola.",
+        "Hazle una foto a cada uno. Si salen en la foto, a lo mejor se pueden ir.",
+        "Pero abajo hay algo mas. Algo que cuenta los pasos.",
+        "Si corres, te oye. Si te quedas delante, te encuentra. Si le das con el flash, te ve.",
+        "Se le oye respirar. Es lo unico."
+      ],
+      "do": [{ "set_flag": "pn_varadero_abierto" }]
+    }
+  ]
+}

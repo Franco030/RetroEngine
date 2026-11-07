@@ -1,0 +1,291 @@
+{
+  "player": { "position": [0, 0, 2.8], "yaw": 0 },
+  "bounds": { "min": [-4.8, -3.8], "max": [4.8, 3.8] },
+  "light": { "direction": [-0.2, -1, 0.1], "ambient": 0.26, "sun": 0.0 },
+  "audio": {
+    "music": { "file": "audio/musica_pn_v2.wav", "volume": 0.25 },
+    "ambient": { "file": "audio/tictac.wav", "volume": 0.4 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.3
+    },
+    "fade": 2
+  },
+  "entities": [
+    {
+      "name": "sala",
+      "model": "models/capitania_dentro.obj",
+      "position": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "tint": [180, 176, 170, 255]
+    },
+    {
+      "name": "salida",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0, 0, 3.75],
+      "interact": {
+        "prompt": "Salir",
+        "range": 3.0,
+        "do": [{ "goto_scene": "scenes/pn_puerto.json", "position": [-38.0, 6.0, 20.4], "yaw": 0 }],
+        "box": { "min": [-0.8, 0, -0.4], "max": [0.8, 2.4, 0.4] }
+      }
+    },
+    {
+      "name": "escritorio",
+      "model": "models/escritorio.obj",
+      "position": [0.6, 0, -1.6],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "silla_cap",
+      "model": "models/silla.obj",
+      "position": [0.6, 0, -2.3],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "capitan",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_capitan.png",
+      "position": [0.6, 0, -2.4],
+      "rotation": [0, 0, 0],
+      "idle": { "bob": 0.006, "sway": 0.8, "speed": 0.9 },
+      "facePlayer": { "range": 4.0, "turnSpeed": 70 },
+      "interact": { "prompt": "Hablar", "range": 2.6, "do": [{ "dialogue": "pn_capitan" }] }
+    },
+    {
+      "name": "atril_libro",
+      "model": "models/atril.obj",
+      "position": [-2.6, 0, -1.2],
+      "rotation": [0, 30, 0],
+      "interact": { "prompt": "Leer el libro", "range": 2.4, "do": [{ "dialogue": "pn_libro" }] }
+    },
+    {
+      "name": "mapa_pared",
+      "model": "models/lamina.obj",
+      "position": [2.5, 1.9, -3.7],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_mapa.png",
+      "collider": false,
+      "scale": [1.4, 1.4, 1]
+    },
+    {
+      "name": "estanteria_cap",
+      "model": "models/estanteria.obj",
+      "position": [-4.4, 0, -2.2],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "estanteria_cap_b",
+      "model": "models/estanteria.obj",
+      "position": [-4.4, 0, 0.2],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "lampara_cap",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [1.0, 1.25, -1.5],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 200, 140],
+        "radius": 7,
+        "intensity": 1.0,
+        "flicker": 0.05,
+        "flickerRate": 4
+      }
+    },
+    {
+      "name": "reloj_cap",
+      "model": "models/lamina.obj",
+      "position": [-2.2, 2.3, -3.72],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_pn_reloj.png",
+      "collider": false,
+      "scale": [0.62, 0.62, 1]
+    },
+    {
+      "name": "farol_mesa",
+      "model": "models/farol_mano.obj",
+      "position": [1.0, 0.84, -1.5],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "libro_0",
+      "model": "models/lamina.obj",
+      "position": [-2.62, 1.2, -1.16],
+      "rotation": [-55, 30, 0],
+      "texture": "textures/lam_pn_lista_0.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1],
+      "showIf": { "flag": "pn_lista", "op": "==", "value": 0 }
+    },
+    {
+      "name": "libro_1",
+      "model": "models/lamina.obj",
+      "position": [-2.62, 1.2, -1.16],
+      "rotation": [-55, 30, 0],
+      "texture": "textures/lam_pn_lista_1.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1],
+      "showIf": { "flag": "pn_lista", "op": "==", "value": 1 }
+    },
+    {
+      "name": "libro_2",
+      "model": "models/lamina.obj",
+      "position": [-2.62, 1.2, -1.16],
+      "rotation": [-55, 30, 0],
+      "texture": "textures/lam_pn_lista_2.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1],
+      "showIf": { "flag": "pn_lista", "op": "==", "value": 2 }
+    },
+    {
+      "name": "libro_3",
+      "model": "models/lamina.obj",
+      "position": [-2.62, 1.2, -1.16],
+      "rotation": [-55, 30, 0],
+      "texture": "textures/lam_pn_lista_3.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1],
+      "showIf": { "flag": "pn_lista", "op": "==", "value": 3 }
+    },
+    {
+      "name": "libro_4",
+      "model": "models/lamina.obj",
+      "position": [-2.62, 1.2, -1.16],
+      "rotation": [-55, 30, 0],
+      "texture": "textures/lam_pn_lista_4.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1],
+      "showIf": { "flag": "pn_lista", "op": "==", "value": 4 }
+    },
+    {
+      "name": "libro_5",
+      "model": "models/lamina.obj",
+      "position": [-2.62, 1.2, -1.16],
+      "rotation": [-55, 30, 0],
+      "texture": "textures/lam_pn_lista_5.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1],
+      "showIf": { "flag": "pn_lista", "op": "==", "value": 5 }
+    },
+    {
+      "name": "libro_6",
+      "model": "models/lamina.obj",
+      "position": [-2.62, 1.2, -1.16],
+      "rotation": [-55, 30, 0],
+      "texture": "textures/lam_pn_lista_6.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1],
+      "showIf": { "flag": "pn_lista", "op": "==", "value": 6 }
+    },
+    {
+      "name": "libro_7",
+      "model": "models/lamina.obj",
+      "position": [-2.62, 1.2, -1.16],
+      "rotation": [-55, 30, 0],
+      "texture": "textures/lam_pn_lista_7.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1],
+      "showIf": { "flag": "pn_lista", "op": "==", "value": 7 }
+    },
+    {
+      "name": "libro_8",
+      "model": "models/lamina.obj",
+      "position": [-2.62, 1.2, -1.16],
+      "rotation": [-55, 30, 0],
+      "texture": "textures/lam_pn_lista_8.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1],
+      "showIf": { "flag": "pn_lista", "op": "==", "value": 8 }
+    },
+    {
+      "name": "libro_9",
+      "model": "models/lamina.obj",
+      "position": [-2.62, 1.2, -1.16],
+      "rotation": [-55, 30, 0],
+      "texture": "textures/lam_pn_lista_9.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1],
+      "showIf": { "flag": "pn_lista", "op": "==", "value": 9 }
+    },
+    {
+      "name": "libro_10",
+      "model": "models/lamina.obj",
+      "position": [-2.62, 1.2, -1.16],
+      "rotation": [-55, 30, 0],
+      "texture": "textures/lam_pn_lista_10.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1],
+      "showIf": { "flag": "pn_lista", "op": "==", "value": 10 }
+    },
+    {
+      "name": "libro_11",
+      "model": "models/lamina.obj",
+      "position": [-2.62, 1.2, -1.16],
+      "rotation": [-55, 30, 0],
+      "texture": "textures/lam_pn_lista_11.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1],
+      "showIf": { "flag": "pn_lista", "op": "==", "value": 11 }
+    },
+    {
+      "name": "libro_12",
+      "model": "models/lamina.obj",
+      "position": [-2.62, 1.2, -1.16],
+      "rotation": [-55, 30, 0],
+      "texture": "textures/lam_pn_lista_12.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1],
+      "showIf": { "flag": "pn_lista", "op": "==", "value": 12 }
+    },
+    {
+      "name": "libro_13",
+      "model": "models/lamina.obj",
+      "position": [-2.62, 1.2, -1.16],
+      "rotation": [-55, 30, 0],
+      "texture": "textures/lam_pn_lista_13.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1],
+      "showIf": { "flag": "pn_lista", "op": "==", "value": 13 }
+    },
+    {
+      "name": "libro_14",
+      "model": "models/lamina.obj",
+      "position": [-2.62, 1.2, -1.16],
+      "rotation": [-55, 30, 0],
+      "texture": "textures/lam_pn_lista_14.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1],
+      "showIf": { "flag": "pn_lista", "op": "==", "value": 14 }
+    },
+    {
+      "name": "libro_15",
+      "model": "models/lamina.obj",
+      "position": [-2.62, 1.2, -1.16],
+      "rotation": [-55, 30, 0],
+      "texture": "textures/lam_pn_lista_15.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1],
+      "showIf": { "flag": "pn_lista", "op": "==", "value": 15 }
+    }
+  ],
+  "background": [6, 6, 8],
+  "fog": { "start": 8, "end": 40 },
+  "weather": {
+    "rain": 1.0,
+    "indoor": true,
+    "sound": "audio/lluvia_dentro.wav",
+    "volume": 0.28,
+    "thunder": { "every": [12, 26], "sounds": ["audio/trueno_1.wav", "audio/trueno_2.wav", "audio/trueno_3.wav"] }
+  },
+  "photo": { "if": { "flag": "pn_camara" }, "cooldown": 1.6 },
+  "emitters": [],
+  "autoCollide": true,
+  "triggers": [],
+  "camera": { "position": [0, 1.7, 2.8], "target": [0, 1.5, -2.2], "fov": 60 }
+}

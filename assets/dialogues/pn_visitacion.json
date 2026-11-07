@@ -1,0 +1,23 @@
+{
+  "speaker": "Visitacion",
+  "entries": [
+    {
+      "if": { "flag": "pn_carta_ok" },
+      "lines": ["Mateo ya la leyo. Lo vi desde aqui. Durmio de pie, tranquilo."]
+    },
+    {
+      "if": { "flag": "pn_carta_tomada" },
+      "lines": ["La carta de Amparo. Mateo, en el muelle uno, al final."]
+    },
+    { "if": { "flag": "lleva", "op": "!=", "value": 0 }, "lines": ["Traes las manos ocupadas."] },
+    {
+      "lines": [
+        "Objetos perdidos. Aqui llega todo lo que se lleva el viento.",
+        "Cartas, zapatos, maletas... a veces, nombres.",
+        "De Hoz llegan sacas enteras. Ninguna carta trae remite.\nEsta si: Amparo.",
+        "Es para Mateo, su marido. Esta en el muelle uno, esperando el barco.\nLlevesela usted. Yo no puedo salir de aqui."
+      ],
+      "do": [{ "set_flag": "lleva", "value": 1 }, { "set_flag": "pn_carta_tomada" }]
+    }
+  ]
+}

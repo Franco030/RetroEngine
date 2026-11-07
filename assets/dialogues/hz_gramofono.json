@@ -1,0 +1,15 @@
+{
+  "entries": [
+    { "if": { "flag": "vals" }, "lines": ["El disco sigue girando."] },
+    {
+      "if": { "flag": "lleva", "op": "==", "value": 3 },
+      "lines": [
+        "Pones el disco. Bajas la aguja.",
+        "Es el vals. El de la feria de Ventosa. El mismo.",
+        "Nadie se mueve. Luego, Chelo cierra los ojos un momento, y los vuelve a abrir."
+      ],
+      "do": [{ "set_flag": "lleva", "value": 0 }, { "set_flag": "vals" }, { "add_flag": "lista", "amount": 4 }]
+    },
+    { "lines": ["Un gramofono. No tiene disco."] }
+  ]
+}

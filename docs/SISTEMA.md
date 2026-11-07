@@ -106,12 +106,12 @@ con la fecha y la hora en el nombre.
 ## 2. El fotograma del juego, paso a paso
 
 `src/main.cpp` monta el juego: un `RetroEngine`, una `RetroCamera`, un `SceneManager` con
-`scenes/demo.json`, un `Player`, un `GameState`, un `ActionRunner`, un `FootstepTracker` y un
+la escena de la pantalla de inicio (§15.6), un `Player`, un `GameState`, un `ActionRunner`, un `FootstepTracker` y un
 `SaveManager`.
 
 **Actualización**, en este orden:
 
-1. Teclas de guardado, carga, cambio de escena, recarga, reinicio de estado y depuración
+1. (Solo en `RetroEngineDebug.exe`, §21.) Teclas de guardado, carga, cambio de escena, recarga, reinicio de estado y depuración
    (F1–F10, Tab).
 2. `SceneManager::Update`: avanza el fundido (si hay cambio de escena) y actualiza las entidades
    (giro `spin`, `facePlayer`, `idle`). El "foco" para `facePlayer` son los pies del jugador.
@@ -651,7 +651,7 @@ ejecuta `ActionRunner` en orden.
 
 | Acción | Modificadores (valor por defecto) | Efecto |
 |---|---|---|
-| `{ "goto_scene": "scenes/x.json" }` | `position` [x,y,z], `yaw`, `dark` (0), `lines` | Cambia de escena con fundido. Si se dan, `position` y `yaw` sustituyen el punto de inicio del destino. Con `dark` (segundos, hasta 60) la pantalla se queda en negro ese rato con la escena nueva ya cargada (ya suena su música) y `lines` son frases que salen una tras otra en el centro, con el tiempo repartido a partes iguales, apareciendo y apagándose despacio (una vacía es un rato de silencio, y dura un tercio de lo que dura una frase). Calcula unos 4 s por frase. Una frase larga se parte sola en varias líneas. Si el archivo no existe, se avisa por consola y no pasa nada. |
+| `{ "goto_scene": "scenes/x.json" }` | `position` [x,y,z], `yaw`, `dark` (0), `lines` | Cambia de escena con fundido. Si se dan, `position` y `yaw` sustituyen el punto de inicio del destino. Con `dark` (segundos, hasta 60) la pantalla se queda en negro ese rato con la escena nueva ya cargada (ya suena su música) y `lines` son frases que salen una tras otra en el centro, con el tiempo repartido a partes iguales, apareciendo y apagándose despacio (una vacía es un rato de silencio, y dura un tercio de lo que dura una frase). Calcula unos 4 s por frase. Una frase larga se parte sola en varias líneas. Con `music` (y `musicVolume`, 0.7) el negro tiene su propia música en lugar de la de la escena, que entra al terminar; si ya sonaba (la puso antes un trigger, como la caída al barranco de Hoz del Cuervo), sigue sin cortes. Si el archivo no existe, se avisa por consola y no pasa nada. |
 | `{ "teleport": [x, y, z] }` | `yaw` (el actual) | Mueve al jugador al instante (reinicia su velocidad). |
 | `{ "set_flag": "nombre" }` | `value` (1) | Fija la bandera. |
 | `{ "add_flag": "nombre" }` | `amount` (1) | Suma a la bandera (puede ser negativo). |
@@ -662,8 +662,13 @@ ejecuta `ActionRunner` en orden.
 | `{ "lock_movement": true }` | — | El jugador puede **mirar pero no andar** ni saltar (se para en seco); `false` lo suelta. Se suelta solo al cambiar de escena. Para los momentos en que hay que darse la vuelta porque algo está detrás (los pasos del bosque negro, la emboscada del árbol hueco) y andar los rompería. |
 | `{ "title_screen": true }` | — | Con un `goto_scene` en la misma lista: al llegar a esa escena, en vez de jugar sale la **pantalla de inicio** (§15.6) con "Jugar", que lleva la cámara volando al punto de inicio de la escena. |
 | `{ "ride": "entidad", "seat": [x,y,z] }` | `exit` [x,y,z], `seconds` (0), `flag`, `after`, `locked` (false) | **Montarse** en algo que se mueve (el tiovivo, la noria). `seat` es un punto del mundo **al subir**: se pasa a coordenadas de la entidad, así gira y sube con ella. El jugador va pegado a ese punto, puede mirar pero no andar (sin física, sin triggers ni interacciones) y baja con **E** (tras un respiro) o a los `seconds` (0 = solo con E), en `exit` (o donde estaba). Con `locked`, E no baja y no sale el aviso: hay que esperar a los `seconds`, que entonces son obligatorios (el mar llegando a Salinas). Mientras va montado, `flag` vale 1: con `showIf` se ven cosas solo desde arriba. Al bajar se abre el diálogo `after`. |
-| `{ "behind_player": "entidad" }` | `distance` (2.4), `side` (0) | Pone la entidad **a la espalda del jugador**, a `distance` metros y `side` metros a su derecha, mirándole: dentro de `bounds` y, si cae dentro de algo sólido, más cerca. Solo mueve X y Z. Para los sustos: en el museo de Salinas, al ver el pedestal vacío el buzo ya está detrás; con un `seen` en la entidad, al darse la vuelta salta el susto. La entidad conviene que no tenga colisión. |
+| `{ "behind_player": "entidad" }` | `distance` (2.4), `side` (0) | Pone la entidad **a la espalda del jugador** (con `distance` negativa, **delante de su cara**: para un susto de frente), a `distance` metros y `side` metros a su derecha, mirándole: dentro de `bounds` y, si cae dentro de algo sólido, más cerca. Solo mueve X y Z. Para los sustos: en el museo de Salinas, al ver el pedestal vacío el buzo ya está detrás; con un `seen` en la entidad, al darse la vuelta salta el susto. Cada vez que se pone a la espalda es una aparición nueva: su `seen` vuelve a valer. La entidad conviene que no tenga colisión. |
 | `{ "shooting": "prefijo_", "position": [x,y,z] }` | `yaw` (0), `seconds` (20), `flag`, `after` | **Tiro al blanco**: el jugador se planta en `position` mirando a `yaw` (puede mirar, no andar) y dispara con clic o **E** a las entidades visibles cuyo nombre empieza por el prefijo (por su caja de dibujo y si nada las tapa: `Scene::FindTarget`). Cada acierto esconde la diana 1.4 s; arriba se ven los aciertos y los segundos. Al acabar, `flag` guarda los aciertos y se abre el diálogo `after` (en sus líneas, `{flag}` muestra la cuenta y las entradas pueden pedir `"op": ">="`). |
+| `{ "weather": { "rain": 0 } }` | `fade` (1), `storm` | Cambia el **tiempo** de la escena (§ `weather`): la lluvia pasa a `rain` (0..1) en `fade` segundos (casi 0: **deja de llover de golpe**, también se corta su sonido) y `storm` (true/false) enciende o apaga los relámpagos sueltos. Lo que no se da sigue igual. Se pierde al cambiar de escena. |
+| `{ "ambient": 0.05 }` | `seconds` (0.5) | La **luz ambiente** de la escena pasa a ese valor (0..1) en `seconds`: un apagón (la conservera de Puerto Niebla) o que vuelva la luz. Se pierde al cambiar de escena. |
+| `{ "wait": 6 }` | — | **Espera** esos segundos y sigue con el resto de la lista (lo que va detrás se ejecuta después: `ActionRunner::Update`). Para secuencias: deja de llover, todos se giran, y a los seis segundos vuelve la tormenta. Si se cambia de escena antes, lo que faltaba se olvida. |
+| `{ "lightning": true }` | `thunderDelay` (0.4) | **Un relámpago ahora**, haya o no tormenta: el destello, la bandera `relampago` un instante y el trueno de la escena a los `thunderDelay` segundos. |
+| `{ "fog": { "start": 2, "end": 8 } }` | `seconds` (2) | La **niebla** pasa a esas distancias, suave, en `seconds`. Vuelve a la de la escena al cambiar de escena. |
 | `{ "look_at": "entidad" }` o `{ "look_at": [x, y, z] }` | `speed` (6) | **Mirar**: gira la vista del jugador hacia la entidad (a la altura de la cara si es alta como una persona) o el punto, **suave y sin acercar**, mientras dure el mensaje o diálogo que se esté leyendo; si no hay nada que leer, no hace nada. Para enseñar un objeto o a alguien. `speed`: fracción de lo que falta que se recorre por segundo. Va antes del `message` o `dialogue`. |
 | `{ "scare": "entidad" }` o `{ "scare": [x, y, z] }` | `speed` (20), `fov` (30) | **Susto de cámara**: como `look_at`, pero de golpe y **acercando** (la vista se estrecha hasta `fov` grados y al terminar vuelve). Con `speed` 2-3 la vista "se va sola" hacia algo inquietante; con 20 o más es un susto. |
 | `{ "dialogue": "sepulturero" }` | — | Abre el diálogo `assets/dialogues/sepulturero.json` (§11.1). Si ninguna de sus entradas se cumple, no dice nada; si el archivo falla, se avisa por consola. |
@@ -1007,6 +1012,21 @@ fundido.
   banderas del juego y las marcas `once:` e `interact:`.
 - El **mensaje** en pantalla y su temporizador.
 
+Estas banderas tienen significado para el motor:
+
+- `ojos_cerrados`: 1 mientras el jugador tiene los ojos cerrados (escenas con `eyes`). La pone el
+  motor cada fotograma; no hace falta escribirla.
+- `velocidad`: lo rápido que va el jugador en horizontal, en decímetros por segundo (andando 35,
+  corriendo con Mayús 60, con sigilo —Ctrl— 14). Para lo que caza por el oído (el varadero de
+  Puerto Niebla): un trigger con `"if": {"flag": "velocidad", "op": ">", "value": 20}`.
+- `relampago`: 1 durante el destello de un relámpago (escenas con `weather`), y `flash` durante el
+  de la cámara (escenas con `photo`); `fotos` cuenta las fotos hechas. Las dos primeras las pone el
+  motor cada fotograma.
+- `lleva`: lo que se trae en la mano (0 = nada). Se pone y se compara como cualquier otra
+  (`set_flag`, `"if": {"flag": "lleva", "value": 2}`); el nombre de cada valor está en
+  `assets/objetos.json` (`{ "1": "La carta de Amparo", ... }`) y sale abajo a la izquierda:
+  "Llevas: ...". Se guarda con la partida, como el resto.
+
 F6 borra todas las banderas (y por tanto los `once`); hay que pulsar F5 para recargar la escena
 y ver el efecto en lo que ya estaba cargado.
 
@@ -1032,7 +1052,9 @@ enteras.
 - Carpeta: `%APPDATA%/RetroEngine/saves` en Windows (`~/Library/Application Support/...` en
   macOS, `$XDG_DATA_HOME` o `~/.local/share/...` en Linux; si no hay variables, junto al
   ejecutable).
-- Ranura 0 = `autosave.json`; ranura 1 = `slot1.json` (F9 / F10).
+- Una ranura por **partida**: `partida1.json` ... `partida3.json` (`SaveManager::kSlots`). Cada
+  partida se guarda sola en la suya; `main.cpp` lleva la **activa** (`activeSlot`), la que se
+  eligió al empezar o al cargar. Con `--scene` no hay partida activa y no se guarda nada.
 
 ### 15.4 Escritura atómica y copia de seguridad (`SaveStorage.hpp`)
 
@@ -1046,33 +1068,51 @@ el archivo falta o no es válido, se prueba el `.bak` (y se avisa por consola).
 
 ### 15.5 Cuándo se guarda y se carga
 
-- **F9**: guarda en la ranura 1 (no durante un fundido).
-- **Autoguardado**: cada vez que se carga una escena (también con Tab y F5) salvo cuando la
-  carga viene de "cargar partida", y al salir del juego si cambió algo (escena o banderas).
-- **F10 / Shift+F10**: lee la ranura, cambia a su escena con la posición y el yaw guardados y,
-  cuando la escena termina de cargar, sustituye todas las banderas por las guardadas y restaura
-  inclinación y tiempo de juego. Si la escena no se pudo cargar, avisa.
-- **Continuar** (pantalla de inicio): carga la más reciente de las dos ranuras (`savedAt`).
+- **Autoguardado** en la partida activa: cada vez que se carga una escena (también con Tab y F5)
+  salvo cuando la carga viene de cargar la partida, y al salir del juego si cambió algo.
+- **F9** (solo `RetroEngineDebug.exe`, §21): guarda ya la partida activa (no durante un fundido).
+- **F10** (ídem): vuelve a lo último guardado de la partida activa: cambia a su escena con la posición y
+  el yaw guardados y, cuando la escena termina de cargar, sustituye todas las banderas por las
+  guardadas y restaura inclinación y tiempo de juego. Si la escena no se pudo cargar, avisa.
+- **Continuar** (pantalla de inicio): carga la partida más reciente (`savedAt`).
+- **Nueva partida**: la lista de las tres ("Partida 2   Puerto Niebla   2:14": el lugar sale de
+  `TitleFor`, el tiempo en horas:minutos; o "(vacia)"). En una vacía empieza ya; en una con
+  partida pregunta antes ("Se borrara la Partida 2", con "No" elegido de entrada) y la borra.
+  La partida nueva empieza en `kFirstScene`.
+- **Cargar partida**: la misma lista; solo se pueden elegir las que tienen partida.
 - **Salir al menú** (pausa): autoguarda antes de volver a la pantalla de inicio.
 
 ### 15.6 Pantalla de inicio, pausa y configuración (`main.cpp`, `ui/Menu`, `game/Settings`)
 
-- La pantalla de inicio va con la **partida**: al arrancar sale solo si la partida guardada más
-  reciente ya llegó a la feria (tiene la bandera `bosque_sueno`, que pone el anciano al
-  empujarte). Si no hay partida, o no ha llegado, el juego arranca como siempre, en la primera
-  escena (`scenes/demo.json`) con el aviso de F10 si hay partida, y la pausa no ofrece "Salir al
-  menú" (solo con la bandera puesta).
+- Sin `--scene` el juego **siempre** arranca en la pantalla de inicio, y va con la **partida**
+  guardada más reciente. Si no hay partida, o aún no llegó a Ventosa (no tiene la bandera
+  `bosque_sueno`, que pone el anciano al empujarte), el fondo es la **aldea de noche**
+  (`scenes/noche.json`, la primera escena de una partida nueva, `kFirstScene`) con su música, y el
+  título **no se alcanza a leer**: `DrawGarbled` lo dibuja como una señal que no sintoniza (cada
+  letra cambia por otra o salta 12 veces por segundo, con los bordes rojo y cian corridos, franjas
+  oscuras que lo rasgan y, de vez en cuando, un instante casi limpio), igual que el subtítulo.
+  Desde Ventosa el título se lee y el fondo es la ciudad de la partida (abajo). La pausa siempre
+  ofrece "Salir al menú".
+- `scenes/demo.json` (la escena de pruebas de la llave y las monedas) **no está conectada** con el
+  mundo: el sendero sur de la aldea de noche, por el que llegó el forastero, se pierde entre los
+  árboles; el límite sur de la escena para al jugador al final del sendero y un aviso lo dice la
+  primera vez (`noche_camino_atras`). Se abre con `--scene scenes/demo.json`.
 - **Llegada jugando** (`title_screen`, el final del árbol hueco): el negro de `goto_scene` suena
   ya con la música de la escena; al aclararse aparece la pantalla de inicio poco a poco (el
   título se descubre) y entra el vals con percusión. Las opciones son Jugar, Configuración y
   Salir; la partida se autoguarda al llegar, con el jugador en el inicio de la escena. **Jugar**
   hace volar la cámara (3 s, suavizado) desde la vuelta al tiovivo hasta los ojos del jugador y
   vuelve la música de la escena; al terminar, se juega.
-- Desbloqueada y sin `--scene`, el juego arranca en `scenes/feria.json` como **fondo**: no hay jugador; la
-  cámara da vueltas alrededor del `target` de la cámara de la escena, a la distancia y altura de
-  su `position` (los espantapájaros la siguen con la cabeza), y suena
-  `musica_feria_menu_v2.wav` (el vals con percusión) en lugar de la música de la escena. En el
-  juego, la feria suena con su música sin percusión.
+- Desbloqueada y sin `--scene`, el juego arranca en la **ciudad de la partida** como fondo
+  (`kTitles` y `TitleFor` en `main.cpp`): la feria, Salinas o Hoz del Cuervo, según la escena de
+  la partida más reciente (`scenes/salinas*`, `scenes/hoz*`, `scenes/hz_*`) o, si no es de
+  ninguna, sus banderas de fin de capítulo (`capitulo2_fin`, `capitulo3_tren`). No hay jugador;
+  en la feria la cámara da vueltas alrededor del `target` de la cámara de la escena, a la
+  distancia y altura de su `position` (los espantapájaros la siguen con la cabeza); en las demás,
+  alrededor de un punto elegido (la plaza, el barranco). Suena la música principal de la ciudad
+  con percusión (`musica_feria_menu_v2`, `musica_salinas_menu_v2`, `musica_hoz_menu_v2`) en
+  lugar de la de la escena; en el juego suena sin ella. "Salir al menú" lleva a la ciudad en la
+  que se va.
 - `Screen` (`Title`, `Playing`, `Paused`) dice qué se actualiza. Al elegir Nueva partida,
   Continuar o Salir al menú se pide el cambio de escena y `leaving` guarda la pantalla a la que se
   pasa **cuando llegue** la escena (mientras tanto el menú no se ve); si el cambio falla, el menú
@@ -1214,7 +1254,11 @@ Todos los campos, con su valor por defecto. Solo `entities` es obligatorio en la
 | `camera` | posición (5, 4, 5), mira a (0, 0.5, 0), `fov` 60 | `{ "position", "target", "fov" }`. En el juego la sustituye la cámara del jugador; es la vista inicial del editor (§7.4). |
 | `player` | `position` [0, 0, 9], `yaw` 0 | Punto de inicio (los pies). |
 | `autoCollide` | `false` | §6.2. |
-| `bounds` | ninguno | `{ "min": [x, z], "max": [x, z] }`. §6.4. |
+| `bounds` | ninguno | `{ "min": [x, z], "max": [x, z] }`. §6.4. Las paredes llegan de -1000 a 1000 en Y: sirven a cualquier altura. |
+| `eyes` | ninguno | `{ "seconds": 9, "sleep": [acciones] }`: en esta escena se pueden **cerrar los ojos** con **Q** (Hoz del Cuervo). Mientras se tienen cerrados la bandera `ojos_cerrados` vale 1, así que lo que tenga `showIf` con ella aparece (y sus colisiones cuentan: un puente que solo sostiene con los ojos cerrados) y lo que la niegue desaparece. Se puede andar. El postproceso (`eyes`, `drowsy` en `post.fs`) cierra los párpados en negro y abre la vista "de lo que duerme", en azul y temblando. A los `seconds` seguidos gana el sueño: los ojos se abren de golpe, pasa `sleep` y no se vuelven a cerrar hasta soltar Q; el susto despierta (el sueño baja al 40 %); al 60 % suena un latido. Abiertos, el sueño se recupera poco a poco. Un `scare` que llega con los ojos cerrados se ve con los ojos cerrados: mientras dura siguen así aunque se suelte Q, y el sueño no avanza. No se pueden cerrar en un diálogo, montado o en el tiro al blanco. |
+| `weather` | ninguno | `{ "rain": 1, "sound": "audio/lluvia.wav", "volume": 0.6, "indoor": false, "thunder": { "every": [10, 25], "sounds": ["audio/trueno_1.wav", ...] } }`: el **tiempo** (Puerto Niebla). Con `rain` (0..1) caen gotas alrededor de la cámara (rayas, torcidas por el viento) y suena `sound` en bucle (un canal propio, aparte de la música y el ambiente) a `volume` × `rain`. Con `thunder`, un **relámpago** cada `every` segundos (al azar entre los dos): un destello doble (el postproceso aclara y enfría la imagen, la luz ambiente sube, así lo que hay se ve con su forma, y la niebla se abre: en una escena a oscuras con la niebla cerrada se ve lejos solo durante el destello), la bandera `relampago` vale 1 mientras dura y el trueno (uno de `sounds`) llega entre 0,3 y 2,4 s después. `indoor`: bajo techo, no caen gotas y el destello es más flojo (el sonido, el que se le dé: una lluvia apagada). Con `fogBank` (`{ "every": [35, 75], "seconds": 15, "fade": 4, "start": 1.5, "end": 13, "color": [62, 66, 74], "mist": 0.55, "sound": "audio/viento.wav", "volume": 0.45 }`), **bancos de niebla**: cada `every` segundos (al azar) la niebla entra en `fade` s (y suena `sound` una vez), se cierra hasta `start`..`end` m con el color `color` (el fondo y el panorama se funden con ella) y la neblina baja `mist`, se queda `seconds` y se va en `fade`. Solo cierra la niebla de la escena, nunca la abre; la accion `weather` con `storm: false` los para (el que haya, se va). `Weather` en `src/world/Weather.cpp`; las acciones `weather`, `lightning` y `fog` lo cambian. |
+| `wind` | ninguno | `{ "center": [x, z], "outward": true, "strength": 0.8, "shelter": 4, "gust": { "every": [5, 9], "seconds": 2.8, "strength": 4.8, "sound": "audio/racha.wav", "volume": 0.8 } }`: **el viento que empuja** (el ojo de la tormenta). Sopla desde `center` hacia fuera (o hacia el, con `outward: false`) con `strength` m/s, que se suman a lo que anda el jugador (`Player::SetPush`; en un dialogo, no). Cada `every` s, una **racha** de `seconds` s (sube en 0.4 s y se apaga en 0.8) que empuja `strength` m/s mas, suena `sound` y se ve: rayas cortas y palidas que corren con el aire. **A cubierto**: si algo solido corta la linea entre el pecho del jugador y de donde viene el viento, a menos de `shelter` m, no empuja (`Scene::Blocked`). Banderas: `racha` (1 mientras sopla una) y `a_cubierto`. `Weather::ApplyWind` / `WindPush`. |
+| `photo` | ninguna | `{ "if": {...}, "cooldown": 1.5 }`: la **cámara de fotos**, mientras se cumpla `if`. **F** la levanta (o la baja): se mira por el visor, que entra desde abajo —el marco negro, las esquinas, la cruz del centro, un punto rojo que parpadea si está lista, "FOTO 03"— y la vista se cierra 14°. Con la cámara arriba, **clic** dispara: el obturador cierra un instante (un fotograma en negro) y luego el flash. Cada foto es un flash: el mismo destello del relámpago, más corto, el sonido `audio/flash.wav`, la bandera `flash` a 1 durante 0,25 s (lo que tenga `showIf` o `seen` con ella sale "en la foto") y uno más en `fotos`. Con la cámara bajada, abajo a la derecha, "F: camara". Se baja sola en un diálogo, un susto o al cambiar de escena. |
 | `panorama` | ninguno | El horizonte lejano de los exteriores: `{ "model", "tint": [r,g,b], "haze": 0.4, "y": -6, "sun": { "texture", "yaw", "pitch", "size": 40 } }`. El modelo (`panorama_montes` o `panorama_bosque`, entre 90 y 210 m) se dibuja primero y **centrado en la cámara**: nunca se llega a él ni corta la escena, y siempre hay "algo lejos". En vez de la niebla por distancia lleva una bruma fija `haze` hacia el color de la niebla (uniform `fogFixed` de los fragment shaders). El `sun` (el sol del lago, la luna de las noches) es un sprite a 320 m, más lejos que el modelo, así que las montañas lo tapan por profundidad, y **no** lo apaga la niebla. `yaw`/`pitch` como la vista del jugador (`yaw` 0 = hacia -Z, `pitch` en grados sobre el horizonte). |
 | `background` | `[24, 20, 32]` | También es el color de la niebla. |
 | `fog` | `start` 10, `end` 26 | Niebla por distancia, del color de `background`. **Neblina baja** (opcional): `mist` (densidad 0-1, 0 = sin ella), `mistHeight` (1.5 m) y `mistColor` [r, g, b]: niebla pegada al suelo que se desvanece hacia arriba, en bancos que cambian por el terreno y nunca pegada a la cámara (`MistAmount` en `retro.fs` y `retro_sprite.fs`). El cementerio la usa leve (0.6, 1.4 m, gris azulado), el lago rosada y el bosque negro densa. |
@@ -1230,12 +1274,12 @@ Todos los campos, con su valor por defecto. Solo `entities` es obligatorio en la
 | Clave | Por defecto | Notas |
 |---|---|---|
 | `name` | — | Obligatorio y único. |
-| `model` | — | `"models/x.obj"` o `{ "type": "plane", "size": 10, "subdivisions": 1, "tiles": 1 }`. Exactamente uno de `model` o `sprite`. |
+| `model` | — | `"models/x.obj"` o `{ "type": "plane", "size": 10, "subdivisions": 1, "tiles": 1 }` (`size` y `tiles` pueden ser `[x, z]`: un suelo rectangular). Exactamente uno de `model` o `sprite`. |
 | `texture` | — | Solo modelos. Va a los materiales sin textura propia en el `.mtl` (§5). |
 | `wrap` | el de Raylib | `"repeat"`, `"clamp"` o `"mirror"`. |
 | `sprite` | — | Ruta de la textura del sprite. |
 | `size` | — | Obligatorio en sprites: `[ancho, alto]`, positivos. |
-| `seen` | ninguno | Acciones cuando el jugador **la mira**, sin pulsar nada: `{ "range": 15, "angle": 20, "awayAngle": 75, "if": {...}, "do": [...], "away": [...] }`. Mientras no se cumpla `if`, mirarla no cuenta (y no se gasta): para que un susto no se repita al volver a la escena. Cuenta como vista si su centro está a menos de `angle` grados del centro de la vista **en horizontal** (hacia donde se gira la cabeza), dentro de la pantalla en vertical (35°: quien mira algo alto o bajo también lo ve), a menos de `range` metros y sin nada sólido en medio (la misma oclusión que la interacción). Encadenando `away` con banderas y `showIf` se hacen cosas que se acercan cuando no las miras (el final del árbol hueco). `do` se ejecuta al verla y `away` al dejar de mirarla después, que **no** es salir de `angle`: es quedar a más de `awayAngle` grados en horizontal (por defecto 75, más que la media pantalla, ~38°), a más de 45° en vertical, lejos o tapada. Así lo que pase entonces (algo que se mueve o desaparece) ya no se ve por el borde; cada uno una vez por visita a la escena (lo que tenga que durar, con banderas y `showIf`). `Scene::UpdateSight`, cada fotograma tras los triggers. El editor lo edita en "Al mirarla". |
+| `seen` | ninguno | Acciones cuando el jugador **la mira**, sin pulsar nada: `{ "range": 15, "angle": 20, "awayAngle": 75, "hold": 0, "if": {...}, "do": [...], "away": [...] }`. Con `hold`, hay que tenerla delante esos segundos **seguidos** para que cuente (si se aparta la vista, vuelve a empezar): "si te quedas parado frente a él, te encuentra". Mientras no se cumpla `if`, mirarla no cuenta (y no se gasta): para que un susto no se repita al volver a la escena. Cuenta como vista si su centro está a menos de `angle` grados del centro de la vista **en horizontal** (hacia donde se gira la cabeza), dentro de la pantalla en vertical (35°: quien mira algo alto o bajo también lo ve), a menos de `range` metros y sin nada sólido en medio (la misma oclusión que la interacción). Encadenando `away` con banderas y `showIf` se hacen cosas que se acercan cuando no las miras (el final del árbol hueco). `do` se ejecuta al verla y `away` al dejar de mirarla después, que **no** es salir de `angle`: es quedar a más de `awayAngle` grados en horizontal (por defecto 75, más que la media pantalla, ~38°), a más de 45° en vertical, lejos o tapada. Así lo que pase entonces (algo que se mueve o desaparece) ya no se ve por el borde; cada uno una vez por visita a la escena (lo que tenga que durar, con banderas y `showIf`). `Scene::UpdateSight`, cada fotograma tras los triggers. El editor lo edita en "Al mirarla". |
 | `fog` | `true` | `false`: la niebla no la apaga (`fogFixed` 0 al dibujarla), para algo que tiene que verse de lejos aunque haya niebla. |
 | `emissive` | `false` | Ignora la luz y se ve a pleno color. En un modelo, se dibuja con el shader de los sprites (textura sin luces, con niebla y trama): para vidrieras y cosas que brillan. |
 | `layer` | `0` | Solo modelos: capa para superficies apoyadas en otras (un sendero sobre el suelo, una alfombra). `1` siempre gana a lo de debajo y `-1` pierde, sin parpadeo (*z-fighting*): el vertex shader resta `layer * 3e-5` a la profundidad (`depthBias`, en NDC), sin mover la superficie en pantalla. El paso crece con la distancia igual que el error de profundidad y de cerca equivale a pocos centímetros. Los senderos usan `1`, la hojarasca bajo el bosque `-1` y la alfombra de la iglesia (modelo aparte) `1`. |
@@ -1256,6 +1300,7 @@ Todos los campos, con su valor por defecto. Solo `entities` es obligatorio en la
 | `collider` | según `autoCollide` | `true`, `false`, `"auto"` o `{ "min", "max" }` (§6.2). |
 | `light` | ninguna | `{ "offset": [0,0,0], "color", "intensity", "radius", "flicker", "flickerRate" }` (§18.4). |
 | `sound` | ninguno | `{ "file", "offset": [0,0,0], "volume": 1, "radius": 10, "minDistance": 1 }`. |
+| `near` | ninguno | `{ "range": 5, "after": 2, "forget": 5, "flag": "nombre" }`: **estar cerca** (oírla), mire donde mire: tras `after` segundos seguidos a menos de `range` m en horizontal (y mientras se vea), la bandera `flag` vale 1; tras `forget` segundos lejos, vuelve a 0. Con `slide` la sigue. Sirve para que algo cuente solo si ya lo oíste (el flash en el varadero: solo te mata si llevabas 2 s oyéndolo respirar). `Scene::UpdateNear`. |
 | `interact` | ninguna | §11. |
 | `facePlayer` | no | `true` o `{ "range": 10, "turnSpeed": 240 }`. |
 | `idle` | no | `true` o `{ "bob": 0.015, "sway": 1.2, "speed": 2.0 }`. |
@@ -1627,6 +1672,59 @@ El botón "Editar dialogo" de una acción no abre el diálogo en el momento: lo 
 dibujar una lista dejaría colgando las referencias a sus elementos (lo mismo que las operaciones
 diferidas de §19.3).
 
+### 19.15 Oír, ver y probar sin salir (`editor/EditorExtras.cpp`)
+
+**Oír.** Cada campo que elige un sonido (pistas de audio, truenos, rachas, la lista de Assets >
+Sonidos) lleva un botón ▶. Lo que dura más de 12 s (música, ambientes) suena en bucle por el canal
+de la música hasta pulsar ■; lo corto suena una vez. El editor no tiene bucle de juego, así que
+`UpdateAudio()` llama a `AudioSystem::Update` cada fotograma (`Run`).
+
+**Escuchar la escena** (auriculares en la barra del visor, "Ver" o la sección Audio): pone la música,
+el ambiente y la lluvia de la escena como en el juego, y oye los emisores posicionales desde la
+cámara del visor (`SetListener` + `UpdateEmitters`): acercarse a un sonido en el visor lo sube. Al
+abrir otra escena se suelta todo antes de vaciar los assets y se vuelve a poner con la nueva.
+
+**Tiempo, viento, cámara de fotos, ojos y "al estar cerca".** Secciones del inspector de la escena
+para `weather` (lluvia, truenos con su lista de sonidos, `fogBank`), `wind` (centro con "Centro en
+la vista", fuerza, cubierto, rachas), `photo` (pausa y condiciones) y `eyes` (segundos y la lista de
+acciones `sleep`); y de la entidad para `near` (§5, §8). Cada una se añade con su botón y se quita
+con el suyo.
+
+**A dónde mira y a dónde lleva** (ojo en la barra del visor). De lo seleccionado se dibuja, por
+encima de todo:
+
+| Color | Qué |
+|---|---|
+| magenta | el punto al que voltea la cámara al hablar con la entidad (`retro::LookPoint`, el mismo que usa el juego) |
+| amarillo | el destino de `look_at` (entidad o punto), con una línea de trazos desde la selección |
+| rojo | el de `scare` |
+| verde | a dónde lleva `teleport` (o `goto_scene` a esta misma escena con posición): el jugador y su giro |
+| naranja | el radio de `near` |
+| azul | el centro del viento y su radio de "a cubierto" |
+
+Se miran las acciones de `interact.do`, `seen.do`/`seen.away` y las del trigger seleccionado.
+
+**Banderas** (pestaña junto al Inspector). Lista las banderas que aparecen en la escena (condiciones,
+`set_flag`/`add_flag`, `{bandera}` en textos) más las del motor (`ojos_cerrados`, `flash`,
+`relampago`, `racha`, `a_cubierto`, `lleva`), con su valor. Con **Ver la escena como en el juego**
+(bandera en la barra) cada entidad con `showIf` se ve o no según esos valores (`ApplyFlagPreview`,
+también tras cada reconstrucción); sin marcar, el editor las enseña todas para poder colocarlas.
+Los valores no se guardan en ningún sitio.
+
+**Probar aquí** (mando en la barra o "Ver"). Escribe la escena tal como está en el editor (aunque
+no esté guardada) en `scenes/_prueba_editor.json` (ignorada por git y oculta en "Abrir escena") y
+abre el juego con:
+
+```
+RetroEngineDebug.exe --prueba --windowed --assets <assets del editor> --scene scenes/_prueba_editor.json
+                --pos x,y,z --yaw grados [--flags a=1,b=2]
+```
+
+El jugador aparece de pie bajo la cámara del visor (sobre la caja de colisión más alta que tenga
+debajo, o en el suelo) mirando hacia donde mira; las banderas son las del panel si "como en el
+juego" está marcado. `--prueba` hace que el juego no escriba partidas ni configuración. Las mismas
+opciones sirven a mano para arrancar el juego en cualquier sitio.
+
 ---
 
 ## 20. Assets y herramientas de contenido
@@ -1804,10 +1902,26 @@ línea de los ojos para ajustar el `--box`.
 
 ## 21. Depuración
 
-### Teclas del juego
+### Dos ejecutables
+
+`CMakeLists.txt` compila `src/main.cpp` dos veces:
+
+- **`RetroEngine.exe`**, el producto: sin herramientas de depuración y, en Windows, con
+  subsistema de ventana (`WIN32_EXECUTABLE`; sin consola). Solo acepta `--windowed`.
+- **`RetroEngineDebug.exe`**: con `RETRO_DEBUG_TOOLS` definido y consola. Tiene las teclas de
+  abajo, F9/F10 (guardar ya / volver a lo guardado), Tab, la ayuda (F1) y las opciones `--scene`,
+  `--pos`, `--yaw`, `--flags`, `--assets` y `--prueba`. El editor lo abre en "Probar aquí".
+
+En `main.cpp`, `kDebugTools` (un `constexpr bool` que vale lo que diga `RETRO_DEBUG_TOOLS`)
+encierra todo eso en `if constexpr`: en el juego final esas ramas se descartan al compilar y sus
+textos no llegan al ejecutable.
+
+### Teclas de `RetroEngineDebug.exe`
 
 | Tecla | Efecto |
 |---|---|
+| F9 / F10 | Guardar ya la partida activa / volver a lo último guardado |
+| Tab / Shift+Tab | Escena siguiente / anterior (de las ya conocidas) |
 | 1 | Temblor de vértices sí / no |
 | 2 | 32 / 256 niveles de color |
 | 3 | *Dithering* sí / no |
@@ -1821,7 +1935,9 @@ línea de los ojos para ajustar el `--box`.
 | F7 | Modo de escalado |
 | F8 | Acabado del post-proceso sí / no |
 | M | Silencio |
-| F12 | Foto (en `Imagenes/Festum Venti`) |
+
+F11 (ventana sin bordes) y F12 (foto, en `Imagenes/Festum Venti`) están en los dos: son del
+juego, no de depuración.
 
 ### Dónde mirar cuando algo falla
 

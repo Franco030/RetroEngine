@@ -1,0 +1,24 @@
+{
+  "speaker": "Nico",
+  "entries": [
+    {
+      "if": { "flag": "lista", "op": "==", "value": 7 },
+      "lines": [
+        "Ya nada mas les falta una cosa en la pizarra: una foto de todos.",
+        "Eso si lo se hacer.\nVamonos a la plaza. Te alcanzo alla."
+      ],
+      "do": [{ "set_flag": "hz_nico_plaza" }]
+    },
+    {
+      "once": true,
+      "key": "hola",
+      "lines": [
+        "Mira. Ni un pajaro. Ni un perro. Ni una mosca.",
+        "El jefe dice que no cierre los ojos. Los cerre. Un segundo.",
+        "Vi gente acostada en la calle. Y un puente donde no hay puente.",
+        "Yo me quedo con el tren. Si arranca sin nosotros, le grito."
+      ]
+    },
+    { "lines": ["Ve tu. Aqui alguien tiene que estar despierto.\nBueno. Aqui todos estan despiertos."] }
+  ]
+}

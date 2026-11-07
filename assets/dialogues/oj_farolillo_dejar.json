@@ -1,0 +1,11 @@
+{
+  "entries": [
+    {
+      "lines": [
+        "Lo dejas con los otros, en la orilla del muelle.",
+        "Ya no falta ninguno. Ahora estan todos encendidos."
+      ],
+      "do": [{ "set_flag": "lleva", "value": 0 }, { "set_flag": "oj_ventosa" }]
+    }
+  ]
+}

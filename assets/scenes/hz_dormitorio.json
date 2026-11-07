@@ -1,0 +1,502 @@
+{
+  "player": { "position": [0, 0, 5.2], "yaw": 0 },
+  "bounds": { "min": [-8.8, -6.8], "max": [8.8, 6.8] },
+  "background": [14, 14, 24],
+  "fog": { "start": 10, "end": 40 },
+  "light": { "direction": [-0.2, -1, 0.1], "ambient": 0.36, "sun": 0.2 },
+  "lights": [{ "position": [0, 4.6, 0], "color": [170, 180, 220], "radius": 14, "intensity": 0.5 }],
+  "audio": {
+    "music": { "file": "audio/musica_hoz_dormitorio_v2.wav", "volume": 0.55 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.3
+    },
+    "fade": 2
+  },
+  "eyes": { "seconds": 9, "sleep": [{ "set_flag": "se_durmio", "value": 1 }] },
+  "entities": [
+    {
+      "name": "sala",
+      "model": "models/sala_grande.obj",
+      "position": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "tint": [150, 150, 166, 255],
+      "interact": {
+        "prompt": "Salir",
+        "range": 3.0,
+        "box": { "min": [-0.9, 0, 6.5], "max": [0.9, 2.7, 7.1] },
+        "do": [{ "goto_scene": "scenes/hoz.json", "position": [25.0, 40.0, 40.0], "yaw": -90 }]
+      }
+    },
+    {
+      "name": "figura_sueno",
+      "model": "models/durmiente.obj",
+      "position": [0, 0, -100],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "ojos_cerrados" }, { "flag": "sueno", "op": ">=", "value": 1 }] },
+      "seen": {
+        "range": 20,
+        "angle": 32,
+        "if": { "flag": "ojos_cerrados" },
+        "do": [
+          { "play_sound": "audio/susto_piano.wav", "volume": 0.7 },
+          { "scare": "figura_sueno", "speed": 14, "fov": 30 },
+          { "message": "Con los ojos abiertos no estaba.", "seconds": 3 },
+          { "set_flag": "susto_sueno", "value": 1 }
+        ]
+      }
+    },
+    {
+      "name": "cama_0",
+      "model": "models/cama.obj",
+      "position": [-7.0, 0, -4.8],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_camas" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "durmiente_0",
+      "model": "models/aldeana.obj",
+      "texture": "textures/pj_fe_hz_vecina.png",
+      "position": [-7.0, 0.58, -4.9],
+      "rotation": [-90, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "cama_1",
+      "model": "models/cama.obj",
+      "position": [-4.2, 0, -4.8],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_camas" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "durmiente_1",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_hz_vecino.png",
+      "position": [-4.2, 0.58, -4.9],
+      "rotation": [-90, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "cama_2",
+      "model": "models/cama.obj",
+      "position": [-1.4, 0, -4.8],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_camas" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "durmiente_2",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_hz_viejo.png",
+      "position": [-1.4, 0.58, -4.9],
+      "rotation": [-90, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "cama_3",
+      "model": "models/cama.obj",
+      "position": [1.4, 0, -4.8],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_camas" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "durmiente_3",
+      "model": "models/nino.obj",
+      "texture": "textures/pj_fe_hz_nino.png",
+      "position": [1.4, 0.58, -4.9],
+      "rotation": [-90, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "cama_4",
+      "model": "models/cama.obj",
+      "position": [4.2, 0, -4.8],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_camas" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "durmiente_4",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_hz_amparo.png",
+      "position": [4.2, 0.58, -4.9],
+      "rotation": [-90, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "cama_5",
+      "model": "models/cama.obj",
+      "position": [7.0, 0, -4.8],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_cama_padre" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "durmiente_5",
+      "model": "models/nina.obj",
+      "texture": "textures/pj_fe_hz_nina.png",
+      "position": [7.0, 0.58, -4.9],
+      "rotation": [-90, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "cama_6",
+      "model": "models/cama.obj",
+      "position": [-7.0, 0, -1.6],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_camas" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "durmiente_6",
+      "model": "models/granjero.obj",
+      "texture": "textures/pj_fe_hz_cartero.png",
+      "position": [-7.0, 0.58, -1.7],
+      "rotation": [-90, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "cama_7",
+      "model": "models/cama.obj",
+      "position": [-4.2, 0, -1.6],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_camas" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "durmiente_7",
+      "model": "models/aldeana.obj",
+      "texture": "textures/pj_fe_hz_vecina.png",
+      "position": [-4.2, 0.58, -1.7],
+      "rotation": [-90, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "cama_8",
+      "model": "models/cama.obj",
+      "position": [-1.4, 0, -1.6],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_camas" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "durmiente_8",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_hz_vecino.png",
+      "position": [-1.4, 0.58, -1.7],
+      "rotation": [-90, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "cama_9",
+      "model": "models/cama.obj",
+      "position": [1.4, 0, -1.6],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_camas" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "durmiente_9",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_hz_viejo.png",
+      "position": [1.4, 0.58, -1.7],
+      "rotation": [-90, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "cama_10",
+      "model": "models/cama.obj",
+      "position": [4.2, 0, -1.6],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_camas" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "durmiente_10",
+      "model": "models/nino.obj",
+      "texture": "textures/pj_fe_hz_nino.png",
+      "position": [4.2, 0.58, -1.7],
+      "rotation": [-90, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "cama_11",
+      "model": "models/cama.obj",
+      "position": [7.0, 0, -1.6],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_camas" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "durmiente_11",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_hz_amparo.png",
+      "position": [7.0, 0.58, -1.7],
+      "rotation": [-90, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "cama_12",
+      "model": "models/cama.obj",
+      "position": [-7.0, 0, 1.6],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_camas" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "durmiente_12",
+      "model": "models/nina.obj",
+      "texture": "textures/pj_fe_hz_nina.png",
+      "position": [-7.0, 0.58, 1.5],
+      "rotation": [-90, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "cama_13",
+      "model": "models/cama.obj",
+      "position": [-4.2, 0, 1.6],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_camas" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "durmiente_13",
+      "model": "models/granjero.obj",
+      "texture": "textures/pj_fe_hz_cartero.png",
+      "position": [-4.2, 0.58, 1.5],
+      "rotation": [-90, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "cama_14",
+      "model": "models/cama.obj",
+      "position": [-1.4, 0, 1.6],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_cama_tuya" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "en_tu_cama",
+      "model": "models/clara.obj",
+      "texture": "textures/pj_fe_clara.png",
+      "position": [-1.4, 0, 2.5],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" },
+      "facePlayer": { "range": 12, "turnSpeed": 60 }
+    },
+    {
+      "name": "cama_15",
+      "model": "models/cama.obj",
+      "position": [1.4, 0, 1.6],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_camas" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "durmiente_15",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_hz_vecino.png",
+      "position": [1.4, 0.58, 1.5],
+      "rotation": [-90, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "cama_16",
+      "model": "models/cama.obj",
+      "position": [4.2, 0, 1.6],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_camas" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "durmiente_16",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_hz_viejo.png",
+      "position": [4.2, 0.58, 1.5],
+      "rotation": [-90, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "cama_17",
+      "model": "models/cama.obj",
+      "position": [7.0, 0, 1.6],
+      "rotation": [0, 0, 0],
+      "scale": [0.75, 0.75, 0.75],
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_camas" }],
+        "box": { "min": [-0.8, 0, -1.4], "max": [0.8, 0.9, 1.4] }
+      }
+    },
+    {
+      "name": "durmiente_17",
+      "model": "models/nino.obj",
+      "texture": "textures/pj_fe_hz_nino.png",
+      "position": [7.0, 0.58, 1.5],
+      "rotation": [-90, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "silencio",
+      "model": "models/letrero.obj",
+      "position": [0, 3.6, -6.9],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_h_no_duerma.png",
+      "collider": false,
+      "scale": [1.2, 1.2, 1]
+    }
+  ],
+  "triggers": [
+    {
+      "position": [0, 0, 0],
+      "size": [400, 400, 400],
+      "on": "stay",
+      "name": "sueno_durmiente",
+      "if": {
+        "all": [{ "flag": "se_durmio" }, { "not": { "flag": "susto_sueno" } }]
+      },
+      "do": [
+        { "set_flag": "se_durmio", "value": 0 },
+        { "add_flag": "sueno" },
+        { "behind_player": "figura_sueno", "distance": 2.4 },
+        { "play_sound": "audio/susurros.wav", "volume": 0.9 },
+        {
+          "message": "Se te estaban cerrando solos. Los abres de golpe.\nAlgo se queda a tu espalda.",
+          "seconds": 4
+        }
+      ]
+    },
+    {
+      "position": [0, 0, 0],
+      "size": [400, 400, 400],
+      "on": "stay",
+      "name": "sueno_solo",
+      "if": { "all": [{ "flag": "se_durmio" }, { "flag": "susto_sueno" }] },
+      "do": [
+        { "set_flag": "se_durmio", "value": 0 },
+        { "message": "Se te estaban cerrando solos. Los abres de golpe.", "seconds": 3 }
+      ]
+    },
+    {
+      "position": [0, 0, 0],
+      "size": [400, 400, 400],
+      "on": "stay",
+      "name": "sueno_fin",
+      "if": {
+        "all": [{ "flag": "susto_sueno" }, { "flag": "sueno" }, { "not": { "flag": "ojos_cerrados" } }]
+      },
+      "do": [{ "set_flag": "sueno", "value": 0 }]
+    }
+  ],
+  "emitters": [],
+  "autoCollide": true,
+  "camera": { "position": [0, 1.7, 5.2], "target": [0, 1.5, 0], "fov": 60 }
+}

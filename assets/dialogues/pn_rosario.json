@@ -1,0 +1,15 @@
+{
+  "speaker": "Rosario",
+  "entries": [
+    {
+      "if": { "flag": "pn_taberna_llena" },
+      "lines": ["¿Que miras? Esta vacio. Esta siempre vacio.", "Los que entran no piden nada. Esperan."]
+    },
+    {
+      "lines": [
+        "Aqui no se cobra. Nadie trae dinero.",
+        "Esperan el barco. Sale cuando se cierre el libro de la capitania."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "speaker": "Nico",
+  "entries": [
+    {
+      "if": { "flag": "oj_niebla" },
+      "lines": ["\"Anda. Ve al centro. Yo me quedo a ver como sale la foto.\""]
+    },
+    {
+      "lines": [
+        "\"A mi ya no me sale nadie en las fotos. Ni yo mismo.\"",
+        "\"A ti si. Siempre te salieron.\"",
+        "Te da una foto: la de la plaza de Hoz. Todos con los ojos cerrados. Todos menos tu.",
+        "\"Llevala. Que alguien se acuerde de como estaban.\"",
+        "\"Y la camara, quedatela. Para siempre.\""
+      ],
+      "do": [{ "set_flag": "oj_niebla" }]
+    }
+  ]
+}

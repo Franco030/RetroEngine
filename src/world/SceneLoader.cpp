@@ -88,9 +88,18 @@ std::shared_ptr<ModelResource> LoadModelSpec(const json& spec, RetroEngine& engi
   } else if (spec.is_object()) {
     const std::string type = spec.at("type").get<std::string>();
     if (type == "plane") {
-      model = std::make_shared<ModelResource>(MakeTiledPlane(
-          spec.value("size", 10.0f), spec.value("size", 10.0f), spec.value("subdivisions", 1),
-          spec.value("tiles", 1.0f), spec.value("tiles", 1.0f)));
+      // "size" y "tiles": un numero (cuadrado) o [ancho en X, fondo en Z]
+      auto pair = [&](const char* key, float def) {
+        if (!spec.contains(key))
+          return Vector2{def, def};
+        const json& j = spec.at(key);
+        return j.is_array() ? Vector2{j.at(0).get<float>(), j.at(1).get<float>()}
+                            : Vector2{j.get<float>(), j.get<float>()};
+      };
+      const Vector2 size = pair("size", 10.0f);
+      const Vector2 tiles = pair("tiles", 1.0f);
+      model = std::make_shared<ModelResource>(
+          MakeTiledPlane(size.x, size.y, spec.value("subdivisions", 1), tiles.x, tiles.y));
     } else {
       throw std::runtime_error("tipo de modelo desconocido: '" + type + "' (plane)");
     }
@@ -285,7 +294,8 @@ std::vector<Condition> ParseConditions(const json& j, const char* key) {
 
 // Cada accion es un objeto con UNA clave de accion y, si hace falta, modificadores:
 //   { "goto_scene": "scenes/x.json", "position": [x,y,z], "yaw": 0,
-//     "dark": 10, "lines": ["...", "..."] }      (un rato en negro, con frases, antes de llegar)
+//     "dark": 10, "lines": ["...", "..."],        (un rato en negro, con frases, antes de llegar)
+//     "music": "audio/x.wav", "musicVolume": 0.7 } (y una musica para ese negro)
 //   { "teleport": [x,y,z], "yaw": 90 }
 //   { "set_flag": "nombre", "value": 1 }
 //   { "message": "texto\notra linea", "seconds": 3 }
@@ -315,6 +325,10 @@ Action ParseAction(const json& ja) {
     a.dark = ja.value("dark", 0.0f);
     if (ja.contains("lines"))
       a.lines = ja.at("lines").get<std::vector<std::string>>();
+    a.music = ja.value("music", std::string{});
+    a.musicVolume = ja.value("musicVolume", a.musicVolume);
+    if (!a.music.empty() && a.dark <= 0.0f)
+      throw std::runtime_error("goto_scene: 'music' necesita 'dark' (suena en el negro)");
     if (a.dark < 0.0f || a.dark > 60.0f)
       throw std::runtime_error("goto_scene: 'dark' debe ir de 0 a 60 segundos");
     if (!a.lines.empty() && a.dark <= 0.0f)
@@ -443,8 +457,57 @@ Action ParseAction(const json& ja) {
     a.entity = ja.at("behind_player").get<std::string>();
     a.distance = ja.value("distance", a.distance);
     a.side = ja.value("side", a.side);
-    if (a.entity.empty() || a.distance <= 0.0f)
-      throw std::runtime_error("'behind_player' necesita la entidad y una 'distance' positiva");
+    if (a.entity.empty() || a.distance == 0.0f)
+      throw std::runtime_error("'behind_player' necesita la entidad y una 'distance' (negativa: delante)");
+    result = a;
+    ++found;
+  }
+  if (ja.contains("weather")) {
+    action::SetWeather a;
+    const json& jw = ja.at("weather");
+    if (jw.contains("rain"))
+      a.rain = jw.at("rain").get<float>();
+    if (jw.contains("storm"))
+      a.storm = jw.at("storm").get<bool>();
+    a.fade = jw.value("fade", a.fade);
+    if ((a.rain && (*a.rain < 0.0f || *a.rain > 1.0f)) || a.fade < 0.0f || (!a.rain && !a.storm))
+      throw std::runtime_error("'weather' necesita 'rain' (0..1) o 'storm', y un 'fade' >= 0");
+    result = a;
+    ++found;
+  }
+  if (ja.contains("ambient")) {
+    action::SetAmbient a;
+    a.value = ja.at("ambient").get<float>();
+    a.seconds = ja.value("seconds", a.seconds);
+    if (a.value < 0.0f || a.value > 1.0f || a.seconds < 0.0f)
+      throw std::runtime_error("'ambient' va de 0 a 1 y 'seconds' no puede ser negativo");
+    result = a;
+    ++found;
+  }
+  if (ja.contains("wait")) {
+    action::Wait a;
+    a.seconds = ja.at("wait").get<float>();
+    if (a.seconds <= 0.0f)
+      throw std::runtime_error("'wait' necesita segundos positivos");
+    result = a;
+    ++found;
+  }
+  if (ja.contains("lightning")) {
+    action::Lightning a;
+    a.thunderDelay = ja.value("thunderDelay", a.thunderDelay);
+    if (a.thunderDelay < 0.0f)
+      throw std::runtime_error("'thunderDelay' no puede ser negativo");
+    result = a;
+    ++found;
+  }
+  if (ja.contains("fog")) {
+    action::SetFog a;
+    const json& jf = ja.at("fog");
+    a.start = jf.value("start", a.start);
+    a.end = jf.value("end", a.end);
+    a.seconds = jf.value("seconds", a.seconds);
+    if (a.start < 0.0f || a.end <= a.start || a.seconds < 0.0f)
+      throw std::runtime_error("'fog' necesita 0 <= start < end y 'seconds' >= 0");
     result = a;
     ++found;
   }
@@ -667,6 +730,9 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
     s.range = js.value("range", s.range);
     s.angle = js.value("angle", s.angle);
     s.awayAngle = js.value("awayAngle", s.awayAngle);
+    s.hold = js.value("hold", s.hold);
+    if (s.hold < 0.0f)
+      throw std::runtime_error("'seen': 'hold' no puede ser negativo");
     if (s.range <= 0.0f || s.angle <= 0.0f || s.angle >= 90.0f || s.awayAngle < s.angle ||
         s.awayAngle > 180.0f)
       throw std::runtime_error("'seen': 'range' positivo, 'angle' entre 0 y 90 y 'awayAngle' "
@@ -681,10 +747,25 @@ void AddEntity(const json& je, RetroEngine& engine, Scene& scene, bool autoColli
     sight = std::move(s);
   }
 
+  // "near": { "range": 5, "after": 2, "forget": 5, "flag": "nombre" }
+  std::optional<Near> near;
+  if (je.contains("near")) {
+    const json& jn = je.at("near");
+    Near n;
+    n.range = jn.value("range", n.range);
+    n.after = jn.value("after", n.after);
+    n.forget = jn.value("forget", n.forget);
+    n.flag = jn.at("flag").get<std::string>();
+    if (n.range <= 0.0f || n.after < 0.0f || n.forget < 0.0f || n.flag.empty())
+      throw std::runtime_error("'near': 'range' positivo, 'after' y 'forget' >= 0 y un 'flag'");
+    near = std::move(n);
+  }
+
   Entity& e = scene.Add(std::move(entity));
   e.colliders = std::move(colliders);
   e.interact = std::move(interact);
   e.sight = std::move(sight);
+  e.near = std::move(near);
   e.transform.position = ReadVec3(je, "position", {0.0f, 0.0f, 0.0f});
   e.transform.rotation = ReadVec3(je, "rotation", {0.0f, 0.0f, 0.0f});
   e.transform.scale = ReadVec3(je, "scale", {1.0f, 1.0f, 1.0f});
@@ -910,6 +991,103 @@ void LoadSceneFromJson(const nlohmann::json& root, const std::string& relativePa
         pano.sunSize = js.value("size", pano.sunSize);
       }
       scene.panorama = std::move(pano);
+    }
+
+    if (root.contains("eyes")) {
+      context = "eyes";
+      const json& je = root.at("eyes");
+      Scene::Eyes eyes;
+      eyes.seconds = je.value("seconds", eyes.seconds);
+      if (eyes.seconds <= 0.5f)
+        throw std::runtime_error("'seconds' debe ser mayor que 0.5");
+      if (je.contains("sleep")) {
+        for (const json& ja : je.at("sleep"))
+          eyes.onSleep.push_back(ParseAction(ja));
+      }
+      scene.eyes = std::move(eyes);
+    }
+
+    if (root.contains("weather")) {
+      context = "weather";
+      const json& jw = root.at("weather");
+      Scene::Weather w;
+      w.rain = jw.value("rain", w.rain);
+      w.indoor = jw.value("indoor", w.indoor);
+      w.sound = jw.value("sound", w.sound);
+      w.volume = jw.value("volume", w.volume);
+      if (jw.contains("thunder")) {
+        const json& jt = jw.at("thunder");
+        const json& every = jt.at("every");
+        w.thunderMin = every.at(0).get<float>();
+        w.thunderMax = every.at(1).get<float>();
+        for (const json& js : jt.at("sounds"))
+          w.thunder.push_back(js.get<std::string>());
+        if (w.thunderMin <= 0.5f || w.thunderMax < w.thunderMin)
+          throw std::runtime_error("'thunder.every' debe ser [min, max] con 0.5 < min <= max");
+      }
+      // "fogBank": { "every": [40, 80], "seconds": 15, "fade": 3, "start": 1, "end": 10,
+      //              "color": [r,g,b], "mist": 0.6, "sound": "audio/x.wav", "volume": 0.5 }
+      if (jw.contains("fogBank")) {
+        const json& jb = jw.at("fogBank");
+        Scene::Weather::FogBank b;
+        const json& every = jb.at("every");
+        b.everyMin = every.at(0).get<float>();
+        b.everyMax = every.at(1).get<float>();
+        b.seconds = jb.value("seconds", b.seconds);
+        b.fade = jb.value("fade", b.fade);
+        b.start = jb.value("start", b.start);
+        b.end = jb.value("end", b.end);
+        if (jb.contains("color"))
+          b.color = ReadColor(jb, "color", b.color);
+        b.mist = jb.value("mist", b.mist);
+        b.sound = jb.value("sound", b.sound);
+        b.volume = jb.value("volume", b.volume);
+        if (b.everyMin <= 1.0f || b.everyMax < b.everyMin || b.seconds <= 0.0f || b.fade < 0.0f ||
+            b.start < 0.0f || b.end <= b.start || b.mist < 0.0f || b.mist > 1.0f || b.volume < 0.0f)
+          throw std::runtime_error("'fogBank': 'every' [min, max] con 1 < min <= max, 'seconds' > 0, "
+                                   "'fade' >= 0, 0 <= 'start' < 'end' y 'mist' de 0 a 1");
+        w.fogBank = std::move(b);
+      }
+      if (w.rain < 0.0f || w.rain > 1.0f || w.volume < 0.0f)
+        throw std::runtime_error("'rain' va de 0 a 1 y 'volume' no puede ser negativo");
+      scene.weather = std::move(w);
+    }
+
+    // "wind": { "center": [x, z], "outward": true, "strength": 1.2, "shelter": 6,
+    //           "gust": { "every": [6, 11], "seconds": 3, "strength": 5.5, "sound": "...", "volume": 0.8 } }
+    if (root.contains("wind")) {
+      context = "wind";
+      const json& jw = root.at("wind");
+      Scene::Wind w;
+      w.center = ReadVec2(jw, "center");
+      w.outward = jw.value("outward", w.outward);
+      w.strength = jw.value("strength", w.strength);
+      w.shelter = jw.value("shelter", w.shelter);
+      if (jw.contains("gust")) {
+        const json& jg = jw.at("gust");
+        w.gustMin = jg.at("every").at(0).get<float>();
+        w.gustMax = jg.at("every").at(1).get<float>();
+        w.gustSeconds = jg.value("seconds", w.gustSeconds);
+        w.gustStrength = jg.value("strength", w.gustStrength);
+        w.gustSound = jg.value("sound", w.gustSound);
+        w.gustVolume = jg.value("volume", w.gustVolume);
+        if (w.gustMin <= 0.5f || w.gustMax < w.gustMin || w.gustSeconds <= 0.0f || w.gustStrength < 0.0f)
+          throw std::runtime_error("'wind.gust': 'every' [min, max] con 0.5 < min <= max, 'seconds' > 0");
+      }
+      if (w.strength < 0.0f || w.shelter < 0.0f)
+        throw std::runtime_error("'wind': 'strength' y 'shelter' no pueden ser negativos");
+      scene.wind = std::move(w);
+    }
+
+    if (root.contains("photo")) {
+      context = "photo";
+      const json& jp = root.at("photo");
+      Scene::Photo photo;
+      photo.conditions = ParseConditions(jp);
+      photo.cooldown = jp.value("cooldown", photo.cooldown);
+      if (photo.cooldown < 0.2f)
+        throw std::runtime_error("'cooldown' debe ser de al menos 0.2 s");
+      scene.photo = std::move(photo);
     }
 
     if (root.contains("bounds")) {

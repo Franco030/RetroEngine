@@ -1,0 +1,5 @@
+# RetroEngine: roca_pared
+
+newmtl mat_roca
+d 1.000000
+map_Kd ../textures/mat_roca.png

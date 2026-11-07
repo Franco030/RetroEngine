@@ -1,0 +1,26 @@
+{
+  "speaker": "Nico",
+  "entries": [
+    {
+      "lines": [
+        "Ya les avise a todos. Van a bajar como esten: en pijama, en traje, con la maleta.",
+        "Tu ponte detras de mi. Tu no sales en esta."
+      ],
+      "do": [
+        { "set_flag": "hz_foto" },
+        {
+          "goto_scene": "scenes/hoz.json",
+          "position": [-17.5, 40.0, -3.0],
+          "yaw": 0,
+          "dark": 12,
+          "lines": [
+            "",
+            "Van llegando de uno en uno. Nadie habla.",
+            "Se acomodan frente al reloj, como para una foto de boda.",
+            ""
+          ]
+        }
+      ]
+    }
+  ]
+}

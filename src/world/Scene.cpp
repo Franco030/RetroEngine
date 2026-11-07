@@ -29,8 +29,8 @@ std::string InteractKey(const std::string& scenePath, const std::string& entityN
 // así que no se pueden atravesar.
 void AppendBoundsWalls(const Scene::Bounds& b, std::vector<WorldBox>& out) {
   constexpr float kThick = 2.0f;
-  constexpr float kBottom = -1.0f;
-  constexpr float kTop = 10.0f; // mucho más alto que un salto
+  constexpr float kBottom = -1000.0f; // las escenas pueden estar a cualquier altura (Hoz del Cuervo)
+  constexpr float kTop = 1000.0f;
 
   const float cx = (b.min.x + b.max.x) * 0.5f;
   const float cz = (b.min.y + b.max.y) * 0.5f;
@@ -146,7 +146,7 @@ void Scene::DrawPanorama(const Camera3D& camera, const Shader& spriteShader) con
   Model& model = p.model->Get();
   const Shader lit = model.materials[0].shader;
 
-  SetFogFixed(lit, p.haze);
+  SetFogFixed(lit, std::max(p.haze, weatherHaze));
   model.transform = MatrixTranslate(camera.position.x, p.y, camera.position.z);
   DrawModel(model, {0.0f, 0.0f, 0.0f}, 1.0f, p.tint);
   SetFogFixed(lit, -1.0f);
@@ -268,6 +268,27 @@ void Scene::PlaceBehind(Entity& entity, Vector3 feet, float yawDegrees, float di
   entity.transform.position.x = spot.x;
   entity.transform.position.z = spot.y;
   entity.transform.rotation.y = std::atan2(feet.x - spot.x, feet.z - spot.y) * RAD2DEG;
+  // Ponerla otra vez a tu espalda es una aparicion nueva: su "seen" vuelve a valer.
+  if (entity.sight) {
+    entity.sight->seen = false;
+    entity.sight->away = false;
+    entity.sight->held = 0.0f;
+  }
+}
+
+Vector3 LookPoint(Entity& e) {
+  BoxCollider box;
+  if (e.interact) {
+    box = e.interact->box;
+  } else {
+    const BoundingBox local = e.LocalBounds();
+    box.min = local.min;
+    box.max = local.max;
+  }
+  const WorldBox b = MakeWorldBox(box, e.transform);
+  const float alto = b.top - b.bottom;
+  const float y = alto > 1.4f ? b.top - 0.4f : (b.top + b.bottom) * 0.5f;
+  return {b.center.x, y, b.center.z};
 }
 
 void Scene::RefreshVisibility(const GameState& state) {
@@ -335,7 +356,7 @@ bool Scene::Occluded(Vector3 origin, Vector3 dir, float distance, const Entity* 
 constexpr float kSightVertical = 35.0f * DEG2RAD;
 constexpr float kOffScreenVertical = 45.0f * DEG2RAD;
 
-void Scene::UpdateSight(Vector3 eye, Vector3 forward, const GameState& state,
+void Scene::UpdateSight(Vector3 eye, Vector3 forward, float dt, const GameState& state,
                         std::vector<Action>& fired) {
   for (auto& e : entities_) {
     if (!e->sight || !e->visible)
@@ -372,12 +393,39 @@ void Scene::UpdateSight(Vector3 eye, Vector3 forward, const GameState& state,
       }
     }
 
-    if (!s.seen && inView) {
+    // Con "hold", hay que tenerla delante ese rato seguido: si se aparta, vuelve a empezar.
+    s.held = inView ? s.held + dt : 0.0f;
+    if (!s.seen && inView && s.held >= s.hold) {
       s.seen = true;
       fired.insert(fired.end(), s.onSeen.begin(), s.onSeen.end());
     } else if (s.seen && !s.away && !onScreen) {
       s.away = true;
       fired.insert(fired.end(), s.onLookAway.begin(), s.onLookAway.end());
+    }
+  }
+}
+
+void Scene::UpdateNear(Vector3 feet, float dt, std::vector<Action>& fired) {
+  for (auto& e : entities_) {
+    if (!e->near)
+      continue;
+    Near& n = *e->near;
+    const Vector3& p = e->transform.position;
+    const bool close = e->visible && std::hypot(p.x - feet.x, p.z - feet.z) <= n.range;
+    if (close) {
+      n.inside += dt;
+      n.outside = 0.0f;
+      if (!n.on && n.inside >= n.after) {
+        n.on = true;
+        fired.push_back(action::SetFlag{n.flag, 1});
+      }
+    } else {
+      n.inside = 0.0f;
+      n.outside += dt;
+      if (n.on && n.outside >= n.forget) {
+        n.on = false;
+        fired.push_back(action::SetFlag{n.flag, 0});
+      }
     }
   }
 }

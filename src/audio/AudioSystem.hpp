@@ -16,7 +16,7 @@
 
 namespace retro {
 
-// Efectos, dos canales de streaming (música y ambiente, con fundido cruzado) y pasos.
+// Efectos, tres canales de streaming (música, ambiente y lluvia, con fundido cruzado) y pasos.
 // Si no hay dispositivo de audio, todo se ignora y el juego sigue sin sonido.
 //
 // Los streams (musica, ambiente y emisores) los alimenta un HILO PROPIO cada pocos milisegundos:
@@ -53,6 +53,10 @@ public:
                  const std::string& then = {});
   void StopMusic(float fadeSeconds) { PlayMusic("", 0.0f, fadeSeconds); }
   void PlayAmbient(const std::string& file, float volume, float fadeSeconds);
+  // La lluvia: un tercer canal en bucle, aparte de la musica y el ambiente, para que pueda
+  // subir, bajar o cortarse de golpe ('FadeWeather', en 'seconds') sin tocar los otros dos.
+  void PlayWeather(const std::string& file, float volume, float fadeSeconds);
+  void FadeWeather(float volume, float seconds);
 
   void SetFootsteps(const std::vector<std::string>& files, float volume);
   void Footstep();
@@ -97,6 +101,7 @@ private:
 
   Channel music_;
   Channel ambient_;
+  Channel weather_;
 
   std::vector<std::shared_ptr<SoundResource>> footsteps_;
   float footstepVolume_ = 0.6f;

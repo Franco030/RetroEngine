@@ -1,0 +1,29 @@
+{
+  "entries": [
+    {
+      "if": { "flag": "lleva", "op": "!=", "value": 0 },
+      "lines": ["Un zapato rojo de niña, en el suelo, debajo de los ganchos.", "Traes las manos ocupadas."]
+    },
+    {
+      "lines": [
+        "Un zapato rojo de niña, en el suelo, debajo de los ganchos.",
+        "Esta mojado. Es el otro. El que faltaba."
+      ],
+      "do": [
+        { "set_flag": "lleva", "value": 4 },
+        { "set_flag": "pn_zapato_tomado" },
+        { "play_sound": "audio/portazo.wav", "volume": 0.9 },
+        { "set_flag": "pn_apagon" },
+        { "ambient": 0.02, "seconds": 0.05 },
+        { "stop_music": true, "fade": 0.4 },
+        { "wait": 0.5 },
+        {
+          "message": "Se va la luz. En toda la conservera, a la vez.\nLas maquinas se paran.",
+          "seconds": 4
+        },
+        { "wait": 3.0 },
+        { "lightning": true, "thunderDelay": 0.2 }
+      ]
+    }
+  ]
+}

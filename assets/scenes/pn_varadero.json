@@ -1,0 +1,754 @@
+{
+  "player": { "position": [0.0, 6.0, 37.0], "yaw": 0 },
+  "bounds": { "min": [-41.0, -30.0], "max": [41.0, 40.0] },
+  "background": [2, 2, 4],
+  "fog": { "start": 0.5, "end": 7.0 },
+  "light": { "direction": [0.3, -0.8, 0.3], "ambient": 0.03, "sun": 0.0 },
+  "weather": {
+    "rain": 1.0,
+    "sound": "audio/lluvia.wav",
+    "volume": 0.22,
+    "thunder": { "every": [6, 13], "sounds": ["audio/trueno_1.wav", "audio/trueno_2.wav", "audio/trueno_3.wav"] }
+  },
+  "photo": { "if": { "flag": "pn_camara" }, "cooldown": 1.6 },
+  "audio": {
+    "music": "",
+    "ambient": { "file": "audio/olas.wav", "volume": 0.35 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.3
+    },
+    "fade": 2
+  },
+  "entities": [
+    {
+      "name": "suelo_varadero",
+      "model": { "type": "plane", "size": [84, 72], "subdivisions": 21, "tiles": [42.0, 36.0] },
+      "texture": "textures/mat_piedra_mojada.png",
+      "wrap": "repeat",
+      "position": [0.0, 6.0, 6.0],
+      "tint": [120, 120, 124, 255],
+      "collider": { "min": [-42.0, -6.0, -36.0], "max": [42.0, 0, 36.0] }
+    },
+    {
+      "name": "mar",
+      "model": { "type": "plane", "size": [840, 270], "subdivisions": 210, "tiles": [140.0, 45.0] },
+      "texture": "textures/mat_mar_tormenta.png",
+      "wrap": "repeat",
+      "position": [0.0, 4.5, -165.0],
+      "tint": [150, 160, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "roca_s_0",
+      "model": "models/monte_a.obj",
+      "position": [-40, 2.0, 33.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [70, 70, 76, 255]
+    },
+    {
+      "name": "roca_s_1",
+      "model": "models/monte_b.obj",
+      "position": [-18, 2.0, 33.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [70, 70, 76, 255]
+    },
+    {
+      "name": "roca_s_2",
+      "model": "models/monte_c.obj",
+      "position": [4, 2.0, 33.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [70, 70, 76, 255]
+    },
+    {
+      "name": "roca_s_3",
+      "model": "models/monte_a.obj",
+      "position": [26, 2.0, 33.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [70, 70, 76, 255]
+    },
+    {
+      "name": "roca_o_0",
+      "model": "models/monte_b.obj",
+      "position": [-43.0, 2.0, -20],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [70, 70, 76, 255]
+    },
+    {
+      "name": "roca_e_0",
+      "model": "models/monte_c.obj",
+      "position": [43.0, 2.0, -20],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "tint": [70, 70, 76, 255]
+    },
+    {
+      "name": "roca_o_1",
+      "model": "models/monte_c.obj",
+      "position": [-43.0, 2.0, 2],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [70, 70, 76, 255]
+    },
+    {
+      "name": "roca_e_1",
+      "model": "models/monte_a.obj",
+      "position": [43.0, 2.0, 2],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "tint": [70, 70, 76, 255]
+    },
+    {
+      "name": "roca_o_2",
+      "model": "models/monte_a.obj",
+      "position": [-43.0, 2.0, 24],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [70, 70, 76, 255]
+    },
+    {
+      "name": "roca_e_2",
+      "model": "models/monte_b.obj",
+      "position": [43.0, 2.0, 24],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "tint": [70, 70, 76, 255]
+    },
+    {
+      "name": "grada_0",
+      "model": "models/grada.obj",
+      "position": [-14.0, 6.0, -30.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "grada_1",
+      "model": "models/grada.obj",
+      "position": [16.0, 6.0, -30.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "costillas_0",
+      "model": "models/costillas.obj",
+      "position": [-20.0, 6.0, -12.0],
+      "rotation": [0, 20, 0],
+      "collider": false
+    },
+    {
+      "name": "costillas_1",
+      "model": "models/costillas.obj",
+      "position": [12.0, 6.0, -4.0],
+      "rotation": [0, -15, 0],
+      "collider": false
+    },
+    {
+      "name": "costillas_2",
+      "model": "models/costillas.obj",
+      "position": [-6.0, 6.0, 10.0],
+      "rotation": [0, 80, 0],
+      "collider": false
+    },
+    {
+      "name": "barco_varado",
+      "model": "models/barco.obj",
+      "position": [26.0, 6.4, 12.0],
+      "rotation": [0, 100, 0],
+      "tint": [110, 110, 110, 255]
+    },
+    {
+      "name": "cobertizo_0",
+      "model": "models/cobertizo.obj",
+      "position": [-34.0, 6.0, 18.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "cobertizo_1",
+      "model": "models/cobertizo.obj",
+      "position": [34.0, 6.0, -14.0],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "torno_0",
+      "model": "models/torno.obj",
+      "position": [-14.0, 6.0, -24.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "torno_1",
+      "model": "models/torno.obj",
+      "position": [16.0, 6.0, -24.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "barca_v_0",
+      "model": "models/barca.obj",
+      "position": [-28.0, 6.0, -2.0],
+      "rotation": [180, 70, 0],
+      "scale": [1.6, 1.6, 1.6]
+    },
+    {
+      "name": "barca_v_1",
+      "model": "models/barca.obj",
+      "position": [30.0, 6.0, 2.0],
+      "rotation": [180, -20, 0],
+      "scale": [1.6, 1.6, 1.6]
+    },
+    {
+      "name": "red_v",
+      "model": "models/red_pesca.obj",
+      "position": [-30.0, 6.0, 8.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "ancla_v",
+      "model": "models/ancla.obj",
+      "position": [6.0, 6.0, -20.0],
+      "rotation": [0, 30, 0]
+    },
+    {
+      "name": "barril_v_0",
+      "model": "models/barril.obj",
+      "position": [20.0, 6.0, 20.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "barril_v_1",
+      "model": "models/barril.obj",
+      "position": [21.0, 6.0, 20.6],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "farol_entrada",
+      "model": "models/farol.obj",
+      "position": [3.0, 6.0, 25.0],
+      "rotation": [0, 0, 0],
+      "light": {
+        "offset": [0, 3.0, 0],
+        "color": [255, 180, 110],
+        "radius": 7,
+        "intensity": 0.7,
+        "flicker": 0.95,
+        "flickerRate": 11
+      }
+    },
+    {
+      "name": "luz_cueva_salida",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-1.3, 8.75, 30.9],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 170, 100],
+        "radius": 6,
+        "intensity": 0.8,
+        "flicker": 0.4,
+        "flickerRate": 7
+      }
+    },
+    {
+      "name": "cueva_salida",
+      "model": "models/cueva_varadero.obj",
+      "position": [0.0, 6.0, 31.5],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_varadero.png",
+      "tint": [90, 90, 96, 255]
+    },
+    {
+      "name": "seis_0",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_partida.png",
+      "position": [-26.0, 6.0, -16.0],
+      "rotation": [0, 200, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_seis_0" } }]
+      },
+      "glitch": 0.6,
+      "seen": {
+        "range": 16,
+        "angle": 22,
+        "if": {
+          "all": [{ "flag": "flash" }, { "not": { "flag": "pn_seis_0" } }]
+        },
+        "do": [
+          { "set_flag": "pn_seis_0" },
+          { "add_flag": "pn_seis" },
+          { "message": "Ruiz. Sigue buscandola.\n({pn_seis} de 6)", "seconds": 4 }
+        ]
+      }
+    },
+    {
+      "name": "latido_0",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-26.0, 7.2, -16.0],
+      "showIf": { "not": { "flag": "pn_seis_0" } },
+      "sound": { "file": "audio/latido.wav", "volume": 0.4, "radius": 8.0, "minDistance": 1.5 }
+    },
+    {
+      "name": "seis_1",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_partida_b.png",
+      "position": [-8.0, 6.0, -22.0],
+      "rotation": [0, 150, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_seis_1" } }]
+      },
+      "glitch": 0.6,
+      "seen": {
+        "range": 16,
+        "angle": 22,
+        "if": {
+          "all": [{ "flag": "flash" }, { "not": { "flag": "pn_seis_1" } }]
+        },
+        "do": [
+          { "set_flag": "pn_seis_1" },
+          { "add_flag": "pn_seis" },
+          { "message": "Lara. Sigue buscandola.\n({pn_seis} de 6)", "seconds": 4 }
+        ]
+      }
+    },
+    {
+      "name": "latido_1",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-8.0, 7.2, -22.0],
+      "showIf": { "not": { "flag": "pn_seis_1" } },
+      "sound": { "file": "audio/latido.wav", "volume": 0.4, "radius": 8.0, "minDistance": 1.5 }
+    },
+    {
+      "name": "seis_2",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_partida.png",
+      "position": [22.0, 6.0, -10.0],
+      "rotation": [0, 260, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_seis_2" } }]
+      },
+      "glitch": 0.6,
+      "seen": {
+        "range": 16,
+        "angle": 22,
+        "if": {
+          "all": [{ "flag": "flash" }, { "not": { "flag": "pn_seis_2" } }]
+        },
+        "do": [
+          { "set_flag": "pn_seis_2" },
+          { "add_flag": "pn_seis" },
+          { "message": "Ochoa. Sigue buscandola.\n({pn_seis} de 6)", "seconds": 4 }
+        ]
+      }
+    },
+    {
+      "name": "latido_2",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [22.0, 7.2, -10.0],
+      "showIf": { "not": { "flag": "pn_seis_2" } },
+      "sound": { "file": "audio/latido.wav", "volume": 0.4, "radius": 8.0, "minDistance": 1.5 }
+    },
+    {
+      "name": "seis_3",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_partida_b.png",
+      "position": [28.0, 6.0, 8.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_seis_3" } }]
+      },
+      "glitch": 0.6,
+      "seen": {
+        "range": 16,
+        "angle": 22,
+        "if": {
+          "all": [{ "flag": "flash" }, { "not": { "flag": "pn_seis_3" } }]
+        },
+        "do": [
+          { "set_flag": "pn_seis_3" },
+          { "add_flag": "pn_seis" },
+          { "message": "Prieto. Sigue buscandola.\n({pn_seis} de 6)", "seconds": 4 }
+        ]
+      }
+    },
+    {
+      "name": "latido_3",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [28.0, 7.2, 8.0],
+      "showIf": { "not": { "flag": "pn_seis_3" } },
+      "sound": { "file": "audio/latido.wav", "volume": 0.4, "radius": 8.0, "minDistance": 1.5 }
+    },
+    {
+      "name": "seis_4",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_partida.png",
+      "position": [-30.0, 6.0, 12.0],
+      "rotation": [0, 300, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_seis_4" } }]
+      },
+      "glitch": 0.6,
+      "seen": {
+        "range": 16,
+        "angle": 22,
+        "if": {
+          "all": [{ "flag": "flash" }, { "not": { "flag": "pn_seis_4" } }]
+        },
+        "do": [
+          { "set_flag": "pn_seis_4" },
+          { "add_flag": "pn_seis" },
+          { "message": "Vela. Sigue buscandola.\n({pn_seis} de 6)", "seconds": 4 }
+        ]
+      }
+    },
+    {
+      "name": "latido_4",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-30.0, 7.2, 12.0],
+      "showIf": { "not": { "flag": "pn_seis_4" } },
+      "sound": { "file": "audio/latido.wav", "volume": 0.4, "radius": 8.0, "minDistance": 1.5 }
+    },
+    {
+      "name": "seis_5",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_partida_b.png",
+      "position": [16.0, 6.0, -27.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_seis_5" } }]
+      },
+      "glitch": 0.6,
+      "seen": {
+        "range": 16,
+        "angle": 22,
+        "if": {
+          "all": [{ "flag": "flash" }, { "not": { "flag": "pn_seis_5" } }]
+        },
+        "do": [
+          { "set_flag": "pn_seis_5" },
+          { "add_flag": "pn_seis" },
+          {
+            "message": "Martin Rosales. El padre de Clara.\nMira el agua como si fuera a devolversela.\n({pn_seis} de 6)",
+            "seconds": 4
+          }
+        ]
+      }
+    },
+    {
+      "name": "latido_5",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [16.0, 7.2, -27.0],
+      "showIf": { "not": { "flag": "pn_seis_5" } },
+      "sound": { "file": "audio/latido.wav", "volume": 0.4, "radius": 8.0, "minDistance": 1.5 }
+    },
+    {
+      "name": "cazador",
+      "model": "models/hombre_alto.obj",
+      "position": [-2.0, 6.0, 14.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "slide": { "offset": [0, 0, -30.0], "period": 34, "phase": 0 },
+      "showIf": {
+        "all": [
+          { "flag": "flash" },
+          {
+            "all": [{ "not": { "flag": "pn_cazado" } }, { "not": { "flag": "pn_seis_fotos" } }]
+          }
+        ]
+      },
+      "seen": {
+        "range": 18,
+        "angle": 18,
+        "if": {
+          "all": [
+            { "flag": "flash" },
+            {
+              "all": [{ "not": { "flag": "pn_cazado" } }, { "not": { "flag": "pn_seis_fotos" } }]
+            },
+            { "flag": "pn_oyo_0" }
+          ]
+        },
+        "do": [
+          { "set_flag": "pn_cazado" },
+          { "message": " ", "seconds": 2.0 },
+          { "behind_player": "cara", "distance": -5.0 },
+          { "play_sound": "audio/jumpscare_flash.wav", "volume": 1.0 },
+          { "scare": "cara", "speed": 60, "fov": 46 },
+          { "wait": 0.13 },
+          { "behind_player": "cara", "distance": -2.8 },
+          { "scare": "cara", "speed": 70, "fov": 38 },
+          { "wait": 0.11 },
+          { "behind_player": "cara", "distance": -1.45 },
+          { "scare": "cara", "speed": 80, "fov": 32 },
+          { "lightning": true, "thunderDelay": 0.0 },
+          { "wait": 0.35 },
+          { "lightning": true, "thunderDelay": 0.6 },
+          { "wait": 1.3 },
+          { "set_flag": "pn_var_init" },
+          {
+            "goto_scene": "scenes/pn_varadero.json",
+            "position": [0.0, 6.0, 37.0],
+            "yaw": 0,
+            "dark": 6,
+            "lines": ["", "Te ha oido.", "Vuelves a la entrada. Las fotos que llevas, las sigues llevando.", ""]
+          }
+        ]
+      }
+    },
+    {
+      "name": "aliento",
+      "model": "models/hombre_alto.obj",
+      "position": [-2.0, 6.0, 14.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "slide": { "offset": [0, 0, -30.0], "period": 34, "phase": 0 },
+      "tint": [0, 0, 0, 0],
+      "showIf": {
+        "all": [{ "not": { "flag": "pn_cazado" } }, { "not": { "flag": "pn_seis_fotos" } }]
+      },
+      "sound": { "file": "audio/respira_cazador.wav", "volume": 0.55, "radius": 5.5, "minDistance": 1.0 },
+      "near": { "range": 5.5, "after": 2.0, "forget": 6.0, "flag": "pn_oyo_0" },
+      "seen": {
+        "range": 4.0,
+        "angle": 30,
+        "hold": 3.0,
+        "if": {
+          "all": [{ "not": { "flag": "pn_cazado" } }, { "not": { "flag": "pn_seis_fotos" } }]
+        },
+        "do": [
+          { "set_flag": "pn_cazado" },
+          { "message": " ", "seconds": 2.0 },
+          { "behind_player": "cara", "distance": -5.0 },
+          { "play_sound": "audio/jumpscare.wav", "volume": 1.0 },
+          { "scare": "cara", "speed": 60, "fov": 46 },
+          { "wait": 0.13 },
+          { "behind_player": "cara", "distance": -2.8 },
+          { "scare": "cara", "speed": 70, "fov": 38 },
+          { "wait": 0.11 },
+          { "behind_player": "cara", "distance": -1.45 },
+          { "scare": "cara", "speed": 80, "fov": 32 },
+          { "wait": 1.3 },
+          { "set_flag": "pn_var_init" },
+          {
+            "goto_scene": "scenes/pn_varadero.json",
+            "position": [0.0, 6.0, 37.0],
+            "yaw": 0,
+            "dark": 6,
+            "lines": ["", "Te ha oido.", "Vuelves a la entrada. Las fotos que llevas, las sigues llevando.", ""]
+          }
+        ]
+      }
+    },
+    {
+      "name": "cazador_2",
+      "model": "models/hombre_alto.obj",
+      "position": [24.0, 6.0, -18.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "slide": { "offset": [-34.0, 0, 0], "period": 41, "phase": 0.5 },
+      "showIf": {
+        "all": [
+          { "flag": "flash" },
+          {
+            "all": [{ "not": { "flag": "pn_cazado" } }, { "not": { "flag": "pn_seis_fotos" } }]
+          }
+        ]
+      },
+      "seen": {
+        "range": 18,
+        "angle": 18,
+        "if": {
+          "all": [
+            { "flag": "flash" },
+            {
+              "all": [{ "not": { "flag": "pn_cazado" } }, { "not": { "flag": "pn_seis_fotos" } }]
+            },
+            { "flag": "pn_oyo_1" }
+          ]
+        },
+        "do": [
+          { "set_flag": "pn_cazado" },
+          { "message": " ", "seconds": 2.0 },
+          { "behind_player": "cara", "distance": -5.0 },
+          { "play_sound": "audio/jumpscare_flash.wav", "volume": 1.0 },
+          { "scare": "cara", "speed": 60, "fov": 46 },
+          { "wait": 0.13 },
+          { "behind_player": "cara", "distance": -2.8 },
+          { "scare": "cara", "speed": 70, "fov": 38 },
+          { "wait": 0.11 },
+          { "behind_player": "cara", "distance": -1.45 },
+          { "scare": "cara", "speed": 80, "fov": 32 },
+          { "lightning": true, "thunderDelay": 0.0 },
+          { "wait": 0.35 },
+          { "lightning": true, "thunderDelay": 0.6 },
+          { "wait": 1.3 },
+          { "set_flag": "pn_var_init" },
+          {
+            "goto_scene": "scenes/pn_varadero.json",
+            "position": [0.0, 6.0, 37.0],
+            "yaw": 0,
+            "dark": 6,
+            "lines": ["", "Te ha oido.", "Vuelves a la entrada. Las fotos que llevas, las sigues llevando.", ""]
+          }
+        ]
+      }
+    },
+    {
+      "name": "aliento_2",
+      "model": "models/hombre_alto.obj",
+      "position": [24.0, 6.0, -18.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "slide": { "offset": [-34.0, 0, 0], "period": 41, "phase": 0.5 },
+      "tint": [0, 0, 0, 0],
+      "showIf": {
+        "all": [{ "not": { "flag": "pn_cazado" } }, { "not": { "flag": "pn_seis_fotos" } }]
+      },
+      "sound": { "file": "audio/respira_cazador.wav", "volume": 0.55, "radius": 5.5, "minDistance": 1.0 },
+      "near": { "range": 5.5, "after": 2.0, "forget": 6.0, "flag": "pn_oyo_1" },
+      "seen": {
+        "range": 4.0,
+        "angle": 30,
+        "hold": 3.0,
+        "if": {
+          "all": [{ "not": { "flag": "pn_cazado" } }, { "not": { "flag": "pn_seis_fotos" } }]
+        },
+        "do": [
+          { "set_flag": "pn_cazado" },
+          { "message": " ", "seconds": 2.0 },
+          { "behind_player": "cara", "distance": -5.0 },
+          { "play_sound": "audio/jumpscare.wav", "volume": 1.0 },
+          { "scare": "cara", "speed": 60, "fov": 46 },
+          { "wait": 0.13 },
+          { "behind_player": "cara", "distance": -2.8 },
+          { "scare": "cara", "speed": 70, "fov": 38 },
+          { "wait": 0.11 },
+          { "behind_player": "cara", "distance": -1.45 },
+          { "scare": "cara", "speed": 80, "fov": 32 },
+          { "wait": 1.3 },
+          { "set_flag": "pn_var_init" },
+          {
+            "goto_scene": "scenes/pn_varadero.json",
+            "position": [0.0, 6.0, 37.0],
+            "yaw": 0,
+            "dark": 6,
+            "lines": ["", "Te ha oido.", "Vuelves a la entrada. Las fotos que llevas, las sigues llevando.", ""]
+          }
+        ]
+      }
+    },
+    {
+      "name": "cara",
+      "model": "models/cazador_cara.obj",
+      "position": [0, 5.55, -80],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "emissive": true,
+      "tint": [210, 210, 214, 255],
+      "showIf": { "flag": "pn_cazado" },
+      "scale": [0.82, 0.82, 0.82],
+      "idle": { "bob": 0.02, "sway": 3.5, "speed": 30 }
+    }
+  ],
+  "triggers": [
+    {
+      "name": "reinicio",
+      "position": [0, 6.0, 1.0],
+      "size": [84, 4, 62],
+      "on": "stay",
+      "if": {
+        "all": [{ "flag": "pn_var_init" }, { "not": { "flag": "pn_seis_fotos" } }]
+      },
+      "do": [
+        { "set_flag": "pn_var_init", "value": 0 },
+        { "set_flag": "pn_cazado", "value": 0 },
+        { "set_flag": "pn_oyo_0", "value": 0 },
+        { "set_flag": "pn_oyo_1", "value": 0 },
+        {
+          "message": "Ctrl: despacio. Algo cuenta los pasos.\nDonde late un corazon, alguien sigue buscando.",
+          "seconds": 5
+        }
+      ]
+    },
+    {
+      "name": "oido",
+      "position": [0, 6.0, 1.0],
+      "size": [84, 4, 62],
+      "on": "stay",
+      "if": {
+        "all": [
+          {
+            "all": [{ "not": { "flag": "pn_cazado" } }, { "not": { "flag": "pn_seis_fotos" } }]
+          },
+          { "not": { "flag": "pn_var_init" } },
+          { "flag": "velocidad", "op": ">", "value": 20 }
+        ]
+      },
+      "do": [
+        { "set_flag": "pn_cazado" },
+        { "message": " ", "seconds": 2.0 },
+        { "behind_player": "cara", "distance": -5.0 },
+        { "play_sound": "audio/jumpscare.wav", "volume": 1.0 },
+        { "scare": "cara", "speed": 60, "fov": 46 },
+        { "wait": 0.13 },
+        { "behind_player": "cara", "distance": -2.8 },
+        { "scare": "cara", "speed": 70, "fov": 38 },
+        { "wait": 0.11 },
+        { "behind_player": "cara", "distance": -1.45 },
+        { "scare": "cara", "speed": 80, "fov": 32 },
+        { "wait": 1.3 },
+        { "set_flag": "pn_var_init" },
+        {
+          "goto_scene": "scenes/pn_varadero.json",
+          "position": [0.0, 6.0, 37.0],
+          "yaw": 0,
+          "dark": 6,
+          "lines": ["", "Te ha oido.", "Vuelves a la entrada. Las fotos que llevas, las sigues llevando.", ""]
+        }
+      ]
+    },
+    {
+      "name": "completo",
+      "position": [0, 6.0, 1.0],
+      "size": [84, 4, 62],
+      "on": "stay",
+      "if": {
+        "all": [{ "flag": "pn_seis", "op": ">=", "value": 6 }, { "not": { "flag": "pn_seis_fotos" } }]
+      },
+      "do": [
+        { "set_flag": "pn_seis_fotos" },
+        { "wait": 2.0 },
+        { "message": "Los seis. Ya no se oye respirar a nadie.\nNico querra ver las fotos.", "seconds": 5 }
+      ]
+    },
+    {
+      "name": "a_la_cueva",
+      "position": [0.0, 6.0, 39.2],
+      "size": [4.4, 4, 1.4],
+      "on": "enter",
+      "do": [{ "goto_scene": "scenes/pn_puerto.json", "position": [-85.0, 4.85, -1.2], "yaw": -90 }]
+    }
+  ],
+  "emitters": [],
+  "autoCollide": true,
+  "camera": { "position": [0.0, 7.7, 37.0], "target": [0.0, 7.5, 32.0], "fov": 60 }
+}

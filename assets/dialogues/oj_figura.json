@@ -1,0 +1,20 @@
+{
+  "entries": [
+    {
+      "lines": [
+        "La figura alta. Por primera vez, de frente, y no se te echa encima.",
+        "Te sigue desde el bosque. Desde antes. No tiene cara: tiene cansancio.",
+        "A su lado, la primera fosa, abierta. Y la pala, clavada en la tierra.",
+        "No te la da. Espera a que la tomes tu.",
+        "Llenas la fosa. Una palada. Otra. Nadie mas va a caber aqui.",
+        "Cuando acabas, la figura baja la cabeza, despacio, como quien da las gracias.",
+        "Y ya no esta. Nunca estuvo: era el miedo de llegar hasta aqui."
+      ],
+      "do": [
+        { "set_flag": "oj_paz" },
+        { "wait": 1.0 },
+        { "message": "La pesadilla se acabo. Ahora hay que escoger.", "seconds": 4 }
+      ]
+    }
+  ]
+}

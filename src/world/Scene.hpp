@@ -29,6 +29,11 @@ struct SceneAudio {
   float fade = 1.5f;
 };
 
+// A donde mira la camara cuando habla con 'e' o cuando un look_at/scare la nombra: a su caja de
+// interaccion (o la del modelo), a la altura de la cara si es alta (40 cm bajo lo de arriba) o al
+// medio si es baja. El juego lo usa para girar la vista; el editor, para dibujar el punto.
+Vector3 LookPoint(Entity& e);
+
 class Scene {
 public:
   struct SpawnPoint {
@@ -65,6 +70,76 @@ public:
   std::vector<PointLight> lights;
   std::vector<Emitter> emitters;
   std::optional<Bounds> bounds;
+  // Cerrar los ojos (Q), solo en las escenas que traen "eyes". Con los ojos cerrados la bandera
+  // "ojos_cerrados" vale 1 (lo que tenga showIf con ella aparece o desaparece). A los 'seconds'
+  // seguidos gana el sueno: los ojos se abren solos y pasa 'onSleep'.
+  struct Eyes {
+    float seconds = 6.0f;
+    std::vector<Action> onSleep;
+  };
+  std::optional<Eyes> eyes;
+
+  // El tiempo (Puerto Niebla): lluvia 'rain' (0..1) que se ve caer y se oye ('sound', en bucle a
+  // 'volume' por la lluvia), y tormenta: un relampago cada 'thunderMin'..'thunderMax' segundos (0 =
+  // sin tormenta), con el trueno ('thunder', uno al azar) despues. 'indoor': bajo techo, la lluvia
+  // solo se oye y los relampagos entran por las ventanas, mas flojos. Durante el destello, la
+  // bandera "relampago" vale 1.
+  struct Weather {
+    float rain = 0.0f;
+    bool indoor = false;
+    std::string sound;
+    float volume = 0.6f;
+    float thunderMin = 0.0f;
+    float thunderMax = 0.0f;
+    std::vector<std::string> thunder;
+    // Bancos de niebla: cada 'everyMin'..'everyMax' segundos la niebla entra (en 'fade' s), se
+    // cierra hasta 'start'..'end' con el color 'color' y la neblina baja 'mist', se queda 'seconds'
+    // y se va otra vez en 'fade'. Al entrar suena 'sound' (si hay).
+    struct FogBank {
+      float everyMin = 0.0f;
+      float everyMax = 0.0f;
+      float seconds = 15.0f;
+      float fade = 3.0f;
+      float start = 1.0f;
+      float end = 10.0f;
+      Color color{60, 64, 72, 255};
+      float mist = 0.6f;
+      std::string sound;
+      float volume = 0.5f;
+    };
+    std::optional<FogBank> fogBank;
+  };
+  std::optional<Weather> weather;
+
+  // El viento que empuja (el ojo de la tormenta): sopla desde 'center' hacia fuera (o hacia el,
+  // con outward false) con 'strength' m/s, y cada 'gustMin'..'gustMax' s una racha de
+  // 'gustSeconds' s que empuja con 'gustStrength' m/s mas (y suena 'gustSound'). Detras de algo
+  // solido (a menos de 'shelter' m, en la direccion de donde viene) no empuja: a cubierto.
+  struct Wind {
+    Vector2 center{0.0f, 0.0f};
+    bool outward = true;
+    float strength = 1.0f;
+    float gustMin = 0.0f;
+    float gustMax = 0.0f;
+    float gustSeconds = 3.0f;
+    float gustStrength = 5.0f;
+    std::string gustSound;
+    float gustVolume = 0.8f;
+    float shelter = 6.0f;
+  };
+  std::optional<Wind> wind;
+  // Lo que el tiempo tapa del panorama ahora (un banco de niebla): main lo pone cada fotograma; el
+  // panorama se dibuja con la mayor de las dos mezclas.
+  float weatherHaze = 0.0f;
+
+  // La camara de fotos (F): solo en las escenas que traen "photo" y mientras se cumpla 'if'. Cada
+  // foto es un flash: la bandera "flash" vale 1 un instante (lo que tenga showIf o seen con ella
+  // sale en la foto) y suma uno a "fotos". Entre una y otra, 'cooldown' segundos.
+  struct Photo {
+    std::vector<Condition> conditions;
+    float cooldown = 1.5f;
+  };
+  std::optional<Photo> photo;
 
   Entity& Add(std::unique_ptr<Entity> entity);
   Entity* Find(const std::string& name);
@@ -78,6 +153,9 @@ public:
     lights.clear();
     emitters.clear();
     bounds.reset();
+    eyes.reset();
+    weather.reset();
+    photo.reset();
     panorama.reset();
     triggersPrimed_ = false;
     audio = SceneAudio{};
@@ -127,9 +205,17 @@ public:
   void Interact(Entity& entity, GameState& state, std::vector<Action>& fired);
 
   // Entidades con "seen": añade a 'fired' las acciones de las que se acaban de ver (o de dejar de
-  // mirar) desde 'eye' mirando hacia 'forward' (unitaria).
-  void UpdateSight(Vector3 eye, Vector3 forward, const GameState& state,
+  // mirar) desde 'eye' mirando hacia 'forward' (unitaria). 'dt': para los "hold".
+  void UpdateSight(Vector3 eye, Vector3 forward, float dt, const GameState& state,
                    std::vector<Action>& fired);
+  // Entidades con "near": pone o quita su bandera (en 'fired') segun lo que lleva el jugador
+  // (pies en 'feet') cerca o lejos de ellas.
+  void UpdateNear(Vector3 feet, float dt, std::vector<Action>& fired);
+
+  // Si algo solido corta el rayo antes de 'distance' (el refugio del viento).
+  bool Blocked(Vector3 origin, Vector3 dir, float distance) const {
+    return Occluded(origin, dir, distance, nullptr);
+  }
 
 private:
   // Si alguna entidad solida (que no sea 'self') corta el rayo antes de 'distance'.

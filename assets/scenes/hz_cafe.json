@@ -1,0 +1,160 @@
+{
+  "player": { "position": [0, 0, 2.6], "yaw": 0 },
+  "bounds": { "min": [-4.7, -3.9], "max": [4.7, 3.9] },
+  "background": [14, 14, 24],
+  "fog": { "start": 14, "end": 50 },
+  "light": { "direction": [-0.2, -1, 0.1], "ambient": 0.5, "sun": 0.3 },
+  "lights": [{ "position": [0, 2.3, 0], "color": [255, 210, 150], "radius": 10, "intensity": 0.8 }],
+  "audio": {
+    "ambient": { "file": "audio/hoz_amb.wav", "volume": 0.25 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.26
+    },
+    "fade": 1.5
+  },
+  "entities": [
+    {
+      "name": "sala",
+      "model": "models/interior_casa.obj",
+      "position": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "scale": [1.6, 1, 1.6],
+      "tint": [200, 170, 150, 255],
+      "interact": {
+        "prompt": "Salir",
+        "range": 3.0,
+        "box": { "min": [-0.8, 0, 2.2], "max": [0.8, 2.4, 2.65] },
+        "do": [{ "goto_scene": "scenes/hoz.json", "position": [-30.0, 40.0, -2.0], "yaw": 90 }]
+      }
+    },
+    {
+      "name": "barra",
+      "model": "models/mostrador.obj",
+      "position": [-2.2, 0, -1.6],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "cafetera",
+      "model": "models/cafetera.obj",
+      "position": [-2.6, 1.05, -1.7],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "interact": {
+        "prompt": "Tomar un cafe",
+        "range": 2.4,
+        "do": [{ "dialogue": "hz_cafetera" }],
+        "box": { "min": [-0.4, 0, -0.3], "max": [0.4, 0.7, 0.3] }
+      }
+    },
+    {
+      "name": "chelo",
+      "model": "models/aldeana.obj",
+      "texture": "textures/pj_fe_hz_chelo.png",
+      "position": [-2.2, 0, -2.8],
+      "rotation": [0, 0, 0],
+      "idle": { "bob": 0.006, "sway": 0.8, "speed": 0.9 },
+      "facePlayer": { "range": 5.0, "turnSpeed": 70 },
+      "interact": { "prompt": "Hablar", "range": 3.4, "do": [{ "dialogue": "hz_chelo" }] }
+    },
+    {
+      "name": "mesa_0",
+      "model": "models/mesa_cocina.obj",
+      "position": [2.4, 0, -1.6],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "silla_0",
+      "model": "models/silla.obj",
+      "position": [2.4, 0, -0.7],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "silla_1",
+      "model": "models/silla.obj",
+      "position": [2.4, 0, -2.5],
+      "rotation": [0, 180, 0]
+    },
+    {
+      "name": "fulgencio",
+      "model": "models/granjero.obj",
+      "texture": "textures/pj_fe_hz_cartero.png",
+      "position": [3.4, 0, -1.6],
+      "rotation": [0, -90, 0],
+      "idle": { "bob": 0.006, "sway": 0.8, "speed": 0.9 },
+      "facePlayer": { "range": 5.0, "turnSpeed": 70 },
+      "interact": { "prompt": "Hablar", "range": 2.6, "do": [{ "dialogue": "hz_fulgencio" }] }
+    },
+    {
+      "name": "mesa_1",
+      "model": "models/mesa_cocina.obj",
+      "position": [2.4, 0, 1.8],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "cliente",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_hz_vecino.png",
+      "position": [3.4, 0, 1.8],
+      "rotation": [0, -90, 0],
+      "idle": { "bob": 0.006, "sway": 0.8, "speed": 0.9 },
+      "facePlayer": { "range": 5.0, "turnSpeed": 70 },
+      "interact": { "prompt": "Hablar", "range": 2.6, "do": [{ "dialogue": "hz_cliente" }] }
+    },
+    {
+      "name": "mesita",
+      "model": "models/mesa_cocina.obj",
+      "position": [-3.6, 0, 2.2],
+      "rotation": [0, 90, 0],
+      "scale": [0.6, 1, 0.6]
+    },
+    {
+      "name": "gramofono",
+      "model": "models/gramofono.obj",
+      "position": [-3.6, 0.94, 2.2],
+      "rotation": [0, 60, 0],
+      "collider": false,
+      "interact": {
+        "prompt": "Mirar el gramofono",
+        "range": 2.6,
+        "do": [{ "dialogue": "hz_gramofono" }],
+        "box": { "min": [-0.4, 0, -0.4], "max": [0.4, 1.0, 0.4] }
+      }
+    },
+    {
+      "name": "vals",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-3.6, 1.2, 2.2],
+      "showIf": { "flag": "vals" },
+      "sound": { "file": "audio/musica_hoz_vals_v2.wav", "volume": 0.6, "radius": 14, "minDistance": 3 }
+    },
+    {
+      "name": "cartel_no_duerma",
+      "model": "models/letrero.obj",
+      "position": [4.75, 1.7, -0.5],
+      "rotation": [0, -90, 0],
+      "texture": "textures/lam_h_no_duerma.png",
+      "collider": false,
+      "scale": [0.6, 0.6, 1]
+    },
+    {
+      "name": "jaula",
+      "model": "models/jaula.obj",
+      "position": [4.4, 2.27, 3.4],
+      "rotation": [0, 20, 0],
+      "collider": false,
+      "interact": {
+        "prompt": "Mirar",
+        "range": 2.6,
+        "do": [{ "dialogue": "hz_jaula" }],
+        "box": { "min": [-0.3, -0.1, -0.3], "max": [0.3, 0.7, 0.3] }
+      }
+    }
+  ],
+  "triggers": [],
+  "emitters": [],
+  "autoCollide": true,
+  "camera": { "position": [0, 1.7, 2.6], "target": [0, 1.5, 0], "fov": 60 }
+}

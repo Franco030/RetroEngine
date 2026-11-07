@@ -1,0 +1,13 @@
+# RetroEngine: cobertizo
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_oxido
+d 1.000000
+map_Kd ../textures/mat_oxido.png
+
+newmtl mat_tablas_negras
+d 1.000000
+map_Kd ../textures/mat_tablas_negras.png

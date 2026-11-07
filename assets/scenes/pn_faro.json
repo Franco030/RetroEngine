@@ -1,0 +1,2554 @@
+{
+  "player": { "position": [140.0, 30.35, -112.6], "yaw": 0 },
+  "bounds": { "min": [136.8, -113.2], "max": [143.2, -106.8] },
+  "background": [14, 16, 22],
+  "fog": { "start": 20, "end": 260 },
+  "light": { "direction": [0.3, -0.8, 0.3], "ambient": 0.32, "sun": 0.12 },
+  "panorama": { "model": "models/panorama_niebla.obj", "tint": [255, 255, 255], "haze": 0.55, "y": 6.0 },
+  "weather": {
+    "rain": 1.0,
+    "sound": "audio/lluvia.wav",
+    "volume": 0.22,
+    "thunder": { "every": [7, 16], "sounds": ["audio/trueno_1.wav", "audio/trueno_2.wav", "audio/trueno_3.wav"] },
+    "fogBank": {
+      "every": [120, 240],
+      "seconds": 15,
+      "fade": 4,
+      "start": 1.5,
+      "end": 13,
+      "color": [62, 66, 74],
+      "mist": 0.55,
+      "sound": "audio/viento.wav",
+      "volume": 0.45
+    }
+  },
+  "photo": { "if": { "flag": "pn_camara" }, "cooldown": 1.6 },
+  "audio": {
+    "music": { "file": "audio/musica_pn_dique_v2.wav", "volume": 0.4 },
+    "ambient": { "file": "audio/olas.wav", "volume": 0.35 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.25
+    },
+    "fade": 3
+  },
+  "entities": [
+    {
+      "name": "galeria",
+      "model": "models/galeria_niebla.obj",
+      "position": [140.0, 30.35, -110.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "suelo_galeria",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "position": [140.0, 30.35, -110.0],
+      "collider": { "min": [-3.4, -0.4, -3.4], "max": [3.4, 0, 3.4] }
+    },
+    {
+      "name": "mar",
+      "model": { "type": "plane", "size": [840, 900], "subdivisions": 225, "tiles": [140.0, 150.0] },
+      "texture": "textures/mat_mar_tormenta.png",
+      "wrap": "repeat",
+      "position": [0.0, 4.5, -450.0],
+      "tint": [150, 160, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "isla",
+      "model": "models/isla_faro.obj",
+      "position": [140.0, 6.0, -110.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "faro",
+      "model": "models/faro_torre.obj",
+      "position": [140.0, 6.0, -110.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "dique_0",
+      "model": "models/dique_tramo.obj",
+      "position": [86.0, 6.0, 2.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "dique_1",
+      "model": "models/dique_tramo.obj",
+      "position": [106.0, 6.0, 2.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "dique_2",
+      "model": "models/dique_tramo.obj",
+      "position": [118.0, 6.0, -10.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "dique_3",
+      "model": "models/dique_tramo.obj",
+      "position": [118.0, 6.0, -30.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "dique_4",
+      "model": "models/dique_tramo.obj",
+      "position": [128.0, 6.0, -42.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "dique_5",
+      "model": "models/dique_tramo.obj",
+      "position": [140.0, 6.0, -54.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "dique_6",
+      "model": "models/dique_tramo.obj",
+      "position": [140.0, 6.0, -76.5],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "dique_esquina_0",
+      "model": "models/dique_esquina.obj",
+      "position": [118.0, 6.0, 2.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "dique_esquina_0_pretil_0",
+      "model": "models/pretil_dique.obj",
+      "position": [120.38, 6.0, 2.3],
+      "rotation": [0, 0, 0],
+      "scale": [1.0, 1.0, 0.8846153846153845]
+    },
+    {
+      "name": "dique_esquina_0_pretil_1",
+      "model": "models/pretil_dique.obj",
+      "position": [118.3, 6.0, 4.38],
+      "rotation": [0, 90, 0],
+      "scale": [1.0, 1.0, 0.8846153846153845]
+    },
+    {
+      "name": "dique_esquina_1",
+      "model": "models/dique_esquina.obj",
+      "position": [118.0, 6.0, -42.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "dique_esquina_1_pretil_0",
+      "model": "models/pretil_dique.obj",
+      "position": [115.62, 6.0, -42.3],
+      "rotation": [0, 0, 0],
+      "scale": [1.0, 1.0, 0.8846153846153845]
+    },
+    {
+      "name": "dique_esquina_1_pretil_1",
+      "model": "models/pretil_dique.obj",
+      "position": [116.7, 6.0, -44.38],
+      "rotation": [0, 90, 0],
+      "scale": [1.0, 1.0, 0.5]
+    },
+    {
+      "name": "dique_esquina_2",
+      "model": "models/dique_esquina.obj",
+      "position": [140.0, 6.0, -42.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "dique_esquina_2_pretil_0",
+      "model": "models/pretil_dique.obj",
+      "position": [142.38, 6.0, -41.7],
+      "rotation": [0, 0, 0],
+      "scale": [1.0, 1.0, 0.8846153846153845]
+    },
+    {
+      "name": "dique_esquina_2_pretil_1",
+      "model": "models/pretil_dique.obj",
+      "position": [140.3, 6.0, -39.62],
+      "rotation": [0, 90, 0],
+      "scale": [1.0, 1.0, 0.8846153846153845]
+    },
+    {
+      "name": "pretil_verja_0",
+      "model": "models/pretil_dique.obj",
+      "position": [75.35, 6.0, -0.28],
+      "rotation": [0, 90, 0],
+      "scale": [1.0, 1.0, 0.25]
+    },
+    {
+      "name": "pretil_verja_1",
+      "model": "models/pretil_dique.obj",
+      "position": [75.35, 6.0, 4.28],
+      "rotation": [0, 90, 0],
+      "scale": [1.0, 1.0, 0.25]
+    },
+    {
+      "name": "dique_final",
+      "model": "models/dique_tramo.obj",
+      "position": [140.0, 6.0, -92.0],
+      "rotation": [0, 0, 0],
+      "scale": [1.0, 1.0, 0.56]
+    },
+    {
+      "name": "haz",
+      "model": "models/haz_faro.obj",
+      "position": [140.0, 31.65, -110.0],
+      "rotation": [0, 0, 0],
+      "emissive": true,
+      "fog": false,
+      "collider": false,
+      "spin": [0, 28, 0],
+      "tint": [255, 244, 210, 150],
+      "showIf": { "flag": "pn_faro_luz" },
+      "light": { "offset": [0, 0, 0], "color": [255, 236, 190], "radius": 40, "intensity": 1.4 }
+    },
+    {
+      "name": "lampara",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [140.0, 31.35, -110.0],
+      "interact": {
+        "prompt": "Encender el faro",
+        "range": 3.4,
+        "do": [{ "dialogue": "pn_lampara" }],
+        "box": { "min": [-1.7, -1.0, -1.7], "max": [1.7, 1.6, 1.7] },
+        "if": { "not": { "flag": "pn_faro_luz" } }
+      }
+    },
+    {
+      "name": "trampilla_bajar",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [140.0, 30.35, -107.6],
+      "interact": {
+        "prompt": "Bajar al mar",
+        "range": 2.6,
+        "do": [{ "dialogue": "pn_bajar" }],
+        "box": { "min": [-0.8, 0, -0.5], "max": [0.8, 2.0, 0.5] },
+        "if": { "flag": "pn_bajar" }
+      }
+    },
+    {
+      "name": "clara_faro",
+      "model": "models/clara.obj",
+      "texture": "textures/pj_fe_clara.png",
+      "position": [141.3, 30.35, -107.1],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_clara_faro" },
+      "facePlayer": { "range": 10, "turnSpeed": 60 }
+    },
+    {
+      "name": "vortice",
+      "model": "models/vortice.obj",
+      "position": [140.0, 0.5, -750.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "spin": [0, 7, 0],
+      "tint": [110, 110, 130, 255]
+    },
+    {
+      "name": "mar_hoz_0",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_dormido.png",
+      "position": [135.82, 4.5, -134.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_hoz_1",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_dormida.png",
+      "position": [143.31, 4.5, -134.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_hoz_2",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_dormido.png",
+      "position": [136.56, 4.5, -137.2],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_hoz_3",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_mateo.png",
+      "position": [143.51, 4.5, -137.2],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_hoz_4",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_mateo.png",
+      "position": [136.23, 4.5, -140.4],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_hoz_5",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_dormida.png",
+      "position": [144.18, 4.5, -140.4],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_hoz_6",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_dormida.png",
+      "position": [135.91, 4.5, -143.6],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_hoz_7",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_dormida.png",
+      "position": [143.39, 4.5, -143.6],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_hoz_8",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_dormida.png",
+      "position": [135.6, 4.5, -146.8],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_hoz_9",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_dormida.png",
+      "position": [143.89, 4.5, -146.8],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_hoz_10",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_dormida.png",
+      "position": [136.33, 4.5, -150.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_hoz_11",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_mateo.png",
+      "position": [143.49, 4.5, -150.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_hoz_12",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_mateo.png",
+      "position": [136.21, 4.5, -153.2],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_hoz_13",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_dormido.png",
+      "position": [144.28, 4.5, -153.2],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_hoz_14",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_mateo.png",
+      "position": [136.56, 4.5, -156.4],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_hoz_15",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_mateo.png",
+      "position": [143.3, 4.5, -156.4],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_hoz_16",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_mateo.png",
+      "position": [136.55, 4.5, -159.6],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_hoz_17",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_dormido.png",
+      "position": [143.31, 4.5, -159.6],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_salinas_0",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_banista.png",
+      "position": [136.12, 4.5, -168.8],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_salinas_1",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_banista.png",
+      "position": [143.79, 4.5, -168.8],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_salinas_2",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_banista.png",
+      "position": [135.76, 4.5, -172.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_salinas_3",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_banista.png",
+      "position": [144.02, 4.5, -172.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_salinas_4",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_banista.png",
+      "position": [136.3, 4.5, -175.2],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_salinas_5",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_banista.png",
+      "position": [144.28, 4.5, -175.2],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_salinas_6",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_banista.png",
+      "position": [135.91, 4.5, -178.4],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_salinas_7",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_banista.png",
+      "position": [144.3, 4.5, -178.4],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_salinas_8",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_banista.png",
+      "position": [135.74, 4.5, -181.6],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_salinas_9",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_banista.png",
+      "position": [143.26, 4.5, -181.6],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_partida_0",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_partida_b.png",
+      "position": [135.91, 4.5, -190.8],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_partida_1",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_partida_b.png",
+      "position": [143.24, 4.5, -190.8],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_partida_2",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_partida.png",
+      "position": [136.45, 4.5, -194.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_partida_3",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_partida.png",
+      "position": [143.35, 4.5, -194.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_partida_4",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_partida_b.png",
+      "position": [136.39, 4.5, -197.2],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_partida_5",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_partida.png",
+      "position": [143.88, 4.5, -197.2],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_forasteros_0",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_forastero.png",
+      "position": [136.28, 4.5, -206.4],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_forasteros_1",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_forastero.png",
+      "position": [144.01, 4.5, -206.4],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_forasteros_2",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_forastero.png",
+      "position": [135.81, 4.5, -209.6],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_forasteros_3",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_forastero.png",
+      "position": [144.37, 4.5, -209.6],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_forasteros_4",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_forastero.png",
+      "position": [136.29, 4.5, -212.8],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_forasteros_5",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_forastero.png",
+      "position": [143.54, 4.5, -212.8],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_forasteros_6",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_forastero.png",
+      "position": [135.71, 4.5, -216.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_forasteros_7",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_forastero.png",
+      "position": [143.48, 4.5, -216.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_forasteros_8",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_forastero.png",
+      "position": [135.68, 4.5, -219.2],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_forasteros_9",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_forastero.png",
+      "position": [143.72, 4.5, -219.2],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_forasteros_10",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_forastero.png",
+      "position": [135.64, 4.5, -222.4],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_forasteros_11",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_forastero.png",
+      "position": [143.68, 4.5, -222.4],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_0",
+      "model": "models/nina.obj",
+      "texture": "textures/pj_fe_pn_dormido.png",
+      "position": [135.71, 4.5, -231.6],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_1",
+      "model": "models/nina.obj",
+      "texture": "textures/pj_fe_hz_nino.png",
+      "position": [144.03, 4.5, -231.6],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_2",
+      "model": "models/nino.obj",
+      "texture": "textures/pj_fe_hz_nina.png",
+      "position": [135.93, 4.5, -234.8],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_3",
+      "model": "models/nina.obj",
+      "texture": "textures/pj_fe_pn_dormido.png",
+      "position": [143.66, 4.5, -234.8],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_4",
+      "model": "models/nino.obj",
+      "texture": "textures/pj_fe_pn_dormido.png",
+      "position": [136.31, 4.5, -238.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_5",
+      "model": "models/nino.obj",
+      "texture": "textures/pj_fe_pn_dormido.png",
+      "position": [144.04, 4.5, -238.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_6",
+      "model": "models/nina.obj",
+      "texture": "textures/pj_fe_pn_dormido.png",
+      "position": [136.23, 4.5, -241.2],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_7",
+      "model": "models/nino.obj",
+      "texture": "textures/pj_fe_pn_dormido.png",
+      "position": [143.35, 4.5, -241.2],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_8",
+      "model": "models/nino.obj",
+      "texture": "textures/pj_fe_hz_nino.png",
+      "position": [136.03, 4.5, -244.4],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_9",
+      "model": "models/nina.obj",
+      "texture": "textures/pj_fe_hz_nino.png",
+      "position": [143.51, 4.5, -244.4],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_10",
+      "model": "models/nino.obj",
+      "texture": "textures/pj_fe_hz_nina.png",
+      "position": [136.27, 4.5, -247.6],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_11",
+      "model": "models/nino.obj",
+      "texture": "textures/pj_fe_hz_nino.png",
+      "position": [143.74, 4.5, -247.6],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_12",
+      "model": "models/nino.obj",
+      "texture": "textures/pj_fe_hz_nino.png",
+      "position": [135.9, 4.5, -250.8],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_13",
+      "model": "models/nino.obj",
+      "texture": "textures/pj_fe_hz_nino.png",
+      "position": [143.36, 4.5, -250.8],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_14",
+      "model": "models/nino.obj",
+      "texture": "textures/pj_fe_pn_dormido.png",
+      "position": [135.94, 4.5, -254.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_15",
+      "model": "models/nino.obj",
+      "texture": "textures/pj_fe_hz_nina.png",
+      "position": [144.21, 4.5, -254.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_16",
+      "model": "models/nino.obj",
+      "texture": "textures/pj_fe_hz_nina.png",
+      "position": [136.02, 4.5, -257.2],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_17",
+      "model": "models/nina.obj",
+      "texture": "textures/pj_fe_hz_nina.png",
+      "position": [144.27, 4.5, -257.2],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_18",
+      "model": "models/nina.obj",
+      "texture": "textures/pj_fe_hz_nina.png",
+      "position": [136.07, 4.5, -260.4],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_19",
+      "model": "models/nina.obj",
+      "texture": "textures/pj_fe_hz_nina.png",
+      "position": [143.25, 4.5, -260.4],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_20",
+      "model": "models/nino.obj",
+      "texture": "textures/pj_fe_pn_dormido.png",
+      "position": [136.62, 4.5, -263.6],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_21",
+      "model": "models/nina.obj",
+      "texture": "textures/pj_fe_pn_dormido.png",
+      "position": [143.95, 4.5, -263.6],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_22",
+      "model": "models/nino.obj",
+      "texture": "textures/pj_fe_pn_dormido.png",
+      "position": [135.67, 4.5, -266.8],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_ninos_23",
+      "model": "models/nina.obj",
+      "texture": "textures/pj_fe_pn_dormido.png",
+      "position": [143.81, 4.5, -266.8],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_0",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [136.35, 4.5, -276.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_1",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [143.75, 4.5, -276.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_2",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [136.61, 4.5, -279.2],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_3",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [143.71, 4.5, -279.2],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_4",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [136.04, 4.5, -282.4],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_5",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [143.54, 4.5, -282.4],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_6",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [136.05, 4.5, -285.6],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_7",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [144.29, 4.5, -285.6],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_8",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [136.28, 4.5, -288.8],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_9",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [143.41, 4.5, -288.8],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_10",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [136.72, 4.5, -292.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_11",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [143.56, 4.5, -292.0],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_12",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [136.0, 4.5, -295.2],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_13",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [144.39, 4.5, -295.2],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_14",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [136.41, 4.5, -298.4],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_15",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [143.33, 4.5, -298.4],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_16",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [136.25, 4.5, -301.6],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_17",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [143.59, 4.5, -301.6],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_18",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [135.8, 4.5, -304.8],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_valdemora_19",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [143.29, 4.5, -304.8],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_0",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [129.44, 4.5, -455.49],
+      "rotation": [0, 1.0435367631287278, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_1",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [177.76, 4.5, -210.99],
+      "rotation": [0, -9.73631072874229, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_2",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [217.76, 4.5, -180.5],
+      "rotation": [0, -11.068734929283302, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_3",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [69.74, 4.5, -313.75],
+      "rotation": [0, -5.719020141299293, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_4",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [104.01, 4.5, -358.46],
+      "rotation": [0, -5.319896264897959, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_5",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [53.56, 4.5, -472.6],
+      "rotation": [0, 7.62034235510524, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_6",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [126.5, 4.5, -482.85],
+      "rotation": [0, -7.399689382587463, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_7",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [97.17, 4.5, -402.84],
+      "rotation": [0, 9.412661477063324, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_8",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [184.79, 4.5, -186.25],
+      "rotation": [0, -8.897865707036473, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_9",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [148.12, 4.5, -261.94],
+      "rotation": [0, -6.494319141616559, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_10",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [247.96, 4.5, -235.09],
+      "rotation": [0, -9.992422279498726, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_11",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [46.55, 4.5, -464.8],
+      "rotation": [0, -0.8283484550825797, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_12",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [148.37, 4.5, -391.74],
+      "rotation": [0, -0.29462975193455954, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_13",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [54.02, 4.5, -318.97],
+      "rotation": [0, -4.1128112394431255, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_14",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [179.25, 4.5, -375.56],
+      "rotation": [0, 11.44661538157024, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_15",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [92.03, 4.5, -448.75],
+      "rotation": [0, -6.712702813176844, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_16",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [171.44, 4.5, -187.56],
+      "rotation": [0, -5.487883583587789, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_17",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [245.8, 4.5, -484.85],
+      "rotation": [0, -11.753351432690302, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_18",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [217.28, 4.5, -498.02],
+      "rotation": [0, 9.991527417985498, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_19",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [258.47, 4.5, -166.58],
+      "rotation": [0, 0.728235646964789, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_20",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [199.25, 4.5, -400.23],
+      "rotation": [0, 10.352409404958326, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_21",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [29.65, 4.5, -363.08],
+      "rotation": [0, 11.50757687772617, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_22",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [206.31, 4.5, -323.14],
+      "rotation": [0, -10.595024164985205, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_23",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [37.49, 4.5, -350.72],
+      "rotation": [0, -8.21178222110482, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_24",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [240.64, 4.5, -251.4],
+      "rotation": [0, 0.2192516815377843, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_25",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [157.17, 4.5, -185.2],
+      "rotation": [0, 10.083174584097392, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_26",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [152.32, 4.5, -468.23],
+      "rotation": [0, -10.87625631979186, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_27",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [204.04, 4.5, -316.17],
+      "rotation": [0, -2.9614089466914173, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_28",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [178.35, 4.5, -209.55],
+      "rotation": [0, 7.530228269692866, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_29",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [104.5, 4.5, -245.37],
+      "rotation": [0, -7.064816251989693, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_30",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [45.11, 4.5, -448.19],
+      "rotation": [0, -8.41870233707772, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_31",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [60.28, 4.5, -449.36],
+      "rotation": [0, -9.243287301800532, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_32",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [22.32, 4.5, -235.1],
+      "rotation": [0, 1.2573015826096121, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_33",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [36.89, 4.5, -338.45],
+      "rotation": [0, -10.994313487280689, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_34",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [230.2, 4.5, -278.96],
+      "rotation": [0, 0.3264032384331159, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_35",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [172.47, 4.5, -377.8],
+      "rotation": [0, 3.9675073452791416, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_36",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [221.58, 4.5, -338.63],
+      "rotation": [0, 8.728120646226198, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_37",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [124.53, 4.5, -160.37],
+      "rotation": [0, 8.583611950636186, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_38",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [162.96, 4.5, -246.28],
+      "rotation": [0, -9.072381077865728, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_39",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [111.88, 4.5, -330.04],
+      "rotation": [0, 4.877426912186145, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_40",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [224.44, 4.5, -192.01],
+      "rotation": [0, -7.156171631245755, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_41",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [201.04, 4.5, -238.64],
+      "rotation": [0, 10.380596104362457, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_42",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [189.58, 4.5, -143.75],
+      "rotation": [0, -10.521535418379528, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_43",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [191.47, 4.5, -465.05],
+      "rotation": [0, -3.260388747078766, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_44",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [166.91, 4.5, -453.71],
+      "rotation": [0, 9.576999677402014, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_45",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [113.48, 4.5, -168.9],
+      "rotation": [0, 2.638448805351155, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_46",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [61.83, 4.5, -494.06],
+      "rotation": [0, -6.07340340375939, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_47",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [188.87, 4.5, -216.48],
+      "rotation": [0, -10.950204002834816, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_48",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [243.56, 4.5, -143.64],
+      "rotation": [0, 11.227433159578048, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_49",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [244.78, 4.5, -444.02],
+      "rotation": [0, -11.01475725218217, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_50",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [210.47, 4.5, -144.74],
+      "rotation": [0, -3.839887570490035, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_51",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [50.19, 4.5, -511.76],
+      "rotation": [0, -0.7968201291430717, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_52",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [97.99, 4.5, -419.59],
+      "rotation": [0, -7.627351448808187, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_53",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [189.18, 4.5, -140.59],
+      "rotation": [0, 4.932185940513353, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_54",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [49.6, 4.5, -200.73],
+      "rotation": [0, -11.06730852265641, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_55",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [235.68, 4.5, -159.17],
+      "rotation": [0, 9.820677505125971, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_56",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [71.5, 4.5, -238.17],
+      "rotation": [0, 7.107843324555226, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_57",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [199.7, 4.5, -503.21],
+      "rotation": [0, -7.598336784533781, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_58",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [231.08, 4.5, -432.9],
+      "rotation": [0, -10.816293789196564, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_59",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [247.97, 4.5, -438.32],
+      "rotation": [0, 0.8629567377808911, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_60",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [199.5, 4.5, -482.83],
+      "rotation": [0, -8.107677272065173, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_61",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [71.64, 4.5, -442.31],
+      "rotation": [0, 5.235481653684815, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_62",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [37.9, 4.5, -205.21],
+      "rotation": [0, -8.968804230172665, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_63",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [239.25, 4.5, -246.02],
+      "rotation": [0, 1.6762195084244027, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_64",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [179.14, 4.5, -159.58],
+      "rotation": [0, 9.1975302435606, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_65",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [124.89, 4.5, -365.95],
+      "rotation": [0, -6.820529158841715, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_66",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [257.07, 4.5, -478.29],
+      "rotation": [0, 9.881770025504718, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "mar_lejos_67",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [51.79, 4.5, -490.68],
+      "rotation": [0, -1.1723815163859577, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_mar" }
+    },
+    {
+      "name": "v_casa_0",
+      "model": "models/casa_niebla_ancha.obj",
+      "position": [-54.0, 6.0, 24.5],
+      "rotation": [0, 180, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "v_casa_1",
+      "model": "models/casa_niebla.obj",
+      "position": [-47.0, 6.0, 24.4],
+      "rotation": [0, 180, 0],
+      "tint": [130, 126, 120, 255]
+    },
+    {
+      "name": "v_capitania",
+      "model": "models/capitania.obj",
+      "position": [-38.0, 6.0, 26.0],
+      "rotation": [0, 180, 0],
+      "tint": [160, 150, 140, 255],
+      "texture": "textures/lam_pn_reloj.png"
+    },
+    {
+      "name": "v_casa_2",
+      "model": "models/casa_niebla_alta.obj",
+      "position": [-29.0, 6.0, 24.4],
+      "rotation": [0, 180, 0],
+      "tint": [120, 128, 136, 255]
+    },
+    {
+      "name": "v_casa_3",
+      "model": "models/casa_niebla.obj",
+      "position": [-24.0, 6.0, 24.4],
+      "rotation": [0, 180, 0],
+      "tint": [170, 166, 160, 255]
+    },
+    {
+      "name": "v_taberna",
+      "model": "models/taberna.obj",
+      "position": [-14.0, 6.0, 25.7],
+      "rotation": [0, 180, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "v_casa_4",
+      "model": "models/casa_niebla_alta.obj",
+      "position": [-5.0, 6.0, 24.4],
+      "rotation": [0, 180, 0],
+      "tint": [130, 126, 120, 255]
+    },
+    {
+      "name": "v_perdidos",
+      "model": "models/perdidos.obj",
+      "position": [2.0, 6.0, 25.2],
+      "rotation": [0, 180, 0],
+      "tint": [160, 150, 140, 255]
+    },
+    {
+      "name": "v_casa_5",
+      "model": "models/casa_niebla.obj",
+      "position": [9.0, 6.0, 24.4],
+      "rotation": [0, 180, 0],
+      "tint": [120, 128, 136, 255]
+    },
+    {
+      "name": "v_casa_6",
+      "model": "models/casa_niebla_ancha.obj",
+      "position": [21.0, 6.0, 24.5],
+      "rotation": [0, 180, 0],
+      "tint": [170, 166, 160, 255]
+    },
+    {
+      "name": "v_casa_7",
+      "model": "models/casa_niebla_alta.obj",
+      "position": [28.0, 6.0, 24.4],
+      "rotation": [0, 180, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "v_conservera",
+      "model": "models/conservera.obj",
+      "position": [46.0, 6.0, 31.0],
+      "rotation": [0, 180, 0],
+      "tint": [130, 126, 120, 255]
+    },
+    {
+      "name": "v_casa_8",
+      "model": "models/casa_niebla.obj",
+      "position": [63.0, 6.0, 24.4],
+      "rotation": [0, 180, 0],
+      "tint": [160, 150, 140, 255]
+    },
+    {
+      "name": "v_casa_9",
+      "model": "models/casa_niebla_alta.obj",
+      "position": [69.0, 6.0, 24.4],
+      "rotation": [0, 180, 0],
+      "tint": [120, 128, 136, 255]
+    },
+    {
+      "name": "v_suelo_puerto",
+      "model": { "type": "plane", "size": [159.2, 42], "subdivisions": 39, "tiles": [88.44, 23.33] },
+      "texture": "textures/mat_adoquin_mojado.png",
+      "wrap": "repeat",
+      "position": [-2.4, 6.0, 21.0],
+      "tint": [150, 150, 156, 255],
+      "collider": { "min": [-79.6, -6.0, -21.0], "max": [79.6, 0, 21.0] }
+    },
+    {
+      "name": "v_rellano",
+      "model": { "type": "plane", "size": [4.0, 7.0], "subdivisions": 1, "tiles": [2.67, 4.67] },
+      "texture": "textures/mat_piedra_mojada.png",
+      "wrap": "repeat",
+      "position": [15.0, 12.6, 36.5],
+      "tint": [150, 150, 150, 255],
+      "collider": { "min": [-2.0, -12.6, -3.5], "max": [2.0, 0, 3.5] }
+    },
+    {
+      "name": "v_escalera",
+      "model": "models/escalera_piedra.obj",
+      "position": [15.0, 6.0, 22.0],
+      "rotation": [0, 180, 0]
+    },
+    {
+      "name": "v_arco_escalera",
+      "model": "models/arco_escalera.obj",
+      "position": [15.0, 6.0, 21.6],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_arco_alto.png"
+    },
+    {
+      "name": "v_paso_roca",
+      "model": "models/paso_roca.obj",
+      "position": [15.0, 12.6, 37.6],
+      "rotation": [0, 180, 0],
+      "tint": [120, 120, 128, 255]
+    },
+    {
+      "name": "v_luz_arco_0",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [13.05, 8.4, 21.1],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 180, 110],
+        "radius": 6,
+        "intensity": 0.8,
+        "flicker": 0.15,
+        "flickerRate": 4
+      }
+    },
+    {
+      "name": "v_luz_arco_1",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [16.95, 8.4, 21.1],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 180, 110],
+        "radius": 6,
+        "intensity": 0.8,
+        "flicker": 0.15,
+        "flickerRate": 6
+      }
+    },
+    {
+      "name": "v_luz_paso",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [13.8, 15.7, 37.3],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 180, 110],
+        "radius": 6,
+        "intensity": 0.8,
+        "flicker": 0.2,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "v_acantilado_s_0",
+      "model": "models/roca_pared.obj",
+      "position": [-88.0, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_1",
+      "model": "models/roca_pared.obj",
+      "position": [-66.0, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_2",
+      "model": "models/roca_pared.obj",
+      "position": [-44.0, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_3",
+      "model": "models/roca_pared.obj",
+      "position": [-22.0, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_4",
+      "model": "models/roca_pared.obj",
+      "position": [0.6, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_5",
+      "model": "models/roca_pared.obj",
+      "position": [29.4, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_6",
+      "model": "models/roca_pared.obj",
+      "position": [51.4, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_7",
+      "model": "models/roca_pared.obj",
+      "position": [73.4, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_8",
+      "model": "models/roca_pared.obj",
+      "position": [95.4, -10.0, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_s_paso",
+      "model": "models/roca_pared.obj",
+      "position": [15.0, 18.5, 40.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255],
+      "scale": [0.21, 0.3522727272727273, 1.0]
+    },
+    {
+      "name": "v_acantilado_o_0",
+      "model": "models/monte_a.obj",
+      "position": [-82.6, 2.0, -4],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_o_1",
+      "model": "models/monte_b.obj",
+      "position": [-82.6, 2.0, 16],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_o_2",
+      "model": "models/monte_c.obj",
+      "position": [-82.6, 2.0, 36],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_e_0",
+      "model": "models/monte_b.obj",
+      "position": [90.0, 2.0, 9.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_e_1",
+      "model": "models/monte_c.obj",
+      "position": [86.0, 2.0, 26],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_acantilado_e_2",
+      "model": "models/monte_a.obj",
+      "position": [86.0, 2.0, 46],
+      "rotation": [0, -90, 0],
+      "collider": false,
+      "tint": [90, 92, 100, 255]
+    },
+    {
+      "name": "v_malecon_0",
+      "model": "models/malecon_niebla.obj",
+      "position": [-86, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_malecon_1",
+      "model": "models/malecon_niebla.obj",
+      "position": [-66, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_malecon_2",
+      "model": "models/malecon_niebla.obj",
+      "position": [-46, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_malecon_3",
+      "model": "models/malecon_niebla.obj",
+      "position": [-26, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_malecon_4",
+      "model": "models/malecon_niebla.obj",
+      "position": [-6, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_malecon_5",
+      "model": "models/malecon_niebla.obj",
+      "position": [14, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_malecon_6",
+      "model": "models/malecon_niebla.obj",
+      "position": [34, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_malecon_7",
+      "model": "models/malecon_niebla.obj",
+      "position": [54, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_malecon_fin",
+      "model": "models/malecon_niebla.obj",
+      "position": [71.0, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "scale": [0.62, 1.0, 1.0]
+    },
+    {
+      "name": "v_muro_este_0",
+      "model": "models/muro_piedra.obj",
+      "position": [76.8, 6.0, 9.6],
+      "rotation": [0, 90, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "v_muro_este_1",
+      "model": "models/muro_piedra.obj",
+      "position": [76.8, 6.0, 19.6],
+      "rotation": [0, 90, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "v_muro_este_2",
+      "model": "models/muro_piedra.obj",
+      "position": [76.8, 6.0, 29.6],
+      "rotation": [0, 90, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "v_muro_este_3",
+      "model": "models/muro_piedra.obj",
+      "position": [76.8, 6.0, 39.6],
+      "rotation": [0, 90, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "v_tunel",
+      "model": "models/tunel.obj",
+      "position": [-81.6, 6.0, 14.0],
+      "rotation": [0, 90, 0],
+      "tint": [110, 110, 116, 255]
+    },
+    {
+      "name": "v_via_0",
+      "model": "models/via.obj",
+      "position": [-76.0, 6.0, 14.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_via_1",
+      "model": "models/via.obj",
+      "position": [-56.0, 6.0, 14.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_tope",
+      "model": "models/tope_via.obj",
+      "position": [-46.4, 6.0, 14.0],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "v_locomotora",
+      "model": "models/locomotora.obj",
+      "position": [-52.0, 6.16, 14.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_vagon_0",
+      "model": "models/vagon.obj",
+      "position": [-61.7, 6.16, 14.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_vagon_1",
+      "model": "models/vagon.obj",
+      "position": [-71.4, 6.16, 14.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_anden",
+      "model": "models/anden.obj",
+      "position": [-60.0, 6.0, 10.9],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_caseta",
+      "model": "models/caseta_estacion.obj",
+      "position": [-66.0, 6.0, 5.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_cartel_estacion_poste",
+      "model": "models/poste_letrero.obj",
+      "position": [-58.0, 6.0, 9.0],
+      "rotation": [0, 0, 0],
+      "scale": [1.0, 1.0, 1.0]
+    },
+    {
+      "name": "v_cartel_estacion",
+      "model": "models/letrero.obj",
+      "position": [-58.0, 8.3, 9.0],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_pn_estacion.png",
+      "collider": false,
+      "scale": [1.0, 1.0, 1]
+    },
+    {
+      "name": "v_cartel_estacion_b",
+      "model": "models/letrero.obj",
+      "position": [-58.0, 8.3, 8.97],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_estacion.png",
+      "collider": false,
+      "scale": [1.0, 1.0, 1]
+    },
+    {
+      "name": "v_muelle_1",
+      "model": "models/embarcadero.obj",
+      "position": [-20.0, 6.0, 0.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_muelle_2",
+      "model": "models/embarcadero.obj",
+      "position": [20.0, 6.0, 0.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_muelle_2b",
+      "model": "models/embarcadero.obj",
+      "position": [20.0, 6.0, -24.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_vapor",
+      "model": "models/vapor.obj",
+      "position": [13.0, 7.1, -26.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "v_cartel_espere_poste",
+      "model": "models/poste_letrero.obj",
+      "position": [20.0, 6.0, -1.0],
+      "rotation": [0, 0, 0],
+      "scale": [0.7, 1.0, 1.0]
+    },
+    {
+      "name": "v_cartel_espere",
+      "model": "models/letrero.obj",
+      "position": [20.0, 8.3, -1.0],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_pn_espere.png",
+      "collider": false,
+      "scale": [0.7, 0.7, 1]
+    },
+    {
+      "name": "v_cartel_espere_b",
+      "model": "models/letrero.obj",
+      "position": [20.0, 8.3, -1.03],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_espere.png",
+      "collider": false,
+      "scale": [0.7, 0.7, 1]
+    },
+    {
+      "name": "v_cartel_equipaje_poste",
+      "model": "models/poste_letrero.obj",
+      "position": [21.6, 6.0, -29.0],
+      "rotation": [0, -90, 0],
+      "scale": [0.55, 1.0, 1.0]
+    },
+    {
+      "name": "v_cartel_equipaje",
+      "model": "models/letrero.obj",
+      "position": [21.6, 8.3, -29.0],
+      "rotation": [0, -90, 0],
+      "texture": "textures/lam_pn_equipaje.png",
+      "collider": false,
+      "scale": [0.55, 0.55, 1]
+    },
+    {
+      "name": "v_barca_0",
+      "model": "models/barca.obj",
+      "position": [-30, 4.45, -4],
+      "rotation": [0, 13.29886760005354, 0],
+      "collider": false
+    },
+    {
+      "name": "v_barca_1",
+      "model": "models/barca.obj",
+      "position": [-26.5, 4.45, -9],
+      "rotation": [0, 7.909976486362737, 0],
+      "collider": false
+    },
+    {
+      "name": "v_barca_2",
+      "model": "models/barca.obj",
+      "position": [-11, 4.45, -6],
+      "rotation": [0, 27.09156082955144, 0],
+      "collider": false
+    },
+    {
+      "name": "v_barca_3",
+      "model": "models/barca.obj",
+      "position": [2, 4.45, -9],
+      "rotation": [0, -19.156741364368944, 0],
+      "collider": false
+    },
+    {
+      "name": "v_barca_4",
+      "model": "models/barca.obj",
+      "position": [30, 4.45, -5],
+      "rotation": [0, -26.651608682533805, 0],
+      "collider": false
+    },
+    {
+      "name": "v_barca_5",
+      "model": "models/barca.obj",
+      "position": [-50, 4.45, -6],
+      "rotation": [0, 12.716287251942923, 0],
+      "collider": false
+    },
+    {
+      "name": "v_boya_0",
+      "model": "models/boya.obj",
+      "position": [-45, 3.9, -45],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_boya_1",
+      "model": "models/boya.obj",
+      "position": [5, 3.9, -70],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_boya_2",
+      "model": "models/boya.obj",
+      "position": [45, 3.9, -40],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_lonja",
+      "model": "models/lonja.obj",
+      "position": [-36.0, 6.0, 10.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_caja_lonja_0",
+      "model": "models/caja.obj",
+      "position": [-38.5, 6.0, 8.6],
+      "rotation": [0, 15, 0]
+    },
+    {
+      "name": "v_caja_lonja_1",
+      "model": "models/caja.obj",
+      "position": [-38.2, 6.6, 8.7],
+      "rotation": [0, 40, 0]
+    },
+    {
+      "name": "v_red_lonja",
+      "model": "models/red_pesca.obj",
+      "position": [-33.0, 6.0, 12.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "v_campana",
+      "model": "models/campana_niebla.obj",
+      "position": [60.0, 6.0, 5.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_luz_taberna",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-12.4, 7.8, 20.5],
+      "light": { "offset": [0, 0, 0], "color": [255, 170, 90], "radius": 9, "intensity": 1.1 }
+    },
+    {
+      "name": "v_luz_capitania",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-38.0, 8.0, 21.0],
+      "light": { "offset": [0, 0, 0], "color": [220, 220, 255], "radius": 7, "intensity": 0.7 }
+    },
+    {
+      "name": "v_cartel_capitania",
+      "model": "models/letrero.obj",
+      "position": [-38.0, 9.2, 21.88],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_capitania.png",
+      "collider": false,
+      "scale": [0.7, 0.7, 1]
+    },
+    {
+      "name": "v_cartel_taberna",
+      "model": "models/letrero.obj",
+      "position": [-11.4, 9.0, 21.88],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_taberna.png",
+      "collider": false,
+      "scale": [0.6, 0.6, 1]
+    },
+    {
+      "name": "v_cartel_perdidos",
+      "model": "models/letrero.obj",
+      "position": [3.4, 9.15, 21.88],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_perdidos.png",
+      "collider": false,
+      "scale": [0.85, 0.85, 1]
+    },
+    {
+      "name": "v_cartel_conservas",
+      "model": "models/letrero.obj",
+      "position": [46.0, 11.6, 21.88],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_conservas.png",
+      "collider": false,
+      "scale": [1.3, 1.3, 1]
+    },
+    {
+      "name": "v_puerta_capitania",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-38.0, 6.0, 21.9]
+    },
+    {
+      "name": "v_puerta_taberna",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-11.4, 6.0, 21.9]
+    },
+    {
+      "name": "v_puerta_perdidos",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0.1, 6.0, 21.9]
+    },
+    {
+      "name": "v_puerta_conservera",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [46.0, 6.0, 21.9]
+    },
+    {
+      "name": "v_luz_conservera_0",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [49.4, 9.7, 21.55],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 190, 120],
+        "radius": 8,
+        "intensity": 0.9,
+        "flicker": 0.15,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "v_luz_conservera_1",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [42.6, 9.7, 21.55],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 190, 120],
+        "radius": 8,
+        "intensity": 0.9,
+        "flicker": 0.15,
+        "flickerRate": 6
+      }
+    },
+    {
+      "name": "v_luz_pilar_dique_0",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [74.5, 10.45, -0.5],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 190, 120],
+        "radius": 7,
+        "intensity": 0.9,
+        "flicker": 0.15,
+        "flickerRate": 4
+      }
+    },
+    {
+      "name": "v_luz_pilar_dique_1",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [74.5, 10.45, 4.5],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 190, 120],
+        "radius": 7,
+        "intensity": 0.9,
+        "flicker": 0.15,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "v_cartel_dique_poste",
+      "model": "models/poste_letrero.obj",
+      "position": [72.0, 6.0, 6.6],
+      "rotation": [0, -90, 0],
+      "scale": [0.6, 1.0, 1.0]
+    },
+    {
+      "name": "v_cartel_dique",
+      "model": "models/letrero.obj",
+      "position": [72.0, 8.3, 6.6],
+      "rotation": [0, -90, 0],
+      "texture": "textures/lam_pn_dique.png",
+      "collider": false,
+      "scale": [0.6, 0.6, 1]
+    },
+    {
+      "name": "v_escalera_varadero",
+      "model": "models/escalera_muelle.obj",
+      "position": [-60.6, 6.0, 0.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "v_cartel_varadero_poste",
+      "model": "models/poste_letrero.obj",
+      "position": [-59.4, 6.0, 1.6],
+      "rotation": [0, 0, 0],
+      "scale": [0.6, 1.0, 1.0]
+    },
+    {
+      "name": "v_cartel_varadero",
+      "model": "models/letrero.obj",
+      "position": [-59.4, 8.3, 1.6],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_pn_varadero.png",
+      "collider": false,
+      "scale": [0.6, 0.6, 1]
+    },
+    {
+      "name": "v_cartel_varadero_b",
+      "model": "models/letrero.obj",
+      "position": [-59.4, 8.3, 1.57],
+      "rotation": [0, 180, 0],
+      "texture": "textures/lam_pn_varadero.png",
+      "collider": false,
+      "scale": [0.6, 0.6, 1]
+    },
+    {
+      "name": "v_pasarela_varadero",
+      "model": "models/embarcadero.obj",
+      "position": [-63.3, 4.85, -1.2],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "v_cueva_varadero",
+      "model": "models/cueva_varadero.obj",
+      "position": [-80.5, 4.85, -1.2],
+      "rotation": [0, 90, 0],
+      "texture": "textures/lam_pn_varadero.png",
+      "tint": [110, 110, 118, 255]
+    },
+    {
+      "name": "v_luz_cueva",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-79.9, 7.6, -2.5],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 170, 100],
+        "radius": 7,
+        "intensity": 0.9,
+        "flicker": 0.5,
+        "flickerRate": 7
+      }
+    },
+    {
+      "name": "v_pretil_verja_0",
+      "model": "models/pretil_dique.obj",
+      "position": [75.35, 6.0, -0.28],
+      "rotation": [0, 90, 0],
+      "scale": [1.0, 1.0, 0.25]
+    },
+    {
+      "name": "v_pretil_verja_1",
+      "model": "models/pretil_dique.obj",
+      "position": [75.35, 6.0, 4.28],
+      "rotation": [0, 90, 0],
+      "scale": [1.0, 1.0, 0.25]
+    }
+  ],
+  "emitters": [],
+  "autoCollide": true,
+  "triggers": [],
+  "camera": { "position": [140.0, 32.050000000000004, -112.6], "target": [140.0, 31.85, -117.6], "fov": 60 }
+}

@@ -1,0 +1,10 @@
+{
+  "entries": [
+    {
+      "if": { "flag": "pn_llave" },
+      "lines": ["Abres el candado con la llave del capitan.", "La reja se abre, chirriando, hacia el mar."],
+      "do": [{ "play_sound": "audio/reja.wav", "volume": 0.9 }, { "set_flag": "pn_dique_abierto" }]
+    },
+    { "lines": ["Una cadena y un candado nuevo.", "DIQUE CERRADO. LLAVE EN CAPITANIA."] }
+  ]
+}

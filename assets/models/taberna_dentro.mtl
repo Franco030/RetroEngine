@@ -1,0 +1,21 @@
+# RetroEngine: taberna_dentro
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_madera_mojada
+d 1.000000
+map_Kd ../textures/mat_madera_mojada.png
+
+newmtl mat_puerta
+d 1.000000
+map_Kd ../textures/mat_puerta.png
+
+newmtl mat_tablas_negras
+d 1.000000
+map_Kd ../textures/mat_tablas_negras.png
+
+newmtl mat_ventana
+d 1.000000
+map_Kd ../textures/mat_ventana.png

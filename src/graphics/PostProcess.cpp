@@ -31,6 +31,9 @@ PostProcess::PostProcess(std::shared_ptr<ShaderResource> shader, const PostParam
   locSaturation_ = GetShaderLocation(s, "saturation");
   locTint_ = GetShaderLocation(s, "tint");
   locTime_ = GetShaderLocation(s, "time");
+  locEyes_ = GetShaderLocation(s, "eyes");
+  locDrowsy_ = GetShaderLocation(s, "drowsy");
+  locFlash_ = GetShaderLocation(s, "flash");
 }
 
 void PostProcess::Draw(const Texture2D& source, Rectangle dst) const {
@@ -55,6 +58,9 @@ void PostProcess::Draw(const Texture2D& source, Rectangle dst) const {
   SetUniform(s, locSaturation_, &saturation, SHADER_UNIFORM_FLOAT);
   SetUniform(s, locTint_, &tint, SHADER_UNIFORM_VEC3);
   SetUniform(s, locTime_, &time, SHADER_UNIFORM_FLOAT);
+  SetUniform(s, locEyes_, &params_.eyes, SHADER_UNIFORM_FLOAT);
+  SetUniform(s, locDrowsy_, &params_.drowsy, SHADER_UNIFORM_FLOAT);
+  SetUniform(s, locFlash_, &params_.flash, SHADER_UNIFORM_FLOAT);
 
   const Rectangle src{0.0f, 0.0f, texSize.x, -texSize.y};
 

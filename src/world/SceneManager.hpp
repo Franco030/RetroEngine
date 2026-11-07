@@ -36,6 +36,10 @@ struct AssetRef {
 struct Interlude {
   float seconds = 0.0f;
   std::vector<std::string> lines;
+  // Musica del negro (la caida en Hoz del Cuervo): suena en lugar de la de la escena, que entra
+  // cuando el negro termina. Si ya sonaba (la puso un trigger antes), sigue sin cortes.
+  std::string music;
+  float musicVolume = 0.7f;
 };
 
 class SceneManager {
@@ -86,6 +90,9 @@ public:
   std::uint64_t Generation() const noexcept { return generation_; }
 
   void SetFocus(Vector3 focus) noexcept { focus_ = focus; }
+  // Una luz que no es de la escena (el flash de la camara del jugador): se dibuja este fotograma
+  // aunque haya otras mas cerca. nullopt la quita.
+  void SetFlashLight(std::optional<PointLight> light) noexcept { flashLight_ = light; }
 
 private:
   enum class Phase { Idle, FadingOut, Dark, FadingIn };
@@ -137,6 +144,7 @@ private:
   float darkTime_ = 0.0f;
 
   std::vector<PointLight> lights_;
+  std::optional<PointLight> flashLight_; // el flash de la camara: entra siempre, delante de las otras
   std::vector<Emitter> emitters_;
 
   Environment defaults_{};

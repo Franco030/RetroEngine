@@ -99,12 +99,26 @@ else()
     target_compile_options(retro_core PRIVATE -Wall -Wextra -Wpedantic)
 endif()
  
-add_executable(RetroEngine src/main.cpp)
-target_link_libraries(RetroEngine PRIVATE retro_core)
-if(MSVC)
-    target_compile_options(RetroEngine PRIVATE /W4 /permissive-)
-else()
-    target_compile_options(RetroEngine PRIVATE -Wall -Wextra -Wpedantic)
+# Dos ejecutables del mismo main.cpp:
+#  - RetroEngine: el juego tal cual (el producto). Sin teclas ni opciones de depuracion y, en
+#    Windows, sin ventana de consola.
+#  - RetroEngineDebug: lo mismo con las herramientas (F1-F10, Tab, 1-6, M, --scene, --pos,
+#    --flags, --prueba, --assets) y con consola. El editor lo usa para "Probar aqui".
+foreach(game_target RetroEngine RetroEngineDebug)
+    add_executable(${game_target} src/main.cpp)
+    target_link_libraries(${game_target} PRIVATE retro_core)
+    if(MSVC)
+        target_compile_options(${game_target} PRIVATE /W4 /permissive-)
+    else()
+        target_compile_options(${game_target} PRIVATE -Wall -Wextra -Wpedantic)
+    endif()
+endforeach()
+target_compile_definitions(RetroEngineDebug PRIVATE RETRO_DEBUG_TOOLS)
+if(WIN32)
+    set_target_properties(RetroEngine PROPERTIES WIN32_EXECUTABLE TRUE)
+    if(MSVC) # con WIN32_EXECUTABLE MSVC busca WinMain; el juego entra por main
+        target_link_options(RetroEngine PRIVATE /ENTRY:mainCRTStartup)
+    endif()
 endif()
 
 if(RETRO_BUILD_EDITOR)
@@ -132,13 +146,14 @@ add_custom_target(CopyAssets ALL
     COMMENT "Sincronizando assets"
 )
 add_dependencies(RetroEngine CopyAssets)
- 
+add_dependencies(RetroEngineDebug CopyAssets)
+
 if(UNIX)
     set(RETRO_RPATH "$ORIGIN")
     if(APPLE)
         set(RETRO_RPATH "@executable_path")
     endif()
-    set_target_properties(RetroEngine PROPERTIES BUILD_RPATH "${RETRO_RPATH}" INSTALL_RPATH "${RETRO_RPATH}")
+    set_target_properties(RetroEngine RetroEngineDebug PROPERTIES BUILD_RPATH "${RETRO_RPATH}" INSTALL_RPATH "${RETRO_RPATH}")
     if(RETRO_BUILD_EDITOR)
         set_target_properties(RetroEditor PROPERTIES BUILD_RPATH "${RETRO_RPATH}" INSTALL_RPATH "${RETRO_RPATH}")
     endif()

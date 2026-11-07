@@ -28,7 +28,8 @@ struct SaveInfo {
 class SaveManager {
 public:
   static constexpr int kVersion = 1;
-  static constexpr int kAutosaveSlot = 0;
+  // Una ranura por partida (1..kSlots): cada partida se guarda sola en la suya.
+  static constexpr int kSlots = 3;
 
   explicit SaveManager(std::filesystem::path directory);
 

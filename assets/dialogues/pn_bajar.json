@@ -1,0 +1,17 @@
+{
+  "entries": [
+    {
+      "lines": ["Bajas los ciento doce escalones. Esta vez no baja nadie."],
+      "do": [
+        { "set_flag": "pn_mar_k", "value": 0 },
+        {
+          "goto_scene": "scenes/pn_mar.json",
+          "position": [140.0, 4.5, -126.0],
+          "yaw": 0,
+          "dark": 10,
+          "lines": ["", "Abajo, el mar esta quieto. Liso, como un suelo.", "Clara pisa el agua. No se hunde.", ""]
+        }
+      ]
+    }
+  ]
+}

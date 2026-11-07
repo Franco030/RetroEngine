@@ -1,0 +1,32 @@
+{
+  "entries": [
+    {
+      "lines": [
+        "Clara se para. Delante, el mar se hunde, girando.",
+        "Todo el camino dijo \"todavia no\".",
+        "Ahora te mira, y dice: \"Ya.\""
+      ],
+      "do": [
+        { "set_flag": "pn_final" },
+        { "wait": 4.0 },
+        { "set_flag": "capitulo5_fin" },
+        { "title_screen": true },
+        {
+          "goto_scene": "scenes/oj_ojo.json",
+          "position": [0.0, 0.0, 64.0],
+          "yaw": 0,
+          "dark": 21,
+          "lines": [
+            "",
+            "Bajan juntos, de la mano, al ojo de la tormenta.",
+            "El sacrificio esta completo.",
+            "FESTVM VENTI",
+            "",
+            "Continuara.",
+            ""
+          ]
+        }
+      ]
+    }
+  ]
+}

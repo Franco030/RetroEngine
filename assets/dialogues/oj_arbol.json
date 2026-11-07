@@ -1,0 +1,35 @@
+{
+  "entries": [
+    {
+      "if": { "not": { "flag": "oj_paz" } },
+      "lines": ["Una voz de niña, detras de ti: \"todavia no\".", "Junto a la capilla, alguien te espera."]
+    },
+    {
+      "lines": [
+        "El arbol hueco. La procesion se para. El anciano te pone un farol en la mano.",
+        "El niño entra al arbol sin mirar atras. Nadie dice nada.",
+        "En la loma, el molino sigue girando sin viento.",
+        "El regalo se paga."
+      ],
+      "do": [
+        { "set_flag": "final_a" },
+        { "stop_music": true, "fade": 2.0 },
+        { "title_screen": true },
+        {
+          "goto_scene": "scenes/feria.json",
+          "position": [0, 0, 28.0],
+          "yaw": 0,
+          "dark": 20,
+          "lines": [
+            "",
+            "Despiertas en un campo de trigo.",
+            "La mochila, a tu lado. El cuaderno, abierto.",
+            "Con tu letra, una linea nueva:",
+            "otra vez no.",
+            ""
+          ]
+        }
+      ]
+    }
+  ]
+}

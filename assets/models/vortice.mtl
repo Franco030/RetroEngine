@@ -1,0 +1,9 @@
+# RetroEngine: vortice
+
+newmtl mat_cielo_tormenta
+d 1.000000
+map_Kd ../textures/mat_cielo_tormenta.png
+
+newmtl mat_nube
+d 1.000000
+map_Kd ../textures/mat_nube.png

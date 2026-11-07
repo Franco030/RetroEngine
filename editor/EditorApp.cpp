@@ -239,6 +239,7 @@ void EditorApp::Run() {
     if (WindowShouldClose() && !openUnsavedPopup_ && pending_.kind == PendingKind::None)
       RequestQuit();
 
+    UpdateAudio();
     BeginDrawing();
     ClearBackground({theme::kClear[0], theme::kClear[1], theme::kClear[2], theme::kClear[3]});
     rlImGuiBegin();
@@ -265,7 +266,9 @@ void EditorApp::RefreshSceneList() {
   std::error_code ec;
   const fs::path dir = fs::path(engine_.Assets().Root()) / "scenes";
   for (const auto& entry : fs::directory_iterator(dir, ec)) {
-    if (entry.is_regular_file() && entry.path().extension() == ".json") {
+    // las que empiezan por '_' son del editor (la de "Probar aqui"), no escenas del juego
+    if (entry.is_regular_file() && entry.path().extension() == ".json" &&
+        entry.path().filename().string().front() != '_') {
       sceneList_.push_back("scenes/" + entry.path().filename().string());
     }
   }
@@ -318,6 +321,8 @@ bool EditorApp::Rebuild(const Json& candidate, const std::string& path, std::str
       next->EntityAt(i).visible = true;
 
     scene_ = std::move(next);
+    if (flagPreview_)
+      ApplyFlagPreview();
     engine_.Assets().PurgeUnused();
     ApplyViewMode();
     return true;
@@ -337,6 +342,8 @@ bool EditorApp::OpenScene(const std::string& relativePath, bool frameCamera) {
       throw std::runtime_error("no se pudo abrir el archivo");
     Json doc = Json::parse(file);
 
+    const bool listening = listenScene_;
+    SetListenScene(false); // suelta los sonidos antes de vaciar los assets
     engine_.Assets().Clear();
     thumbs_.clear();
     badAssets_.clear();
@@ -367,6 +374,8 @@ bool EditorApp::OpenScene(const std::string& relativePath, bool frameCamera) {
       selection_ = {};
     ValidateSelection();
     UpdateDirty();
+    if (listening)
+      SetListenScene(true);
     Log(false, "Escena abierta: " + relativePath);
     return true;
   } catch (const std::exception& e) {
@@ -1122,6 +1131,7 @@ void EditorApp::DrawUi() {
   DrawMessages();
   DrawValidation();
   DrawDialogues();
+  DrawFlags();
   DrawViewport();
   DrawModals();
   HandleShortcuts();
@@ -1228,6 +1238,15 @@ void EditorApp::DrawMenuBar() {
     ImGui::MenuItem("Sonidos", nullptr, &showEmitters_);
     ImGui::MenuItem("Limites", nullptr, &showBounds_);
     ImGui::MenuItem("Punto de inicio", nullptr, &showSpawn_);
+    ImGui::MenuItem("A donde mira y a donde lleva", nullptr, &showLookHints_);
+    ImGui::Separator();
+    bool listen = listenScene_;
+    if (ImGui::MenuItem(ICON_FA_HEADPHONES "  Escuchar la escena", nullptr, &listen, hasScene))
+      SetListenScene(listen);
+    if (ImGui::MenuItem(ICON_FA_FLAG "  Ver como en el juego (banderas)", nullptr, &flagPreview_))
+      ApplyFlagPreview();
+    if (ImGui::MenuItem(ICON_FA_GAMEPAD "  Probar aqui en el juego", nullptr, false, hasScene))
+      PlayTestHere();
     ImGui::Separator();
     if (ImGui::MenuItem("Restablecer paneles"))
       layoutPending_ = true;
@@ -1266,6 +1285,7 @@ void EditorApp::BuildDefaultLayout(ImGuiID dock) {
   ImGui::DockBuilderDockWindow("###Jerarquia", left);
   ImGui::DockBuilderDockWindow("###Inspector", right);
   ImGui::DockBuilderDockWindow("###Dialogos", right);
+  ImGui::DockBuilderDockWindow("###Banderas", right);
   ImGui::DockBuilderDockWindow("###Visor", view);
   ImGui::DockBuilderDockWindow("###Assets", bottom);
   ImGui::DockBuilderDockWindow("###Mensajes", bottom);
@@ -1822,6 +1842,7 @@ void EditorApp::InspectEntity(Json& e) {
     EditInteraction(e, selection_.index);
   if (theme::Section(ICON_FA_EYE "  Al mirarla", e.contains("seen")))
     EditSight(e);
+  EditNear(e);
 
   bool header = false;
   for (auto it = e.begin(); it != e.end(); ++it) {
@@ -1829,7 +1850,7 @@ void EditorApp::InspectEntity(Json& e) {
                            "wrap", "position", "rotation", "scale", "tint", "spin", "collider",
                            "light", "sound", "showIf", "glitch", "interact", "seen", "slide", "arrive",
                            "attach", "smoke", "frames", "fps", "layer", "idle", "facePlayer",
-                           "fog"})) {
+                           "fog", "near"})) {
       continue;
     }
     if (!header) {
@@ -2018,6 +2039,11 @@ void EditorApp::InspectScene() {
 
   // Los volumenes por defecto son los de SceneAudio (src/world/Scene.hpp).
   if (theme::Section(ICON_FA_MUSIC "  Audio")) {
+    bool listen = listenScene_;
+    if (ImGui::Checkbox(ICON_FA_HEADPHONES "  Escuchar la escena", &listen))
+      SetListenScene(listen);
+    ImGui::SetItemTooltip("Musica, ambiente y lluvia como en el juego, y los sonidos posicionales\n"
+                          "oidos desde la camara del visor (acercate para oirlos).");
     AudioTrack(d, "music", "Musica", 0.6f);
     AudioTrack(d, "ambient", "Ambiente (viento, grillos...)", 0.5f);
     AudioFootsteps(d);
@@ -2065,11 +2091,16 @@ void EditorApp::InspectScene() {
     }
   }
 
+  InspectWeather(d);
+  InspectWind(d);
+  InspectPhoto(d);
+  InspectEyes(d);
+
   bool header = false;
   for (auto it = d.begin(); it != d.end(); ++it) {
     if (IsOneOf(it.key(), {"camera", "player", "autoCollide", "bounds", "background", "fog",
                            "light", "audio", "entities", "triggers", "lights", "emitters",
-                           "panorama"})) {
+                           "panorama", "weather", "wind", "photo", "eyes"})) {
       continue;
     }
     if (!header) {
@@ -2111,6 +2142,7 @@ void EditorApp::AudioTrack(Json& d, const char* key, const char* title, float de
   if (track.is_string()) {
     // atajo "music": "ruta" (sin volumen): se pasa a objeto para poder editarlo
     ImGui::TextDisabled("%s", track.get_ref<const std::string&>().c_str());
+    AudioButton(track.get<std::string>());
     if (ImGui::Button(ICON_FA_SLIDERS "  Editar volumen")) {
       Json file = track;
       BeginChange(0);
@@ -2290,6 +2322,10 @@ void EditorApp::AssetList(const std::vector<std::string>& files, bool thumbnails
       else
         column = 0;
     } else {
+      if (Contains(assets_.sounds, file)) { // un boton para oirlo, delante del nombre
+        AudioButton(file, false);
+        ImGui::SameLine();
+      }
       activated = ImGui::Selectable(file.c_str());
       if (ImGui::BeginDragDropSource()) {
         ImGui::SetDragDropPayload("ASSET", file.c_str(), file.size() + 1);
@@ -2661,6 +2697,8 @@ bool EditorApp::FieldFile(const char* label, Json& root, const char* parent, con
     }
     ImGui::EndDragDropTarget();
   }
+  if (known)
+    AudioButton(current); // solo hace algo si es un sonido
 
   if (!changed)
     return false;
@@ -2913,12 +2951,35 @@ void EditorApp::DrawViewportToolbar() {
       {ICON_FA_VOLUME_HIGH, &showEmitters_, "Sonidos"},
       {ICON_FA_BORDER_ALL, &showBounds_, "Limites jugables"},
       {ICON_FA_PERSON, &showSpawn_, "Punto de inicio del jugador"},
+      {ICON_FA_EYE, &showLookHints_,
+       "De lo seleccionado: a donde voltea la camara al hablarle (magenta), a donde mira o asusta\n"
+       "(amarillo, rojo) y a donde lleva al jugador (verde)"},
   };
   for (const Layer& layer : layers) {
     if (theme::ToolToggle(layer.icon, *layer.value, layer.tooltip))
       *layer.value = !*layer.value;
     ImGui::SameLine();
   }
+  theme::ToolSeparator();
+
+  // Como en el juego: oirla, verla con banderas, probarla
+  const bool hasScene = !scenePath_.empty();
+  ImGui::BeginDisabled(!hasScene);
+  if (theme::ToolToggle(ICON_FA_HEADPHONES, listenScene_,
+                        "Escuchar la escena: musica, ambiente, lluvia y sonidos desde la camara"))
+    SetListenScene(!listenScene_);
+  ImGui::SameLine();
+  if (theme::ToolToggle(ICON_FA_FLAG, flagPreview_,
+                        "Ver como en el juego: lo que tiene \"Visible solo si\" sigue el panel Banderas")) {
+    flagPreview_ = !flagPreview_;
+    ApplyFlagPreview();
+  }
+  ImGui::SameLine();
+  if (theme::ToolToggle(ICON_FA_GAMEPAD, false,
+                        "Probar aqui: abre el juego en esta escena (tal como esta, sin guardar), de pie\n"
+                        "donde esta la camara y mirando hacia donde mira. No guarda partida."))
+    PlayTestHere();
+  ImGui::EndDisabled();
   theme::ToolSeparator();
 
   // Acciones sobre la seleccion
@@ -3066,6 +3127,13 @@ void EditorApp::DrawGizmos() {
                {s.x - std::sin(yaw) * 1.2f, s.y + 1.5f, s.z - std::cos(yaw) * 1.2f},
                {80, 220, 255, 255});
   }
+
+  // a donde mira y a donde lleva: por encima de todo, que se vea aunque quede tras un muro
+  rlDrawRenderBatchActive();
+  rlDisableDepthTest();
+  DrawLogicHints();
+  rlDrawRenderBatchActive();
+  rlEnableDepthTest();
 }
 
 void EditorApp::DrawSelectionGizmo() {

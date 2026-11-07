@@ -30,7 +30,7 @@ struct ActionInfo {
   const char* title;
 };
 
-constexpr std::array<ActionInfo, 16> kActions{{
+constexpr std::array<ActionInfo, 21> kActions{{
     {"dialogue", "Dialogo"},
     {"look_at", "Mirar hacia"},
     {"scare", "Susto de camara"},
@@ -47,6 +47,11 @@ constexpr std::array<ActionInfo, 16> kActions{{
     {"ride", "Montarse"},
     {"behind_player", "A la espalda del jugador"},
     {"shooting", "Tiro al blanco"},
+    {"weather", "Tiempo (lluvia)"},
+    {"lightning", "Relampago"},
+    {"fog", "Niebla"},
+    {"wait", "Esperar"},
+    {"ambient", "Luz ambiente"},
 }};
 
 const ActionInfo* FindAction(const Json& action) {
@@ -116,6 +121,16 @@ Json NewAction(const std::string& key, const std::vector<std::string>& scenes,
   if (key == "shooting")
     return Json::object({{"shooting", "diana_"}, {"position", Vec3Json({0.0f, 0.0f, 0.0f})},
                          {"seconds", 20}, {"flag", "puntos"}});
+  if (key == "weather")
+    return Json::object({{"weather", Json::object({{"rain", 0.0f}, {"fade", 0.3f}})}});
+  if (key == "lightning")
+    return Json::object({{"lightning", true}});
+  if (key == "wait")
+    return Json::object({{"wait", 2.0f}});
+  if (key == "ambient")
+    return Json::object({{"ambient", 0.05f}, {"seconds", 0.3f}});
+  if (key == "fog")
+    return Json::object({{"fog", Json::object({{"start", 2.0f}, {"end", 8.0f}, {"seconds", 3.0f}})}});
   return Json::object({{"stop_music", true}});
 }
 
@@ -325,6 +340,10 @@ void EditorApp::EditAction(Json& a) {
     FieldFloat("Negro (s)", a, nullptr, "dark", 0.0f, 0.1f, 0.0f, 60.0f);
     ImGui::SetItemTooltip("Segundos en negro antes de llegar (ya suena la escena nueva)");
     if (a.value("dark", 0.0f) > 0.0f) {
+      FieldFile("Musica del negro", a, nullptr, "music", assets_.sounds, true, false);
+      ImGui::SetItemTooltip("Opcional: suena en el negro en lugar de la de la escena, que entra al acabar");
+    }
+    if (a.value("dark", 0.0f) > 0.0f) {
       if (!a.contains("lines") || !a.at("lines").is_array())
         a["lines"] = Json::array();
       Json& lines = a["lines"];
@@ -436,6 +455,30 @@ void EditorApp::EditAction(Json& a) {
     FieldFloat("A su derecha", a, nullptr, "side", 0.0f, 0.05f, -30.0f, 30.0f);
     ImGui::TextDisabled("La deja mirando al jugador, dentro de los limites y sin\n"
                         "meterla en nada solido (si no cabe, mas cerca).");
+
+  } else if (key == "weather") {
+    FieldFloat("Lluvia (0..1)", a, "weather", "rain", 0.0f, 0.01f, 0.0f, 1.0f, false);
+    FieldFloat("En segundos", a, "weather", "fade", 1.0f, 0.05f, 0.0f, 60.0f);
+    ImGui::TextDisabled("Casi 0 segundos: deja de llover de golpe. \"storm\" (true o false)\n"
+                        "enciende o apaga los relampagos: se escribe en el JSON.");
+
+  } else if (key == "lightning") {
+    FieldFloat("Trueno a los (s)", a, nullptr, "thunderDelay", 0.4f, 0.05f, 0.0f, 10.0f);
+    ImGui::TextDisabled("El destello y la bandera \"relampago\" un instante.");
+
+  } else if (key == "ambient") {
+    FieldFloat("Luz (0..1)", a, nullptr, "ambient", 0.35f, 0.01f, 0.0f, 1.0f, false);
+    FieldFloat("En segundos", a, nullptr, "seconds", 0.5f, 0.05f, 0.0f, 60.0f);
+
+  } else if (key == "wait") {
+    FieldFloat("Segundos", a, nullptr, "wait", 2.0f, 0.05f, 0.05f, 600.0f, false);
+    ImGui::TextDisabled("Lo que va detras en la lista se ejecuta despues.\n"
+                        "Si se cambia de escena, se olvida.");
+
+  } else if (key == "fog") {
+    FieldFloat("Empieza", a, "fog", "start", 10.0f, 0.1f, 0.0f, 500.0f, false);
+    FieldFloat("Acaba", a, "fog", "end", 26.0f, 0.1f, 0.1f, 1000.0f, false);
+    FieldFloat("En segundos", a, "fog", "seconds", 2.0f, 0.05f, 0.0f, 60.0f);
 
   } else if (key == "shooting") {
     FieldText("Dianas (prefijo)", a, nullptr, "shooting");
@@ -789,6 +832,7 @@ void EditorApp::EditSight(Json& e) {
   FieldFloat("Distancia", s, nullptr, "range", 15.0f, 0.1f, 0.5f, 100.0f);
   FieldFloat("Angulo", s, nullptr, "angle", 20.0f, 0.2f, 1.0f, 89.0f);
   FieldFloat("Angulo al apartar", s, nullptr, "awayAngle", 75.0f, 0.5f, 1.0f, 180.0f);
+  FieldFloat("Mirarla seguidos (s)", s, nullptr, "hold", 0.0f, 0.05f, 0.0f, 60.0f);
   ImGui::SetItemTooltip("Deja de contar como mirada cuando queda a mas de este angulo (75: ya\n"
                         "fuera de pantalla, asi lo que pase al apartar la vista no se ve)");
   ImGui::TextDisabled("Cuenta como vista si esta a menos de ese angulo del centro de la\n"

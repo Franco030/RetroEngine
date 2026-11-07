@@ -1,0 +1,9 @@
+# RetroEngine: isla_faro
+
+newmtl mat_adoquin_mojado
+d 1.000000
+map_Kd ../textures/mat_adoquin_mojado.png
+
+newmtl mat_roca
+d 1.000000
+map_Kd ../textures/mat_roca.png

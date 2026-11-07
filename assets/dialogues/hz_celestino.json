@@ -1,0 +1,14 @@
+{
+  "speaker": "Celestino, jefe de estacion",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Hoz del Cuervo. Bienvenidos.",
+        "Aqui no se duerme, joven. Ni yo ni nadie. Nueve noches llevamos.",
+        "El tren se queda hasta que sople. Luego, ya veremos quien lo maneja."
+      ]
+    },
+    { "lines": ["Si le pesan los ojos, camine.\nY no se asome mucho al barranco."] }
+  ]
+}

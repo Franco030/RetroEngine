@@ -1,0 +1,16 @@
+{
+  "speaker": "Nico",
+  "entries": [
+    { "if": { "flag": "pn_camara" }, "lines": ["Voy a la taberna. Dicen que ahi se espera el barco."] },
+    {
+      "lines": [
+        "Puerto Niebla. Fin de la via.",
+        "Ten. La camara. A mi ya no me sale nadie.",
+        "En la foto de Hoz salieron todos con los ojos cerrados. Todos menos tu.\nA lo mejor a ti te sale lo que a mi ya no.",
+        "Con F la levantas y miras por el visor. Con el clic, la foto.\nAqui, lo que sale en el flash, esta.",
+        "Voy a la taberna. Buscame ahi."
+      ],
+      "do": [{ "set_flag": "pn_camara" }]
+    }
+  ]
+}

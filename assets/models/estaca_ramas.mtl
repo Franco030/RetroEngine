@@ -1,0 +1,13 @@
+# RetroEngine: estaca_ramas
+
+newmtl mat_madera
+d 1.000000
+map_Kd ../textures/mat_madera.png
+
+newmtl mat_madera_mojada
+d 1.000000
+map_Kd ../textures/mat_madera_mojada.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png

@@ -1,0 +1,628 @@
+{
+  "player": { "position": [95.5, 6.0, 2.0], "yaw": -90 },
+  "bounds": { "min": [60.0, -130.0], "max": [170.0, 20.0] },
+  "background": [26, 28, 34],
+  "fog": { "start": 1.0, "end": 11.0 },
+  "light": { "direction": [0.3, -0.8, 0.3], "ambient": 0.3, "sun": 0.1 },
+  "weather": {
+    "rain": 1.0,
+    "sound": "audio/lluvia.wav",
+    "volume": 0.22,
+    "thunder": { "every": [10, 24], "sounds": ["audio/trueno_1.wav", "audio/trueno_2.wav", "audio/trueno_3.wav"] }
+  },
+  "photo": { "if": { "flag": "pn_camara" }, "cooldown": 1.6 },
+  "audio": {
+    "music": { "file": "audio/musica_pn_dique_v2.wav", "volume": 0.55 },
+    "ambient": { "file": "audio/olas.wav", "volume": 0.6 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.25
+    },
+    "fade": 3
+  },
+  "entities": [
+    {
+      "name": "mar",
+      "model": { "type": "plane", "size": [840, 900], "subdivisions": 225, "tiles": [140.0, 150.0] },
+      "texture": "textures/mat_mar_tormenta.png",
+      "wrap": "repeat",
+      "position": [0.0, 4.5, -450.0],
+      "tint": [150, 160, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "suelo_muelle",
+      "model": { "type": "plane", "size": [17.2, 42], "subdivisions": 10, "tiles": [9.56, 23.33] },
+      "texture": "textures/mat_adoquin_mojado.png",
+      "wrap": "repeat",
+      "position": [68.6, 6.0, 21.0],
+      "tint": [150, 150, 156, 255],
+      "collider": { "min": [-8.6, -6.0, -21.0], "max": [8.6, 0, 21.0] }
+    },
+    {
+      "name": "malecon_fin",
+      "model": "models/malecon_niebla.obj",
+      "position": [68.0, 6.0, 0.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "dique_0",
+      "model": "models/dique_tramo.obj",
+      "position": [86.0, 6.0, 2.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "dique_1",
+      "model": "models/dique_tramo.obj",
+      "position": [106.0, 6.0, 2.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "dique_2",
+      "model": "models/dique_tramo.obj",
+      "position": [118.0, 6.0, -10.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "dique_3",
+      "model": "models/dique_tramo.obj",
+      "position": [118.0, 6.0, -30.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "dique_4",
+      "model": "models/dique_tramo.obj",
+      "position": [128.0, 6.0, -42.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "dique_5",
+      "model": "models/dique_tramo.obj",
+      "position": [140.0, 6.0, -54.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "dique_6",
+      "model": "models/dique_tramo.obj",
+      "position": [140.0, 6.0, -76.5],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "dique_esquina_0",
+      "model": "models/dique_esquina.obj",
+      "position": [118.0, 6.0, 2.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "dique_esquina_0_pretil_0",
+      "model": "models/pretil_dique.obj",
+      "position": [120.38, 6.0, 2.3],
+      "rotation": [0, 0, 0],
+      "scale": [1.0, 1.0, 0.8846153846153845]
+    },
+    {
+      "name": "dique_esquina_0_pretil_1",
+      "model": "models/pretil_dique.obj",
+      "position": [118.3, 6.0, 4.38],
+      "rotation": [0, 90, 0],
+      "scale": [1.0, 1.0, 0.8846153846153845]
+    },
+    {
+      "name": "dique_esquina_1",
+      "model": "models/dique_esquina.obj",
+      "position": [118.0, 6.0, -42.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "dique_esquina_1_pretil_0",
+      "model": "models/pretil_dique.obj",
+      "position": [115.62, 6.0, -42.3],
+      "rotation": [0, 0, 0],
+      "scale": [1.0, 1.0, 0.8846153846153845]
+    },
+    {
+      "name": "dique_esquina_1_pretil_1",
+      "model": "models/pretil_dique.obj",
+      "position": [116.7, 6.0, -44.38],
+      "rotation": [0, 90, 0],
+      "scale": [1.0, 1.0, 0.5]
+    },
+    {
+      "name": "dique_esquina_2",
+      "model": "models/dique_esquina.obj",
+      "position": [140.0, 6.0, -42.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "dique_esquina_2_pretil_0",
+      "model": "models/pretil_dique.obj",
+      "position": [142.38, 6.0, -41.7],
+      "rotation": [0, 0, 0],
+      "scale": [1.0, 1.0, 0.8846153846153845]
+    },
+    {
+      "name": "dique_esquina_2_pretil_1",
+      "model": "models/pretil_dique.obj",
+      "position": [140.3, 6.0, -39.62],
+      "rotation": [0, 90, 0],
+      "scale": [1.0, 1.0, 0.8846153846153845]
+    },
+    {
+      "name": "pretil_verja_0",
+      "model": "models/pretil_dique.obj",
+      "position": [75.35, 6.0, -0.28],
+      "rotation": [0, 90, 0],
+      "scale": [1.0, 1.0, 0.25]
+    },
+    {
+      "name": "pretil_verja_1",
+      "model": "models/pretil_dique.obj",
+      "position": [75.35, 6.0, 4.28],
+      "rotation": [0, 90, 0],
+      "scale": [1.0, 1.0, 0.25]
+    },
+    {
+      "name": "dique_final",
+      "model": "models/dique_tramo.obj",
+      "position": [140.0, 6.0, -92.0],
+      "rotation": [0, 0, 0],
+      "scale": [1.0, 1.0, 0.56]
+    },
+    {
+      "name": "isla",
+      "model": "models/isla_faro.obj",
+      "position": [140.0, 6.0, -110.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "faro",
+      "model": "models/faro_niebla.obj",
+      "position": [140.0, 6.0, -110.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "muro_este_0",
+      "model": "models/muro_piedra.obj",
+      "position": [76.8, 6.0, 9.6],
+      "rotation": [0, 90, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "muro_este_1",
+      "model": "models/muro_piedra.obj",
+      "position": [76.8, 6.0, 19.6],
+      "rotation": [0, 90, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "muro_este_2",
+      "model": "models/muro_piedra.obj",
+      "position": [76.8, 6.0, 29.6],
+      "rotation": [0, 90, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "muro_este_3",
+      "model": "models/muro_piedra.obj",
+      "position": [76.8, 6.0, 39.6],
+      "rotation": [0, 90, 0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "puerta_dique",
+      "model": "models/puerta_dique_abierta.obj",
+      "position": [74.5, 6.0, 2.0],
+      "rotation": [0, -90, 0],
+      "texture": "textures/lam_pn_arco_dique.png"
+    },
+    {
+      "name": "puerta_faro",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [140.0, 6.0, -106.4],
+      "interact": {
+        "prompt": "Subir",
+        "range": 3.0,
+        "do": [{ "dialogue": "pn_subir_faro" }],
+        "box": { "min": [-0.8, 0, -0.4], "max": [0.8, 2.4, 0.4] }
+      }
+    },
+    {
+      "name": "clara_dique",
+      "model": "models/clara.obj",
+      "texture": "textures/pj_fe_clara.png",
+      "position": [141.6, 6.0, -104.5],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "pn_zapato_ok" },
+      "glitch": true,
+      "facePlayer": { "range": 30, "turnSpeed": 90 }
+    },
+    {
+      "name": "boya_d_0",
+      "model": "models/boya.obj",
+      "position": [112.0, 3.9, 9.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "idle": { "bob": 0.08, "sway": 8, "speed": 0.7 },
+      "sound": { "file": "audio/campana_boya.wav", "volume": 0.9, "radius": 40, "minDistance": 3 }
+    },
+    {
+      "name": "boya_d_1",
+      "model": "models/boya.obj",
+      "position": [124.0, 3.9, -38.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "idle": { "bob": 0.08, "sway": 8, "speed": 0.7 },
+      "sound": { "file": "audio/campana_boya.wav", "volume": 0.9, "radius": 40, "minDistance": 3 }
+    },
+    {
+      "name": "boya_d_2",
+      "model": "models/boya.obj",
+      "position": [146.0, 3.9, -46.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "idle": { "bob": 0.08, "sway": 8, "speed": 0.7 },
+      "sound": { "file": "audio/campana_boya.wav", "volume": 0.9, "radius": 40, "minDistance": 3 }
+    },
+    {
+      "name": "boya_d_3",
+      "model": "models/boya.obj",
+      "position": [146.0, 3.9, -84.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "idle": { "bob": 0.08, "sway": 8, "speed": 0.7 },
+      "sound": { "file": "audio/campana_boya.wav", "volume": 0.9, "radius": 40, "minDistance": 3 }
+    },
+    {
+      "name": "ahogado_d_0",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [82.99, 3.6, 12.86],
+      "rotation": [0, -1.5292881139635757, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_1",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [86.48, 3.6, -6.94],
+      "rotation": [0, 3.3657478781927335, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_2",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [89.35, 3.6, -8.19],
+      "rotation": [0, 5.813836632836953, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_3",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [94.14, 3.6, -4.73],
+      "rotation": [0, 4.2826930787723185, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_4",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [104.95, 3.6, -6.81],
+      "rotation": [0, -9.841323515035313, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_5",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [99.51, 3.6, 11.18],
+      "rotation": [0, 0.6895018601214442, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_6",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [111.85, 3.6, -4.16],
+      "rotation": [0, -7.444033336353854, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_7",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [113.25, 3.6, 7.83],
+      "rotation": [0, -10.97635587420638, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_8",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [110.06, 3.6, -15.42],
+      "rotation": [0, -7.2112632948719915, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_9",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [107.44, 3.6, -1.22],
+      "rotation": [0, -0.594367230699202, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_10",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [127.81, 3.6, -18.55],
+      "rotation": [0, 1.8325023097124387, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_11",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [127.38, 3.6, -9.79],
+      "rotation": [0, -6.080968615031968, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_12",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [126.26, 3.6, -30.16],
+      "rotation": [0, -4.792449309921551, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_13",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [123.58, 3.6, -36.73],
+      "rotation": [0, 11.765451529282885, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_14",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [127.45, 3.6, -27.36],
+      "rotation": [0, -3.1371459169173086, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_15",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [111.93, 3.6, -29.7],
+      "rotation": [0, 8.784169937887505, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_16",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [131.73, 3.6, -34.93],
+      "rotation": [0, 2.3848370422861365, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_17",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [119.44, 3.6, -34.49],
+      "rotation": [0, -7.342462711403797, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_18",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [129.27, 3.6, -32.62],
+      "rotation": [0, -0.09893697658485046, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_19",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [124.61, 3.6, -35.63],
+      "rotation": [0, -7.067546543393949, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_20",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [148.36, 3.6, -52.72],
+      "rotation": [0, -11.593686607115067, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_21",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [147.77, 3.6, -62.2],
+      "rotation": [0, -2.2553467732705563, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_22",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [150.78, 3.6, -48.61],
+      "rotation": [0, 9.96508043848246, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_23",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [150.02, 3.6, -62.38],
+      "rotation": [0, 10.941042089353019, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_24",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [150.9, 3.6, -76.24],
+      "rotation": [0, -7.093209784925901, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_25",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [145.95, 3.6, -84.55],
+      "rotation": [0, -8.064471650524617, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_26",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [146.28, 3.6, -79.14],
+      "rotation": [0, -9.278981869217684, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "ahogado_d_27",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [129.38, 3.6, -71.87],
+      "rotation": [0, 9.983501355592786, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 60, "turnSpeed": 90 }
+    },
+    {
+      "name": "andante",
+      "model": "models/hombre_alto.obj",
+      "position": [133.0, 4.0, -48.0],
+      "rotation": [0, 180, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "slide": { "offset": [0, 0, -40.0], "period": 26, "phase": 0 }
+    },
+    {
+      "name": "andante_agua",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [133.0, 4.5, -48.0],
+      "slide": { "offset": [0, 0, -40.0], "period": 26, "phase": 0 },
+      "sound": { "file": "audio/chapoteo.wav", "volume": 0.5, "radius": 16, "minDistance": 2 }
+    }
+  ],
+  "triggers": [
+    {
+      "name": "caer_agua",
+      "position": [110, 0, -50],
+      "size": [160, 4.6, 220],
+      "on": "enter",
+      "do": [
+        {
+          "goto_scene": "scenes/pn_dique.json",
+          "position": [95.5, 6.0, 2.0],
+          "yaw": -90,
+          "dark": 8,
+          "lines": [
+            "",
+            "Caes entre los bloques. El agua te traga y te escupe.",
+            "Estas otra vez en el dique, empapado.",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sirena_d",
+      "position": [128.0, 6.0, -42.0],
+      "size": [20, 4, 6],
+      "on": "enter",
+      "do": [
+        {
+          "play_sound": "audio/sirena_niebla.wav",
+          "volume": 1.0,
+          "at": [140.0, 30.35, -110.0],
+          "radius": 300,
+          "minDistance": 40
+        }
+      ]
+    },
+    {
+      "name": "volver_puerto",
+      "position": [79.0, 6.0, 2.0],
+      "size": [2.0, 4, 6],
+      "on": "enter",
+      "do": [
+        { "fog": { "start": 18.0, "end": 170.0, "seconds": 2.0 } },
+        { "goto_scene": "scenes/pn_puerto.json", "position": [89.0, 6.0, 2.0], "yaw": 90 }
+      ]
+    }
+  ],
+  "emitters": [],
+  "autoCollide": true,
+  "camera": { "position": [95.5, 7.7, 2.0], "target": [95.5, 7.5, -3.0], "fov": 60 }
+}

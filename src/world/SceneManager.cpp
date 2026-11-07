@@ -231,7 +231,15 @@ void SceneManager::LoadNow(std::size_t index) {
     throw;
   }
 
-  ApplyAudio(scene_->audio);
+  if (pendingInterlude_.music.empty()) {
+    ApplyAudio(scene_->audio);
+  } else { // el negro trae su musica: la de la escena espera a que acabe (ver Phase::Dark)
+    SceneAudio negro = scene_->audio;
+    negro.music = pendingInterlude_.music;
+    negro.musicVolume = pendingInterlude_.musicVolume;
+    negro.ambient.clear();
+    ApplyAudio(negro);
+  }
   const double tAudio = MsSince(start);
 
   // Las vecinas se leen en un hilo; la purga de lo que solo usaba la escena anterior espera a
@@ -342,6 +350,8 @@ void SceneManager::Update(float dt) {
   case Phase::Dark:
     darkTime_ += dt;
     if (darkTime_ >= interlude_.seconds) {
+      if (!interlude_.music.empty() && scene_)
+        ApplyAudio(scene_->audio);
       interlude_ = {};
       phase_ = Phase::FadingIn;
     }
@@ -489,6 +499,11 @@ void SceneManager::Draw() {
   if (p.pointLights) {
     scene_->CollectLights(lights_);
     KeepNearestLights(lights_, camera_.Position(), kMaxPointLights);
+    if (flashLight_) {
+      lights_.insert(lights_.begin(), *flashLight_);
+      if (lights_.size() > static_cast<std::size_t>(kMaxPointLights))
+        lights_.resize(static_cast<std::size_t>(kMaxPointLights));
+    }
   }
   engine_.Retro().SetPointLights(lights_);
 

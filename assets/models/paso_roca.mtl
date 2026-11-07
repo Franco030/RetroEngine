@@ -1,0 +1,21 @@
+# RetroEngine: paso_roca
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png
+
+newmtl mat_oxido
+d 1.000000
+map_Kd ../textures/mat_oxido.png
+
+newmtl mat_piedra_mojada
+d 1.000000
+map_Kd ../textures/mat_piedra_mojada.png
+
+newmtl mat_roca
+d 1.000000
+map_Kd ../textures/mat_roca.png
+
+newmtl mat_ventana_luz
+d 1.000000
+map_Kd ../textures/mat_ventana_luz.png

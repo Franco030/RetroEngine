@@ -12,3 +12,6 @@ RetroEngine
 *.bak
 __pycache__/
 build-release/
+
+# escena temporal de 'Probar aqui' del editor
+assets/scenes/_prueba_editor.json

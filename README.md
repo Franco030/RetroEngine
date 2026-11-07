@@ -42,7 +42,7 @@ nuevas). Lo que existe hoy:
 | Jugador | Primera persona, cilindro que choca contra cajas orientadas, escalones, salto, gravedad, límites de escena. |
 | Lógica | Triggers (zonas) con eventos `enter`/`exit`/`stay`, banderas, condiciones anidadas (`all`/`any`/`not`), interacción con **E**, visibilidad condicional (`showIf`), cambio de escena con fundido. **Diálogos** en archivos aparte (`assets/dialogues/`): páginas, nombre de quien habla y entradas que cambian según lo hablado y las banderas (dice A, luego B y repite C). |
 | Audio | Música y ambiente con fundido cruzado, efectos (también posicionales), emisores en bucle con atenuación y paneo, pasos. |
-| Guardado | Ranuras en `%APPDATA%/RetroEngine/saves`, escritura atómica con copia `.bak`, autoguardado. |
+| Guardado | Tres partidas (`partida1..3.json` en `%APPDATA%/RetroEngine/saves`), cada una con su autoguardado; escritura atómica con copia `.bak`. |
 | Editor | Visor 3D con cámara libre, vista PS1 opcional, selección por clic, gizmo de mover, jerarquía, inspector, panel de assets con arrastrar y soltar, deshacer/rehacer, guardar/abrir/crear escenas. Editor de lógica: acciones, condiciones, interacciones y `showIf` en formularios, un panel de validación que avisa de referencias rotas y banderas sospechosas, y un panel **Dialogos** para crearlos y editarlos (se guardan solos). |
 | Contenido | Modelos low-poly hechos con Blender por script: molino con aspas que giran, casas de madera y de piedra (también de noche, con las ventanas encendidas), capilla, cripta, tumbas, verjas, faroles, fuente, pozo y otros objetos, y ocho personajes compatibles con los atlas de caras. Texturas de materiales y sprites procedurales con acabado PS1. |
 | Herramientas | `tools/texconv.py` (imagen a textura PS1) y `tools/charatlas.py` (foto de cara a atlas de personaje), para meter contenido propio. |
@@ -54,7 +54,9 @@ Escenas, conectadas entre sí por **senderos que se meten en el bosque** (no hay
 entrar en la espesura un trigger invisible cambia de escena con un fundido, y se llega a la otra
 saliendo de su propio bosque):
 
-- `demo.json`: escena de pruebas (puzle de llave y 3 monedas que abre la verja del sendero).
+- `demo.json`: escena de pruebas (puzle de llave y 3 monedas que abre la verja del sendero). No
+  está conectada con el mundo: se abre con `--scene scenes/demo.json`. El juego empieza en
+  `noche.json`, la aldea de noche.
 - `aldea.json`: aldea de día con molino, casas, pozo y aldeanos.
 - `noche.json`: plaza nocturna con fuente, faroles y un sereno.
 - `cementerio.json`: cementerio con capilla, tumbas, cuervos y un sepulturero; con su llave se
@@ -98,6 +100,15 @@ saliendo de su propio bosque):
   es feliz y está convidándote a todo; con seis señales raras llega la Fiesta de la Vuelta
   (`salinas_pleamar.json`), la marea (`salinas_marea.json`) y la noche después (`salinas_fin.json`).
   Todo suena con variaciones de una habanera propia.
+- `hoz.json`: el capítulo 4, Hoz del Cuervo, donde nadie duerme. Una ciudad colgada a los dos
+  lados de un barranco, de madrugada y con todas las ventanas encendidas: llevan nueve noches sin
+  dormir y esperan el final con calma. No queda un solo animal. Con **Q** se cierran los ojos y se
+  ve lo que duerme (y un puente que con los ojos abiertos no existe); si se aguantan demasiado,
+  gana el sueño. Lo que le falta a la ciudad está en una pizarra de la plaza: llevar una carta,
+  dar cuerda al reloj de la torre (`hz_relojeria.json`, con la llave del dormitorio comunal,
+  `hz_dormitorio.json`), devolver el último vals al café (`hz_cafe.json`) y, al final, una foto
+  de todos. Entonces sopla (`hoz_viento.json`): la ciudad se acuesta en la calle y hay que llegar
+  al tren a oscuras, cerrando los ojos para ver el camino. Música en 7/4.
 
 En la capilla, tocar el órgano tiene consecuencias.
 
@@ -132,23 +143,30 @@ Si no quieres compilar el editor, añade `-DRETRO_BUILD_EDITOR=OFF` al configura
 
 Los ejecutables quedan en `build/bin/`:
 
-- `RetroEngine.exe`: el juego. Lee los assets de `build/bin/assets/`, una **copia** que el
-  destino `CopyAssets` sincroniza en cada compilación.
+- `RetroEngine.exe`: el juego, **el producto final**: menús, partidas y nada más (sin teclas ni
+  opciones de depuración y, en Windows, sin ventana de consola). Lee los assets de
+  `build/bin/assets/`, una **copia** que el destino `CopyAssets` sincroniza en cada compilación.
+- `RetroEngineDebug.exe`: el mismo juego (mismo `main.cpp`, compilado con `RETRO_DEBUG_TOOLS`)
+  con consola, las teclas de depuración y las opciones de línea de comandos. Es el que abre el
+  editor en "Probar aquí".
 - `RetroEditor.exe`: el editor. Edita directamente los assets **de origen** (`assets/` del
   proyecto; la ruta se fija al compilar con `RETRO_PROJECT_ASSETS_DIR`). Se puede cambiar con
   `RetroEditor.exe --assets <carpeta>`.
-- El juego (*Festum Venti*, "la fiesta del viento" en latín) empieza en la demo hasta que la
-  partida llega a la feria; desde entonces arranca en la **pantalla de inicio**: la feria de
-  fondo, con la cámara dando vueltas al tiovivo y el vals con percusión; Continuar (la partida más
-  reciente), Nueva partida (empieza en la demo), Configuración (volumen, ratón, pantalla
-  completa, imagen, grano y viñeta; se guarda en `ajustes.json` junto a las partidas) y Salir.
-  En la partida, Esc abre la pausa.
-- Los dos aceptan `--scene scenes/<escena>.json` para empezar en esa escena (el juego, sin
-  pantalla de inicio: directamente jugando). El juego acepta también `--windowed`: en ventana aunque la
-  configuración diga pantalla completa (sin cambiar la configuración guardada).
-- El juego apunta en la consola los fotogramas de más de 25 ms (`[tiron]`, con lo que costó
-  cada parte) y cada carga de escena (`[carga]`, `[precarga]`). Los `INFO` de raylib están
-  apagados: escribir miles de líneas en la consola de Windows bloquea el juego.
+- El juego (*Festum Venti*, "la fiesta del viento" en latín) arranca siempre en la **pantalla
+  de inicio**, con la ciudad de la última partida de fondo (antes de llegar a Ventosa, la aldea de
+  noche y el título distorsionado): Continuar (la partida más reciente), Nueva partida (se elige
+  una de las tres ranuras), Cargar partida, Configuración (volumen, ratón, pantalla completa,
+  imagen, grano y viñeta; se guarda en `ajustes.json` junto a las partidas) y Salir. En la
+  partida, Esc abre la pausa. Cada partida se guarda sola.
+- Los dos aceptan `--windowed`: en ventana aunque la configuración diga pantalla completa (sin
+  cambiar la configuración guardada).
+- Solo `RetroEngineDebug.exe` acepta `--scene scenes/<escena>.json` (empezar jugando en esa
+  escena, sin partida: no guarda), `--pos x,y,z`, `--yaw grados`, `--flags a=1,b=2`, `--assets
+  <carpeta>` y `--prueba` (no escribe partidas ni configuración). `RetroEditor.exe` acepta
+  también `--scene` y `--assets`.
+- La versión de depuración apunta en la consola los fotogramas de más de 25 ms (`[tiron]`, con lo
+  que costó cada parte) y cada carga de escena (`[carga]`, `[precarga]`). Los `INFO` de raylib
+  están apagados: escribir miles de líneas en la consola de Windows bloquea el juego.
 
 > Importante: como el juego lee la copia, después de guardar una escena en el editor hay que
 > **volver a compilar** (o al menos ejecutar el destino `CopyAssets`) para verla en el juego.
@@ -165,7 +183,18 @@ Los ejecutables quedan en `build/bin/`:
 | Shift | Correr |
 | Espacio | Saltar |
 | E | Interactuar con lo que miras |
-| F9 / F10 / Shift+F10 | Guardar en la ranura 1 / cargar la ranura 1 / cargar el autoguardado |
+| Ctrl | Andar despacio (sin ruido) |
+| F / clic | Levantar la cámara de fotos / disparar (donde se permite) |
+| Q | Cerrar los ojos (donde se permite) |
+| F11 | Ventana sin bordes |
+| F12 | Foto: se guarda en Imagenes/Festum Venti (tal como se ve, sin las barras negras) |
+| Esc | Pausa (seguir, configuración, salir al menú o del juego) / volver en un menú |
+
+### Solo en `RetroEngineDebug.exe`
+
+| Tecla | Acción |
+|---|---|
+| F9 / F10 | Guardar ya la partida / volver a lo último guardado de la partida |
 | Tab / Shift+Tab | Escena siguiente / anterior (de las ya conocidas) |
 | F1 | Mostrar u ocultar la ayuda |
 | F2 | Alternar entre primera persona y cámara orbital |
@@ -175,9 +204,6 @@ Los ejecutables quedan en `build/bin/`:
 | F7 / F8 | Modo de escalado / activar o quitar el acabado del post-proceso |
 | 1 2 3 4 6 | Temblor, color de 15 bits, *dithering*, niebla, luces puntuales |
 | M | Silenciar |
-| F11 | Ventana sin bordes |
-| F12 | Foto: se guarda en Imagenes/Festum Venti (tal como se ve, sin las barras negras) |
-| Esc | Pausa (seguir, configuración, salir al menú o del juego) / volver en un menú |
 
 ### Editor
 

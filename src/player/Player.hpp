@@ -4,6 +4,7 @@
 
 #include <raylib.h>
 
+#include <cmath>
 #include <span>
 
 namespace retro {
@@ -17,6 +18,7 @@ struct PlayerSettings {
   float stepHeight = 0.35f; // desniveles que se suben sin saltar
   float walkSpeed = 3.5f;
   float runSpeed = 6.0f;
+  float sneakSpeed = 1.4f; // con Ctrl: despacio, sin hacer ruido
   float jumpHeight = 0.9f;
   float gravity = 20.0f;
   float mouseSensitivity = 0.12f; // grados por pixel
@@ -51,6 +53,10 @@ public:
   Vector3 Eye() const noexcept { return {feet_.x, feet_.y + cfg_.eyeHeight, feet_.z}; }
 
   bool Grounded() const noexcept { return grounded_; }
+  // Un empuje de fuera (el viento), en m/s, que se suma a lo que anda: se pone cada fotograma.
+  void SetPush(Vector2 push) noexcept { push_ = push; }
+  // Lo rapido que va en horizontal (m/s): lo que oye lo que caza por el oido.
+  float HorizontalSpeed() const noexcept { return std::hypot(vel_.x, vel_.y); }
   float Yaw() const noexcept { return yaw_; }
 
   float Pitch() const noexcept { return pitch_; }
@@ -75,6 +81,7 @@ private:
   PlayerSettings cfg_;
   Vector3 feet_{0.0f, 0.0f, 0.0f};
   Vector2 vel_{0.0f, 0.0f}; // velocidad horizontal (x, z)
+  Vector2 push_{0.0f, 0.0f}; // lo que le empuja de fuera (el viento), m/s
   float velY_ = 0.0f;
   float yaw_ = 0.0f; // grados
   float pitch_ = 0.0f;

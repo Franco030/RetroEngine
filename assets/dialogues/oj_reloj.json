@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "lines": [
+        "El reloj de la plaza de Hoz, solo, marcando las 3:12.",
+        "Le das cuerda. La manivela cruje.",
+        "El minutero salta a las 3:13. Y sigue el tictac.",
+        "En Hoz alguien, por fin, cierra los ojos."
+      ],
+      "do": [{ "set_flag": "oj_hoz" }]
+    }
+  ]
+}

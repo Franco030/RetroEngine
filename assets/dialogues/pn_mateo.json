@@ -1,0 +1,21 @@
+{
+  "entries": [
+    { "if": { "flag": "pn_carta_ok" }, "lines": ["Mateo duerme de pie, mirando al mar. Sonrie."] },
+    {
+      "if": { "flag": "lleva", "op": "==", "value": 1 },
+      "lines": [
+        "Le das la carta. La lee con los ojos cerrados.",
+        "\"Amparo... ¿sigue despierta?\"",
+        "\"Dile que ya puede dormir. Yo ya me dormi.\""
+      ],
+      "do": [
+        { "set_flag": "lleva", "value": 0 },
+        { "set_flag": "pn_carta_ok" },
+        { "add_flag": "pn_lista", "amount": 1 }
+      ]
+    },
+    {
+      "lines": ["Un viejo en pijama, descalzo, con los ojos cerrados, mirando al mar.", "\"¿Ya soplo?\""]
+    }
+  ]
+}

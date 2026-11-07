@@ -1,0 +1,77 @@
+{
+  "speaker": "Clara",
+  "entries": [
+    {
+      "if": { "all": [{ "flag": "lleva", "op": "==", "value": 4 }, { "flag": "pn_seis_ok" }] },
+      "lines": [
+        "Clara levanta la cabeza. Ve el zapato rojo que traes en la mano.",
+        "No lo agarra luego luego. Te mira a ti, un buen rato.",
+        "\"Tu eres el del tren. El que me buscaba en la feria.\"",
+        "\"Todos me buscaban. Pero nadie me veia. Nomas en las fotos, y en los sueños.\"",
+        "\"Le tomaste una foto a mi papa, alla abajo. Ya lo vi.\"",
+        "\"Sigue con la lampara, gritando mi nombre. Yo le contesto y no me oye.\"",
+        "Le das el zapato. Esta mojado y frio. Se lo pone. Le queda justo.",
+        "Te agarra la mano para pararse.",
+        "Su mano esta tibia. Es la unica mano tibia de todo el puerto.",
+        "\"No estoy muerta. Nada mas me trajo el viento. Como a todo lo demas.\"",
+        "\"Pero el viento no regresa a nadie. De aqui se sale por el mar, por donde alumbra el faro.\"",
+        "\"Y el faro esta apagado.\"",
+        "Te suelta la mano.",
+        "\"Prendelo tu. Yo te espero alla.\"",
+        "Mira los bancos vacios, uno por uno, como si se despidiera de alguien.",
+        "\"Ya no tengo que estar aqui sentada. Ellos me cuidaban.\""
+      ],
+      "do": [
+        { "set_flag": "lleva", "value": 0 },
+        { "set_flag": "pn_zapato_ok" },
+        { "add_flag": "pn_lista", "amount": 2 },
+        { "set_flag": "pn_clara_se_va" },
+        { "message": "Clara se va por el pasillo, despacio, tarareando el vals de la feria.", "seconds": 5 },
+        { "wait": 10.5 },
+        { "set_flag": "pn_clara_fuera" },
+        { "play_sound": "audio/portazo.wav", "volume": 0.45 },
+        { "message": "La puerta del santuario se cierra detras de ella.", "seconds": 4 }
+      ]
+    },
+    {
+      "if": { "flag": "lleva", "op": "==", "value": 4 },
+      "lines": [
+        "Clara levanta la cabeza. Ve el zapato rojo que traes en la mano.",
+        "No lo agarra luego luego. Te mira a ti, un buen rato.",
+        "\"Tu eres el del tren. El que me buscaba en la feria.\"",
+        "\"Todos me buscaban. Pero nadie me veia. Nomas en las fotos, y en los sueños.\"",
+        "\"Mi papa tambien me busca. Esta alla abajo, en el varadero, con los otros cinco.\"",
+        "\"Sigue gritando mi nombre. Yo le contesto y no me oye.\"",
+        "Le das el zapato. Esta mojado y frio. Se lo pone. Le queda justo.",
+        "Te agarra la mano para pararse.",
+        "Su mano esta tibia. Es la unica mano tibia de todo el puerto.",
+        "\"No estoy muerta. Nada mas me trajo el viento. Como a todo lo demas.\"",
+        "\"Pero el viento no regresa a nadie. De aqui se sale por el mar, por donde alumbra el faro.\"",
+        "\"Y el faro esta apagado.\"",
+        "Te suelta la mano.",
+        "\"Prendelo tu. Yo te espero alla.\"",
+        "Mira los bancos vacios, uno por uno, como si se despidiera de alguien.",
+        "\"Ya no tengo que estar aqui sentada. Ellos me cuidaban.\""
+      ],
+      "do": [
+        { "set_flag": "lleva", "value": 0 },
+        { "set_flag": "pn_zapato_ok" },
+        { "add_flag": "pn_lista", "amount": 2 },
+        { "set_flag": "pn_clara_se_va" },
+        { "message": "Clara se va por el pasillo, despacio, tarareando el vals de la feria.", "seconds": 5 },
+        { "wait": 10.5 },
+        { "set_flag": "pn_clara_fuera" },
+        { "play_sound": "audio/portazo.wav", "volume": 0.45 },
+        { "message": "La puerta del santuario se cierra detras de ella.", "seconds": 4 }
+      ]
+    },
+    {
+      "lines": [
+        "Clara, sentada en el escalon del altar. Un zapato rojo; el otro pie, descalzo.",
+        "\"Tu me buscabas en la feria. Te vi.\"",
+        "\"Me falta uno. Se me cayo en el bosque, cuando me levanto el viento.\"",
+        "\"Sin los dos no puedo ir tan lejos.\""
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+# RetroEngine: sacos_cartas
+
+newmtl mat_pintura_blanca
+d 1.000000
+map_Kd ../textures/mat_pintura_blanca.png
+
+newmtl mat_saco
+d 1.000000
+map_Kd ../textures/mat_saco.png

@@ -63,6 +63,7 @@ void Player::Update(float dt, std::span<const WorldBox> boxes) {
 
   Vector2 wish{0.0f, 0.0f};
   bool run = false;
+  bool sneak = false;
   bool jump = false;
 
   if (active_ && !frozen_) {
@@ -82,11 +83,12 @@ void Player::Update(float dt, std::span<const WorldBox> boxes) {
       wish = {wish.x / len, wish.y / len}; // diagonal sin ir más rápido
 
     run = IsKeyDown(KEY_LEFT_SHIFT);
+    sneak = IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL);
     jump = IsKeyPressed(KEY_SPACE);
   }
 
   // Aceleración hacia la velocidad deseada (más control en el suelo).
-  const float speed = run ? cfg_.runSpeed : cfg_.walkSpeed;
+  const float speed = sneak ? cfg_.sneakSpeed : run ? cfg_.runSpeed : cfg_.walkSpeed;
   Vector2 diff{wish.x * speed - vel_.x, wish.y * speed - vel_.y};
   const float maxDelta = (grounded_ ? kGroundAccel : kAirAccel) * dt;
   const float diffLen = std::hypot(diff.x, diff.y);
@@ -153,7 +155,8 @@ float Player::TurnTowards(Vector3 target, float dt, float rate) noexcept {
 
 void Player::Step(float h, std::span<const WorldBox> boxes) {
   // --- Horizontal: mover y sacar del interior de las cajas ---
-  Vector2 p{feet_.x + vel_.x * h, feet_.z + vel_.y * h};
+  const Vector2 push = active_ && !frozen_ ? push_ : Vector2{0.0f, 0.0f}; // (en un dialogo, no)
+  Vector2 p{feet_.x + (vel_.x + push.x) * h, feet_.z + (vel_.y + push.y) * h};
 
   for (int iter = 0; iter < 3; ++iter) { // varias pasadas para resolver esquinas
     bool any = false;

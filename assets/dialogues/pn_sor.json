@@ -1,0 +1,17 @@
+{
+  "speaker": "Sor Brigida",
+  "entries": [
+    { "if": { "flag": "pn_zapato_ok" }, "lines": ["La niña se fue hacia el faro. Descalza ya no."] },
+    {
+      "once": true,
+      "key": "hola",
+      "lines": [
+        "El santuario de los vientos.",
+        "Ahi arriba dice FESTVM VENTI. La fiesta del viento. La primera.",
+        "Aqui se le canto al viento por primera vez, para que soplara.\nY soplo.",
+        "Todo lo que se ha llevado desde entonces llega aqui, a este puerto."
+      ]
+    },
+    { "lines": ["La niña lleva ahi sentada desde que llego. No pide nada. Le falta un zapato."] }
+  ]
+}

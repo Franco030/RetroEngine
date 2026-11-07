@@ -1,0 +1,41 @@
+# RetroEngine: conservera
+
+newmtl mat_cal_sucia
+d 1.000000
+map_Kd ../textures/mat_cal_sucia.png
+
+newmtl mat_granito
+d 1.000000
+map_Kd ../textures/mat_granito.png
+
+newmtl mat_metal
+d 1.000000
+map_Kd ../textures/mat_metal.png
+
+newmtl mat_oscuro
+d 1.000000
+map_Kd ../textures/mat_oscuro.png
+
+newmtl mat_oxido
+d 1.000000
+map_Kd ../textures/mat_oxido.png
+
+newmtl mat_piedra_mojada
+d 1.000000
+map_Kd ../textures/mat_piedra_mojada.png
+
+newmtl mat_pintura_roja
+d 1.000000
+map_Kd ../textures/mat_pintura_roja.png
+
+newmtl mat_puerta
+d 1.000000
+map_Kd ../textures/mat_puerta.png
+
+newmtl mat_ventana
+d 1.000000
+map_Kd ../textures/mat_ventana.png
+
+newmtl mat_ventana_luz
+d 1.000000
+map_Kd ../textures/mat_ventana_luz.png

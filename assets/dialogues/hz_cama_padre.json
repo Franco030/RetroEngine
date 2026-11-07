@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "if": { "flag": "hz_llave" },
+      "lines": ["BAUTISTA, PADRE.", "Debajo de la almohada ya no hay nada."]
+    },
+    {
+      "if": { "flag": "lleva", "op": "!=", "value": 0 },
+      "lines": ["BAUTISTA, PADRE. Debajo de la almohada asoma algo de bronce.", "Traes las manos ocupadas."]
+    },
+    {
+      "lines": ["BAUTISTA, PADRE.", "Debajo de la almohada, una llave de cuerda, grande, de bronce."],
+      "do": [{ "set_flag": "lleva", "value": 2 }, { "set_flag": "hz_llave" }]
+    }
+  ]
+}

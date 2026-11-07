@@ -1,0 +1,12 @@
+{
+  "speaker": "Matilde y Ramon",
+  "entries": [
+    { "if": { "flag": "vals" }, "lines": ["Lo oimos. Desde aqui se oye.", "Ya no tenemos que contar."] },
+    {
+      "lines": [
+        "Bailamos sin musica, para no dormirnos.",
+        "Uno, dos, tres. Uno, dos, tres.\nSi alguien encontrara el disco de Chelo..."
+      ]
+    }
+  ]
+}

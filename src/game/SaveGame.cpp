@@ -110,8 +110,7 @@ fs::path SaveManager::DefaultDirectory(const std::string& appName) {
 }
 
 fs::path SaveManager::SlotPath(int slot) const {
-  return dir_ / (slot == kAutosaveSlot ? std::string("autosave.json")
-                                       : "slot" + std::to_string(slot) + ".json");
+  return dir_ / ("partida" + std::to_string(slot) + ".json");
 }
 
 bool SaveManager::Exists(int slot) const {

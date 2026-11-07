@@ -1,0 +1,1362 @@
+{
+  "player": { "position": [0.0, 0.0, 64.0], "yaw": 0 },
+  "bounds": { "min": [-74.0, -74.0], "max": [74.0, 74.0] },
+  "background": [14, 16, 26],
+  "fog": { "start": 40, "end": 230, "mist": 0.25, "mistHeight": 1.2, "mistColor": [70, 76, 90] },
+  "light": { "direction": [0.2, -1.0, 0.3], "ambient": 0.5, "sun": 0.3 },
+  "panorama": {
+    "model": "models/panorama_niebla.obj",
+    "tint": [120, 126, 150],
+    "haze": 0.6,
+    "y": 0,
+    "sun": { "texture": "textures/spr_luna.png", "yaw": 0, "pitch": 70, "size": 40 }
+  },
+  "wind": {
+    "center": [0, 0],
+    "outward": true,
+    "strength": 0.8,
+    "shelter": 4.0,
+    "gust": { "every": [5, 9], "seconds": 2.8, "strength": 4.8, "sound": "audio/racha.wav", "volume": 0.8 }
+  },
+  "eyes": {
+    "seconds": 9,
+    "sleep": [{ "message": "El sueño te gana un momento.\nAbres los ojos.", "seconds": 3 }]
+  },
+  "photo": { "if": { "flag": "pn_camara" }, "cooldown": 1.6 },
+  "audio": {
+    "music": { "file": "audio/musica_oj_v2.wav", "volume": 0.5 },
+    "ambient": { "file": "audio/huracan.wav", "volume": 0.3 },
+    "footsteps": {
+      "files": ["audio/paso_tierra_1.wav", "audio/paso_tierra_2.wav", "audio/paso_tierra_3.wav"],
+      "volume": 0.3
+    },
+    "fade": 3
+  },
+  "entities": [
+    {
+      "name": "lecho",
+      "model": { "type": "plane", "size": [224, 224], "subdivisions": 56, "tiles": [74.67, 74.67] },
+      "texture": "textures/mat_sal.png",
+      "wrap": "repeat",
+      "position": [0.0, 0.0, 0.0],
+      "tint": [96, 102, 112, 255],
+      "collider": { "min": [-112.0, -0.2, -112.0], "max": [112.0, 0, 112.0] }
+    },
+    {
+      "name": "pared",
+      "model": "models/pared_tormenta.obj",
+      "position": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "spin": [0, 4, 0],
+      "fog": false,
+      "tint": [150, 156, 170, 255]
+    },
+    {
+      "name": "refugio_56_1",
+      "model": "models/roca_refugio.obj",
+      "position": [24.19, 0, 48.55],
+      "rotation": [0, 31.21, 0],
+      "scale": [1.010084684622082, 1.1369302765140896, 1.010084684622082],
+      "tint": [139, 139, 139, 255]
+    },
+    {
+      "name": "refugio_56_2",
+      "model": "models/roca_refugio.obj",
+      "position": [36.13, 0, 40.8],
+      "rotation": [0, 46.93, 0],
+      "scale": [1.2539082860837414, 0.9354978624240949, 1.2539082860837414],
+      "tint": [123, 123, 123, 255]
+    },
+    {
+      "name": "refugio_56_3",
+      "model": "models/roca_refugio.obj",
+      "position": [53.65, 0, 18.94],
+      "rotation": [0, 62.64, 0],
+      "scale": [0.9045925857554152, 1.066972716455487, 0.9045925857554152],
+      "tint": [126, 126, 126, 255]
+    },
+    {
+      "name": "refugio_56_4",
+      "model": "models/roca_refugio.obj",
+      "position": [56.79, 0, -0.99],
+      "rotation": [0, 98.77, 0],
+      "scale": [1.1506348794281087, 1.0370847520317479, 1.1506348794281087],
+      "tint": [137, 137, 137, 255]
+    },
+    {
+      "name": "refugio_56_5",
+      "model": "models/roca_refugio.obj",
+      "position": [52.24, 0, -18.19],
+      "rotation": [0, 102.14, 0],
+      "scale": [1.0259361495299513, 1.0378989234409257, 1.0259361495299513],
+      "tint": [138, 138, 138, 255]
+    },
+    {
+      "name": "refugio_56_7",
+      "model": "models/roca_refugio.obj",
+      "position": [22.75, 0, -50.3],
+      "rotation": [0, 151.93, 0],
+      "scale": [1.0459601709659465, 1.114942223724441, 1.0459601709659465],
+      "tint": [136, 136, 136, 255]
+    },
+    {
+      "name": "refugio_56_8",
+      "model": "models/roca_refugio.obj",
+      "position": [2.46, 0, -54.1],
+      "rotation": [0, 183.0, 0],
+      "scale": [1.109886167728465, 0.9355008332744907, 1.109886167728465],
+      "tint": [135, 135, 135, 255]
+    },
+    {
+      "name": "refugio_56_9",
+      "model": "models/roca_refugio.obj",
+      "position": [-16.34, 0, -53.29],
+      "rotation": [0, 192.17, 0],
+      "scale": [1.2205381841986886, 1.0052279316582613, 1.2205381841986886],
+      "tint": [136, 136, 136, 255]
+    },
+    {
+      "name": "refugio_56_13",
+      "model": "models/roca_refugio.obj",
+      "position": [-54.42, 0, 16.98],
+      "rotation": [0, 291.45, 0],
+      "scale": [1.1197681737739815, 1.1351826006608479, 1.1197681737739815],
+      "tint": [150, 150, 150, 255]
+    },
+    {
+      "name": "refugio_56_14",
+      "model": "models/roca_refugio.obj",
+      "position": [-45.2, 0, 34.14],
+      "rotation": [0, 302.96, 0],
+      "scale": [1.216440534047166, 1.0652645709965627, 1.216440534047166],
+      "tint": [147, 147, 147, 255]
+    },
+    {
+      "name": "refugio_56_15",
+      "model": "models/roca_refugio.obj",
+      "position": [-30.45, 0, 49.02],
+      "rotation": [0, 330.73, 0],
+      "scale": [1.108607734501286, 1.0006972058676349, 1.108607734501286],
+      "tint": [148, 148, 148, 255]
+    },
+    {
+      "name": "refugio_56_16",
+      "model": "models/roca_refugio.obj",
+      "position": [-4.22, 0, 55.06],
+      "rotation": [0, 357.45, 0],
+      "scale": [1.1721513721789114, 1.1007541990079317, 1.1721513721789114],
+      "tint": [120, 120, 120, 255]
+    },
+    {
+      "name": "refugio_48_0",
+      "model": "models/roca_refugio.obj",
+      "position": [7.07, 0, 48.58],
+      "rotation": [0, 12.32, 0],
+      "scale": [1.1678603270039252, 0.8528393318712371, 1.1678603270039252],
+      "tint": [126, 126, 126, 255]
+    },
+    {
+      "name": "refugio_48_1",
+      "model": "models/roca_refugio.obj",
+      "position": [26.18, 0, 38.29],
+      "rotation": [0, 39.76, 0],
+      "scale": [1.0149795282047618, 1.00075580703148, 1.0149795282047618],
+      "tint": [123, 123, 123, 255]
+    },
+    {
+      "name": "refugio_48_4",
+      "model": "models/roca_refugio.obj",
+      "position": [48.74, 0, -1.66],
+      "rotation": [0, 90.22, 0],
+      "scale": [1.1850204573709224, 1.0833106608580538, 1.1850204573709224],
+      "tint": [146, 146, 146, 255]
+    },
+    {
+      "name": "refugio_48_5",
+      "model": "models/roca_refugio.obj",
+      "position": [46.53, 0, -18.09],
+      "rotation": [0, 111.93, 0],
+      "scale": [1.2628947203437149, 1.1002752638980717, 1.2628947203437149],
+      "tint": [127, 127, 127, 255]
+    },
+    {
+      "name": "refugio_48_7",
+      "model": "models/roca_refugio.obj",
+      "position": [19.98, 0, -42.17],
+      "rotation": [0, 160.01, 0],
+      "scale": [0.9962245875931908, 0.873922702783377, 0.9962245875931908],
+      "tint": [142, 142, 142, 255]
+    },
+    {
+      "name": "refugio_48_8",
+      "model": "models/roca_refugio.obj",
+      "position": [10.07, 0, -48.52],
+      "rotation": [0, 176.0, 0],
+      "scale": [1.1876603443953233, 1.1070500519575326, 1.1876603443953233],
+      "tint": [144, 144, 144, 255]
+    },
+    {
+      "name": "refugio_48_9",
+      "model": "models/roca_refugio.obj",
+      "position": [-9.73, 0, -48.58],
+      "rotation": [0, 193.7, 0],
+      "scale": [1.1966925146339793, 0.9162837229308389, 1.1966925146339793],
+      "tint": [129, 129, 129, 255]
+    },
+    {
+      "name": "refugio_48_12",
+      "model": "models/roca_refugio.obj",
+      "position": [-47.04, 0, -16.84],
+      "rotation": [0, 243.24, 0],
+      "scale": [1.1096836557107346, 0.9515903334910786, 1.1096836557107346],
+      "tint": [149, 149, 149, 255]
+    },
+    {
+      "name": "refugio_48_13",
+      "model": "models/roca_refugio.obj",
+      "position": [-49.81, 0, -2.52],
+      "rotation": [0, 271.7, 0],
+      "scale": [1.101241571078742, 0.9714164634285969, 1.101241571078742],
+      "tint": [132, 132, 132, 255]
+    },
+    {
+      "name": "refugio_48_16",
+      "model": "models/roca_refugio.obj",
+      "position": [-25.42, 0, 42.45],
+      "rotation": [0, 329.33, 0],
+      "scale": [1.0257521541128842, 0.9955694983185327, 1.0257521541128842],
+      "tint": [142, 142, 142, 255]
+    },
+    {
+      "name": "refugio_48_17",
+      "model": "models/roca_refugio.obj",
+      "position": [-6.94, 0, 46.3],
+      "rotation": [0, 346.34, 0],
+      "scale": [1.1958955888903595, 0.865832481355922, 1.1958955888903595],
+      "tint": [139, 139, 139, 255]
+    },
+    {
+      "name": "refugio_36_0",
+      "model": "models/roca_refugio.obj",
+      "position": [4.87, 0, 35.32],
+      "rotation": [0, 7.74, 0],
+      "scale": [1.2004319212679906, 0.9562436431789895, 1.2004319212679906],
+      "tint": [131, 131, 131, 255]
+    },
+    {
+      "name": "refugio_36_1",
+      "model": "models/roca_refugio.obj",
+      "position": [12.14, 0, 32.5],
+      "rotation": [0, 28.15, 0],
+      "scale": [1.2462361609567967, 0.8579680612672921, 1.2462361609567967],
+      "tint": [147, 147, 147, 255]
+    },
+    {
+      "name": "refugio_36_5",
+      "model": "models/roca_refugio.obj",
+      "position": [35.12, 0, -3.12],
+      "rotation": [0, 91.96, 0],
+      "scale": [0.9045310381699547, 0.9020746415394624, 0.9045310381699547],
+      "tint": [144, 144, 144, 255]
+    },
+    {
+      "name": "refugio_36_6",
+      "model": "models/roca_refugio.obj",
+      "position": [33.26, 0, -10.6],
+      "rotation": [0, 105.08, 0],
+      "scale": [0.8626269985275253, 1.002379315568277, 0.8626269985275253],
+      "tint": [148, 148, 148, 255]
+    },
+    {
+      "name": "refugio_36_9",
+      "model": "models/roca_refugio.obj",
+      "position": [8.63, 0, -34.75],
+      "rotation": [0, 160.22, 0],
+      "scale": [1.1515596968531276, 0.9656301121996254, 1.1515596968531276],
+      "tint": [150, 150, 150, 255]
+    },
+    {
+      "name": "refugio_36_10",
+      "model": "models/roca_refugio.obj",
+      "position": [-5.03, 0, -35.22],
+      "rotation": [0, 187.69, 0],
+      "scale": [1.0796341677855528, 1.0911371449703613, 1.0796341677855528],
+      "tint": [149, 149, 149, 255]
+    },
+    {
+      "name": "refugio_36_15",
+      "model": "models/roca_refugio.obj",
+      "position": [-37.43, 0, 5.02],
+      "rotation": [0, 282.12, 0],
+      "scale": [0.9843828390332566, 1.0426987452938246, 0.9843828390332566],
+      "tint": [130, 130, 130, 255]
+    },
+    {
+      "name": "refugio_36_18",
+      "model": "models/roca_refugio.obj",
+      "position": [-20.99, 0, 29.53],
+      "rotation": [0, 326.7, 0],
+      "scale": [0.8698235966927885, 0.9428888646583689, 0.8698235966927885],
+      "tint": [133, 133, 133, 255]
+    },
+    {
+      "name": "refugio_36_19",
+      "model": "models/roca_refugio.obj",
+      "position": [-7.15, 0, 35.79],
+      "rotation": [0, 355.8, 0],
+      "scale": [0.9048371987549666, 0.9640685086155711, 0.9048371987549666],
+      "tint": [130, 130, 130, 255]
+    },
+    {
+      "name": "refugio_27_0",
+      "model": "models/roca_refugio.obj",
+      "position": [5.3, 0, 25.4],
+      "rotation": [0, 9.61, 0],
+      "scale": [1.1529751921853493, 0.9924711271055829, 1.1529751921853493],
+      "tint": [134, 134, 134, 255]
+    },
+    {
+      "name": "refugio_27_1",
+      "model": "models/roca_refugio.obj",
+      "position": [14.54, 0, 23.67],
+      "rotation": [0, 37.04, 0],
+      "scale": [1.1359921008169813, 0.9042331080801502, 1.1359921008169813],
+      "tint": [146, 146, 146, 255]
+    },
+    {
+      "name": "refugio_27_4",
+      "model": "models/roca_refugio.obj",
+      "position": [26.03, 0, 0.07],
+      "rotation": [0, 87.28, 0],
+      "scale": [0.8982762816616926, 1.1274743000008545, 0.8982762816616926],
+      "tint": [136, 136, 136, 255]
+    },
+    {
+      "name": "refugio_27_5",
+      "model": "models/roca_refugio.obj",
+      "position": [23.51, 0, -11.69],
+      "rotation": [0, 111.56, 0],
+      "scale": [0.9689758887921702, 1.1362616375710404, 0.9689758887921702],
+      "tint": [135, 135, 135, 255]
+    },
+    {
+      "name": "refugio_27_7",
+      "model": "models/roca_refugio.obj",
+      "position": [12.96, 0, -23.34],
+      "rotation": [0, 158.24, 0],
+      "scale": [1.1059191502835546, 0.9527611712593882, 1.1059191502835546],
+      "tint": [139, 139, 139, 255]
+    },
+    {
+      "name": "refugio_27_8",
+      "model": "models/roca_refugio.obj",
+      "position": [5.51, 0, -25.87],
+      "rotation": [0, 169.8, 0],
+      "scale": [0.8538836272413626, 1.0137307446096073, 0.8538836272413626],
+      "tint": [124, 124, 124, 255]
+    },
+    {
+      "name": "refugio_27_9",
+      "model": "models/roca_refugio.obj",
+      "position": [-8.35, 0, -27.51],
+      "rotation": [0, 196.27, 0],
+      "scale": [1.1012014554649334, 0.8909563243973898, 1.1012014554649334],
+      "tint": [132, 132, 132, 255]
+    },
+    {
+      "name": "refugio_27_12",
+      "model": "models/roca_refugio.obj",
+      "position": [-27.62, 0, -6.62],
+      "rotation": [0, 263.69, 0],
+      "scale": [0.9658946391081298, 0.8961735330306144, 0.9658946391081298],
+      "tint": [123, 123, 123, 255]
+    },
+    {
+      "name": "refugio_27_13",
+      "model": "models/roca_refugio.obj",
+      "position": [-27.87, 0, 2.71],
+      "rotation": [0, 277.46, 0],
+      "scale": [0.8903954434461876, 0.85268503977335, 0.8903954434461876],
+      "tint": [121, 121, 121, 255]
+    },
+    {
+      "name": "refugio_27_16",
+      "model": "models/roca_refugio.obj",
+      "position": [-13.42, 0, 22.79],
+      "rotation": [0, 335.86, 0],
+      "scale": [1.2432294739418417, 0.8764972112591171, 1.2432294739418417],
+      "tint": [128, 128, 128, 255]
+    },
+    {
+      "name": "refugio_27_17",
+      "model": "models/roca_refugio.obj",
+      "position": [-2.47, 0, 26.51],
+      "rotation": [0, 359.32, 0],
+      "scale": [1.0296991027440858, 1.066381511875847, 1.0296991027440858],
+      "tint": [123, 123, 123, 255]
+    },
+    {
+      "name": "refugio_17_0",
+      "model": "models/roca_refugio.obj",
+      "position": [-0.35, 0, 15.51],
+      "rotation": [0, -3.59, 0],
+      "scale": [1.0844883088260295, 1.0345687089015958, 1.0844883088260295],
+      "tint": [121, 121, 121, 255]
+    },
+    {
+      "name": "refugio_17_1",
+      "model": "models/roca_refugio.obj",
+      "position": [7.03, 0, 14.47],
+      "rotation": [0, 24.31, 0],
+      "scale": [0.880007388884311, 1.0256575882638108, 0.880007388884311],
+      "tint": [136, 136, 136, 255]
+    },
+    {
+      "name": "refugio_17_2",
+      "model": "models/roca_refugio.obj",
+      "position": [13.95, 0, 8.21],
+      "rotation": [0, 55.0, 0],
+      "scale": [0.9020912040016396, 1.13646213665315, 0.9020912040016396],
+      "tint": [145, 145, 145, 255]
+    },
+    {
+      "name": "refugio_17_3",
+      "model": "models/roca_refugio.obj",
+      "position": [18.09, 0, -0.22],
+      "rotation": [0, 87.89, 0],
+      "scale": [1.1263023387617435, 1.0558563439716049, 1.1263023387617435],
+      "tint": [125, 125, 125, 255]
+    },
+    {
+      "name": "refugio_17_4",
+      "model": "models/roca_refugio.obj",
+      "position": [16.51, 0, -8.9],
+      "rotation": [0, 123.39, 0],
+      "scale": [1.2636135103464334, 0.9215856620297277, 1.2636135103464334],
+      "tint": [129, 129, 129, 255]
+    },
+    {
+      "name": "refugio_17_5",
+      "model": "models/roca_refugio.obj",
+      "position": [9.45, 0, -14.33],
+      "rotation": [0, 142.74, 0],
+      "scale": [1.1173475780396573, 0.9800110279928883, 1.1173475780396573],
+      "tint": [120, 120, 120, 255]
+    },
+    {
+      "name": "refugio_17_6",
+      "model": "models/roca_refugio.obj",
+      "position": [0.94, 0, -18.95],
+      "rotation": [0, 178.03, 0],
+      "scale": [1.1502224739283995, 0.9668084284925336, 1.1502224739283995],
+      "tint": [125, 125, 125, 255]
+    },
+    {
+      "name": "refugio_17_7",
+      "model": "models/roca_refugio.obj",
+      "position": [-9.45, 0, -15.56],
+      "rotation": [0, 208.64, 0],
+      "scale": [0.9411857729065948, 1.0651719415395708, 0.9411857729065948],
+      "tint": [146, 146, 146, 255]
+    },
+    {
+      "name": "refugio_17_8",
+      "model": "models/roca_refugio.obj",
+      "position": [-14.41, 0, -6.72],
+      "rotation": [0, 237.12, 0],
+      "scale": [1.1856241319478775, 1.0598850675567677, 1.1856241319478775],
+      "tint": [147, 147, 147, 255]
+    },
+    {
+      "name": "refugio_17_9",
+      "model": "models/roca_refugio.obj",
+      "position": [-15.48, 0, 0.85],
+      "rotation": [0, 267.96, 0],
+      "scale": [0.968756533580038, 0.8820424358360972, 0.968756533580038],
+      "tint": [122, 122, 122, 255]
+    },
+    {
+      "name": "refugio_17_10",
+      "model": "models/roca_refugio.obj",
+      "position": [-15.62, 0, 9.48],
+      "rotation": [0, 296.49, 0],
+      "scale": [1.2130378602847427, 1.0014723512194372, 1.2130378602847427],
+      "tint": [132, 132, 132, 255]
+    },
+    {
+      "name": "refugio_17_11",
+      "model": "models/roca_refugio.obj",
+      "position": [-8.67, 0, 16.3],
+      "rotation": [0, 324.46, 0],
+      "scale": [0.9789240850675011, 0.9482816062971186, 0.9789240850675011],
+      "tint": [133, 133, 133, 255]
+    },
+    {
+      "name": "resto_0",
+      "model": "models/casa_ruina.obj",
+      "position": [17.79, 0, 48.86],
+      "rotation": [0, 20, 0],
+      "tint": [140, 140, 146, 255]
+    },
+    {
+      "name": "resto_1",
+      "model": "models/muro_piedra.obj",
+      "position": [-12.68, 0, 27.19],
+      "rotation": [0, -25, 0],
+      "tint": [140, 140, 146, 255]
+    },
+    {
+      "name": "resto_2",
+      "model": "models/muro_piedra.obj",
+      "position": [29.54, 0, -5.21],
+      "rotation": [0, 100, 0],
+      "tint": [140, 140, 146, 255]
+    },
+    {
+      "name": "resto_3",
+      "model": "models/casa_ruina.obj",
+      "position": [-29.54, 0, -5.21],
+      "rotation": [0, -80, 0],
+      "tint": [140, 140, 146, 255]
+    },
+    {
+      "name": "resto_4",
+      "model": "models/muro_piedra.obj",
+      "position": [4.51, 0, -25.61],
+      "rotation": [0, 170, 0],
+      "tint": [140, 140, 146, 255]
+    },
+    {
+      "name": "resto_5",
+      "model": "models/casa_ruina.obj",
+      "position": [-8.68, 0, -49.24],
+      "rotation": [0, -170, 0],
+      "tint": [140, 140, 146, 255]
+    },
+    {
+      "name": "resto_6",
+      "model": "models/carreta.obj",
+      "position": [55.79, 0, -4.88],
+      "rotation": [0, 165, 0],
+      "tint": [140, 140, 146, 255]
+    },
+    {
+      "name": "resto_7",
+      "model": "models/barca.obj",
+      "position": [-19.84, 0, 54.5],
+      "rotation": [0, 60, 0],
+      "tint": [140, 140, 146, 255]
+    },
+    {
+      "name": "letrero_ventosa_poste",
+      "model": "models/poste_letrero.obj",
+      "position": [34.29, 0.0, -39.24],
+      "rotation": [0, 135.0, 0],
+      "scale": [0.8, 1.0, 1.0]
+    },
+    {
+      "name": "letrero_ventosa",
+      "model": "models/letrero.obj",
+      "position": [34.29, 2.3, -39.24],
+      "rotation": [0, 135.0, 0],
+      "texture": "textures/lam_oj_ventosa.png",
+      "collider": false,
+      "scale": [0.8, 0.8, 1]
+    },
+    {
+      "name": "letrero_ventosa_b",
+      "model": "models/letrero.obj",
+      "position": [34.27, 2.3, -39.22],
+      "rotation": [0, 315.0, 0],
+      "texture": "textures/lam_oj_ventosa.png",
+      "collider": false,
+      "scale": [0.8, 0.8, 1]
+    },
+    {
+      "name": "noria_soporte",
+      "model": "models/noria_soporte.obj",
+      "position": [29.7, 0.0, -21.21],
+      "rotation": [0, 135.0, 0]
+    },
+    {
+      "name": "noria_rueda",
+      "model": "models/noria_rueda.obj",
+      "position": [29.7, 10.0, -21.21],
+      "rotation": [0, 135.0, 0],
+      "spin": [0, 0, 4],
+      "collider": false
+    },
+    {
+      "name": "tiovivo",
+      "model": "models/tiovivo_base.obj",
+      "position": [19.09, 0.0, -30.41],
+      "rotation": [0, 135.0, 0],
+      "tint": [150, 120, 120, 255]
+    },
+    {
+      "name": "muro_feria",
+      "model": "models/muro_piedra.obj",
+      "position": [26.87, 0.0, -36.77],
+      "rotation": [0, 135.0, 0],
+      "tint": [150, 140, 130, 255]
+    },
+    {
+      "name": "fogata",
+      "model": "models/fogata.obj",
+      "position": [28.43, 0.0, -38.33],
+      "rotation": [0, 135.0, 0],
+      "collider": false,
+      "interact": {
+        "prompt": "Acercarte al fuego",
+        "range": 2.6,
+        "do": [{ "dialogue": "oj_fogata" }],
+        "box": { "min": [-0.9, 0, -0.9], "max": [0.9, 2.0, 0.9] }
+      },
+      "light": {
+        "offset": [0, 0.6, 0],
+        "color": [255, 150, 70],
+        "radius": 7,
+        "intensity": 0.9,
+        "flicker": 0.5,
+        "flickerRate": 9
+      }
+    },
+    {
+      "name": "muro_laguna",
+      "model": "models/muro_piedra.obj",
+      "position": [45.25, 0.0, -31.96],
+      "rotation": [0, 135.0, 0],
+      "tint": [150, 140, 130, 255]
+    },
+    {
+      "name": "muelle_laguna",
+      "model": "models/muelle.obj",
+      "position": [44.41, 0.0, -35.92],
+      "rotation": [0, 225.0, 0]
+    },
+    {
+      "name": "farolillo_0",
+      "model": "models/farol_mano.obj",
+      "position": [44.41, 0.25, -35.07],
+      "rotation": [0, 135.0, 0],
+      "collider": false
+    },
+    {
+      "name": "farolillo_1",
+      "model": "models/farol_mano.obj",
+      "position": [46.03, 0.25, -35.14],
+      "rotation": [0, 135.0, 0],
+      "collider": false
+    },
+    {
+      "name": "farolillo_2",
+      "model": "models/farol_mano.obj",
+      "position": [45.96, 0.25, -33.52],
+      "rotation": [0, 135.0, 0],
+      "collider": false
+    },
+    {
+      "name": "farolillo_3",
+      "model": "models/farol_mano.obj",
+      "position": [47.59, 0.25, -33.59],
+      "rotation": [0, 135.0, 0],
+      "collider": false
+    },
+    {
+      "name": "farolillo_4",
+      "model": "models/farol_mano.obj",
+      "position": [47.52, 0.25, -31.96],
+      "rotation": [0, 135.0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_farolillos",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [46.39, 1.0, -33.94],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 200, 120],
+        "radius": 7,
+        "intensity": 0.8,
+        "flicker": 0.3,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "farolillo_tuyo",
+      "model": "models/farol_mano.obj",
+      "position": [48.79, 0.25, -31.54],
+      "rotation": [0, 135.0, 0],
+      "collider": false,
+      "tint": [70, 66, 60, 255],
+      "showIf": { "not": { "flag": "oj_farolillo" } },
+      "interact": {
+        "prompt": "Tomar tu farolillo",
+        "range": 2.4,
+        "if": { "not": { "flag": "lleva", "op": "!=", "value": 0 } },
+        "do": [
+          { "set_flag": "lleva", "value": 21 },
+          { "set_flag": "oj_farolillo" },
+          { "message": "Tu farolillo. El unico apagado. Tiene tu nombre, con tu letra.", "seconds": 4 }
+        ]
+      }
+    },
+    {
+      "name": "farolillo_tuyo_luz",
+      "model": "models/farol_mano.obj",
+      "position": [48.79, 0.25, -31.54],
+      "rotation": [0, 135.0, 0],
+      "collider": false,
+      "showIf": { "flag": "oj_ventosa" },
+      "light": {
+        "offset": [0, 0.25, 0],
+        "color": [255, 210, 130],
+        "radius": 5,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 6
+      }
+    },
+    {
+      "name": "dejar_farolillo",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [48.79, 0.25, -31.54],
+      "interact": {
+        "prompt": "Dejarlo con los otros",
+        "range": 2.4,
+        "if": { "flag": "lleva", "op": "==", "value": 22 },
+        "do": [{ "dialogue": "oj_farolillo_dejar" }],
+        "box": { "min": [-0.7, 0, -0.7], "max": [0.7, 1.8, 0.7] }
+      }
+    },
+    {
+      "name": "letrero_salinas_poste",
+      "model": "models/poste_letrero.obj",
+      "position": [-37.59, 0.0, 26.9],
+      "rotation": [0, -60.0, 0],
+      "scale": [0.8, 1.0, 1.0]
+    },
+    {
+      "name": "letrero_salinas",
+      "model": "models/letrero.obj",
+      "position": [-37.59, 2.3, 26.9],
+      "rotation": [0, -60.0, 0],
+      "texture": "textures/lam_oj_salinas.png",
+      "collider": false,
+      "scale": [0.8, 0.8, 1]
+    },
+    {
+      "name": "letrero_salinas_b",
+      "model": "models/letrero.obj",
+      "position": [-37.56, 2.3, 26.88],
+      "rotation": [0, 120.0, 0],
+      "texture": "textures/lam_oj_salinas.png",
+      "collider": false,
+      "scale": [0.8, 0.8, 1]
+    },
+    {
+      "name": "barco_varado",
+      "model": "models/barco.obj",
+      "position": [-45.79, 0.0, 18.7],
+      "rotation": [0, 30.0, 0],
+      "tint": [130, 120, 110, 255]
+    },
+    {
+      "name": "muelle_seco_0",
+      "model": "models/muelle.obj",
+      "position": [-45.81, 0.0, 26.45],
+      "rotation": [0, 30.0, 0]
+    },
+    {
+      "name": "muelle_seco_1",
+      "model": "models/muelle.obj",
+      "position": [-49.16, 0.0, 20.65],
+      "rotation": [0, 30.0, 0]
+    },
+    {
+      "name": "barca_tumbada_0",
+      "model": "models/barca.obj",
+      "position": [-43.22, 0.12, 30.15],
+      "rotation": [0, -20.0, 18],
+      "tint": [130, 110, 90, 255]
+    },
+    {
+      "name": "barca_tumbada_1",
+      "model": "models/barca.obj",
+      "position": [-33.37, 0.12, 26.2],
+      "rotation": [0, -120.0, -14],
+      "tint": [130, 110, 90, 255]
+    },
+    {
+      "name": "barca_tumbada_2",
+      "model": "models/barca.obj",
+      "position": [-35.66, 0.12, 14.24],
+      "rotation": [0, 60.0, 10],
+      "tint": [130, 110, 90, 255]
+    },
+    {
+      "name": "sal_0",
+      "model": "models/monton_sal.obj",
+      "position": [-28.18, 0.0, 23.2],
+      "rotation": [0, -30.0, 0],
+      "tint": [200, 200, 206, 255]
+    },
+    {
+      "name": "sal_1",
+      "model": "models/monton_sal.obj",
+      "position": [-32.08, 0.0, 10.44],
+      "rotation": [0, -60.0, 0],
+      "scale": [0.7, 0.6, 0.7],
+      "tint": [200, 200, 206, 255]
+    },
+    {
+      "name": "cubeta",
+      "model": "models/cubo.obj",
+      "position": [-43.71, 0.0, 27.09],
+      "rotation": [0, -60.0, 0],
+      "scale": [1.8, 1.8, 1.8],
+      "tint": [110, 140, 170, 255],
+      "showIf": { "not": { "flag": "oj_cubeta" } },
+      "interact": {
+        "prompt": "Tomar la cubeta",
+        "range": 2.4,
+        "if": { "not": { "flag": "lleva", "op": "!=", "value": 0 } },
+        "do": [
+          { "set_flag": "lleva", "value": 23 },
+          { "set_flag": "oj_cubeta" },
+          {
+            "message": "La cubeta de la Fiesta de la Vuelta. Esta seca.\nPor el llano no hay una gota... casi.",
+            "seconds": 5
+          }
+        ]
+      }
+    },
+    {
+      "name": "vaciar_cubeta",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-52.21, 0.25, 15.36],
+      "interact": {
+        "prompt": "Vaciar la cubeta",
+        "range": 2.4,
+        "if": { "flag": "lleva", "op": "==", "value": 24 },
+        "do": [{ "dialogue": "oj_cubeta_vaciar" }],
+        "box": { "min": [-0.8, 0, -0.9], "max": [0.8, 1.8, 0.9] }
+      }
+    },
+    {
+      "name": "marea_palmo",
+      "model": "models/lago.obj",
+      "position": [-54.71, 0.0, 20.04],
+      "rotation": [0, 30.0, 0],
+      "collider": false,
+      "showIf": { "flag": "oj_salinas" },
+      "scale": [0.3, 1.0, 0.25],
+      "tint": [70, 100, 170, 255]
+    },
+    {
+      "name": "charco",
+      "model": "models/lago.obj",
+      "position": [-59.77, 0, -5.23],
+      "rotation": [0, 20, 0],
+      "collider": false,
+      "scale": [0.22, 1.0, 0.22],
+      "tint": [70, 100, 170, 255]
+    },
+    {
+      "name": "refugio_charco",
+      "model": "models/roca_refugio.obj",
+      "position": [-55.79, 0.0, -4.88],
+      "rotation": [0, -95, 0],
+      "scale": [1.2, 1.0, 1.1],
+      "tint": [132, 132, 132, 255]
+    },
+    {
+      "name": "llenar_cubeta",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-59.77, 0, -5.23],
+      "interact": {
+        "prompt": "Llenar la cubeta",
+        "range": 3.0,
+        "if": { "flag": "lleva", "op": "==", "value": 23 },
+        "do": [
+          { "set_flag": "lleva", "value": 24 },
+          { "message": "Agua de mar, fria. Pesa.\nQue no te pegue una racha a descubierto.", "seconds": 4 }
+        ],
+        "box": { "min": [-2.4, 0, -1.6], "max": [2.4, 1.8, 1.6] }
+      }
+    },
+    {
+      "name": "meseta_hoz",
+      "model": "models/meseta_hoz.obj",
+      "position": [-29.7, 0.0, -29.7],
+      "rotation": [0, -135.0, 0],
+      "tint": [120, 120, 128, 255]
+    },
+    {
+      "name": "letrero_hoz_poste",
+      "model": "models/poste_letrero.obj",
+      "position": [-44.55, 0.0, -40.31],
+      "rotation": [0, -135.0, 0],
+      "scale": [0.8, 1.0, 1.0]
+    },
+    {
+      "name": "letrero_hoz",
+      "model": "models/letrero.obj",
+      "position": [-44.55, 2.3, -40.31],
+      "rotation": [0, -135.0, 0],
+      "texture": "textures/lam_oj_hoz.png",
+      "collider": false,
+      "scale": [0.8, 0.8, 1]
+    },
+    {
+      "name": "letrero_hoz_b",
+      "model": "models/letrero.obj",
+      "position": [-44.53, 2.3, -40.28],
+      "rotation": [0, 45.0, 0],
+      "texture": "textures/lam_oj_hoz.png",
+      "collider": false,
+      "scale": [0.8, 0.8, 1]
+    },
+    {
+      "name": "puente_sueno",
+      "model": "models/puente_tablas.obj",
+      "position": [-26.87, 4.08, -26.87],
+      "rotation": [0, -45.0, 0],
+      "scale": [0.33, 1, 1],
+      "showIf": { "flag": "ojos_cerrados" }
+    },
+    {
+      "name": "reloj",
+      "model": "models/reloj_poste.obj",
+      "position": [-19.09, 4.08, -19.09],
+      "rotation": [0, -135.0, 0],
+      "texture": "textures/lam_oj_reloj_312.png",
+      "showIf": { "not": { "flag": "oj_hoz" } },
+      "interact": { "prompt": "Dar cuerda", "range": 2.6, "do": [{ "dialogue": "oj_reloj" }] }
+    },
+    {
+      "name": "reloj_313",
+      "model": "models/reloj_poste.obj",
+      "position": [-19.09, 4.08, -19.09],
+      "rotation": [0, -135.0, 0],
+      "texture": "textures/lam_oj_reloj_313.png",
+      "showIf": { "flag": "oj_hoz" },
+      "sound": { "file": "audio/tictac.wav", "volume": 0.5, "radius": 10, "minDistance": 1.5 }
+    },
+    {
+      "name": "letrero_niebla_poste",
+      "model": "models/poste_letrero.obj",
+      "position": [41.55, 0.0, 28.03],
+      "rotation": [0, 60.0, 0],
+      "scale": [0.8, 1.0, 1.0]
+    },
+    {
+      "name": "letrero_niebla",
+      "model": "models/letrero.obj",
+      "position": [41.55, 2.3, 28.03],
+      "rotation": [0, 60.0, 0],
+      "texture": "textures/lam_oj_niebla.png",
+      "collider": false,
+      "scale": [0.8, 0.8, 1]
+    },
+    {
+      "name": "letrero_niebla_b",
+      "model": "models/letrero.obj",
+      "position": [41.53, 2.3, 28.02],
+      "rotation": [0, 240.0, 0],
+      "texture": "textures/lam_oj_niebla.png",
+      "collider": false,
+      "scale": [0.8, 0.8, 1]
+    },
+    {
+      "name": "campana",
+      "model": "models/campana_niebla.obj",
+      "position": [30.04, 0.0, 21.96],
+      "rotation": [0, 60.0, 0]
+    },
+    {
+      "name": "lancha",
+      "model": "models/barca.obj",
+      "position": [40.61, 0.0, 17.67],
+      "rotation": [0, 90.0, 0],
+      "tint": [90, 96, 104, 255]
+    },
+    {
+      "name": "sacas",
+      "model": "models/sacos_cartas.obj",
+      "position": [33.18, 0.0, 14.54],
+      "rotation": [0, 40.0, 0]
+    },
+    {
+      "name": "farol_niebla",
+      "model": "models/farol.obj",
+      "position": [29.44, 0.0, 17.0],
+      "rotation": [0, 60.0, 0],
+      "light": {
+        "offset": [0, 3.0, 0],
+        "color": [255, 190, 120],
+        "radius": 10,
+        "intensity": 0.8,
+        "flicker": 0.15,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "nico",
+      "model": "models/fotografo.obj",
+      "position": [35.51, 0.0, 20.5],
+      "rotation": [0, 60.0, 0],
+      "texture": "textures/pj_fe_nico.png",
+      "showIf": { "any": [{ "flag": "flash" }, { "flag": "oj_nico" }] },
+      "facePlayer": { "range": 8, "turnSpeed": 70 },
+      "seen": {
+        "range": 14,
+        "angle": 25,
+        "if": {
+          "all": [{ "flag": "flash" }, { "not": { "flag": "oj_nico" } }]
+        },
+        "do": [
+          { "set_flag": "oj_nico" },
+          {
+            "message": "En la foto sale Nico, con su camara.\nY al bajar la camara, sigue ahi.",
+            "seconds": 5
+          }
+        ]
+      },
+      "interact": { "prompt": "Hablar", "range": 2.6, "if": { "flag": "oj_nico" }, "do": [{ "dialogue": "oj_nico" }] }
+    },
+    {
+      "name": "circulo",
+      "model": "models/circulo_piedras.obj",
+      "position": [0, 0, 0],
+      "rotation": [0, -27, 0],
+      "scale": [3.0, 3.0, 3.0],
+      "tint": [150, 150, 156, 255]
+    },
+    {
+      "name": "velas_ventosa",
+      "model": "models/velas_grupo.obj",
+      "position": [4.38, 0, -4.38],
+      "rotation": [0, 135.0, 0],
+      "collider": false,
+      "showIf": { "flag": "oj_ventosa" }
+    },
+    {
+      "name": "luz_velas_ventosa",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [4.38, 0.6, -4.38],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 170, 90],
+        "radius": 6,
+        "intensity": 0.85,
+        "flicker": 0.35,
+        "flickerRate": 5
+      },
+      "showIf": { "flag": "oj_ventosa" }
+    },
+    {
+      "name": "velas_salinas",
+      "model": "models/velas_grupo.obj",
+      "position": [-5.37, 0, 3.1],
+      "rotation": [0, -60.0, 0],
+      "collider": false,
+      "showIf": { "flag": "oj_salinas" }
+    },
+    {
+      "name": "luz_velas_salinas",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-5.37, 0.6, 3.1],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 170, 90],
+        "radius": 6,
+        "intensity": 0.85,
+        "flicker": 0.35,
+        "flickerRate": 6
+      },
+      "showIf": { "flag": "oj_salinas" }
+    },
+    {
+      "name": "velas_hoz",
+      "model": "models/velas_grupo.obj",
+      "position": [-4.38, 0, -4.38],
+      "rotation": [0, -135.0, 0],
+      "collider": false,
+      "showIf": { "flag": "oj_hoz" }
+    },
+    {
+      "name": "luz_velas_hoz",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-4.38, 0.6, -4.38],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 170, 90],
+        "radius": 6,
+        "intensity": 0.85,
+        "flicker": 0.35,
+        "flickerRate": 7
+      },
+      "showIf": { "flag": "oj_hoz" }
+    },
+    {
+      "name": "velas_niebla",
+      "model": "models/velas_grupo.obj",
+      "position": [5.37, 0, 3.1],
+      "rotation": [0, 60.0, 0],
+      "collider": false,
+      "showIf": { "flag": "oj_niebla" }
+    },
+    {
+      "name": "luz_velas_niebla",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [5.37, 0.6, 3.1],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 170, 90],
+        "radius": 6,
+        "intensity": 0.85,
+        "flicker": 0.35,
+        "flickerRate": 8
+      },
+      "showIf": { "flag": "oj_niebla" }
+    },
+    {
+      "name": "figura_centro",
+      "model": "models/hombre_alto.obj",
+      "position": [0, 0, 6.5],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "emissive": true,
+      "tint": [200, 200, 206, 255],
+      "showIf": { "not": { "flag": "ojos_cerrados" } },
+      "glitch": 0.5,
+      "facePlayer": { "range": 60, "turnSpeed": 40 }
+    },
+    {
+      "name": "figura_hoz",
+      "model": "models/hombre_alto.obj",
+      "position": [-22.91, 4.08, -22.91],
+      "rotation": [0, -135.0, 0],
+      "collider": false,
+      "emissive": true,
+      "tint": [200, 200, 206, 255],
+      "showIf": {
+        "all": [{ "not": { "flag": "ojos_cerrados" } }, { "not": { "flag": "oj_hoz" } }]
+      },
+      "glitch": 0.5,
+      "facePlayer": { "range": 40, "turnSpeed": 40 }
+    },
+    {
+      "name": "clara_centro",
+      "model": "models/clara.obj",
+      "position": [0, 0, 6.5],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "texture": "textures/pj_fe_clara.png",
+      "showIf": { "flag": "ojos_cerrados" },
+      "glitch": 0.5,
+      "facePlayer": { "range": 60, "turnSpeed": 60 }
+    },
+    {
+      "name": "clara_hoz",
+      "model": "models/clara.obj",
+      "position": [-22.63, 4.08, -21.21],
+      "rotation": [0, -135.0, 0],
+      "collider": false,
+      "texture": "textures/pj_fe_clara.png",
+      "showIf": {
+        "all": [{ "flag": "ojos_cerrados" }, { "not": { "flag": "oj_hoz" } }]
+      },
+      "glitch": 0.5,
+      "facePlayer": { "range": 30, "turnSpeed": 60 }
+    },
+    {
+      "name": "cara_pesadilla",
+      "model": "models/cazador_cara.obj",
+      "position": [0, -40, 0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "emissive": true,
+      "tint": [210, 210, 214, 255],
+      "showIf": { "flag": "oj_pesadilla" },
+      "scale": [0.82, 0.82, 0.82],
+      "idle": { "bob": 0.02, "sway": 3.5, "speed": 30 }
+    }
+  ],
+  "triggers": [
+    {
+      "name": "llegada",
+      "position": [0.0, 0.0, 64.0],
+      "size": [8, 4, 8],
+      "on": "stay",
+      "once": true,
+      "do": [{ "wait": 1.2 }, { "dialogue": "oj_llegada" }]
+    },
+    {
+      "name": "pesadilla_hoz",
+      "position": [-31.54, 4.08, -31.54],
+      "size": [7, 3, 5],
+      "rotation": -135.0,
+      "on": "stay",
+      "if": {
+        "all": [
+          { "not": { "flag": "ojos_cerrados" } },
+          { "not": { "flag": "oj_pesadilla" } },
+          { "not": { "flag": "oj_hoz" } }
+        ]
+      },
+      "do": [
+        { "set_flag": "oj_pesadilla" },
+        { "message": " ", "seconds": 1.6 },
+        { "behind_player": "cara_pesadilla", "distance": -3.4 },
+        { "play_sound": "audio/jumpscare.wav", "volume": 0.85 },
+        { "scare": "cara_pesadilla", "speed": 50, "fov": 40 },
+        { "wait": 0.13 },
+        { "behind_player": "cara_pesadilla", "distance": -1.6 },
+        { "scare": "cara_pesadilla", "speed": 60, "fov": 32 },
+        { "wait": 1.0 },
+        { "teleport": [-42.78, 0.0, -42.78], "yaw": 45.0 },
+        { "set_flag": "oj_pesadilla", "value": 0 },
+        { "message": "No te deja pasar. Con los ojos abiertos, no.", "seconds": 4 }
+      ]
+    },
+    {
+      "name": "pesadilla_centro",
+      "position": [0, 0, 0],
+      "size": [22, 4, 22],
+      "on": "stay",
+      "if": {
+        "all": [
+          {
+            "all": [{ "flag": "oj_ventosa" }, { "flag": "oj_salinas" }, { "flag": "oj_hoz" }, { "flag": "oj_niebla" }]
+          },
+          { "not": { "flag": "ojos_cerrados" } },
+          { "not": { "flag": "oj_pesadilla" } }
+        ]
+      },
+      "do": [
+        { "set_flag": "oj_pesadilla" },
+        { "message": " ", "seconds": 1.6 },
+        { "behind_player": "cara_pesadilla", "distance": -3.4 },
+        { "play_sound": "audio/jumpscare.wav", "volume": 0.85 },
+        { "scare": "cara_pesadilla", "speed": 50, "fov": 40 },
+        { "wait": 0.13 },
+        { "behind_player": "cara_pesadilla", "distance": -1.6 },
+        { "scare": "cara_pesadilla", "speed": 60, "fov": 32 },
+        { "wait": 1.0 },
+        { "teleport": [0, 0, 26], "yaw": 0 },
+        { "set_flag": "oj_pesadilla", "value": 0 },
+        { "message": "No te deja pasar. Con los ojos abiertos, no.", "seconds": 4 }
+      ]
+    },
+    {
+      "name": "aun_no",
+      "position": [0, 0, 0],
+      "size": [24, 4, 24],
+      "on": "enter",
+      "if": {
+        "not": {
+          "all": [{ "flag": "oj_ventosa" }, { "flag": "oj_salinas" }, { "flag": "oj_hoz" }, { "flag": "oj_niebla" }]
+        }
+      },
+      "do": [
+        {
+          "message": "Las piedras no te dejan pasar. Cada pueblo dejo aqui algo sin terminar.",
+          "seconds": 5
+        }
+      ]
+    },
+    {
+      "name": "a_valdemora",
+      "position": [0, 0, 0],
+      "size": [13.0, 4, 13.0],
+      "on": "enter",
+      "if": {
+        "all": [{ "flag": "oj_ventosa" }, { "flag": "oj_salinas" }, { "flag": "oj_hoz" }, { "flag": "oj_niebla" }]
+      },
+      "do": [
+        { "stop_music": true, "fade": 2.0 },
+        {
+          "goto_scene": "scenes/oj_valdemora.json",
+          "position": [0, 0, 26],
+          "yaw": 0,
+          "dark": 14,
+          "lines": [
+            "",
+            "Pones la mano en la piedra del centro.",
+            "Dentro del circulo no sopla nada.",
+            "Huele a pan y a leña.",
+            "Es de noche. Es 1702.",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "name": "olor_revelador",
+      "position": [34.64, 0.0, 20.0],
+      "size": [14, 4, 14],
+      "on": "enter",
+      "once": true,
+      "if": { "not": { "flag": "oj_nico" } },
+      "do": [
+        {
+          "message": "Huele a revelador de fotos.\nAqui hay alguien que solo sale en las fotos.",
+          "seconds": 5
+        }
+      ]
+    },
+    {
+      "name": "racha_cubeta",
+      "position": [0, 0, 0],
+      "size": [230, 8, 230],
+      "on": "stay",
+      "if": {
+        "all": [
+          { "flag": "lleva", "op": "==", "value": 24 },
+          { "flag": "racha" },
+          { "not": { "flag": "a_cubierto" } }
+        ]
+      },
+      "do": [{ "set_flag": "lleva", "value": 23 }, { "message": "Una racha te vacia la cubeta.", "seconds": 3 }]
+    },
+    {
+      "name": "racha_farolillo",
+      "position": [0, 0, 0],
+      "size": [230, 8, 230],
+      "on": "stay",
+      "if": {
+        "all": [
+          { "flag": "lleva", "op": "==", "value": 22 },
+          { "flag": "racha" },
+          { "not": { "flag": "a_cubierto" } }
+        ]
+      },
+      "do": [
+        { "set_flag": "lleva", "value": 21 },
+        { "message": "La racha te apaga el farolillo.", "seconds": 3 }
+      ]
+    }
+  ],
+  "emitters": [],
+  "autoCollide": true,
+  "camera": { "position": [0.0, 1.7, 64.0], "target": [0.0, 1.5, 59.0], "fov": 60 }
+}

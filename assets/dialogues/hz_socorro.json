@@ -1,0 +1,15 @@
+{
+  "speaker": "Doña Socorro",
+  "entries": [
+    {
+      "if": { "flag": "reloj" },
+      "lines": ["Se movio. Viste? Se movio.", "Ya merito, viejo. Ya merito."]
+    },
+    {
+      "lines": [
+        "Miro el reloj. Si lo miro, no se me cierran.",
+        "Mi marido se quedo dormido la ultima vez que soplo.\nAhora me toca alcanzarlo."
+      ]
+    }
+  ]
+}

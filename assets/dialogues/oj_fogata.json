@@ -1,0 +1,17 @@
+{
+  "entries": [
+    {
+      "if": { "all": [{ "flag": "lleva", "op": "==", "value": 21 }, { "flag": "a_cubierto" }] },
+      "lines": [
+        "Detras del muro no sopla. Acercas el farolillo al fuego.",
+        "Prende. Tu nombre se ve por dentro, al trasluz."
+      ],
+      "do": [{ "set_flag": "lleva", "value": 22 }]
+    },
+    {
+      "if": { "flag": "lleva", "op": "==", "value": 21 },
+      "lines": ["Aqui sopla demasiado: el viento se lleva la llama.", "Ponte del otro lado del muro."]
+    },
+    { "lines": ["Una fogata detras de un muro de la feria. Calienta poco."] }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "entries": [
+    {
+      "lines": ["La puerta del faro esta abierta."],
+      "do": [
+        {
+          "goto_scene": "scenes/pn_faro.json",
+          "position": [140.0, 30.35, -112.6],
+          "yaw": 0,
+          "dark": 16,
+          "lines": [
+            "",
+            "Ciento doce escalones, en espiral.",
+            "En el sesenta, alguien baja.",
+            "Te pegas a la pared. Los pasos pasan a tu lado.",
+            "No pasa nadie.",
+            ""
+          ],
+          "music": "audio/pasos_bajan.wav",
+          "musicVolume": 0.9
+        }
+      ]
+    }
+  ]
+}

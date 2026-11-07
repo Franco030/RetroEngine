@@ -1,0 +1,26 @@
+{
+  "entries": [
+    {
+      "lines": [
+        "La ultima foto de Nico.",
+        "Todos salen con los ojos abiertos.",
+        "Clara, de la mano de su papa, con sus dos zapatos rojos.",
+        "Nico, en la orilla, con la camara al cuello.",
+        "En medio de la fila, un hueco. En el suelo del hueco, una mochila.",
+        "La tuya. Tu no sales."
+      ],
+      "do": [
+        { "set_flag": "juego_fin" },
+        { "stop_music": true, "fade": 4.0 },
+        { "title_screen": true },
+        {
+          "goto_scene": "scenes/oj_fin.json",
+          "position": [-2.0, 0.3, -1.0],
+          "yaw": 180,
+          "dark": 18,
+          "lines": ["", "No sopla.", "FESTVM VENTI", "", "Fin.", ""]
+        }
+      ]
+    }
+  ]
+}

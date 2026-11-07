@@ -13,6 +13,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <map>
 #include <memory>
 #include <optional>
 #include <string>
@@ -244,6 +245,40 @@ private:
   void MessagesToDialogue(Json& entity);
   std::string DialoguePath(const std::string& id) const;
 
+  // ------------------------------------------------------------------ extras (EditorExtras.cpp)
+  // Audio. Cada fotograma: el audio del motor y, si se escucha la escena, su musica, su ambiente,
+  // su lluvia y sus sonidos con su posicion (el oido, en la camara del editor).
+  void UpdateAudio();
+  // Un boton para oir 'file' (o pararlo si ya suena); va junto a cualquier campo de audio.
+  void AudioButton(const std::string& file, bool sameLine = true);
+  void StopPreview();
+  void SetListenScene(bool on);
+
+  // Lo de la escena que antes salia en "Otros (solo lectura)": el tiempo (lluvia, truenos,
+  // bancos de niebla), el viento que empuja, la camara de fotos y cerrar los ojos.
+  void InspectWeather(Json& d);
+  void InspectWind(Json& d);
+  void InspectPhoto(Json& d);
+  void InspectEyes(Json& d);
+  // "near" de una entidad (estar cerca: oirla).
+  void EditNear(Json& e);
+  // Una lista de archivos (los truenos, los pasos): cambiar, anadir, quitar, oir.
+  void EditFileList(Json& list, const std::vector<std::string>& files);
+
+  // Visor: a donde voltea la camara al hablar con la seleccion (el punto del juego), y los puntos
+  // de sus acciones (mirar hacia, susto, teletransportar, cambiar de escena aqui).
+  void DrawLogicHints();
+  void DrawActionHints(const Json& actions, Vector3 from);
+
+  // Banderas: ver la escena como en el juego (cada entidad con "showIf" segun estas banderas).
+  void DrawFlags();
+  void ApplyFlagPreview();
+  std::vector<std::string> SceneFlags() const;
+
+  // Probar aqui: abre el juego en esta escena (tal como esta, sin guardar), donde mira la camara
+  // del editor y con las banderas de la vista previa; el juego no guarda nada.
+  void PlayTestHere();
+
   // ------------------------------------------------------------------ visor
   void EnsureTargets(int w, int h);
   void RenderViewport(int w, int h);
@@ -346,6 +381,18 @@ private:
   bool showEmitters_ = true;
   bool showBounds_ = true;
   bool showSpawn_ = true;
+  bool showLookHints_ = true; // a donde mira la camara, destinos de las acciones
+
+  // audio
+  std::string previewFile_;     // lo que suena con el boton de oir ("" = nada)
+  double previewEnds_ = 0.0;    // un sonido corto: cuando acaba (no se repite)
+  bool listenScene_ = false;
+  std::vector<retro::Emitter> emitters_;
+
+  // banderas de la vista previa
+  bool flagPreview_ = false;
+  std::map<std::string, int> previewFlags_;
+  char newFlag_[48] = "";
 
   // dialogos
   std::vector<std::string> dialogueList_; // ids: la ruta dentro de dialogues/, sin ".json"

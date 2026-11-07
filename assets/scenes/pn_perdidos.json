@@ -1,0 +1,139 @@
+{
+  "player": { "position": [0, 0, 2.2], "yaw": 0 },
+  "bounds": { "min": [-3.8, -3.0], "max": [3.8, 3.0] },
+  "light": { "direction": [-0.2, -1, 0.1], "ambient": 0.24, "sun": 0.0 },
+  "audio": {
+    "music": { "file": "audio/musica_pn_perdidos_v2.wav", "volume": 0.55 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.3
+    },
+    "fade": 2
+  },
+  "entities": [
+    {
+      "name": "sala",
+      "model": "models/perdidos_dentro.obj",
+      "position": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "tint": [190, 190, 180, 255]
+    },
+    {
+      "name": "salida",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0, 0, 2.95],
+      "interact": {
+        "prompt": "Salir",
+        "range": 3.0,
+        "do": [{ "goto_scene": "scenes/pn_puerto.json", "position": [0.1, 6.0, 20.4], "yaw": 0 }],
+        "box": { "min": [-0.8, 0, -0.4], "max": [0.8, 2.4, 0.4] }
+      }
+    },
+    {
+      "name": "mostrador",
+      "model": "models/mostrador.obj",
+      "position": [0, 0, -0.6],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "visitacion",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_visitacion.png",
+      "position": [0, 0, -1.3],
+      "rotation": [0, 0, 0],
+      "idle": { "bob": 0.006, "sway": 0.8, "speed": 0.9 },
+      "facePlayer": { "range": 4.0, "turnSpeed": 70 },
+      "interact": { "prompt": "Hablar", "range": 3.0, "do": [{ "dialogue": "pn_visitacion" }] }
+    },
+    {
+      "name": "estante_0",
+      "model": "models/estante_perdidos.obj",
+      "position": [-1.9, 0, -2.65],
+      "rotation": [0, 0, 0],
+      "interact": { "prompt": "Mirar", "range": 2.4, "do": [{ "dialogue": "pn_estante" }] }
+    },
+    {
+      "name": "estante_1",
+      "model": "models/estante_perdidos.obj",
+      "position": [1.9, 0, -2.65],
+      "rotation": [0, 0, 0],
+      "interact": { "prompt": "Mirar", "range": 2.4, "do": [{ "dialogue": "pn_estante" }] }
+    },
+    {
+      "name": "estante_2",
+      "model": "models/estante_perdidos.obj",
+      "position": [3.5, 0, 0.2],
+      "rotation": [0, -90, 0],
+      "interact": { "prompt": "Mirar", "range": 2.4, "do": [{ "dialogue": "pn_estante" }] }
+    },
+    {
+      "name": "sacas",
+      "model": "models/sacos_cartas.obj",
+      "position": [-2.4, 0, 1.4],
+      "rotation": [0, 20, 0],
+      "interact": { "prompt": "Mirar", "range": 2.6, "do": [{ "dialogue": "pn_sacas" }] }
+    },
+    {
+      "name": "mochila",
+      "model": "models/mochila.obj",
+      "position": [2.9, 0, 1.9],
+      "rotation": [0, 200, 0],
+      "collider": false,
+      "interact": { "prompt": "Mirar", "range": 2.0, "do": [{ "dialogue": "pn_mochila" }] }
+    },
+    {
+      "name": "zapatitos",
+      "model": "models/zapatitos.obj",
+      "position": [1.4, 0, 2.2],
+      "rotation": [0, 30, 0],
+      "collider": false,
+      "interact": { "prompt": "Mirar", "range": 2.0, "do": [{ "dialogue": "pn_zapatitos" }] }
+    },
+    {
+      "name": "caja_rojos",
+      "model": "models/caja_zapatos.obj",
+      "position": [-0.9, 1.12, -0.55],
+      "rotation": [0, 10, 0],
+      "collider": false,
+      "interact": { "prompt": "Mirar", "range": 2.2, "do": [{ "dialogue": "pn_caja_rojos" }] }
+    },
+    {
+      "name": "foco_perdidos",
+      "model": "models/foco_corto.obj",
+      "position": [0.0, 3.6, 0.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "bombilla",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0, 2.95, 0.6],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 220, 150],
+        "radius": 7,
+        "intensity": 0.9,
+        "flicker": 0.2,
+        "flickerRate": 7
+      }
+    }
+  ],
+  "background": [6, 6, 8],
+  "fog": { "start": 8, "end": 40 },
+  "weather": {
+    "rain": 1.0,
+    "indoor": true,
+    "sound": "audio/lluvia_dentro.wav",
+    "volume": 0.28,
+    "thunder": { "every": [12, 26], "sounds": ["audio/trueno_1.wav", "audio/trueno_2.wav", "audio/trueno_3.wav"] }
+  },
+  "photo": { "if": { "flag": "pn_camara" }, "cooldown": 1.6 },
+  "emitters": [],
+  "autoCollide": true,
+  "triggers": [],
+  "camera": { "position": [0, 1.7, 2.2], "target": [0, 1.5, -2.8], "fov": 60 }
+}

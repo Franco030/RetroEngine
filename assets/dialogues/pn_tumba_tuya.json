@@ -1,0 +1,18 @@
+{
+  "entries": [
+    {
+      "lines": [
+        "FORASTERO - HOY.",
+        "El nombre esta rascado con una piedra.",
+        "Encima, con tiza, con letra de niña: TODAVIA NO."
+      ],
+      "do": [
+        { "lightning": true, "thunderDelay": 0.1 },
+        { "set_flag": "pn_tumba" },
+        { "behind_player": "figura_tumba", "distance": 2.2 },
+        { "wait": 2.5 },
+        { "play_sound": "audio/respira_cazador.wav", "volume": 0.5 }
+      ]
+    }
+  ]
+}

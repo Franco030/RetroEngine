@@ -4,6 +4,7 @@
 #include "game/GameState.hpp"
 #include "world/Dialogue.hpp"
 #include "world/Trigger.hpp"
+#include "world/Weather.hpp"
 
 #include <optional>
 #include <string>
@@ -29,10 +30,15 @@ struct CameraShot {
 class ActionRunner {
 public:
   ActionRunner(SceneManager& scenes, Player& player, GameState& state, AudioSystem& audio,
-               DialogueSystem& dialogues)
-      : scenes_(scenes), player_(player), state_(state), audio_(audio), dialogues_(dialogues) {}
+               DialogueSystem& dialogues, Weather& weather)
+      : scenes_(scenes), player_(player), state_(state), audio_(audio), dialogues_(dialogues),
+        weather_(weather) {}
 
   void Run(const std::vector<Action>& actions);
+  // Lo que quedo esperando tras un "wait": se ejecuta cuando le toca. Cada fotograma.
+  void Update(float dt);
+  // Al cambiar de escena: lo que esperaba ya no tiene sentido.
+  void CancelPending() noexcept { pending_.clear(); }
 
   // La ultima mirada pedida (look_at o scare) desde la ultima llamada, y la olvida. La aplica
   // quien lleva la camara del jugador (main), que sabe a que altura se mira a una entidad.
@@ -58,10 +64,16 @@ private:
   GameState& state_;
   AudioSystem& audio_;
   DialogueSystem& dialogues_;
+  Weather& weather_;
   std::optional<CameraShot> shot_;
   bool titleRequested_ = false;
   std::optional<action::Ride> ride_;
   std::optional<action::Shooting> shooting_;
+  struct Pending {
+    float left;
+    std::vector<Action> actions;
+  };
+  std::vector<Pending> pending_;
 };
 
 } // namespace retro

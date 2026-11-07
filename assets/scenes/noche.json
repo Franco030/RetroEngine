@@ -2,7 +2,7 @@
   "camera": { "position": [12, 9, 16], "target": [0, 1, 0], "fov": 60 },
   "player": { "position": [0, 0, 9], "yaw": 0 },
   "autoCollide": true,
-  "bounds": { "min": [-25, -25], "max": [25, 25] },
+  "bounds": { "min": [-25, -25], "max": [25, 14.5] },
   "background": [10, 12, 30],
   "audio": {
     "music": { "file": "audio/musica_noche_v2.wav", "volume": 0.38 },
@@ -2452,6 +2452,50 @@
       "position": [1.32, 0, 26.07],
       "rotation": [0, 44.2, 0],
       "scale": [0.86, 0.86, 0.86],
+      "tint": [110, 120, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "camino_cerrado_arbol_0",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [0.25, 0, 15.1],
+      "rotation": [0, 31.0, 0],
+      "scale": [0.92, 0.92, 0.92],
+      "tint": [110, 120, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "camino_cerrado_arbol_1",
+      "model": "models/arbol_roble_2.obj",
+      "position": [-0.55, 0, 16.4],
+      "rotation": [0, 147.0, 0],
+      "scale": [0.95, 0.95, 0.95],
+      "tint": [110, 120, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "camino_cerrado_arbol_2",
+      "model": "models/arbol_pino.obj",
+      "position": [0.95, 0, 17.2],
+      "rotation": [0, 262.0, 0],
+      "scale": [1.0, 1.0, 1.0],
+      "tint": [110, 120, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "camino_cerrado_arbol_3",
+      "model": "models/arbol_pino_alto.obj",
+      "position": [-0.1, 0, 18.6],
+      "rotation": [0, 75.0, 0],
+      "scale": [0.9, 0.9, 0.9],
+      "tint": [110, 120, 170, 255],
+      "collider": false
+    },
+    {
+      "name": "camino_cerrado_arbusto",
+      "model": "models/arbusto_hojas.obj",
+      "position": [0.6, 0, 14.4],
+      "rotation": [0, 40.0, 0],
       "tint": [110, 120, 170, 255],
       "collider": false
     },
@@ -4911,14 +4955,15 @@
       ]
     },
     {
-      "name": "bosque_demo",
-      "position": [0.0, 0, 17.6],
-      "size": [14, 3, 1.2],
+      "name": "camino_cerrado",
+      "position": [0.0, 0, 13.6],
+      "size": [6, 3, 1.2],
       "rotation": 180.0,
+      "if": { "not": { "flag": "noche_camino_atras" } },
       "do": [
-        { "play_sound": "audio/hojas.wav", "volume": 0.7 },
-        { "set_flag": "camino_demo" },
-        { "goto_scene": "scenes/demo.json", "position": [15.5, 0, -6], "yaw": 90 }
+        { "play_sound": "audio/hojas.wav", "volume": 0.5 },
+        { "set_flag": "noche_camino_atras" },
+        { "message": "El camino por el que llegaste se pierde entre los arboles.\nYa no se ve por donde.", "seconds": 4 }
       ]
     }
   ],

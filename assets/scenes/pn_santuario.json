@@ -1,0 +1,658 @@
+{
+  "player": { "position": [0, 0, 14.0], "yaw": 0 },
+  "bounds": { "min": [-7.8, -15.8], "max": [7.8, 15.8] },
+  "light": { "direction": [-0.2, -1, 0.1], "ambient": 0.34, "sun": 0.0 },
+  "fog": { "start": 10, "end": 48 },
+  "audio": {
+    "music": { "file": "audio/musica_pn_alto_v2.wav", "volume": 0.55 },
+    "ambient": { "file": "audio/goteo.wav", "volume": 0.4 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.35
+    },
+    "fade": 2
+  },
+  "entities": [
+    {
+      "name": "nave",
+      "model": "models/santuario_dentro.obj",
+      "position": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "tint": [170, 170, 176, 255]
+    },
+    {
+      "name": "salida",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0, 0, 15.7],
+      "interact": {
+        "prompt": "Salir",
+        "range": 3.0,
+        "do": [{ "goto_scene": "scenes/pn_alto.json", "position": [0.0, 34.0, 100.5], "yaw": 0 }],
+        "box": { "min": [-1.4, 0, -0.4], "max": [1.4, 4.0, 0.4] }
+      }
+    },
+    { "name": "altar", "model": "models/altar.obj", "position": [0, 0.6, -13.4], "rotation": [0, 0, 0] },
+    {
+      "name": "festum",
+      "model": "models/letrero.obj",
+      "position": [0, 8.2, -15.55],
+      "rotation": [0, 0, 0],
+      "texture": "textures/lam_pn_festum.png",
+      "collider": false,
+      "scale": [3.4, 3.4, 1],
+      "interact": { "prompt": "Leer", "range": 9.0, "do": [{ "dialogue": "pn_festum" }] }
+    },
+    {
+      "name": "organo",
+      "model": "models/organo.obj",
+      "position": [7.3, 0.6, -12.6],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "sor",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_sor.png",
+      "position": [-3.2, 0.6, -11.0],
+      "rotation": [0, 150, 0],
+      "idle": { "bob": 0.006, "sway": 0.8, "speed": 0.9 },
+      "facePlayer": { "range": 5.0, "turnSpeed": 70 },
+      "interact": { "prompt": "Hablar", "range": 2.6, "do": [{ "dialogue": "pn_sor" }] }
+    },
+    {
+      "name": "clara",
+      "model": "models/clara_descalza.obj",
+      "texture": "textures/pj_fe_clara.png",
+      "position": [0, 0.4, -9.4],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "showIf": { "not": { "flag": "pn_zapato_ok" } },
+      "interact": { "prompt": "Hablar", "range": 2.6, "do": [{ "dialogue": "pn_clara" }] }
+    },
+    {
+      "name": "clara_se_va",
+      "model": "models/clara.obj",
+      "texture": "textures/pj_fe_clara.png",
+      "position": [0.65, 0, 15.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "pn_clara_se_va" }, { "not": { "flag": "pn_clara_fuera" } }]
+      },
+      "arrive": { "offset": [0, 0, -23.6], "seconds": 10.0, "brake": 0.15 },
+      "sound": { "file": "audio/tarareo.wav", "volume": 0.7, "radius": 16, "minDistance": 2 }
+    },
+    {
+      "name": "exvoto_0",
+      "model": "models/barca.obj",
+      "position": [-4.0, 9.0, -4.0],
+      "rotation": [0, 0, 0],
+      "collider": false,
+      "scale": [0.9, 0.9, 0.9],
+      "idle": { "bob": 0.0, "sway": 2.5, "speed": 0.4 }
+    },
+    {
+      "name": "exvoto_1",
+      "model": "models/barca.obj",
+      "position": [-2.0, 9.4, -1.0],
+      "rotation": [0, 30, 0],
+      "collider": false,
+      "scale": [0.9, 0.9, 0.9],
+      "idle": { "bob": 0.0, "sway": 2.5, "speed": 0.4 }
+    },
+    {
+      "name": "exvoto_2",
+      "model": "models/barca.obj",
+      "position": [0.0, 9.0, 2.0],
+      "rotation": [0, 60, 0],
+      "collider": false,
+      "scale": [0.9, 0.9, 0.9],
+      "idle": { "bob": 0.0, "sway": 2.5, "speed": 0.4 }
+    },
+    {
+      "name": "exvoto_3",
+      "model": "models/barca.obj",
+      "position": [2.0, 9.4, 5.0],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "scale": [0.9, 0.9, 0.9],
+      "idle": { "bob": 0.0, "sway": 2.5, "speed": 0.4 }
+    },
+    {
+      "name": "exvoto_4",
+      "model": "models/barca.obj",
+      "position": [4.0, 9.0, 8.0],
+      "rotation": [0, 120, 0],
+      "collider": false,
+      "scale": [0.9, 0.9, 0.9],
+      "idle": { "bob": 0.0, "sway": 2.5, "speed": 0.4 }
+    },
+    {
+      "name": "banco_0_-1",
+      "model": "models/banco_iglesia.obj",
+      "position": [-2.1, 0, -6.5],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_0_1",
+      "model": "models/banco_iglesia.obj",
+      "position": [2.1, 0, -6.5],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_1_-1",
+      "model": "models/banco_iglesia.obj",
+      "position": [-2.1, 0, -4.8],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_1_1",
+      "model": "models/banco_iglesia.obj",
+      "position": [2.1, 0, -4.8],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_2_-1",
+      "model": "models/banco_iglesia.obj",
+      "position": [-2.1, 0, -3.1],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_2_1",
+      "model": "models/banco_iglesia.obj",
+      "position": [2.1, 0, -3.1],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_3_-1",
+      "model": "models/banco_iglesia.obj",
+      "position": [-2.1, 0, -1.4],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_3_1",
+      "model": "models/banco_iglesia.obj",
+      "position": [2.1, 0, -1.4],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_4_-1",
+      "model": "models/banco_iglesia.obj",
+      "position": [-2.1, 0, 0.3],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_4_1",
+      "model": "models/banco_iglesia.obj",
+      "position": [2.1, 0, 0.3],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_5_-1",
+      "model": "models/banco_iglesia.obj",
+      "position": [-2.1, 0, 2.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_5_1",
+      "model": "models/banco_iglesia.obj",
+      "position": [2.1, 0, 2.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_6_-1",
+      "model": "models/banco_iglesia.obj",
+      "position": [-2.1, 0, 3.7],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_6_1",
+      "model": "models/banco_iglesia.obj",
+      "position": [2.1, 0, 3.7],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_7_-1",
+      "model": "models/banco_iglesia.obj",
+      "position": [-2.1, 0, 5.4],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_7_1",
+      "model": "models/banco_iglesia.obj",
+      "position": [2.1, 0, 5.4],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_8_-1",
+      "model": "models/banco_iglesia.obj",
+      "position": [-2.1, 0, 7.1],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_8_1",
+      "model": "models/banco_iglesia.obj",
+      "position": [2.1, 0, 7.1],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_9_-1",
+      "model": "models/banco_iglesia.obj",
+      "position": [-2.1, 0, 8.8],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "banco_9_1",
+      "model": "models/banco_iglesia.obj",
+      "position": [2.1, 0, 8.8],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "velas_0",
+      "model": "models/candelabro.obj",
+      "position": [-2.0, 0.6, -13.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_vela_0",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-2.0, 2.4, -13.0],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 170, 90],
+        "radius": 8,
+        "intensity": 0.9,
+        "flicker": 0.3,
+        "flickerRate": 4
+      }
+    },
+    {
+      "name": "velas_1",
+      "model": "models/candelabro.obj",
+      "position": [2.0, 0.6, -13.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_vela_1",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [2.0, 2.4, -13.0],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 170, 90],
+        "radius": 8,
+        "intensity": 0.9,
+        "flicker": 0.3,
+        "flickerRate": 4
+      }
+    },
+    {
+      "name": "velas_2",
+      "model": "models/candelabro.obj",
+      "position": [-6.0, 0.6, -11.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_vela_2",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [-6.0, 2.4, -11.0],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 170, 90],
+        "radius": 8,
+        "intensity": 0.9,
+        "flicker": 0.3,
+        "flickerRate": 4
+      }
+    },
+    {
+      "name": "velas_3",
+      "model": "models/candelabro.obj",
+      "position": [6.0, 0.6, -11.0],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_vela_3",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [6.0, 2.4, -11.0],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 170, 90],
+        "radius": 8,
+        "intensity": 0.9,
+        "flicker": 0.3,
+        "flickerRate": 4
+      }
+    },
+    {
+      "name": "fiel_0",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [-2.7, 0.0, -4.1],
+      "rotation": [0, 191.09508086002518, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_zapato_ok" } }]
+      }
+    },
+    {
+      "name": "fiel_1",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [-1.5, 0.0, -4.1],
+      "rotation": [0, 184.91560614891858, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_zapato_ok" } }]
+      }
+    },
+    {
+      "name": "fiel_2",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [1.5, 0.0, -4.1],
+      "rotation": [0, 173.93858363829804, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_zapato_ok" } }]
+      }
+    },
+    {
+      "name": "fiel_3",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [2.7, 0.0, -4.1],
+      "rotation": [0, 177.6170456961158, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_zapato_ok" } }]
+      }
+    },
+    {
+      "name": "fiel_4",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [-2.7, 0.0, -0.7],
+      "rotation": [0, 179.69764985796198, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_zapato_ok" } }]
+      }
+    },
+    {
+      "name": "fiel_5",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [-1.5, 0.0, -0.7],
+      "rotation": [0, 181.7549981818612, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_zapato_ok" } }]
+      }
+    },
+    {
+      "name": "fiel_6",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [1.5, 0.0, -0.7],
+      "rotation": [0, 179.6423875512212, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_zapato_ok" } }]
+      }
+    },
+    {
+      "name": "fiel_7",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [2.7, 0.0, -0.7],
+      "rotation": [0, 180.48426772493073, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_zapato_ok" } }]
+      }
+    },
+    {
+      "name": "fiel_8",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [-2.7, 0.0, 2.7],
+      "rotation": [0, 185.42404641754584, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_zapato_ok" } }]
+      }
+    },
+    {
+      "name": "fiel_9",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [-1.5, 0.0, 2.7],
+      "rotation": [0, 170.3320135459189, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_zapato_ok" } }]
+      }
+    },
+    {
+      "name": "fiel_10",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [1.5, 0.0, 2.7],
+      "rotation": [0, 182.88403108648043, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_zapato_ok" } }]
+      }
+    },
+    {
+      "name": "fiel_11",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [2.7, 0.0, 2.7],
+      "rotation": [0, 183.86023611868399, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_zapato_ok" } }]
+      }
+    },
+    {
+      "name": "fiel_12",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [-2.7, 0.0, 6.1],
+      "rotation": [0, 184.59121371854334, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_zapato_ok" } }]
+      }
+    },
+    {
+      "name": "fiel_13",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [-1.5, 0.0, 6.1],
+      "rotation": [0, 181.95687707812655, 0],
+      "collider": false,
+      "showIf": {
+        "all": [{ "flag": "flash" }, { "not": { "flag": "pn_zapato_ok" } }]
+      }
+    },
+    {
+      "name": "fiel_mira_0",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [-2.7, 0.0, -4.1],
+      "rotation": [0, 191.09508086002518, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "flash" }, { "flag": "pn_zapato_ok" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "fiel_mira_1",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [-1.5, 0.0, -4.1],
+      "rotation": [0, 184.91560614891858, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "flash" }, { "flag": "pn_zapato_ok" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "fiel_mira_2",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [1.5, 0.0, -4.1],
+      "rotation": [0, 173.93858363829804, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "flash" }, { "flag": "pn_zapato_ok" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "fiel_mira_3",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [2.7, 0.0, -4.1],
+      "rotation": [0, 177.6170456961158, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "flash" }, { "flag": "pn_zapato_ok" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "fiel_mira_4",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [-2.7, 0.0, -0.7],
+      "rotation": [0, 179.69764985796198, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "flash" }, { "flag": "pn_zapato_ok" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "fiel_mira_5",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [-1.5, 0.0, -0.7],
+      "rotation": [0, 181.7549981818612, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "flash" }, { "flag": "pn_zapato_ok" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "fiel_mira_6",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [1.5, 0.0, -0.7],
+      "rotation": [0, 179.6423875512212, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "flash" }, { "flag": "pn_zapato_ok" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "fiel_mira_7",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [2.7, 0.0, -0.7],
+      "rotation": [0, 180.48426772493073, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "flash" }, { "flag": "pn_zapato_ok" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "fiel_mira_8",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [-2.7, 0.0, 2.7],
+      "rotation": [0, 185.42404641754584, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "flash" }, { "flag": "pn_zapato_ok" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "fiel_mira_9",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [-1.5, 0.0, 2.7],
+      "rotation": [0, 170.3320135459189, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "flash" }, { "flag": "pn_zapato_ok" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "fiel_mira_10",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [1.5, 0.0, 2.7],
+      "rotation": [0, 182.88403108648043, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "flash" }, { "flag": "pn_zapato_ok" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "fiel_mira_11",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [2.7, 0.0, 2.7],
+      "rotation": [0, 183.86023611868399, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "flash" }, { "flag": "pn_zapato_ok" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "fiel_mira_12",
+      "model": "models/hombre.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [-2.7, 0.0, 6.1],
+      "rotation": [0, 184.59121371854334, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "flash" }, { "flag": "pn_zapato_ok" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    },
+    {
+      "name": "fiel_mira_13",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [-1.5, 0.0, 6.1],
+      "rotation": [0, 181.95687707812655, 0],
+      "collider": false,
+      "showIf": { "all": [{ "flag": "flash" }, { "flag": "pn_zapato_ok" }] },
+      "facePlayer": { "range": 40, "turnSpeed": 900 }
+    }
+  ],
+  "triggers": [
+    {
+      "name": "clara_fuera",
+      "position": [0, 0, 15.0],
+      "size": [4, 4, 2.0],
+      "on": "enter",
+      "if": {
+        "all": [{ "flag": "pn_clara_se_va" }, { "not": { "flag": "pn_clara_fuera" } }]
+      },
+      "do": [{ "set_flag": "pn_clara_fuera" }]
+    }
+  ],
+  "background": [6, 6, 8],
+  "weather": {
+    "rain": 1.0,
+    "indoor": true,
+    "sound": "audio/lluvia_dentro.wav",
+    "volume": 0.28,
+    "thunder": { "every": [12, 26], "sounds": ["audio/trueno_1.wav", "audio/trueno_2.wav", "audio/trueno_3.wav"] }
+  },
+  "photo": { "if": { "flag": "pn_camara" }, "cooldown": 1.6 },
+  "emitters": [],
+  "autoCollide": true,
+  "camera": { "position": [0, 1.7, 14.0], "target": [0, 1.5, 9.0], "fov": 60 }
+}

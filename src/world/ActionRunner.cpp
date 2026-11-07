@@ -6,6 +6,7 @@
 #include <exception>
 #include <iostream>
 #include <string>
+#include <cstddef>
 #include <variant>
 
 namespace retro {
@@ -19,13 +20,35 @@ template <class... Ts> Overloaded(Ts...) -> Overloaded<Ts...>;
 
 } // namespace
 
+void ActionRunner::Update(float dt) {
+  // Run puede anadir esperas nuevas mientras se recorre: primero se sacan las que tocan.
+  std::vector<std::vector<Action>> due;
+  for (auto it = pending_.begin(); it != pending_.end();) {
+    it->left -= dt;
+    if (it->left <= 0.0f) {
+      due.push_back(std::move(it->actions));
+      it = pending_.erase(it);
+    } else {
+      ++it;
+    }
+  }
+  for (const auto& list : due)
+    Run(list);
+}
+
 void ActionRunner::Run(const std::vector<Action>& actions) {
-  for (const Action& a : actions) {
+  for (std::size_t i = 0; i < actions.size(); ++i) {
+    const Action& a = actions[i];
+    if (const auto* w = std::get_if<action::Wait>(&a)) {
+      pending_.push_back({w->seconds, std::vector<Action>(actions.begin() + static_cast<std::ptrdiff_t>(i) + 1,
+                                                          actions.end())});
+      return;
+    }
     std::visit(
         Overloaded{
             [&](const action::GotoScene& g) {
               try {
-                scenes_.GoToPath(g.scene, g.position, g.yaw, Interlude{g.dark, g.lines});
+                scenes_.GoToPath(g.scene, g.position, g.yaw, Interlude{g.dark, g.lines, g.music, g.musicVolume});
               } catch (const std::exception& e) {
                 std::cerr << "goto_scene: " << e.what() << '\n';
               }
@@ -72,6 +95,16 @@ void ActionRunner::Run(const std::vector<Action>& actions) {
                 std::cerr << "behind_player: entidad inexistente '" << b.entity << "'\n";
               }
             },
+            [&](const action::SetWeather& w) {
+              if (w.rain)
+                weather_.SetRain(*w.rain, w.fade);
+              if (w.storm)
+                weather_.SetStorm(*w.storm);
+            },
+            [&](const action::Lightning& l) { weather_.Strike(l.thunderDelay); },
+            [&](const action::SetFog& f) { weather_.FadeFog(f.start, f.end, f.seconds); },
+            [&](const action::Wait&) {}, // no llega aqui: se trata antes
+            [&](const action::SetAmbient& a) { weather_.FadeAmbient(a.value, a.seconds); },
         },
         a);
   }

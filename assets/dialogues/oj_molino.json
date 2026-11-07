@@ -1,0 +1,32 @@
+{
+  "entries": [
+    {
+      "lines": [
+        "Agarras la palanca del freno. Esta fria.",
+        "La giras. Las aspas chirrian, se resisten... y se paran.",
+        "Y en todas partes a la vez, deja de soplar.",
+        "La procesion se queda quieta. El niño suelta la mano del anciano y se va a su casa."
+      ],
+      "do": [
+        { "set_flag": "final_b" },
+        { "stop_music": true, "fade": 3.0 },
+        { "wait": 2.5 },
+        {
+          "goto_scene": "scenes/oj_fin.json",
+          "position": [-2.0, 0.3, -1.0],
+          "yaw": 180,
+          "dark": 30,
+          "lines": [
+            "",
+            "En Hoz del Cuervo, por fin, todos duermen.",
+            "En Salinas la marea sube despacio, y nadie se aparta.",
+            "En Ventosa la noria se queda quieta, arriba del todo.",
+            "En Puerto Niebla se levanta la niebla. El barco no sale.",
+            "En el varadero, Martin Rosales oye a su hija. Esta vez, la oye.",
+            ""
+          ]
+        }
+      ]
+    }
+  ]
+}

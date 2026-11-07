@@ -1,0 +1,12 @@
+{
+  "entries": [
+    { "if": { "flag": "lleva", "op": "!=", "value": 0 }, "lines": ["Traes las manos ocupadas."] },
+    {
+      "lines": [
+        "Con los ojos cerrados, en el escalon, un disco.",
+        "Lo levantas. Cuando abres los ojos, sigue en tu mano."
+      ],
+      "do": [{ "set_flag": "lleva", "value": 3 }]
+    }
+  ]
+}

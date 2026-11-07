@@ -1,0 +1,33 @@
+{
+  "entries": [
+    {
+      "lines": ["La lampara. Tiene aceite. Tiene mecha.", "La enciendes."],
+      "do": [
+        { "set_flag": "pn_faro_luz" },
+        { "set_flag": "pn_faro_ok" },
+        { "add_flag": "pn_lista", "amount": 8 },
+        { "play_sound": "audio/zumbido_farola.wav", "volume": 0.9 },
+        { "stop_music": true, "fade": 1.5 },
+        { "wait": 1.0 },
+        { "message": "El haz sale al mar y empieza a girar.", "seconds": 4 },
+        { "wait": 4.5 },
+        { "weather": { "rain": 0.0, "fade": 0.15, "storm": false } },
+        { "message": "Y deja de llover. Esta vez, del todo.", "seconds": 4 },
+        { "wait": 4.0 },
+        { "fog": { "start": 80, "end": 720, "seconds": 6 } },
+        { "ambient": 0.6, "seconds": 6 },
+        { "set_flag": "pn_mar" },
+        { "wait": 3.5 },
+        { "play_music": "audio/musica_pn_final_v2.wav", "volume": 0.7, "fade": 2 },
+        { "message": "Sobre el mar, de pie, todos los que se llevo el viento.", "seconds": 5 },
+        { "wait": 6.5 },
+        { "set_flag": "pn_clara_faro" },
+        { "message": "Una mano chica coge la tuya.", "seconds": 4 },
+        { "wait": 4.5 },
+        { "message": "\"Ahora si.\"", "seconds": 4 },
+        { "wait": 2.0 },
+        { "set_flag": "pn_bajar" }
+      ]
+    }
+  ]
+}

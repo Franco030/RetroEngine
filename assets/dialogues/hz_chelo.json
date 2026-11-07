@@ -1,0 +1,21 @@
+{
+  "speaker": "Chelo",
+  "entries": [
+    { "if": { "flag": "vals" }, "lines": ["Lo bailamos la ultima vez que soplo.", "Ya puede soplar."] },
+    {
+      "if": { "flag": "lleva", "op": "==", "value": 3 },
+      "lines": ["Ese es. Ese es.", "Ponlo tu, que a mi me tiemblan las manos."]
+    },
+    {
+      "once": true,
+      "key": "hola",
+      "lines": [
+        "Un cafe? Aqui no se le niega a nadie.",
+        "Llevamos nueve noches abiertos. Bueno, siempre estamos abiertos. Ahora tiene sentido.",
+        "Lo unico que me falta es oir el vals otra vez. El ultimo.",
+        "Mi hermana tenia el disco, en las casas colgadas, del otro lado.\nAhi ya no vive nadie."
+      ]
+    },
+    { "lines": ["El disco lo tenia mi hermana. Las casas colgadas, del otro lado de la grieta."] }
+  ]
+}

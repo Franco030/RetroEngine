@@ -1,0 +1,29 @@
+{
+  "speaker": "Amparo",
+  "entries": [
+    {
+      "if": { "flag": "hz_carta" },
+      "lines": ["La echaste? Gracias, mijo.", "Ya le llegara. Las cartas siempre llegan, aunque una ya no este."]
+    },
+    {
+      "if": { "flag": "lleva", "op": "==", "value": 1 },
+      "lines": ["El buzon esta en la estacion. Ve, ve."]
+    },
+    {
+      "if": { "flag": "lleva", "op": "!=", "value": 0 },
+      "lines": ["Traes las manos ocupadas, mijo.\nTermina lo tuyo y luego vienes."]
+    },
+    {
+      "once": true,
+      "key": "carta",
+      "lines": [
+        "Tu no eres de aqui. Se te ve en los ojos: todavia te pesan.",
+        "Me haces un favor? Esta carta es para mi hijo, Telmo. Se fue a Puerto Niebla hace veinte años.",
+        "Escribia cada invierno. Este no ha escrito.",
+        "Echala en el buzon de la estacion. Yo ya no llego hasta alla."
+      ],
+      "do": [{ "set_flag": "lleva", "value": 1 }]
+    },
+    { "lines": ["El buzon esta en la estacion, mijo."] }
+  ]
+}

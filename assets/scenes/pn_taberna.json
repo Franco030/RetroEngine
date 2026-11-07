@@ -1,0 +1,348 @@
+{
+  "player": { "position": [0.0, 0, 2.6], "yaw": 0 },
+  "bounds": { "min": [-5.0, -3.5], "max": [5.0, 3.5] },
+  "light": { "direction": [-0.2, -1, 0.1], "ambient": 0.2, "sun": 0.0 },
+  "audio": {
+    "music": { "file": "audio/musica_pn_taberna_v2.wav", "volume": 0.5 },
+    "footsteps": {
+      "files": ["audio/paso_piedra_1.wav", "audio/paso_piedra_2.wav", "audio/paso_piedra_3.wav"],
+      "volume": 0.3
+    },
+    "fade": 2
+  },
+  "entities": [
+    {
+      "name": "sala",
+      "model": "models/taberna_dentro.obj",
+      "position": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "tint": [190, 180, 170, 255]
+    },
+    {
+      "name": "salida",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0.0, 0, 3.45],
+      "interact": {
+        "prompt": "Salir",
+        "range": 3.0,
+        "do": [{ "goto_scene": "scenes/pn_puerto.json", "position": [-11.4, 6.0, 20.4], "yaw": 0 }],
+        "box": { "min": [-0.8, 0, -0.4], "max": [0.8, 2.4, 0.4] }
+      }
+    },
+    {
+      "name": "barra",
+      "model": "models/mostrador.obj",
+      "position": [-1.6, 0, -2.2],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "barra_b",
+      "model": "models/mostrador.obj",
+      "position": [1.2, 0, -2.2],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "barril_0",
+      "model": "models/barril.obj",
+      "position": [-3.8, 0, -3.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "barril_1",
+      "model": "models/barril.obj",
+      "position": [-3.0, 0, -3.1],
+      "rotation": [0, 20, 0]
+    },
+    {
+      "name": "barril_2",
+      "model": "models/barril.obj",
+      "position": [3.4, 0, -3.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "rosario",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_tabernera.png",
+      "position": [-0.4, 0, -2.9],
+      "rotation": [0, 0, 0],
+      "idle": { "bob": 0.006, "sway": 0.8, "speed": 0.9 },
+      "facePlayer": { "range": 4.0, "turnSpeed": 70 },
+      "interact": { "prompt": "Hablar", "range": 3.2, "do": [{ "dialogue": "pn_rosario" }] }
+    },
+    {
+      "name": "espejo",
+      "model": "models/espejo.obj",
+      "position": [-4.92, 0.9, 0.3],
+      "rotation": [0, 90, 0],
+      "collider": false,
+      "interact": { "prompt": "Mirarse", "range": 2.4, "do": [{ "dialogue": "pn_espejo" }] }
+    },
+    {
+      "name": "foco_barra",
+      "model": "models/foco_corto.obj",
+      "position": [0.0, 3.2, -1.6],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "foco_mesas",
+      "model": "models/foco_corto.obj",
+      "position": [2.8, 3.2, 1.2],
+      "rotation": [0, 0, 0],
+      "collider": false
+    },
+    {
+      "name": "luz_barra",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [0, 2.55, -1.6],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 170, 90],
+        "radius": 7,
+        "intensity": 1.0,
+        "flicker": 0.08,
+        "flickerRate": 5
+      }
+    },
+    {
+      "name": "luz_mesas",
+      "model": { "type": "plane", "size": 0.02 },
+      "tint": [0, 0, 0, 0],
+      "collider": false,
+      "position": [2.8, 2.55, 1.2],
+      "light": {
+        "offset": [0, 0, 0],
+        "color": [255, 160, 80],
+        "radius": 6,
+        "intensity": 0.8,
+        "flicker": 0.1,
+        "flickerRate": 6
+      }
+    },
+    {
+      "name": "mesa_0",
+      "model": "models/mesa_cocina.obj",
+      "position": [2.9, 0, 1.2],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "silla_0a",
+      "model": "models/silla.obj",
+      "position": [2.0, 0, 1.2],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "silla_0b",
+      "model": "models/silla.obj",
+      "position": [3.8, 0, 1.2],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "mesa_1",
+      "model": "models/mesa_cocina.obj",
+      "position": [-1.8, 0, 1.0],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "silla_1a",
+      "model": "models/silla.obj",
+      "position": [-2.7, 0, 1.0],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "silla_1b",
+      "model": "models/silla.obj",
+      "position": [-0.9, 0, 1.0],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "mesa_2",
+      "model": "models/mesa_cocina.obj",
+      "position": [-3.4, 0, -0.6],
+      "rotation": [0, 0, 0]
+    },
+    {
+      "name": "silla_2a",
+      "model": "models/silla.obj",
+      "position": [-4.3, 0, -0.6],
+      "rotation": [0, 90, 0]
+    },
+    {
+      "name": "silla_2b",
+      "model": "models/silla.obj",
+      "position": [-2.5, 0, -0.6],
+      "rotation": [0, -90, 0]
+    },
+    {
+      "name": "nico",
+      "model": "models/fotografo.obj",
+      "texture": "textures/pj_fe_nico.png",
+      "position": [3.75, 0, 1.2],
+      "rotation": [0, -90, 0],
+      "idle": { "bob": 0.006, "sway": 0.8, "speed": 0.9 },
+      "facePlayer": { "range": 4.0, "turnSpeed": 70 },
+      "interact": { "prompt": "Hablar", "range": 2.6, "do": [{ "dialogue": "pn_nico" }] }
+    },
+    {
+      "name": "foto_seis",
+      "model": "models/lamina.obj",
+      "position": [2.9, 0.96, 1.0],
+      "rotation": [-90, 20, 0],
+      "texture": "textures/lam_pn_foto_seis.png",
+      "collider": false,
+      "scale": [0.5, 0.5, 1],
+      "showIf": { "flag": "pn_seis_ok" },
+      "interact": { "prompt": "Mirar la foto", "range": 2.2, "do": [{ "dialogue": "pn_foto_seis" }] }
+    },
+    {
+      "name": "cliente_0",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [-2.3, 0.0, -1.4],
+      "rotation": [0, 185.8028877422575, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 20, "turnSpeed": 900 }
+    },
+    {
+      "name": "cliente_1",
+      "model": "models/anciana.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [-1.0, 0.0, -1.5],
+      "rotation": [0, 188.16835489254402, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 20, "turnSpeed": 900 }
+    },
+    {
+      "name": "cliente_2",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [1.8, 0.0, -1.4],
+      "rotation": [0, 189.62161180201494, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 20, "turnSpeed": 900 }
+    },
+    {
+      "name": "cliente_3",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [-1.8, 0.0, 1.8],
+      "rotation": [0, 179.25765714677192, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 20, "turnSpeed": 900 }
+    },
+    {
+      "name": "cliente_4",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [-3.6, 0.0, 0.4],
+      "rotation": [0, 181.05026062166232, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 20, "turnSpeed": 900 }
+    },
+    {
+      "name": "cliente_5",
+      "model": "models/anciano.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [2.2, 0.0, 2.2],
+      "rotation": [0, 168.31474055013365, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 20, "turnSpeed": 900 }
+    },
+    {
+      "name": "cliente_6",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogada.png",
+      "position": [-0.4, 0.0, 2.6],
+      "rotation": [0, 174.70757678426665, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 20, "turnSpeed": 900 }
+    },
+    {
+      "name": "cliente_7",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [-2.8, 0.0, 2.9],
+      "rotation": [0, 186.28621026226526, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 20, "turnSpeed": 900 }
+    },
+    {
+      "name": "cliente_8",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [3.9, 0.0, -0.6],
+      "rotation": [0, 182.83022843911394, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 20, "turnSpeed": 900 }
+    },
+    {
+      "name": "cliente_9",
+      "model": "models/mujer.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [-4.2, 0.0, -1.8],
+      "rotation": [0, 171.17378050120618, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 20, "turnSpeed": 900 }
+    },
+    {
+      "name": "cliente_10",
+      "model": "models/persona_m.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [0.8, 0.0, 0.6],
+      "rotation": [0, 186.56624887266418, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 20, "turnSpeed": 900 }
+    },
+    {
+      "name": "cliente_11",
+      "model": "models/persona_f.obj",
+      "texture": "textures/pj_fe_pn_ahogado.png",
+      "position": [0.6, 0.0, -1.5],
+      "rotation": [0, 174.94332402592624, 0],
+      "collider": false,
+      "showIf": { "flag": "flash" },
+      "facePlayer": { "range": 20, "turnSpeed": 900 },
+      "seen": {
+        "range": 12,
+        "angle": 40,
+        "if": {
+          "all": [{ "flag": "flash" }, { "not": { "flag": "pn_taberna_llena" } }]
+        },
+        "do": [
+          { "set_flag": "pn_taberna_llena" },
+          { "play_sound": "audio/susto_golpe.wav", "volume": 0.8 },
+          { "message": "En el destello, la taberna estaba llena.\nTodos te miraban.", "seconds": 4 }
+        ]
+      }
+    }
+  ],
+  "background": [6, 6, 8],
+  "fog": { "start": 8, "end": 40 },
+  "weather": {
+    "rain": 1.0,
+    "indoor": true,
+    "sound": "audio/lluvia_dentro.wav",
+    "volume": 0.28,
+    "thunder": { "every": [12, 26], "sounds": ["audio/trueno_1.wav", "audio/trueno_2.wav", "audio/trueno_3.wav"] }
+  },
+  "photo": { "if": { "flag": "pn_camara" }, "cooldown": 1.6 },
+  "emitters": [],
+  "autoCollide": true,
+  "triggers": [],
+  "camera": { "position": [0.0, 1.7, 2.6], "target": [0.0, 1.5, -2.4], "fov": 60 }
+}

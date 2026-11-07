@@ -1,0 +1,13 @@
+{
+  "speaker": "Ruben y Abril",
+  "entries": [
+    {
+      "once": true,
+      "lines": [
+        "Estamos jugando a no dormirnos. Pierde el que bosteza.",
+        "Mi mama dice que cuando sople nos vamos a dormir todos juntos.\nComo en Navidad."
+      ]
+    },
+    { "lines": ["Bostezaste. Perdiste."] }
+  ]
+}

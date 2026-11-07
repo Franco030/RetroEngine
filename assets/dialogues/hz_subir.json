@@ -1,0 +1,31 @@
+{
+  "entries": [
+    {
+      "lines": [
+        "Subes. El tren arranca solo; nadie lo maneja.",
+        "Por la ventanilla, la ciudad acostada en la calle. Las ventanas se apagan una a una.",
+        "Nico mira la camara. En la foto de la plaza salen todos con los ojos cerrados.\nTodos menos tu.",
+        "Proxima parada: PUERTO NIEBLA."
+      ],
+      "do": [
+        { "set_flag": "capitulo4_fin" },
+        { "set_flag": "capitulo4_tren" },
+        { "stop_music": true, "fade": 3.0 },
+        {
+          "goto_scene": "scenes/pn_puerto.json",
+          "position": [-56.0, 6.31, 10.9],
+          "yaw": -90,
+          "dark": 21,
+          "lines": [
+            "",
+            "El tren baja toda la noche hacia el mar.",
+            "Nico mira la foto de la plaza y no dice nada.",
+            "Empieza a llover. Luego, a llover de verdad.",
+            "La via se acaba en un muelle. El tren se para porque ya no hay mas via.",
+            ""
+          ]
+        }
+      ]
+    }
+  ]
+}

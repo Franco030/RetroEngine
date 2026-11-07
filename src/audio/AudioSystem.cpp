@@ -38,7 +38,7 @@ void AudioSystem::FeedLoop() {
   while (feeding_) {
     {
       std::lock_guard lock(mutex_);
-      for (Channel* ch : {&music_, &ambient_}) {
+      for (Channel* ch : {&music_, &ambient_, &weather_}) {
         if (ch->outgoing)
           UpdateMusicStream(ch->outgoing->Get());
         if (ch->current)
@@ -170,6 +170,18 @@ void AudioSystem::PlayAmbient(const std::string& file, float volume, float fade)
   StartChannel(ambient_, file, std::clamp(volume, 0.0f, 1.0f), fade);
 }
 
+void AudioSystem::PlayWeather(const std::string& file, float volume, float fade) {
+  StartChannel(weather_, file, std::clamp(volume, 0.0f, 1.0f), fade);
+}
+
+void AudioSystem::FadeWeather(float volume, float seconds) {
+  if (!enabled_)
+    return;
+  std::lock_guard lock(mutex_);
+  weather_.target = std::clamp(volume, 0.0f, 1.0f);
+  weather_.upRate = std::max(std::fabs(weather_.target - weather_.volume) / std::max(seconds, 0.01f), 0.01f);
+}
+
 void AudioSystem::Update(float dt) {
   if (!enabled_)
     return;
@@ -180,6 +192,7 @@ void AudioSystem::Update(float dt) {
     // Solo los fundidos: los streams los rellena el hilo (FeedLoop).
     UpdateChannel(music_, dt);
     UpdateChannel(ambient_, dt);
+    UpdateChannel(weather_, dt);
     if (music_.current && !music_.then.empty() && !IsMusicStreamPlaying(music_.current->Get())) {
       next = std::exchange(music_.then, {});
       nextVolume = music_.target;

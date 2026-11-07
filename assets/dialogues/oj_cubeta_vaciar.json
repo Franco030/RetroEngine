@@ -1,0 +1,12 @@
+{
+  "entries": [
+    {
+      "lines": [
+        "Vacias la cubeta al final del muelle, como en la fiesta.",
+        "El agua corre por el llano. Por un momento, el mar vuelve un palmo.",
+        "Nadie aplaude. Pero alguien, en algun lado, se rie."
+      ],
+      "do": [{ "set_flag": "lleva", "value": 0 }, { "set_flag": "oj_salinas" }]
+    }
+  ]
+}

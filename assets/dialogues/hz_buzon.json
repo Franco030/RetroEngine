@@ -1,0 +1,18 @@
+{
+  "entries": [
+    {
+      "if": { "flag": "lleva", "op": "==", "value": 1 },
+      "lines": [
+        "Echas la carta de Amparo.",
+        "Cae despacio. Adentro se oyen muchas cartas, muchas.\nTodas dicen lo mismo en el sobre: PUERTO NIEBLA."
+      ],
+      "do": [
+        { "play_sound": "audio/buzon.wav", "volume": 0.9 },
+        { "set_flag": "lleva", "value": 0 },
+        { "set_flag": "hz_carta" },
+        { "add_flag": "lista", "amount": 1 }
+      ]
+    },
+    { "lines": ["CORREOS. Ultima recogida: 3:11.", "Esta lleno hasta la boca."] }
+  ]
+}

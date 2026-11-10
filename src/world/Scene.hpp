@@ -23,6 +23,9 @@ namespace retro {
 struct SceneAudio {
   std::string music;
   float musicVolume = 0.6f;
+  // En lugar de 'music': varias al azar con silencios entre una y otra (AudioSystem::PlayShuffle).
+  std::vector<std::string> playlist;
+  Vector2 musicGap{40.0f, 120.0f};
   std::string ambient;
   float ambientVolume = 0.5f;
   std::vector<std::string> footsteps;
@@ -157,6 +160,8 @@ public:
   // El suelo de base del jugador ("floor": un numero, o false para ninguno). Ver Player::SetBaseFloor.
   std::optional<float> floor = 0.0f;
   std::vector<PointLight> streamedLights;
+  std::vector<Emitter> streamedEmitters; // y la musica de sus tiendas
+  std::vector<WorldBox> streamedBoxes;   // y sus colisiones, ya en el mundo (las rehace al girar)
 
   // Mueve todo lo de la escena 'dz' en Z (la ciudad sin fin recentra el mundo para que los numeros
   // no crezcan sin fin): entidades (y lo que las mueve: drift, slide, arrive), triggers, luces,
@@ -181,6 +186,8 @@ public:
     panorama.reset();
     city.reset();
     streamedLights.clear();
+    streamedEmitters.clear();
+    streamedBoxes.clear();
     triggersPrimed_ = false;
     audio = SceneAudio{};
   }

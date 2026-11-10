@@ -141,6 +141,10 @@ void Scene::ShiftZ(float dz) {
     l.position.z += dz;
   for (Emitter& em : emitters)
     em.position.z += dz;
+  for (Emitter& em : streamedEmitters)
+    em.position.z += dz;
+  for (WorldBox& b : streamedBoxes)
+    b.center.z += dz;
   spawn.position.z += dz;
   if (bounds) {
     bounds->min.y += dz;
@@ -152,6 +156,7 @@ void Scene::ShiftZ(float dz) {
 
 void Scene::CollectEmitters(std::vector<Emitter>& out) const {
   out.insert(out.end(), emitters.begin(), emitters.end());
+  out.insert(out.end(), streamedEmitters.begin(), streamedEmitters.end());
 
   for (const auto& e : entities_) {
     if (!e->sound || !e->visible)
@@ -262,6 +267,7 @@ void Scene::CollectColliders(std::vector<WorldBox>& out) const {
     for (const BoxCollider& c : e->colliders)
       out.push_back(MakeWorldBox(c, e->transform));
   }
+  out.insert(out.end(), streamedBoxes.begin(), streamedBoxes.end());
 
   if (bounds)
     AppendBoundsWalls(*bounds, out);

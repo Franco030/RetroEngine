@@ -130,7 +130,7 @@ void AudioSystem::StartChannel(Channel& ch, const std::string& file, float volum
   ch.then = then;
   ch.current = std::move(next);
   if (ch.current) {
-    ch.current->Get().looping = then.empty();
+    ch.current->Get().looping = then.empty() && ch.shuffle.empty(); // las de la lista suenan una vez
     ch.volume = fade > 0.0f ? 0.0f : volume;
     ch.target = volume;
     ch.upRate = std::max(volume, 0.1f) / f;
@@ -141,14 +141,14 @@ void AudioSystem::StartChannel(Channel& ch, const std::string& file, float volum
   }
 }
 
-void AudioSystem::UpdateChannel(Channel& ch, float dt) {
+void AudioSystem::UpdateChannel(Channel& ch, float dt, float factor) {
   if (ch.outgoing) {
     ch.outVolume -= ch.outRate * dt;
     if (ch.outVolume <= 0.0f) {
       StopMusicStream(ch.outgoing->Get());
       ch.outgoing.reset();
     } else {
-      SetMusicVolume(ch.outgoing->Get(), ch.outVolume);
+      SetMusicVolume(ch.outgoing->Get(), ch.outVolume * factor);
     }
   }
   if (ch.current) {
@@ -157,13 +157,71 @@ void AudioSystem::UpdateChannel(Channel& ch, float dt) {
     } else if (ch.volume > ch.target) {
       ch.volume = std::max(ch.target, ch.volume - ch.upRate * dt);
     }
-    SetMusicVolume(ch.current->Get(), ch.volume);
+    SetMusicVolume(ch.current->Get(), ch.volume * factor);
   }
 }
 
 void AudioSystem::PlayMusic(const std::string& file, float volume, float fade,
                             const std::string& then) {
+  {
+    std::lock_guard lock(mutex_);
+    music_.shuffle.clear();
+  }
   StartChannel(music_, file, std::clamp(volume, 0.0f, 1.0f), fade, then);
+}
+
+std::string AudioSystem::PickShuffle(Channel& ch) {
+  if (ch.bag.empty()) {
+    ch.bag = ch.shuffle;
+    std::shuffle(ch.bag.begin(), ch.bag.end(), rng_);
+    if (ch.bag.size() > 1 && ch.bag.back() == ch.last)
+      std::swap(ch.bag.back(), ch.bag.front()); // se saca por detras
+  }
+  std::string next = std::move(ch.bag.back());
+  ch.bag.pop_back();
+  return next;
+}
+
+void AudioSystem::PlayShuffle(const std::vector<std::string>& files, float volume, Vector2 gap, float fade) {
+  if (!enabled_)
+    return;
+  volume = std::clamp(volume, 0.0f, 1.0f);
+  std::string first;
+  {
+    std::lock_guard lock(mutex_);
+    if (!files.empty() && files == music_.shuffle) { // la misma lista: sigue (en cancion o en silencio)
+      music_.gap = gap;
+      music_.shuffleVolume = volume;
+      if (music_.current) {
+        music_.target = volume;
+        music_.upRate = std::max(volume, 0.1f);
+      }
+      return;
+    }
+    music_.shuffle = files;
+    music_.gap = gap;
+    music_.shuffleVolume = volume;
+    music_.wait = 0.0f;
+    music_.last.clear();
+    music_.bag.clear();
+    if (files.empty())
+      return;
+    // si ya suena una de la lista (la del menu al empezar a jugar), sigue: es la primera
+    if (music_.current && music_.then.empty() && std::ranges::find(files, music_.file) != files.end()) {
+      music_.current->Get().looping = false;
+      for (const std::string& f : files) { // el resto de la vuelta, sin la que ya suena
+        if (f != music_.file)
+          music_.bag.push_back(f);
+      }
+      std::shuffle(music_.bag.begin(), music_.bag.end(), rng_);
+      music_.target = volume;
+      music_.upRate = std::max(volume, 0.1f) / std::max(fade, 0.01f);
+      return;
+    }
+    first = PickShuffle(music_);
+  }
+  std::cout << "[musica] lista de " << files.size() << ", empieza " << first << std::endl;
+  StartChannel(music_, first, volume, fade);
 }
 
 void AudioSystem::PlayAmbient(const std::string& file, float volume, float fade) {
@@ -190,12 +248,32 @@ void AudioSystem::Update(float dt) {
   {
     std::lock_guard lock(mutex_);
     // Solo los fundidos: los streams los rellena el hilo (FeedLoop).
-    UpdateChannel(music_, dt);
-    UpdateChannel(ambient_, dt);
+    duck_ += std::clamp(duckTarget_ - duck_, -dt / 0.6f, dt / 0.6f);
+    UpdateChannel(music_, dt, duck_);
+    UpdateChannel(ambient_, dt, duck_);
     UpdateChannel(weather_, dt);
     if (music_.current && !music_.then.empty() && !IsMusicStreamPlaying(music_.current->Get())) {
       next = std::exchange(music_.then, {});
       nextVolume = music_.target;
+    }
+    // la lista: acabo una cancion -> silencio un rato -> otra
+    if (!music_.shuffle.empty()) {
+      if (music_.current && !IsMusicStreamPlaying(music_.current->Get())) {
+        StopMusicStream(music_.current->Get());
+        music_.current.reset();
+        music_.last = std::exchange(music_.file, {});
+        std::uniform_real_distribution<float> gap(music_.gap.x, std::max(music_.gap.x, music_.gap.y));
+        music_.wait = gap(rng_);
+        std::cout << "[musica] acabo " << music_.last << "; silencio de " << static_cast<int>(music_.wait) << " s" << std::endl;
+      } else if (!music_.current) {
+        music_.wait -= dt;
+        if (music_.wait <= 0.0f) {
+          next = PickShuffle(music_);
+          nextVolume = music_.shuffleVolume;
+          std::cout << "[musica] suena " << next << std::endl;
+          music_.wait = 1e9f; // hasta que empiece (si no se puede abrir, no se reintenta cada fotograma)
+        }
+      }
     }
   }
   if (!next.empty())
@@ -247,7 +325,7 @@ void AudioSystem::SetListener(Vector3 position, Vector3 forward) {
 }
 
 float AudioSystem::Spatialize(Vector3 position, float volume, float radius, float minDistance,
-                              float& pan) const {
+                              float& pan, bool directional) const {
   pan = 0.5f;
   const Vector3 d = Vector3Subtract(position, listenerPos_);
   const float dist = Vector3Length(d);
@@ -257,6 +335,8 @@ float AudioSystem::Spatialize(Vector3 position, float volume, float radius, floa
   const float t =
       std::clamp((dist - minDistance) / std::max(radius - minDistance, 0.001f), 0.0f, 1.0f);
   float gain = volume * (1.0f - t) * (1.0f - t);
+  if (!directional)
+    return gain; // sin paneo ni sombra de espalda: centrado siempre
 
   const Vector3 flat{d.x, 0.0f, d.z};
   const float flatLen = Vector3Length(flat);
@@ -308,7 +388,7 @@ void AudioSystem::UpdateEmitters(std::span<const Emitter> emitters, float dt) {
   candidates.reserve(emitters.size());
   for (const Emitter& e : emitters) {
     float pan = 0.5f;
-    const float gain = Spatialize(e.position, e.volume, e.radius, e.minDistance, pan);
+    const float gain = Spatialize(e.position, e.volume, e.radius, e.minDistance, pan, e.directional);
     if (gain > 0.002f)
       candidates.push_back({&e, gain, pan});
   }

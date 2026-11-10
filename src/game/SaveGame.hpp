@@ -17,6 +17,13 @@ struct SaveData {
   double playTime = 0.0;
   std::string savedAt;
   std::unordered_map<std::string, int> flags;
+  // En la ciudad sin fin (CylinderCity): el trozo que estaba en z = 0 y lo que habia girado la
+  // ciudad (grados). Con 'position', el lugar exacto del cilindro.
+  struct CityPlace {
+    long long origin = 0;
+    double phi = 0.0;
+  };
+  std::optional<CityPlace> city;
 };
 
 struct SaveInfo {

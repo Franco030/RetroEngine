@@ -618,7 +618,8 @@ void AddTrigger(const json& jt, Scene& scene) {
   scene.triggers.push_back(std::move(t));
 }
 
-// "audio": { "music": "ruta" | { "file": "ruta", "volume": 0.5 },
+// "audio": { "music": "ruta" | { "file": "ruta", "volume": 0.5 }
+//                     | { "files": [ ... ], "volume": 0.5, "gap": [40, 120] },  (al azar, con silencios)
 //            "ambient": igual,
 //            "footsteps": { "files": [ ... ], "volume": 0.6 },
 //            "fade": 1.5 }
@@ -634,6 +635,22 @@ void ReadAudio(const json& ja, const AssetManager& assets, Scene& scene) {
     const json& t = ja.at(key);
     if (t.is_string()) {
       file = t.get<std::string>();
+    } else if (t.is_object() && t.contains("files") && std::string(key) == "music") {
+      SceneAudio& a = scene.audio;
+      for (const json& item : t.at("files")) {
+        a.playlist.push_back(item.get<std::string>());
+        checkFile(a.playlist.back());
+      }
+      if (a.playlist.empty())
+        throw std::runtime_error("'music': 'files' necesita al menos una cancion");
+      volume = t.value("volume", volume);
+      if (t.contains("gap")) {
+        const json& gp = t.at("gap");
+        a.musicGap = {gp.at(0).get<float>(), gp.at(1).get<float>()};
+        if (a.musicGap.x < 0.0f || a.musicGap.y < a.musicGap.x)
+          throw std::runtime_error("'music': 'gap' es [minimo, maximo] en segundos");
+      }
+      return;
     } else if (t.is_object()) {
       file = t.at("file").get<std::string>();
       volume = t.value("volume", volume);
@@ -680,12 +697,12 @@ CityConfig ReadCity(const json& j, const AssetManager& assets) {
   c.avenue = j.value("avenue", c.avenue);
   c.walk = j.value("walk", c.walk);
   c.detailArc = j.value("detailArc", c.detailArc);
+  c.detailStep = j.value("detailStep", c.detailStep);
   c.minHeight = j.value("minHeight", c.minHeight);
   c.maxHeight = j.value("maxHeight", c.maxHeight);
   c.seed = j.value("seed", c.seed);
   c.firstSector = j.value("firstSector", c.firstSector);
   c.sectorLabel = j.value("sectorLabel", c.sectorLabel);
-  c.foodLabel = j.value("foodLabel", c.foodLabel);
   c.glyphs = j.value("glyphs", c.glyphs);
   c.glyphCols = std::max(1, j.value("glyphCols", c.glyphCols));
   c.glyphRows = std::max(1, j.value("glyphRows", c.glyphRows));
@@ -715,6 +732,11 @@ CityConfig ReadCity(const json& j, const AssetManager& assets) {
     return out;
   };
   c.textures.facades = list("facades");
+  if (jt.contains("pavement")) {
+    c.textures.pavement = list("pavement");
+    c.textures.pavementLine = jt.contains("pavementLine") ? tex("pavementLine") : std::string();
+  }
+  c.paveTile = std::max(1.0f, j.value("paveTile", c.paveTile));
   c.textures.podiums = list("podiums");
   c.textures.roofs = list("roofs");
   c.textures.ground = tex("ground");
@@ -726,6 +748,53 @@ CityConfig ReadCity(const json& j, const AssetManager& assets) {
   c.textures.metal = tex("metal");
   c.textures.lamp = tex("lamp");
 
+  if (j.contains("store")) { // la tienda de COMIDA (se entra)
+    const json& js = j.at("store");
+    auto model = [&](const json& v) {
+      const std::string m = v.get<std::string>();
+      if (!FileExists(assets.Resolve(m).c_str()))
+        throw std::runtime_error("city.store: no existe el modelo " + m);
+      return m;
+    };
+    CityConfig::Store& st = c.store;
+    st.enabled = true;
+    for (const json& v : js.at("variants"))
+      st.variants.push_back({model(v.at("model")), model(v.at("glow"))});
+    if (st.variants.empty())
+      throw std::runtime_error("city.store: 'variants' necesita al menos una");
+    auto sound = [&](const char* key) {
+      const std::string f = js.value(key, std::string());
+      if (!f.empty() && !FileExists(assets.Resolve(f).c_str()))
+        throw std::runtime_error(std::string("city.store: no existe el sonido de '") + key + "': " + f);
+      return f;
+    };
+    st.music = sound("music");
+    st.musicVolume = js.value("musicVolume", st.musicVolume);
+    if (js.contains("footsteps")) {
+      for (const json& f : js.at("footsteps")) {
+        st.footsteps.push_back(f.get<std::string>());
+        if (!FileExists(assets.Resolve(st.footsteps.back()).c_str()))
+          throw std::runtime_error("city.store: no existe el paso " + st.footsteps.back());
+      }
+    }
+    st.footstepVolume = js.value("footstepVolume", st.footstepVolume);
+    st.everySectors = js.value("everySectors", st.everySectors);
+    if (st.everySectors < 1)
+      throw std::runtime_error("city.store: 'everySectors' debe ser 1 o mas");
+    st.chime = sound("chime");
+    st.chimeVolume = js.value("chimeVolume", st.chimeVolume);
+    st.signPrompt = js.value("signPrompt", st.signPrompt);
+    st.signMessage = js.value("signMessage", std::string());
+    for (const json& p : js.at("plaques"))
+      st.plaques.push_back(model(p));
+    if (st.plaques.empty())
+      throw std::runtime_error("city.store: 'plaques' necesita al menos una");
+    st.plaquePrompt = js.value("plaquePrompt", st.plaquePrompt);
+    if (js.contains("plaqueMessages"))
+      st.plaqueMessages = js.at("plaqueMessages").get<std::vector<std::string>>();
+    if (st.plaqueMessages.empty())
+      throw std::runtime_error("city.store: 'plaqueMessages' necesita al menos un mensaje");
+  }
   if (j.contains("cycle")) {
     const json& jc = j.at("cycle");
     CityConfig::Cycle& cy = c.cycle;

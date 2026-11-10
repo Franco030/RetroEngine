@@ -90,11 +90,24 @@ public:
   Scene* CurrentMut() noexcept { return scene_.get(); }
   std::uint64_t Generation() const noexcept { return generation_; }
 
-  void SetFocus(Vector3 focus) noexcept { focus_ = focus; }
-  // Lo que la ciudad sin fin ha recentrado el mundo en Z desde la ultima vez (0 si nada): quien
-  // lleva al jugador lo mueve eso mismo hacia atras.
-  float TakeOriginShift() noexcept { return std::exchange(originShift_, 0.0f); }
+  // 'carried': el foco es alguien que anda (el jugador). Solo entonces la ciudad sin fin gira bajo
+  // sus pies para dejarlo siempre abajo (se pide cada fotograma; sin pedirlo, no gira).
+  void SetFocus(Vector3 focus, bool carried = false) noexcept {
+    focus_ = focus;
+    carried_ = carried;
+  }
+  // Lo que la ciudad sin fin ha recentrado el mundo desde la ultima vez: 'dz' en Z (quien lleva al
+  // jugador lo mueve eso hacia atras) y 'turn' grados alrededor del eje Z (lo gira eso mismo).
+  struct OriginMove {
+    float dz = 0.0f;
+    float turn = 0.0f;
+  };
+  OriginMove TakeOriginMove() noexcept { return std::exchange(originMove_, OriginMove{}); }
   const CylinderCity* City() const noexcept { return city_.get(); }
+  // La ciudad de la proxima escena que se cargue empieza ahi (al cargar una partida).
+  void SetCityStart(CylinderCity::Spot place) noexcept { cityStart_ = place; }
+  // La musica de la escena (una en bucle, o su lista al azar), en 'fade' segundos.
+  void PlaySceneMusic(const SceneAudio& audio, float fade);
   // Una luz que no es de la escena (el flash de la camara del jugador): se dibuja este fotograma
   // aunque haya otras mas cerca. nullopt la quita.
   void SetFlashLight(std::optional<PointLight> light) noexcept { flashLight_ = light; }
@@ -124,6 +137,7 @@ private:
   };
 
   Vector3 focus_{0.0f, 0.0f, 0.0f};
+  bool carried_ = false;
 
   void ApplyEnvironment(const Environment& env);
   void ApplyAudio(const SceneAudio& audio);
@@ -167,7 +181,9 @@ private:
   Environment defaults_{};
   std::unique_ptr<Scene> scene_;
   std::unique_ptr<CylinderCity> city_; // si la escena tiene "city"
-  float originShift_ = 0.0f;
+  OriginMove originMove_;
+  std::optional<CylinderCity::Spot> cityStart_;
+  bool cityIndoors_ = false; // la ultima vez: dentro de una tienda (para cambiar los pasos)
   std::size_t index_ = 0;
   std::size_t pending_ = 0;
   std::uint64_t generation_ = 0;

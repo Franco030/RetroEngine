@@ -159,7 +159,8 @@ Vector3 At(const Frame& f, float a, float b, float h) {
 // Una frase con la rejilla de letras ('glyphs'): de izquierda a derecha por 'right', de 'height'
 // de alto, empezando en 'origin' (abajo a la izquierda), mirando hacia 'n'.
 void Text(Builder& b, const CityConfig& c, const std::string& text, Vector3 origin, Vector3 right, Vector3 up,
-          float height, Vector3 n) {
+          float height, Vector3 n, const std::string& grid = {}) {
+  const std::string& atlas = grid.empty() ? c.textures.glyphs : grid; // la rejilla de letras (hay una por fondo)
   const float w = height * 0.62f;
   for (std::size_t i = 0; i < text.size(); ++i) {
     const std::size_t g = c.glyphs.find(static_cast<char>(std::toupper(static_cast<unsigned char>(text[i]))));
@@ -169,7 +170,7 @@ void Text(Builder& b, const CityConfig& c, const std::string& text, Vector3 orig
     const float u0 = static_cast<float>(col) / c.glyphCols, u1 = static_cast<float>(col + 1) / c.glyphCols;
     const float vt = 1.0f - static_cast<float>(row) / c.glyphRows, vb = 1.0f - static_cast<float>(row + 1) / c.glyphRows;
     const Vector3 o = Vector3Add(origin, Vector3Scale(right, w * 1.08f * static_cast<float>(i)));
-    b.Quad(c.textures.glyphs, o, Vector3Add(o, Vector3Scale(right, w)),
+    b.Quad(atlas, o, Vector3Add(o, Vector3Scale(right, w)),
            Vector3Add(o, Vector3Add(Vector3Scale(right, w), Vector3Scale(up, height))), Vector3Add(o, Vector3Scale(up, height)),
            {u0, vb}, {u1, vb}, {u1, vt}, {u0, vt}, n);
   }
@@ -304,11 +305,119 @@ float Tower(const CityConfig& c, Builder& solid, Builder& glow, Rng& r, const To
   return reach;
 }
 
+
+// La tienda de COMIDA: su modelo 3D (una de las variantes) a 'edge' - 15 m del centro de la avenida,
+// de un lado o del otro, con el frente hacia la avenida. Aqui va lo que el modelo no trae: las
+// colisiones (muros con el hueco de la puerta, gondolas, refrigeradores, mostrador, el piso de
+// dentro), las luces, la musica, la campanita, el interior (para saber cuando se esta dentro) y lo que
+// se lee (el letrero y dos placas). Las medidas, las del modelo (tools/gen_onus_tienda_modelo.py).
+void Store(const CityConfig& c, CylinderCity::ChunkData& out, long long index, float zc, float edge) {
+  const CityConfig::Store& st = c.store;
+  Rng r(Seed(c.seed, index, 555, static_cast<int>(zc)));
+  const float s = r.Chance(0.5f) ? -1.0f : 1.0f; // de que lado de la avenida
+  const float W = 12.0f, D = 9.0f, H = 4.2f, door = 1.0f, doorH = 2.6f, t = 0.2f, floorUp = 0.22f;
+  const float fx = edge - 15.0f;
+  const float xf = s * fx, xb = s * (fx + D), z0 = zc - W * 0.5f, z1 = zc + W * 0.5f;
+  const float y = -std::sqrt(c.radius * c.radius - fx * fx);
+  const float xfi = xf + s * t, xbi = xb - s * t, z0i = z0 + t, z1i = z1 - t;
+  const float yaw = s > 0.0f ? 0.0f : 180.0f; // el modelo mira a -X: del lado +X ya da a la avenida
+  // del modelo (x hacia dentro, z a lo largo) al trozo
+  auto at = [&](float lx, float ly, float lz) { return Vector3{xf + s * lx, y + ly, zc + s * lz}; };
+  auto box = [&](float xa, float xc, float ya, float yc, float za, float zb) {
+    out.solids.push_back({{{std::min(xa, xc), ya, std::min(za, zb)}, {std::max(xa, xc), yc, std::max(za, zb)}}, 0.0f, false});
+  };
+
+  // el modelo (lo solido, con el letrero para leer) y lo que brilla
+  const CityConfig::Store::Variant& v = st.variants[static_cast<std::size_t>(r.Pick(static_cast<int>(st.variants.size())))];
+  CylinderCity::ChunkData::Placed shell;
+  shell.model = v.model;
+  shell.position = at(0.0f, 0.0f, 0.0f);
+  shell.yaw = yaw;
+  shell.box = {{-0.45f, H - 1.15f, -W * 0.5f + 0.4f}, {0.0f, H - 0.05f, W * 0.5f - 0.4f}, 0.0f};
+  shell.prompt = st.signPrompt;
+  shell.message = st.signMessage;
+  out.placed.push_back(shell);
+  out.placed.push_back({v.glow, shell.position, yaw, true, {}, {}, {}});
+  // las placas: arriba de los refrigeradores (mira a la puerta) y arriba de la puerta (mira dentro)
+  auto plaque = [&](float lx, float ly, float facingYaw) {
+    CylinderCity::ChunkData::Placed p;
+    p.model = st.plaques[static_cast<std::size_t>(r.Pick(static_cast<int>(st.plaques.size())))];
+    p.position = at(lx, ly, 0.0f);
+    p.yaw = facingYaw;
+    p.box = {{-0.15f, -0.25f, -1.6f}, {0.05f, 0.25f, 1.6f}, 0.0f};
+    p.prompt = st.plaquePrompt;
+    p.message = st.plaqueMessages[static_cast<std::size_t>(r.Pick(static_cast<int>(st.plaqueMessages.size())))];
+    out.placed.push_back(p);
+  };
+  plaque(D - t - 0.03f, floorUp + 2.97f, yaw);
+  plaque(t + 0.03f, 3.47f, yaw + 180.0f);
+
+  // las colisiones: muros (con el hueco de la puerta), el piso de dentro, los muebles
+  const float yf = y + floorUp;
+  box(xb, xbi, y - 1.0f, y + H, z0, z1);
+  box(xf, xb, y - 1.0f, y + H, z0, z0i);
+  box(xf, xb, y - 1.0f, y + H, z1i, z1);
+  box(xf, xfi, y - 1.0f, y + H, z0, zc - door);
+  box(xf, xfi, y - 1.0f, y + H, zc + door, z1);
+  box(xf, xfi, y + doorH, y + H, zc - door, zc + door);
+  box(xf, xb, yf - 1.0f, yf, z0, z1);
+  box(xbi, xbi - s * 0.62f, y - 1.0f, y + H, zc - 3.6f, zc + 3.6f); // los refrigeradores
+  for (const float gx : {3.4f, 5.9f}) {                              // las gondolas
+    const Vector3 g = at(gx, 0.0f, 0.6f);
+    box(g.x - 0.45f, g.x + 0.45f, y - 1.0f, yf + 1.9f, g.z - 3.0f, g.z + 3.0f);
+  }
+  {
+    const Vector3 m = at(1.5f, 0.0f, -3.4f);                         // el mostrador
+    box(m.x - 0.45f, m.x + 0.45f, y - 1.0f, yf + 1.05f, m.z - 1.35f, m.z + 1.35f);
+    const Vector3 k = at(1.5f, 0.0f, W * 0.5f - t - 0.35f);          // la cafetera
+    box(k.x - 0.6f, k.x + 0.6f, y - 1.0f, yf + 1.55f, k.z - 0.35f, k.z + 0.35f);
+  }
+
+  // la luz: dos fluorescentes dentro y el letrero fuera
+  for (const float dz : {-2.6f, 2.6f}) {
+    PointLight l;
+    l.position = {xf + s * D * 0.45f, y + H - 0.5f, zc + dz};
+    l.color = {1.0f, 1.08f, 1.12f};
+    l.radius = 9.0f;
+    out.lights.push_back(l);
+  }
+  {
+    PointLight l;
+    l.position = {xf - s * 1.6f, y + H - 0.4f, zc};
+    l.color = {0.75f, 0.95f, 0.95f};
+    l.radius = 11.0f;
+    l.flicker = 0.08f;
+    out.lights.push_back(l);
+  }
+  // la musica (dentro y en la puerta), la campanita y el interior
+  if (!st.music.empty()) {
+    Emitter e;
+    e.key = "store:" + std::to_string(index) + ":" + std::to_string(static_cast<int>(zc));
+    e.file = st.music;
+    e.position = {xf + s * D * 0.5f, y + 1.6f, zc};
+    e.volume = st.musicVolume;
+    // sin direccion y a todo volumen en todo el local (la esquina mas lejana queda a ~7.5 m del
+    // centro); afuera se apaga en unos metros
+    e.radius = 14.0f;
+    e.minDistance = 7.5f;
+    e.directional = false;
+    out.emitters.push_back(e);
+  }
+  out.doors.push_back({{xf + s * t * 0.5f, y + 1.0f, zc}, {0.55f, 1.2f, door}});
+  out.interiors.push_back({{std::min(xfi, xbi), y - 0.5f, z0i}, {std::max(xfi, xbi), y + H, z1i}});
+}
+
 }  // namespace
 
-// Todo lo de un trozo: la tierra y las ventanas del anillo, las torres, y cerca de la avenida el
-// detalle, la calle (farolas, quioscos, bancas), los letreros del sector y las colisiones.
-static CylinderCity::ChunkData BuildChunk(const CityConfig& c, long long index, bool detail) {
+// Los metros a lo ancho (por la tierra) de 'from' a 'to' (grados), por el camino corto.
+static float ArcBetween(const CityConfig& c, float from, float to) {
+  return (std::fmod(to - from + 540.0f, 360.0f) - 180.0f) * kDeg * c.radius;
+}
+
+// Todo lo de un trozo: la tierra y las ventanas del anillo y las torres. Con 'detail', ademas, alrededor
+// de 'anchor' (grados: por donde anda el jugador) el detalle de las torres y sus colisiones, el suelo
+// fino, y si la avenida queda cerca, la calle (farolas, bancas, tiendas, el portico del sector).
+static CylinderCity::ChunkData BuildChunk(const CityConfig& c, long long index, bool detail, float anchor) {
   CylinderCity::ChunkData out;
   Builder solid(out.solid), glow(out.glow);
   ObjData windows;
@@ -328,12 +437,25 @@ static CylinderCity::ChunkData BuildChunk(const CityConfig& c, long long index, 
     return false;
   };
 
-  // el anillo: tierra (la avenida con su textura) y ventanas, en tiras de 2 grados y tramos de 60 m
+  // la franja que se camina (abajo, alrededor de la avenida), en grados: un multiplo de las tiras del
+  // anillo, para que su borde caiga justo en el de una tira
   const float step = 2.0f;
-  for (float a = -180.0f; a < 180.0f - 1e-3f; a += step) {
-    const float b = a + step, mid = a + step * 0.5f;
+  // la calle de la avenida (y su pavimento), si quien anda esta cerca de ella
+  const bool street = detail && std::fabs(ArcBetween(c, anchor, 0.0f)) < c.detailArc;
+  const bool pave = street && !c.textures.pavement.empty();
+  // alrededor de quien anda, el anillo en tiras finas: una tira de 2 grados es una cuerda de 52 m que
+  // en medio queda 23 cm por encima del circulo (por donde van las colisiones); de 0.25, 4 mm
+  const float fineArc = c.walk + c.detailStep;
+  const float bandDeg = step * std::ceil((c.walk + 8.0f) / R / kDeg / step);
+
+  // el anillo: tierra (la avenida con su textura) y ventanas, en tiras de 2 grados (cerca de quien
+  // anda, de 0.25) y tramos de 60 m
+  auto strip = [&](float a, float b) {
+    const float mid = (a + b) * 0.5f;
     float center = 0.0f;
     const bool land = onLand(mid, &center);
+    if (pave && land && center == 0.0f && std::fabs(mid) < bandDeg)
+      return; // lo pone el pavimento de abajo
     const bool avenue = land && center == 0.0f && std::fabs(R * mid * kDeg) < c.avenue * 0.5f + 24.0f;
     const std::string& tex = !land ? c.textures.windows : avenue ? c.textures.avenue : c.textures.ground;
     const float rep = land ? c.block : 60.0f;
@@ -352,6 +474,38 @@ static CylinderCity::ChunkData BuildChunk(const CityConfig& c, long long index, 
                 {fa.base.x, fa.base.y, zb}, {ua, za / rep}, {ub, za / rep}, {ub, zb / rep}, {ua, zb / rep}, n);
       }
     }
+  };
+  for (float a = -180.0f; a < 180.0f - 1e-3f; a += step) {
+    const bool fine = detail && std::fabs(ArcBetween(c, anchor, a + step * 0.5f)) < fineArc + step * kDeg * R;
+    const int parts = fine ? 8 : 1;
+    for (int k = 0; k < parts; ++k)
+      strip(a + step * k / parts, a + step * (k + 1) / parts);
+  }
+
+  // el pavimento de lo que se camina: losas de 'paveTile' m que siguen la curva, cada una con una de
+  // las variantes (y volteada o no): de cerca, detalle de verdad; y no se ve el mismo cuadro repetido
+  if (pave) {
+    int across = static_cast<int>(std::lround(2.0f * bandDeg * kDeg * R / c.paveTile));
+    if (across % 2 == 0)
+      ++across; // impar: la losa de en medio queda centrada en la avenida (la de la linea de luz)
+    const float dTheta = 2.0f * bandDeg / static_cast<float>(across);
+    const int along = std::max(1, static_cast<int>(std::lround(L / c.paveTile)));
+    const float dz = L / static_cast<float>(along);
+    for (int i = 0; i < across; ++i) {
+      const float a = -bandDeg + dTheta * i, b = a + dTheta;
+      const Frame fa = FrameAt(c, a, 0.0f), fb = FrameAt(c, b, 0.0f);
+      const Vector3 n = FrameAt(c, (a + b) * 0.5f, 0.0f).up;
+      const bool line = i == across / 2 && !c.textures.pavementLine.empty();
+      for (int j = 0; j < along; ++j) {
+        Rng r(Seed(c.seed, index, 333, i, j));
+        const std::string& tex = line ? c.textures.pavementLine
+                                      : c.textures.pavement[static_cast<std::size_t>(r.Pick(static_cast<int>(c.textures.pavement.size())))];
+        const float u0 = r.Chance(0.5f) ? 0.0f : 1.0f, v0 = (line || r.Chance(0.5f)) ? 0.0f : 1.0f;
+        const float za = dz * j, zb = dz * (j + 1);
+        solid.Quad(tex, {fa.base.x, fa.base.y, za}, {fb.base.x, fb.base.y, za}, {fb.base.x, fb.base.y, zb},
+                   {fa.base.x, fa.base.y, zb}, {u0, v0}, {1.0f - u0, v0}, {1.0f - u0, 1.0f - v0}, {u0, 1.0f - v0}, n);
+      }
+    }
   }
 
   // las torres
@@ -363,8 +517,7 @@ static CylinderCity::ChunkData BuildChunk(const CityConfig& c, long long index, 
     const int cols = static_cast<int>(arc / c.block);
     for (int col = 0; col < cols; ++col) {
       const float off = (static_cast<float>(col) - (cols - 1) * 0.5f) * c.block;
-      const bool bottomLand = lc == 0.0f;
-      if (bottomLand && std::fabs(off) < c.avenue * 0.5f + c.block * 0.3f)
+      if (lc == 0.0f && std::fabs(off) < c.avenue * 0.5f + c.block * 0.3f)
         continue; // la avenida
       const float theta = lc + off / R / kDeg;
       std::vector<float> reach(static_cast<std::size_t>(rows), 0.0f);
@@ -380,19 +533,19 @@ static CylinderCity::ChunkData BuildChunk(const CityConfig& c, long long index, 
         s.l = c.block * r.Range(0.5f, 0.78f);
         const float u = r.Unit();
         s.height = c.minHeight + (c.maxHeight - c.minHeight) * u * u;
-        s.bottom = bottomLand && std::fabs(off) < c.detailArc;
+        const float arc = std::fabs(ArcBetween(c, anchor, theta));
+        s.bottom = arc < c.detailArc;
         const bool near = detail && s.bottom;
         ++towerNumber;
         reach[static_cast<std::size_t>(row)] = Tower(c, solid, glow, r, s, near, towerNumber, sector);
-        // colisiones de las torres a las que se llega caminando (la inclinacion es poca: se ignora)
-        if (near && std::fabs(off) - s.w * 0.5f - 3.0f < c.walk) {
-          const Frame f = FrameAt(c, theta, s.z);
+        // colisiones de las torres a las que se llega caminando: derechas en su propio abajo
+        if (near && arc - s.w * 0.5f - 3.0f < c.walk + c.detailStep) {
           const float hw = (s.w + 6.0f) * 0.5f, hl = (s.l + 6.0f) * 0.5f;
-          out.colliders.push_back({{f.base.x - hw, f.base.y - 5.0f, s.z - hl}, {f.base.x + hw, f.base.y + 60.0f, s.z + hl}, 0.0f});
+          out.solids.push_back({{{-hw, -R - 5.0f, s.z - hl}, {hw, -R + 60.0f, s.z + hl}}, theta, false});
         }
       }
       // puentes entre las dos torres de la columna (cruzan la calle a lo largo)
-      if (detail && bottomLand && std::fabs(off) < c.detailArc) {
+      if (detail && std::fabs(ArcBetween(c, anchor, theta)) < c.detailArc) {
         for (int row = 0; row + 1 < rows; ++row) {
           const float lo = std::min(reach[static_cast<std::size_t>(row)], reach[static_cast<std::size_t>(row) + 1]);
           Rng r(Seed(c.seed, index, 900 + static_cast<int>(li), col, row));
@@ -420,12 +573,11 @@ static CylinderCity::ChunkData BuildChunk(const CityConfig& c, long long index, 
     }
   }
 
-  if (detail) {
+  if (street) {
     // la calle de la avenida: farolas, bancas, quioscos de comida (siempre hay comida)
     auto ground = [&](float x) { return -std::sqrt(R * R - x * x); };
     const Vector3 up{0, 1, 0}, ax{1, 0, 0}, az{0, 0, 1};
     const float edge = c.avenue * 0.5f - 2.0f;
-    const std::string food = lang::Tr(c.foodLabel);
     for (float z = c.lampEvery * 0.5f; z < L; z += c.lampEvery) {
       for (const float side : {-1.0f, 1.0f}) {
         const float x = side * edge;
@@ -449,26 +601,10 @@ static CylinderCity::ChunkData BuildChunk(const CityConfig& c, long long index, 
         }
       }
     }
-    for (float z = c.block * 0.5f; z < L; z += c.block) {
-      Rng r(Seed(c.seed, index, 555, static_cast<int>(z)));
-      const float side = r.Chance(0.5f) ? -1.0f : 1.0f;
-      const float x = side * (edge - 10.0f);
-      const Vector3 base{x, ground(x), z};
-      solid.Box(c.textures.podiums[static_cast<std::size_t>(r.Pick(static_cast<int>(c.textures.podiums.size())))],
-                c.textures.metal, base, up, ax, az, 5.0f, 4.0f, 0.0f, 3.4f, {8.0f, 8.0f}, {0, 0}, 4.0f);
-      solid.Box(c.textures.metal, c.textures.metal, base, up, ax, az, 6.4f, 5.4f, 3.4f, 3.7f, {4.0f, 4.0f}, {0, 0}, 4.0f);
-      const Vector3 n{-side, 0, 0};
-      const Vector3 right{0, 0, side}; // visto desde la avenida
-      const float th = 0.8f;
-      Text(glow, c, food, {x - side * 3.3f, base.y + 3.9f, z - side * TextWidth(food, th) * 0.5f}, right, up, th, n);
-      out.colliders.push_back({{x - 2.6f, base.y - 1.0f, z - 2.1f}, {x + 2.6f, base.y + 3.7f, z + 2.1f}, 0.0f});
-      PointLight l;
-      l.position = {x - side * 4.0f, base.y + 3.0f, z};
-      l.color = {0.68f, 0.81f, 0.9f};
-      l.radius = 12.0f;
-      l.flicker = 0.15f;
-      out.lights.push_back(l);
-    }
+    // una tienda cada 'everySectors' sectores (en los que su numero es multiplo), en la primera manzana
+    const long long number = c.firstSector + index;
+    if (c.store.enabled && ((number % c.store.everySectors) + c.store.everySectors) % c.store.everySectors == 0)
+      Store(c, out, index, c.block * 0.5f, edge);
     // el portico del sector: dos pilares y una viga que cruza la avenida, con "SECTOR N" por las
     // dos caras (se lee al llegar de cualquier lado)
     {
@@ -484,17 +620,15 @@ static CylinderCity::ChunkData BuildChunk(const CityConfig& c, long long index, 
       Text(glow, c, label, {tw * 0.5f, ground(0.0f) + y0 + 1.0f, z - 0.65f}, {-1, 0, 0}, up, th, {0, 0, -1});
       Text(glow, c, label, {-tw * 0.5f, ground(0.0f) + y0 + 1.0f, z + 0.65f}, {1, 0, 0}, up, th, {0, 0, 1});
     }
-    // el suelo que se pisa: escalones finos que siguen la curva (los sube el jugador) y paredes a
-    // los lados de lo que se camina
-    for (float x0 = -c.walk; x0 < c.walk; x0 += 3.0f) {
+  }
+  if (detail) {
+    // el suelo que se pisa, abajo del mundo (el jugador siempre esta ahi; la ciudad gira debajo):
+    // escalones finos que siguen la curva, igual en toda la vuelta
+    auto ground = [&](float x) { return -std::sqrt(R * R - x * x); };
+    for (float x0 = -48.0f; x0 < 48.0f; x0 += 3.0f) {
       const float x1 = x0 + 3.0f;
       const float top = ground(std::max(std::fabs(x0), std::fabs(x1))); // el borde mas alto: nunca se hunde
-      out.colliders.push_back({{x0, top - 6.0f, 0.0f}, {x1, top, L}, 0.0f});
-    }
-    for (const float side : {-1.0f, 1.0f}) {
-      const float x = side * c.walk;
-      out.colliders.push_back({{std::min(x, x + side * 2.0f), ground(x) - 10.0f, 0.0f},
-                               {std::max(x, x + side * 2.0f), ground(x) + 200.0f, L}, 0.0f});
+      out.solids.push_back({{{x0, top - 6.0f, 0.0f}, {x1, top, L}}, 0.0f, true});
     }
   }
 
@@ -508,8 +642,8 @@ static CylinderCity::ChunkData BuildChunk(const CityConfig& c, long long index, 
 CylinderCity::CylinderCity(CityConfig config, RetroEngine& engine) : cfg_(std::move(config)), engine_(engine) {
   if (cfg_.textures.facades.empty())
     throw std::runtime_error("city: 'facades' necesita al menos una textura");
-  if (cfg_.chunkLength <= 0.0f || cfg_.block <= 0.0f || cfg_.radius <= cfg_.maxHeight)
-    throw std::runtime_error("city: 'chunkLength' y 'block' positivos, y 'radius' mayor que 'maxHeight'");
+  if (cfg_.chunkLength <= 0.0f || cfg_.block <= 0.0f || cfg_.detailStep <= 0.0f || cfg_.radius <= cfg_.maxHeight)
+    throw std::runtime_error("city: 'chunkLength', 'block' y 'detailStep' positivos, y 'radius' mayor que 'maxHeight'");
   // la capsula, una sola vez
   ObjData pod;
   Builder b(pod);
@@ -521,6 +655,13 @@ CylinderCity::CylinderCity(CityConfig config, RetroEngine& engine) : cfg_(std::m
       p.positions[i] += 20.0f;
   }
   podModel_ = Upload(pod);
+  // los modelos de la tienda (varios MB de .obj): que los hilos los vayan leyendo desde ya
+  for (const CityConfig::Store::Variant& v : cfg_.store.variants) {
+    engine_.Assets().RequestModel(v.model);
+    engine_.Assets().RequestModel(v.glow);
+  }
+  for (const std::string& p : cfg_.store.plaques)
+    engine_.Assets().RequestModel(p);
 }
 
 CylinderCity::~CylinderCity() = default;
@@ -546,25 +687,53 @@ std::shared_ptr<ModelResource> CylinderCity::Upload(const ObjData& data) {
   return model;
 }
 
+std::shared_ptr<ModelResource> CylinderCity::Model(const std::string& path) {
+  auto& m = models_[path];
+  if (!m) {
+    m = engine_.Assets().GetModel(path);
+    m->SetShader(engine_.Retro().Lit());
+    // mipmaps en sus texturas, como las de la ciudad (de lejos, el promedio; de cerca, igual)
+    ::Model& raw = m->Get(); // el tipo de raylib (aqui Model es esta funcion)
+    for (int i = 0; i < raw.materialCount; ++i) {
+      if (raw.materials[i].maps == nullptr)
+        continue;
+      const Texture2D tx = raw.materials[i].maps[MATERIAL_MAP_DIFFUSE].texture;
+      if (tx.id == 0 || tx.width <= 1)
+        continue;
+      int mips = 1;
+      rlGenTextureMipmaps(tx.id, tx.width, tx.height, tx.format, &mips);
+      rlTextureParameters(tx.id, RL_TEXTURE_MIN_FILTER, RL_TEXTURE_FILTER_NEAREST_MIP_LINEAR);
+    }
+  }
+  return m;
+}
+
 long long CylinderCity::SectorAt(float z) const {
   return cfg_.firstSector + origin_ + static_cast<long long>(std::floor(z / cfg_.chunkLength));
 }
 
 void CylinderCity::Drop(Scene& scene, Chunk& chunk) {
-  for (const std::string& name : chunk.entities)
-    scene.Remove(name);
-  chunk.entities.clear();
+  for (const Piece& p : chunk.pieces)
+    scene.Remove(p.name);
+  for (const auto& [name, door] : chunk.doors)
+    std::erase_if(scene.triggers, [&](const Trigger& t) { return t.name == name; });
+  chunk.pieces.clear();
   chunk.lights.clear();
+  chunk.emitters.clear();
+  chunk.solids.clear();
+  chunk.doors.clear();
+  chunk.interiors.clear();
   chunk.lod = -1;
 }
 
-void CylinderCity::Place(Scene& scene, long long index, int lod, ChunkData data) {
+void CylinderCity::Place(Scene& scene, long long index, int lod, long long anchor, ChunkData data) {
   Chunk& chunk = chunks_[index];
   Drop(scene, chunk);
   const float z0 = static_cast<float>(index - origin_) * cfg_.chunkLength;
   const std::string tag = "~city:" + std::to_string(index) + ":";
 
-  // lo solido (con sus colisiones) y lo que brilla (sin luz: emisivo), y las ventanas aparte
+  // lo solido y lo que brilla (sin luz: emisivo), y las ventanas aparte; las entidades van en el eje
+  // (Turn las gira con la ciudad)
   ObjData windows;
   ObjData glow;
   for (ObjData::Part& p : data.glow.parts)
@@ -580,16 +749,13 @@ void CylinderCity::Place(Scene& scene, long long index, int lod, ChunkData data)
     auto e = std::make_unique<Entity>(tag + part.name, Upload(*part.obj));
     e->transform.position = {0.0f, 0.0f, z0};
     e->emissive = part.emissive;
-    if (std::string(part.name) == "solid")
-      e->colliders = std::move(data.colliders);
-    chunk.entities.push_back(e->Name());
+    chunk.pieces.push_back({e->Name(), {0.0f, 0.0f}, 0.0f});
     scene.Add(std::move(e));
   }
   for (std::size_t k = 0; k < data.pods.size(); ++k) {
     const ChunkData::Pod& p = data.pods[k];
     auto e = std::make_unique<Entity>(tag + "pod" + std::to_string(k), podModel_);
     e->transform.position = {p.position.x, p.position.y, z0 + p.position.z};
-    e->transform.rotation = {0.0f, 0.0f, p.roll};
     e->emissive = true;
     Entity::Drift d;
     d.velocity = {0.0f, 0.0f, p.speed};
@@ -598,14 +764,129 @@ void CylinderCity::Place(Scene& scene, long long index, int lod, ChunkData data)
     d.base = e->transform.position;
     d.ease = 0.0f;
     e->drift = d;
-    chunk.entities.push_back(e->Name());
+    chunk.pieces.push_back({e->Name(), {p.position.x, p.position.y}, p.roll});
     scene.Add(std::move(e));
   }
   for (PointLight l : data.lights) {
     l.position.z += z0;
     chunk.lights.push_back(l);
   }
+  for (Emitter e : data.emitters) {
+    e.position.z += z0;
+    chunk.emitters.push_back(e);
+  }
+  for (Solid b : data.solids) {
+    b.box.min.z += z0;
+    b.box.max.z += z0;
+    chunk.solids.push_back(b);
+  }
+  for (BoundingBox b : data.interiors) {
+    b.min.z += z0;
+    b.max.z += z0;
+    chunk.interiors.push_back(b);
+  }
+  // los modelos ya hechos (la tienda, sus placas); los que se leen, con E dan su mensaje (traducible)
+  for (std::size_t k = 0; k < data.placed.size(); ++k) {
+    const ChunkData::Placed& p = data.placed[k];
+    auto e = std::make_unique<Entity>(tag + "m" + std::to_string(k), Model(p.model));
+    e->transform.position = {p.position.x, p.position.y, z0 + p.position.z};
+    e->transform.rotation = {0.0f, p.yaw, 0.0f};
+    e->emissive = p.emissive;
+    if (!p.message.empty()) {
+      Interaction it;
+      it.prompt = p.prompt;
+      it.range = 4.0f;
+      it.box = p.box;
+      it.actions.push_back(action::Message{p.message, 5.0f});
+      e->interact = std::move(it);
+    }
+    chunk.pieces.push_back({e->Name(), {p.position.x, p.position.y}, 0.0f});
+    scene.Add(std::move(e));
+  }
+  // la campanita de cada puerta: un trigger al cruzarla (Turn lo pone en su sitio)
+  if (!cfg_.store.chime.empty()) {
+    for (std::size_t k = 0; k < data.doors.size(); ++k) {
+      ChunkData::Door d = data.doors[k];
+      d.center.z += z0;
+      Trigger t;
+      t.name = tag + "door" + std::to_string(k);
+      t.on = TriggerEvent::Enter;
+      t.actions.push_back(action::PlaySound{cfg_.store.chime, cfg_.store.chimeVolume});
+      scene.triggers.push_back(std::move(t));
+      chunk.doors.emplace_back(tag + "door" + std::to_string(k), d);
+    }
+  }
   chunk.lod = lod;
+  chunk.anchor = anchor;
+}
+
+void CylinderCity::Turn(Scene& scene) {
+  const float phi = static_cast<float>(phi_);
+  auto rot = [](float x, float y, float deg) {
+    const float a = deg * kDeg, c = std::cos(a), s = std::sin(a);
+    return Vector2{x * c - y * s, x * s + y * c};
+  };
+  auto box = [](Vector3 center, Vector3 half) {
+    WorldBox w;
+    w.center = center;
+    w.halfX = half.x;
+    w.halfZ = half.z;
+    w.bottom = center.y - half.y;
+    w.top = center.y + half.y;
+    return w;
+  };
+  scene.streamedLights.clear();
+  scene.streamedEmitters.clear();
+  scene.streamedBoxes.clear();
+  for (auto& [index, chunk] : chunks_) {
+    for (const Piece& p : chunk.pieces) {
+      Entity* e = scene.Find(p.name);
+      if (!e)
+        continue;
+      const Vector2 w = rot(p.xy.x, p.xy.y, -phi);
+      e->transform.position.x = w.x;
+      e->transform.position.y = w.y;
+      e->transform.rotation.z = p.roll - phi;
+      if (e->drift) {
+        e->drift->base.x = w.x;
+        e->drift->base.y = w.y;
+      }
+    }
+    for (PointLight l : chunk.lights) {
+      const Vector2 w = rot(l.position.x, l.position.y, -phi);
+      l.position.x = w.x;
+      l.position.y = w.y;
+      scene.streamedLights.push_back(l);
+    }
+    for (Emitter e : chunk.emitters) {
+      const Vector2 w = rot(e.position.x, e.position.y, -phi);
+      e.position.x = w.x;
+      e.position.y = w.y;
+      scene.streamedEmitters.push_back(e);
+    }
+    for (const Solid& s : chunk.solids) {
+      Vector3 c = Vector3Scale(Vector3Add(s.box.min, s.box.max), 0.5f);
+      const Vector3 half = Vector3Scale(Vector3Subtract(s.box.max, s.box.min), 0.5f);
+      if (!s.ground) {
+        const Vector2 w = rot(c.x, c.y, s.theta - phi);
+        c.x = w.x;
+        c.y = w.y;
+      }
+      scene.streamedBoxes.push_back(box(c, half));
+    }
+    for (const auto& [name, door] : chunk.doors) {
+      for (Trigger& t : scene.triggers) {
+        if (t.name != name)
+          continue;
+        const Vector2 w = rot(door.center.x, door.center.y, -phi);
+        t.box = box({w.x, w.y, door.center.z}, door.half);
+      }
+    }
+  }
+}
+
+float CylinderCity::AnchorDegrees(long long anchor) const {
+  return static_cast<float>(anchor) * cfg_.detailStep / cfg_.radius / kDeg;
 }
 
 void CylinderCity::ApplyCycle(Scene& scene, float dt) {
@@ -630,29 +911,61 @@ void CylinderCity::ApplyCycle(Scene& scene, float dt) {
   engine_.Retro().SetParams(p);
   const Color win = mix(cy.nightWindows, cy.dayWindows);
   for (auto& [index, chunk] : chunks_) {
-    for (const std::string& name : chunk.entities) {
-      if (name.size() > 8 && name.compare(name.size() - 8, 8, ":windows") == 0) {
-        if (Entity* e = scene.Find(name))
+    for (const Piece& p : chunk.pieces) {
+      if (p.name.size() > 8 && p.name.compare(p.name.size() - 8, 8, ":windows") == 0) {
+        if (Entity* e = scene.Find(p.name))
           e->tint = win;
       }
     }
   }
 }
 
-float CylinderCity::Update(Scene& scene, Vector3 focus, float dt) {
+CylinderCity::Recenter CylinderCity::Update(Scene& scene, Vector3 focus, float dt, bool carried) {
   const float L = cfg_.chunkLength;
-  // recentrar: si se alejo mas de cuatro trozos del origen, todo se mueve un numero entero de trozos
-  float shift = 0.0f;
+  Recenter out;
+  bool changed = false;
+  // recentrar en Z: si se alejo mas de cuatro trozos del origen, todo se mueve un numero entero de trozos
   const long long away = static_cast<long long>(std::floor(focus.z / L));
   if (std::llabs(away) >= 4) {
     origin_ += away;
-    shift = static_cast<float>(away) * L;
-    scene.ShiftZ(-shift);
+    out.dz = static_cast<float>(away) * L;
+    scene.ShiftZ(-out.dz);
     for (auto& [index, chunk] : chunks_) {
       for (PointLight& l : chunk.lights)
-        l.position.z -= shift;
+        l.position.z -= out.dz;
+      for (Emitter& e : chunk.emitters)
+        e.position.z -= out.dz;
+      for (Solid& s : chunk.solids) {
+        s.box.min.z -= out.dz;
+        s.box.max.z -= out.dz;
+      }
+      for (auto& [name, door] : chunk.doors)
+        door.center.z -= out.dz;
+      for (BoundingBox& b : chunk.interiors) {
+        b.min.z -= out.dz;
+        b.max.z -= out.dz;
+      }
     }
-    focus.z -= shift;
+    focus.z -= out.dz;
+    changed = true;
+  }
+  // girar: lo que se movio a lo ancho, la ciudad gira para que quien anda vuelva a estar abajo
+  if (carried) {
+    const double alpha = std::atan2(static_cast<double>(focus.x), -static_cast<double>(focus.y)) / kDeg;
+    if (alpha != 0.0) {
+      phi_ = std::remainder(phi_ + alpha, 360.0);
+      out.turn = static_cast<float>(-alpha);
+      focus = {0.0f, -std::hypot(focus.x, focus.y), focus.z};
+      changed = true;
+    }
+  }
+  // el paso de detalle: se cambia al pasar tres cuartos de paso (y no se rehace a cada vaiven)
+  {
+    const double arc = phi_ * kDeg * cfg_.radius, step = cfg_.detailStep;
+    const double circle = 2.0 * PI * cfg_.radius;
+    const double off = std::remainder(arc - static_cast<double>(anchor_) * step, circle);
+    if (std::fabs(off) > step * 0.75)
+      anchor_ = std::llround(std::remainder(arc, circle) / step);
   }
   const long long here = origin_ + static_cast<long long>(std::floor(focus.z / L));
 
@@ -660,17 +973,20 @@ float CylinderCity::Update(Scene& scene, Vector3 focus, float dt) {
     const long long d = std::llabs(i - here);
     return d <= cfg_.viewChunks ? (d <= cfg_.detailChunks ? 1 : 0) : -1;
   };
+  auto key = [&](long long i, int lod) { return std::make_tuple(i, lod, lod == 1 ? anchor_ : 0ll); };
 
   // al empezar, los de alrededor ya hechos (sin esperar a los hilos)
   if (first_) {
     first_ = false;
     for (long long i = here - 2; i <= here + 2; ++i)
-      Place(scene, i, wanted(i), BuildChunk(cfg_, i, wanted(i) == 1));
+      Place(scene, i, wanted(i), anchor_, BuildChunk(cfg_, i, wanted(i) == 1, AnchorDegrees(anchor_)));
+    changed = true;
   }
 
   // fuera los que ya no hacen falta
   for (auto it = chunks_.begin(); it != chunks_.end();) {
     if (wanted(it->first) < 0) {
+      changed = true;
       Drop(scene, it->second);
       it = chunks_.erase(it);
     } else {
@@ -682,39 +998,49 @@ float CylinderCity::Update(Scene& scene, Vector3 focus, float dt) {
     for (const long long i : {here - d, here + d}) {
       const int lod = wanted(i);
       const auto found = chunks_.find(i);
-      if ((found != chunks_.end() && found->second.lod == lod) || pending_.contains({i, lod}))
+      const bool current = found != chunks_.end() && found->second.lod == lod && (lod != 1 || found->second.anchor == anchor_);
+      if (current || pending_.contains(key(i, lod)))
         continue;
       const CityConfig cfg = cfg_;
-      pending_.emplace(std::make_pair(i, lod),
-                       engine_.Assets().Loader().Submit([cfg, i, lod] { return BuildChunk(cfg, i, lod == 1); }));
+      const float anchor = AnchorDegrees(anchor_);
+      pending_.emplace(key(i, lod),
+                       engine_.Assets().Loader().Submit([cfg, i, lod, anchor] { return BuildChunk(cfg, i, lod == 1, anchor); }));
       if (d == 0)
         break;
     }
   }
   // subir los que esten listos: pocos por fotograma
   int budget = 2;
-  bool lightsChanged = shift != 0.0f;
   for (auto it = pending_.begin(); it != pending_.end() && budget > 0;) {
     if (it->second.wait_for(std::chrono::seconds(0)) != std::future_status::ready) {
       ++it;
       continue;
     }
-    const auto [i, lod] = it->first;
+    const auto [i, lod, anchor] = it->first;
     ChunkData data = it->second.get();
     it = pending_.erase(it);
-    if (wanted(i) != lod)
+    if (wanted(i) != lod || (lod == 1 && anchor != anchor_))
       continue; // ya no hace falta asi
-    Place(scene, i, lod, std::move(data));
-    lightsChanged = true;
+    Place(scene, i, lod, anchor, std::move(data));
+    changed = true;
     --budget;
   }
-  if (lightsChanged) {
-    scene.streamedLights.clear();
-    for (const auto& [index, chunk] : chunks_)
-      scene.streamedLights.insert(scene.streamedLights.end(), chunk.lights.begin(), chunk.lights.end());
+  if (changed)
+    Turn(scene);
+  // dentro de una tienda? (ahi solo suena su musica); las tiendas estan en los ejes de la ciudad
+  {
+    const float a = static_cast<float>(phi_) * kDeg;
+    const Vector3 f{focus.x * std::cos(a) - focus.y * std::sin(a), focus.x * std::sin(a) + focus.y * std::cos(a), focus.z};
+    indoors_ = false;
+    for (const auto& [index, chunk] : chunks_) {
+      for (const BoundingBox& b : chunk.interiors) {
+        if (f.x > b.min.x && f.x < b.max.x && f.z > b.min.z && f.z < b.max.z && f.y > b.min.y && f.y < b.max.y)
+          indoors_ = true;
+      }
+    }
   }
   ApplyCycle(scene, dt);
-  return shift;
+  return out;
 }
 
 } // namespace retro

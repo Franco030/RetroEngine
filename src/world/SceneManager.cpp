@@ -161,11 +161,18 @@ void SceneManager::ApplyEnvironment(const Environment& env) {
   engine_.Retro().SetParams(p);
 }
 
+void SceneManager::PlaySceneMusic(const SceneAudio& a, float fade) {
+  if (a.playlist.empty())
+    engine_.Audio().PlayMusic(a.music, a.musicVolume, fade);
+  else
+    engine_.Audio().PlayShuffle(a.playlist, a.musicVolume, a.musicGap, fade);
+}
+
 void SceneManager::ApplyAudio(const SceneAudio& a) {
   AudioSystem& audio = engine_.Audio();
   audio.ClearEmitters();
   if (musicOverride_.empty())
-    audio.PlayMusic(a.music, a.musicVolume, a.fade);
+    PlaySceneMusic(a, a.fade);
   else
     audio.PlayMusic(musicOverride_, musicOverrideVolume_, a.fade);
   audio.PlayAmbient(a.ambient, a.ambientVolume, a.fade);
@@ -220,9 +227,15 @@ void SceneManager::LoadNow(std::size_t index) {
     tLoad = MsSince(start);
 
     city_.reset(); // la de la escena anterior (sus trozos se iban con ella)
+    engine_.Audio().SetIndoor(1.0f);
+    cityIndoors_ = false;
     scene_ = std::move(next); // la escena anterior se destruye aqui
-    if (scene_->city)
+    if (scene_->city) {
       city_ = std::make_unique<CylinderCity>(*scene_->city, engine_);
+      if (cityStart_)
+        city_->StartAt(*cityStart_);
+    }
+    cityStart_.reset();
     tSwap = MsSince(start);
     index_ = index;
     ++generation_;
@@ -374,8 +387,22 @@ void SceneManager::Update(float dt) {
   if (phase_ != Phase::FadingOut) // jugando o llegando (al irse, la carga ya va a ocurrir)
     StepPrefetch();
 
-  if (scene_ && city_)
-    originShift_ += city_->Update(*scene_, focus_, dt);
+  if (scene_ && city_) {
+    const CylinderCity::Recenter r = city_->Update(*scene_, focus_, dt, std::exchange(carried_, false));
+    originMove_.dz += r.dz;
+    originMove_.turn += r.turn;
+    // dentro de una tienda solo se oye su musica: la de la escena y el ambiente se apagan
+    engine_.Audio().SetIndoor(city_->Indoors() ? 0.0f : 1.0f);
+    // y se pisa otro piso: los pasos de la tienda (mosaico, sala chica) o los de la calle
+    if (city_->Indoors() != cityIndoors_) {
+      cityIndoors_ = city_->Indoors();
+      const CityConfig::Store& st = scene_->city->store;
+      if (cityIndoors_ && !st.footsteps.empty())
+        engine_.Audio().SetFootsteps(st.footsteps, st.footstepVolume);
+      else
+        engine_.Audio().SetFootsteps(scene_->audio.footsteps, scene_->audio.footstepVolume);
+    }
+  }
   if (scene_)
     scene_->Update(dt, focus_);
 }

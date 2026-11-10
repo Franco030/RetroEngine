@@ -574,6 +574,8 @@ int main(int argc, char** argv) {
       d.pitch = player.Pitch();
       d.playTime = playTime;
       d.flags = state.Flags();
+      if (const retro::CylinderCity* c = scenes.City())
+        d.city = retro::SaveData::CityPlace{c->Origin(), c->Phi()};
       return d;
     };
 
@@ -608,6 +610,8 @@ int main(int argc, char** argv) {
       try {
         bool backup = false;
         retro::SaveData data = saves.Read(slot, &backup);
+        if (data.city)
+          scenes.SetCityStart({data.city->origin, data.city->phi});
         scenes.GoToPath(data.scene, data.position, data.yaw);
         pendingLoad = std::move(data);
         activeSlot = slot;
@@ -898,7 +902,7 @@ int main(int argc, char** argv) {
           glide = Glide{camera.Position(), camera.Target(), camera.Up()};
           arrival = false;
           if (const retro::Scene* s = scenes.Current())
-            engine.Audio().PlayMusic(s->audio.music, s->audio.musicVolume, 2.5f);
+            scenes.PlaySceneMusic(s->audio, 2.5f);
           break;
         }
         case kContinue:
@@ -1085,7 +1089,7 @@ int main(int argc, char** argv) {
               }
             }
             scenes.Update(dt);
-            scenes.TakeOriginShift(); // sin jugador (inicio, intro): la camara no se lleva
+            scenes.TakeOriginMove(); // sin jugador (inicio, intro): la camara no se lleva
             if (scenes.Generation() != seenGeneration) {
               seenGeneration = scenes.Generation();
               onSceneChanged();
@@ -1149,11 +1153,16 @@ int main(int argc, char** argv) {
               showColliders = !showColliders;
           }
 
-          scenes.SetFocus(player.Feet());
+          scenes.SetFocus(player.Feet(), true);
           scenes.Update(dt);
-          // la ciudad sin fin recentro el mundo: el jugador va con el (no se nota)
-          if (const float dz = scenes.TakeOriginShift(); dz != 0.0f)
-            player.PlaceFeet({player.Feet().x, player.Feet().y, player.Feet().z - dz});
+          // la ciudad sin fin recentro el mundo (en Z, o girando alrededor del eje): el jugador va con
+          // el, sin perder el paso (no se nota)
+          if (const auto move = scenes.TakeOriginMove(); move.dz != 0.0f || move.turn != 0.0f) {
+            Vector3 f = player.Feet();
+            const float a = move.turn * DEG2RAD;
+            f = {f.x * std::cos(a) - f.y * std::sin(a), f.x * std::sin(a) + f.y * std::cos(a), f.z - move.dz};
+            player.CarryFeet(f);
+          }
           state.Update(dt);
           letterSounds.Update(state, engine.Audio());
 
@@ -1536,8 +1545,9 @@ int main(int argc, char** argv) {
                       4, h - 12.0f, 8.0f, RAYWHITE);
               const Vector3 f = player.Feet();
               const std::string donde = scenes.City()
-                                            ? TextFormat("%.1f, %.1f, %.1f   sector %lld", f.x, f.y, f.z,
-                                                         scenes.City()->SectorAt(f.z))
+                                            ? TextFormat("%.1f, %.1f, %.1f   sector %lld   %.2f grados%s", f.x, f.y, f.z,
+                                                         scenes.City()->SectorAt(f.z), scenes.City()->Phi(),
+                                                         scenes.City()->Indoors() ? "   dentro" : "")
                                             : TextFormat("%.1f, %.1f, %.1f", f.x, f.y, f.z);
               ui.Text(donde, 4, h - 22.0f, 8.0f, RAYWHITE);
             }

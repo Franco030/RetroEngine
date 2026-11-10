@@ -40,6 +40,9 @@ public:
   void Spawn(Vector3 feet, float yawDegrees);
   // Pone los pies en 'feet' sin cambiar hacia donde mira (y sin velocidad): para ir montado.
   void PlaceFeet(Vector3 feet) noexcept;
+  // Lleva los pies a 'feet' sin tocar nada mas (ni velocidad ni suelo): cuando el mundo se recentra
+  // debajo (la ciudad sin fin), el jugador sigue andando como si nada.
+  void CarryFeet(Vector3 feet) noexcept { feet_ = feet; }
   // Solo el raton (mirar), sin moverse ni caer: montado en algo.
   void UpdateLook();
 

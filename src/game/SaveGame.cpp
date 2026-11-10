@@ -49,6 +49,8 @@ std::string Serialize(const SaveData& d) {
     flags[name] = value;
   }
   j["flags"] = flags;
+  if (d.city)
+    j["city"] = {{"origin", d.city->origin}, {"phi", d.city->phi}};
   return j.dump(2);
 }
 
@@ -85,6 +87,13 @@ SaveData Deserialize(const std::string& text) {
       !std::isfinite(d.position.z) || !std::isfinite(d.yaw) || !std::isfinite(d.pitch) ||
       !std::isfinite(d.playTime)) {
     throw std::runtime_error("el guardado contiene valores no finitos");
+  }
+
+  if (j.contains("city")) {
+    const json& c = j.at("city");
+    d.city = SaveData::CityPlace{c.at("origin").get<long long>(), c.at("phi").get<double>()};
+    if (!std::isfinite(d.city->phi))
+      throw std::runtime_error("'city.phi' no es finito");
   }
 
   if (j.contains("flags")) {

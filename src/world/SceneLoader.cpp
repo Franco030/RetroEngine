@@ -684,6 +684,58 @@ struct SoundSpec {
 
 // "city": la ciudad sin fin dentro de un cilindro (CylinderCity). Las texturas se comprueban aqui:
 // la ciudad las pide mientras se juega y ahi un archivo que falta seria un error a destiempo.
+// "building": { "kind": "oficinas" | "departamentos" | "hotel", "layout": 0..2, "floorHeight": 3.6,
+//               "textures": { floor, corridor, lobby, wall, corridorWall, ceiling, light, concrete, metal,
+//                             wood, window, fabric, fabric2, bed, screen, counter, plant, mail, kitchen,
+//                             partition, rug },
+//               "glyphs": { "texture": ..., "order": "0123...", "cols": 8, "rows": 5 },
+//               "stairDoor": "models/...obj", "exitDoor": "models/...obj" }
+BuildingConfig ReadBuilding(const json& j, const AssetManager& assets) {
+  BuildingConfig b;
+  auto exists = [&](const std::string& what, const std::string& path) {
+    if (!FileExists(assets.Resolve(path).c_str()))
+      throw std::runtime_error("building: no existe '" + what + "': " + path);
+    return path;
+  };
+  const std::string kind = j.at("kind").get<std::string>();
+  if (kind == "oficinas")
+    b.kind = BuildingConfig::Kind::Offices;
+  else if (kind == "departamentos")
+    b.kind = BuildingConfig::Kind::Apartments;
+  else if (kind == "hotel")
+    b.kind = BuildingConfig::Kind::Hotel;
+  else
+    throw std::runtime_error("building: 'kind' es oficinas, departamentos u hotel");
+  b.layout = j.value("layout", 0);
+  if (b.layout < 0 || b.layout > 2)
+    throw std::runtime_error("building: 'layout' va de 0 a 2");
+  b.floorHeight = j.value("floorHeight", b.floorHeight);
+  if (b.floorHeight < 3.2f)
+    throw std::runtime_error("building: 'floorHeight' de 3.2 m o mas (cabe el plafon)");
+  const json& t = j.at("textures");
+  BuildingConfig::Textures& T = b.textures;
+  const std::pair<const char*, std::string*> roles[] = {
+      {"floor", &T.floor},       {"corridor", &T.corridor}, {"lobby", &T.lobby},       {"wall", &T.wall},
+      {"corridorWall", &T.corridorWall}, {"ceiling", &T.ceiling}, {"light", &T.light}, {"concrete", &T.concrete},
+      {"metal", &T.metal},       {"wood", &T.wood},         {"window", &T.window},     {"fabric", &T.fabric},
+      {"fabric2", &T.fabric2},   {"bed", &T.bed},           {"screen", &T.screen},     {"counter", &T.counter},
+      {"plant", &T.plant},       {"mail", &T.mail},         {"kitchen", &T.kitchen},   {"partition", &T.partition},
+      {"rug", &T.rug}};
+  for (const auto& [key, out] : roles)
+    *out = exists(std::string("textures.") + key, t.at(key).get<std::string>());
+  const json& g = j.at("glyphs");
+  b.glyphs.texture = exists("glyphs", g.at("texture").get<std::string>());
+  b.glyphs.glyphs = g.at("order").get<std::string>();
+  b.glyphs.cols = std::max(1, g.value("cols", 8));
+  b.glyphs.rows = std::max(1, g.value("rows", 5));
+  b.stairDoor = exists("stairDoor", j.at("stairDoor").get<std::string>());
+  b.exitDoor = exists("exitDoor", j.at("exitDoor").get<std::string>());
+  b.openPrompt = j.value("openPrompt", b.openPrompt);
+  b.exitPrompt = j.value("exitPrompt", b.exitPrompt);
+  b.roofPrompt = j.value("roofPrompt", b.roofPrompt);
+  return b;
+}
+
 CityConfig ReadCity(const json& j, const AssetManager& assets) {
   CityConfig c;
   c.radius = j.value("radius", c.radius);
@@ -747,6 +799,72 @@ CityConfig ReadCity(const json& j, const AssetManager& assets) {
   c.textures.pod = tex("pod");
   c.textures.metal = tex("metal");
   c.textures.lamp = tex("lamp");
+
+  if (j.contains("interiors")) { // por dentro de las torres
+    const json& ji = j.at("interiors");
+    auto scenes = [&](const char* key) {
+      std::vector<std::string> out = ji.at(key).get<std::vector<std::string>>();
+      for (const std::string& p : out) {
+        if (!FileExists(assets.Resolve(p).c_str()))
+          throw std::runtime_error(std::string("city.interiors: no existe la escena de '") + key + "': " + p);
+      }
+      if (out.empty())
+        throw std::runtime_error(std::string("city.interiors: '") + key + "' necesita al menos una escena");
+      return out;
+    };
+    auto model = [&](const char* key) {
+      const std::string p = ji.at(key).get<std::string>();
+      if (!FileExists(assets.Resolve(p).c_str()))
+        throw std::runtime_error(std::string("city.interiors: no existe el modelo '") + key + "': " + p);
+      return p;
+    };
+    CityConfig::Interiors& in = c.interiors;
+    in.offices = scenes("oficinas");
+    in.apartments = scenes("departamentos");
+    in.hotel = scenes("hotel");
+    in.lobbyDoor = model("lobbyDoor");
+    in.roofDoor = model("roofDoor");
+    in.enterPrompt = ji.value("enterPrompt", in.enterPrompt);
+    in.downPrompt = ji.value("downPrompt", in.downPrompt);
+  }
+
+  if (j.contains("storefronts")) { // los locales en 3D de las torres de cerca
+    const json& jf = j.at("storefronts");
+    auto one = [&](const char* key) {
+      const std::string t = jf.at(key).get<std::string>();
+      if (!FileExists(assets.Resolve(t).c_str()))
+        throw std::runtime_error(std::string("city.storefronts: no existe '") + key + "': " + t);
+      return t;
+    };
+    auto many = [&](const char* key) {
+      std::vector<std::string> out;
+      for (const json& f : jf.at(key)) {
+        out.push_back(f.get<std::string>());
+        if (!FileExists(assets.Resolve(out.back()).c_str()))
+          throw std::runtime_error(std::string("city.storefronts: no existe '") + key + "': " + out.back());
+      }
+      if (out.empty())
+        throw std::runtime_error(std::string("city.storefronts: '") + key + "' necesita al menos una");
+      return out;
+    };
+    CityConfig::Storefronts& sf = c.storefronts;
+    sf.arc = jf.value("arc", sf.arc);
+    sf.tops = many("tops");
+    if (sf.tops.size() != c.textures.podiums.size())
+      throw std::runtime_error("city.storefronts: 'tops' necesita una por cada textura de 'podiums'");
+    sf.shops = many("shops");
+    sf.shutters = many("shutters");
+    sf.awnings = many("awnings");
+    sf.signs = many("signs");
+    sf.lobbies = many("lobbies");
+    sf.boards = one("boards");
+    sf.dark = one("dark");
+    sf.pillar = one("pillar");
+    sf.frame = one("frame");
+    sf.floor = one("floor");
+    sf.wall = one("wall");
+    sf.ceiling = one("ceiling");
+  }
 
   if (j.contains("store")) { // la tienda de COMIDA (se entra)
     const json& js = j.at("store");
@@ -1285,6 +1403,10 @@ void LoadSceneFromJson(const nlohmann::json& root, const std::string& relativePa
     if (root.contains("city")) {
       context = "city";
       scene.city = ReadCity(root.at("city"), engine.Assets());
+    }
+    if (root.contains("building")) {
+      context = "building";
+      scene.building = ReadBuilding(root.at("building"), engine.Assets());
     }
     if (root.contains("photo")) {
       context = "photo";

@@ -4,6 +4,8 @@
 #include "core/RetroEngine.hpp"
 #include "game/Localization.hpp"
 #include "world/Entity.hpp"
+#include "world/MeshBuilder.hpp"
+#include "world/MeshUpload.hpp"
 #include "world/Scene.hpp"
 
 #include <raymath.h>
@@ -21,121 +23,11 @@ namespace retro {
 namespace {
 
 constexpr float kDeg = PI / 180.0f;
+using gen::Builder;
+using gen::Mix;
+using gen::Rng;
+using gen::Seed;
 
-// --------------------------------------------------------------------------- azar con semilla
-// Cada trozo sale de su numero: la misma semilla, la misma ciudad (splitmix64).
-std::uint64_t Mix(std::uint64_t x) {
-  x += 0x9E3779B97F4A7C15ull;
-  x = (x ^ (x >> 30)) * 0xBF58476D1CE4E5B9ull;
-  x = (x ^ (x >> 27)) * 0x94D049BB133111EBull;
-  return x ^ (x >> 31);
-}
-
-class Rng {
-public:
-  explicit Rng(std::uint64_t seed) : s_(Mix(seed)) {}
-  std::uint64_t Next() { return s_ = Mix(s_); }
-  float Unit() { return static_cast<float>(Next() >> 40) / static_cast<float>(1ull << 24); }
-  float Range(float a, float b) { return a + (b - a) * Unit(); }
-  bool Chance(float p) { return Unit() < p; }
-  int Pick(int n) { return static_cast<int>(Next() % static_cast<std::uint64_t>(std::max(1, n))); }
-
-private:
-  std::uint64_t s_;
-};
-
-std::uint64_t Seed(std::uint64_t base, long long chunk, int a, int b = 0, int c = 0) {
-  std::uint64_t h = Mix(base ^ static_cast<std::uint64_t>(chunk) * 0xD6E8FEB86659FD93ull);
-  h = Mix(h ^ (static_cast<std::uint64_t>(a) << 1));
-  h = Mix(h ^ (static_cast<std::uint64_t>(b) << 17));
-  return Mix(h ^ (static_cast<std::uint64_t>(c) << 33));
-}
-
-// --------------------------------------------------------------------------- geometria
-// Arma un ObjData parte a parte (una por textura). Las uv se dan con v hacia arriba en la imagen,
-// como en un .obj; aqui se invierten, como hace el lector de .obj para raylib.
-class Builder {
-public:
-  explicit Builder(ObjData& data) : data_(data) {}
-
-  ObjData::Part& Part(const std::string& texture) {
-    for (ObjData::Part& p : data_.parts) {
-      if (p.texture == texture)
-        return p;
-    }
-    ObjData::Part p;
-    p.material = texture;
-    p.texture = texture;
-    data_.parts.push_back(std::move(p));
-    return data_.parts.back();
-  }
-
-  // 'n': hacia donde debe mirar la cara (si las esquinas vienen al reves, se dan la vuelta).
-  void Quad(const std::string& tex, Vector3 a, Vector3 b, Vector3 c, Vector3 d, Vector2 ua, Vector2 ub,
-            Vector2 uc, Vector2 ud, Vector3 n) {
-    if (tex.empty())
-      return;
-    if (Vector3DotProduct(Vector3CrossProduct(Vector3Subtract(b, a), Vector3Subtract(c, a)), n) < 0.0f) {
-      std::swap(b, d);
-      std::swap(ub, ud);
-    }
-    ObjData::Part& p = Part(tex);
-    auto push = [&](Vector3 v, Vector2 t) {
-      p.positions.insert(p.positions.end(), {v.x, v.y, v.z});
-      p.texcoords.insert(p.texcoords.end(), {t.x, 1.0f - t.y});
-      p.normals.insert(p.normals.end(), {n.x, n.y, n.z});
-    };
-    push(a, ua);
-    push(b, ub);
-    push(c, uc);
-    push(a, ua);
-    push(c, uc);
-    push(d, ud);
-  }
-
-  // Una caja que crece desde 'base' hacia 'up', de h0 a h1: los lados con 'side' (uv: 'tile' m por
-  // vuelta de textura, desplazadas 'off') partidos en tramos de 'seg' m de alto (el mapeo afin
-  // de la PS1 deforma mucho los triangulos grandes), y la tapa con 'top' (si hay).
-  void Box(const std::string& side, const std::string& top, Vector3 base, Vector3 up, Vector3 across,
-           Vector3 along, float w, float l, float h0, float h1, Vector2 tile, Vector2 off, float seg) {
-    const float hw = w * 0.5f, hl = l * 0.5f;
-    auto p = [&](float a, float b, float h) {
-      return Vector3Add(base, Vector3Add(Vector3Scale(across, a), Vector3Add(Vector3Scale(along, b), Vector3Scale(up, h))));
-    };
-    const struct {
-      float a0, b0, a1, b1;
-      Vector3 n;
-      float span;
-    } faces[4] = {{-hw, -hl, hw, -hl, Vector3Negate(along), w},
-                  {hw, -hl, hw, hl, across, l},
-                  {hw, hl, -hw, hl, along, w},
-                  {-hw, hl, -hw, -hl, Vector3Negate(across), l}};
-    const int pieces = std::max(1, static_cast<int>(std::ceil((h1 - h0) / std::max(seg, 1.0f))));
-    for (const auto& f : faces) {
-      // a lo ancho tambien, en tramos de 'seg' (las caras de una torre miden hasta 90 m)
-      const int across_n = std::max(1, static_cast<int>(std::ceil(f.span / std::max(seg, 1.0f))));
-      for (int j = 0; j < across_n; ++j) {
-        const float ta = static_cast<float>(j) / across_n, tb = static_cast<float>(j + 1) / across_n;
-        const float a0 = f.a0 + (f.a1 - f.a0) * ta, a1 = f.a0 + (f.a1 - f.a0) * tb;
-        const float b0 = f.b0 + (f.b1 - f.b0) * ta, b1 = f.b0 + (f.b1 - f.b0) * tb;
-        const float u0 = off.x + f.span * ta / tile.x, u1 = off.x + f.span * tb / tile.x;
-        for (int k = 0; k < pieces; ++k) {
-          const float ha = h0 + (h1 - h0) * k / pieces, hb = h0 + (h1 - h0) * (k + 1) / pieces;
-          const float va = ha / tile.y + off.y, vb = hb / tile.y + off.y;
-          Quad(side, p(a0, b0, ha), p(a1, b1, ha), p(a1, b1, hb), p(a0, b0, hb), {u0, va}, {u1, va}, {u1, vb},
-               {u0, vb}, f.n);
-        }
-      }
-    }
-    if (!top.empty()) {
-      Quad(top, p(-hw, -hl, h1), p(hw, -hl, h1), p(hw, hl, h1), p(-hw, hl, h1), {0, 0}, {w / 24.0f, 0},
-           {w / 24.0f, l / 24.0f}, {0, l / 24.0f}, up);
-    }
-  }
-
-private:
-  ObjData& data_;
-};
 
 // --------------------------------------------------------------------------- el trozo
 struct Frame {
@@ -156,27 +48,14 @@ Vector3 At(const Frame& f, float a, float b, float h) {
   return Vector3Add(f.base, Vector3Add(Vector3Scale(f.across, a), Vector3Add(Vector3Scale(f.along, b), Vector3Scale(f.up, h))));
 }
 
-// Una frase con la rejilla de letras ('glyphs'): de izquierda a derecha por 'right', de 'height'
-// de alto, empezando en 'origin' (abajo a la izquierda), mirando hacia 'n'.
+// La rejilla de letras de la ciudad ('grid': otra rejilla con el mismo orden, para otro fondo).
 void Text(Builder& b, const CityConfig& c, const std::string& text, Vector3 origin, Vector3 right, Vector3 up,
           float height, Vector3 n, const std::string& grid = {}) {
-  const std::string& atlas = grid.empty() ? c.textures.glyphs : grid; // la rejilla de letras (hay una por fondo)
-  const float w = height * 0.62f;
-  for (std::size_t i = 0; i < text.size(); ++i) {
-    const std::size_t g = c.glyphs.find(static_cast<char>(std::toupper(static_cast<unsigned char>(text[i]))));
-    if (g == std::string::npos)
-      continue; // un espacio o algo que no esta: hueco
-    const int col = static_cast<int>(g) % c.glyphCols, row = static_cast<int>(g) / c.glyphCols;
-    const float u0 = static_cast<float>(col) / c.glyphCols, u1 = static_cast<float>(col + 1) / c.glyphCols;
-    const float vt = 1.0f - static_cast<float>(row) / c.glyphRows, vb = 1.0f - static_cast<float>(row + 1) / c.glyphRows;
-    const Vector3 o = Vector3Add(origin, Vector3Scale(right, w * 1.08f * static_cast<float>(i)));
-    b.Quad(atlas, o, Vector3Add(o, Vector3Scale(right, w)),
-           Vector3Add(o, Vector3Add(Vector3Scale(right, w), Vector3Scale(up, height))), Vector3Add(o, Vector3Scale(up, height)),
-           {u0, vb}, {u1, vb}, {u1, vt}, {u0, vt}, n);
-  }
+  gen::Text(b, {grid.empty() ? c.textures.glyphs : grid, c.glyphs, c.glyphCols, c.glyphRows}, text, origin, right, up,
+            height, n);
 }
 
-float TextWidth(const std::string& text, float height) { return height * 0.62f * 1.08f * static_cast<float>(text.size()); }
+using gen::TextWidth;
 
 // Un letrero de neon (una celda de la rejilla 4x4 de 'neon') en la cara de normal 'n'.
 void Neon(Builder& b, const CityConfig& c, Rng& r, Vector3 center, Vector3 right, Vector3 up, float w, float h,
@@ -201,13 +80,203 @@ struct TowerSpot {
   float z;   // en el trozo
   float w, l, height;
   bool bottom;
+  bool fronts = false; // el pie con locales en 3D (CityConfig::storefronts)
 };
+
+// Los locales en 3D al pie de una torre de cerca (el zocalo de W x Lz m, en el marco 'f', con la base
+// hundida 2 m): por cada cara, pilastras en las esquinas y entre local y local, y cada local de 6 a 9 m
+// de ancho con su escalon, su caja de luz (o una placa de lamina si esta cerrado) y uno de cuatro:
+// aparador hundido con el local con luz detras (y a veces toldo), cortina de acero, tapiado con triplay,
+// o vacio y oscuro. La tierra es curva: cada local se apoya en lo mas alto de su tramo. Devuelve la
+// altura (en el marco de la torre) donde acaba la cornisa: de ahi para arriba, el zocalo de oficinas.
+// La puerta del vestibulo de una torre (la deja Storefronts en el local de en medio de 'entranceFace').
+struct Entrance {
+  bool ok = false;
+  Vector3 door;      // donde va el modelo de la puerta (en la ciudad)
+  float yaw = 0.0f;  // su giro en los ejes de la torre (el frente mira hacia fuera)
+  float across = 0.0f, along = 0.0f, floor = 0.0f; // fuera de la puerta, en los ejes de la torre
+  float sign = 1.0f; // hacia que lado de 'across' mira
+};
+
+float Storefronts(const CityConfig& c, Builder& solid, Builder& glow, Rng& r, const Frame& f, float W, float Lz,
+                  int entranceFace = -1, Entrance* entrance = nullptr) {
+  const CityConfig::Storefronts& sf = c.storefronts;
+  constexpr float kSink = 2.0f;
+  auto groundAt = [&](float across) { return kSink + across * across / (2.0f * c.radius); };
+  const float hTop = groundAt(W * 0.5f) + 6.2f;
+  const float hO = hTop - 1.6f; // lo alto de los huecos (encima, la caja de luz)
+
+  struct Face {
+    Vector3 n;    // hacia fuera
+    Vector3 t;    // la derecha de quien la mira desde fuera
+    float half;   // del centro de la torre a la cara
+    float len;    // lo que mide
+    bool across;  // la cara mira a lo ancho (su tierra esta a una sola altura)
+  };
+  auto face = [&](Vector3 n, float half, float len, bool across) {
+    return Face{n, Vector3CrossProduct(Vector3Negate(n), f.up), half, len, across};
+  };
+  const Face faces[4] = {face(f.across, W * 0.5f, Lz, true), face(Vector3Negate(f.across), W * 0.5f, Lz, true),
+                         face(f.along, Lz * 0.5f, W, false), face(Vector3Negate(f.along), Lz * 0.5f, W, false)};
+
+  for (int fi = 0; fi < 4; ++fi) {
+    const Face& fc = faces[fi];
+    // un punto de la cara: x a la derecha, h hacia arriba, k hacia dentro (negativo: fuera)
+    auto P = [&](float x, float h, float k) {
+      return Vector3Add(f.base, Vector3Add(Vector3Scale(fc.n, fc.half - k),
+                                           Vector3Add(Vector3Scale(fc.t, x), Vector3Scale(f.up, h))));
+    };
+    auto box = [&](Builder& b, const std::string& side, const std::string& top, float x0, float x1, float h0, float h1,
+                   float k0, float k1, Vector2 tile) {
+      b.Box(side, top, P((x0 + x1) * 0.5f, 0.0f, (k0 + k1) * 0.5f), f.up, fc.t, fc.n, x1 - x0, k1 - k0, h0, h1, tile,
+            {0, 0}, 50.0f);
+    };
+    // un rectangulo vertical de frente (mira hacia fuera) a la profundidad k
+    auto front = [&](Builder& b, const std::string& tex, float x0, float x1, float h0, float h1, float k, Vector2 uv1) {
+      b.Quad(tex, P(x0, h0, k), P(x1, h0, k), P(x1, h1, k), P(x0, h1, k), {0, 0}, {uv1.x, 0}, uv1, {0, uv1.y}, fc.n);
+    };
+    // un lado de un hueco, de k0 a k1 (mira hacia 'dir': +1 a la derecha)
+    auto side = [&](const std::string& tex, float x, float h0, float h1, float k0, float k1, float dir) {
+      const float d = k1 - k0;
+      solid.Quad(tex, P(x, h0, k0), P(x, h0, k1), P(x, h1, k1), P(x, h1, k0), {0, 0}, {d / 2.0f, 0},
+                 {d / 2.0f, (h1 - h0) / 2.0f}, {0, (h1 - h0) / 2.0f}, Vector3Scale(fc.t, dir));
+    };
+    auto flat = [&](const std::string& tex, float x0, float x1, float h, float k0, float k1, bool facingUp) {
+      solid.Quad(tex, P(x0, h, k0), P(x1, h, k0), P(x1, h, k1), P(x0, h, k1), {0, 0}, {(x1 - x0) / 2.0f, 0},
+                 {(x1 - x0) / 2.0f, (k1 - k0) / 2.0f}, {0, (k1 - k0) / 2.0f}, facingUp ? f.up : Vector3Negate(f.up));
+    };
+    auto ground = [&](float x) { return fc.across ? groundAt(fc.half) : groundAt(x); };
+
+    // las esquinas y la cornisa
+    const float L = fc.len;
+    box(solid, sf.pillar, sf.pillar, -L * 0.5f, -L * 0.5f + 1.0f, 0.0f, hTop, -0.35f, 0.6f, {2.0f, 4.0f});
+    box(solid, sf.pillar, sf.pillar, L * 0.5f - 1.0f, L * 0.5f, 0.0f, hTop, -0.35f, 0.6f, {2.0f, 4.0f});
+    box(solid, sf.pillar, sf.pillar, -L * 0.5f - 0.35f, L * 0.5f + 0.35f, hTop, hTop + 0.55f, -0.55f, 0.6f, {2.0f, 4.0f});
+
+    const float inner = L - 2.0f;
+    const int bays = std::max(1, static_cast<int>(std::lround(inner / 8.0f)));
+    const float bw = (inner - (bays - 1) * 0.7f) / bays;
+    for (int b = 0; b < bays; ++b) {
+      const float xa = -L * 0.5f + 1.0f + b * (bw + 0.7f), xb = xa + bw;
+      if (b > 0)
+        box(solid, sf.pillar, sf.pillar, xa - 0.7f, xa, 0.0f, hTop, -0.25f, 0.6f, {2.0f, 4.0f});
+      const float fl = std::max(ground(xa), ground(xb)) + 0.12f; // el piso del local
+      // el escalon, el muro de encima del hueco y la caja de luz
+      box(solid, sf.pillar, sf.pillar, xa, xb, 0.0f, fl, -0.6f, 0.3f, {2.0f, 2.0f});
+      front(solid, sf.pillar, xa, xb, hO, hTop, 0.0f, {bw / 2.0f, (hTop - hO) / 2.0f});
+      if (fi == entranceFace && b == bays / 2 && entrance && !sf.lobbies.empty()) {
+        // el vestibulo: hundido 2.2 m, con luz, vidrio a los lados y la puerta (un modelo) en medio
+        const float D = 2.2f, xc = (xa + xb) * 0.5f;
+        const std::string& back = sf.lobbies[static_cast<std::size_t>(r.Pick(static_cast<int>(sf.lobbies.size())))];
+        flat(sf.floor, xa, xb, fl, 0.0f, D, true);
+        flat(sf.ceiling, xa, xb, hO, 0.0f, D, false);
+        side(sf.wall, xa, fl, hO, 0.0f, D, 1.0f);
+        side(sf.wall, xb, fl, hO, 0.0f, D, -1.0f);
+        front(glow, back, xa, xb, fl, hO, D, {1.0f, 1.0f});
+        box(solid, c.textures.metal, c.textures.metal, xa + 0.05f, xb - 0.05f, hTop - 1.5f, hTop - 0.2f, -0.3f, 0.0f,
+            {2.0f, 2.0f});
+        for (const float x : {xa, xc - 1.3f, xc + 1.3f, xb})
+          box(solid, sf.frame, sf.frame, x - 0.06f, x + 0.06f, fl, hO, 0.95f, 1.05f, {1.0f, 1.0f});
+        box(solid, sf.frame, sf.frame, xa, xb, fl + 2.75f, fl + 2.85f, 0.95f, 1.05f, {1.0f, 1.0f});
+        box(solid, sf.frame, sf.frame, xa, xc - 1.3f, fl, fl + 0.3f, 0.95f, 1.05f, {1.0f, 1.0f});
+        box(solid, sf.frame, sf.frame, xc + 1.3f, xb, fl, fl + 0.3f, 0.95f, 1.05f, {1.0f, 1.0f});
+        entrance->ok = true;
+        entrance->door = P(xc, fl, 1.0f);
+        entrance->sign = Vector3DotProduct(fc.n, f.across) > 0.0f ? 1.0f : -1.0f;
+        entrance->yaw = entrance->sign > 0.0f ? 90.0f : -90.0f;
+        entrance->across = entrance->sign * (fc.half + 1.6f);
+        entrance->along = Vector3DotProduct(fc.t, f.along) * xc;
+        entrance->floor = fl;
+        continue;
+      }
+      const float u = r.Unit();
+      const bool open = u < 0.45f;
+      box(solid, c.textures.metal, c.textures.metal, xa + 0.05f, xb - 0.05f, hTop - 1.5f, hTop - 0.2f, -0.3f, 0.0f,
+          {2.0f, 2.0f});
+      if (open || r.Chance(0.5f)) {
+        const std::string& sign = sf.signs[static_cast<std::size_t>(r.Pick(static_cast<int>(sf.signs.size())))];
+        front(glow, sign, xa + 0.25f, xb - 0.25f, hTop - 1.4f, hTop - 0.3f, -0.31f, {1.0f, 1.0f});
+      }
+
+      if (u < 0.45f || u >= 0.87f) {
+        // aparador hundido (con luz) o local vacio (oscuro)
+        const bool lit = u < 0.45f;
+        const float D = lit ? 2.6f : 1.8f;
+        const std::string& back = lit ? sf.shops[static_cast<std::size_t>(r.Pick(static_cast<int>(sf.shops.size())))] : sf.dark;
+        flat(lit ? sf.floor : sf.dark, xa, xb, fl, 0.0f, D, true);
+        flat(lit ? sf.ceiling : sf.dark, xa, xb, hO, 0.0f, D, false);
+        side(lit ? sf.wall : sf.dark, xa, fl, hO, 0.0f, D, 1.0f);
+        side(lit ? sf.wall : sf.dark, xb, fl, hO, 0.0f, D, -1.0f);
+        front(lit ? glow : solid, back, xa, xb, fl, hO, D, {1.0f, 1.0f});
+        // la canceleria: zoclo, jambas, travesano y cabezal (con el hueco de la puerta)
+        const float dw = 1.9f, dx0 = r.Range(xa + 0.4f, std::max(xa + 0.4f, xb - dw - 0.4f)), dx1 = dx0 + dw;
+        box(solid, sf.frame, sf.frame, xa, dx0, fl, fl + 0.4f, 0.2f, 0.3f, {1.0f, 1.0f});
+        box(solid, sf.frame, sf.frame, dx1, xb, fl, fl + 0.4f, 0.2f, 0.3f, {1.0f, 1.0f});
+        for (const float x : {xa, dx0, dx1, xb})
+          box(solid, sf.frame, sf.frame, x - 0.05f, x + 0.05f, fl, hO, 0.2f, 0.3f, {1.0f, 1.0f});
+        if (lit) {
+          box(solid, sf.frame, sf.frame, xa, xb, fl + 2.6f, fl + 2.7f, 0.2f, 0.3f, {1.0f, 1.0f});
+          box(solid, sf.frame, sf.frame, xa, xb, hO - 0.1f, hO, 0.2f, 0.3f, {1.0f, 1.0f});
+        }
+        if (lit && r.Chance(0.4f)) {
+          // el toldo: la lona cae 0.6 m en 1.4 m hacia fuera, y su faldon
+          const std::string& lona = sf.awnings[static_cast<std::size_t>(r.Pick(static_cast<int>(sf.awnings.size())))];
+          const float top = hO + 0.05f, low = hO - 0.55f, out = -1.4f;
+          const Vector3 nUp = Vector3Normalize(Vector3Add(Vector3Scale(f.up, 1.4f), Vector3Scale(fc.n, 0.6f)));
+          const float uw = bw / 1.0f;
+          for (const float sgn : {1.0f, -1.0f})
+            solid.Quad(lona, P(xa, top, 0.0f), P(xb, top, 0.0f), P(xb, low, out), P(xa, low, out), {0, 0}, {uw, 0},
+                       {uw, 1}, {0, 1}, Vector3Scale(nUp, sgn));
+          for (const float sgn : {1.0f, -1.0f})
+            solid.Quad(lona, P(xa, low - 0.3f, out), P(xb, low - 0.3f, out), P(xb, low, out), P(xa, low, out), {0, 0},
+                       {uw, 0}, {uw, 0.25f}, {0, 0.25f}, Vector3Scale(fc.n, sgn));
+        }
+      } else if (u < 0.75f) {
+        // cortina de acero, abajo
+        const std::string& cort = sf.shutters[static_cast<std::size_t>(r.Pick(static_cast<int>(sf.shutters.size())))];
+        side(sf.pillar, xa, fl, hO, 0.0f, 0.25f, 1.0f);
+        side(sf.pillar, xb, fl, hO, 0.0f, 0.25f, -1.0f);
+        flat(sf.pillar, xa, xb, fl, 0.0f, 0.25f, true);
+        front(solid, cort, xa, xb, fl, hO - 0.45f, 0.25f, {bw / 4.0f, (hO - 0.45f - fl) / 4.0f});
+        box(solid, sf.frame, sf.frame, xa, xb, hO - 0.5f, hO, -0.05f, 0.3f, {2.0f, 1.0f});
+        for (const float x : {xa + 0.04f, xb - 0.04f})
+          box(solid, sf.frame, sf.frame, x - 0.04f, x + 0.04f, fl, hO - 0.5f, 0.18f, 0.26f, {1.0f, 1.0f});
+      } else {
+        // tapiado: triplay encima del hueco, con lo oscuro detras
+        side(sf.pillar, xa, fl, hO, 0.0f, 0.3f, 1.0f);
+        side(sf.pillar, xb, fl, hO, 0.0f, 0.3f, -1.0f);
+        front(solid, sf.dark, xa, xb, fl, hO, 0.3f, {1.0f, 1.0f});
+        for (float x = xa; x < xb - 0.05f; x += 1.22f) {
+          if (r.Chance(0.12f))
+            continue; // una que se cayo
+          const float x1 = std::min(xb, x + 1.19f);
+          box(solid, sf.boards, sf.boards, x, x1, fl, hO - r.Range(0.0f, 0.4f), -0.05f, 0.0f, {1.22f, 2.44f});
+        }
+      }
+    }
+  }
+  return hTop + 0.55f;
+}
 
 // Una torre: un zocalo con tiendas, el fuste, de cero a tres retranqueos y la corona (maquinas,
 // a veces un mastil con luz). Con 'detail', ademas: cornisas, costillas, tubos, aparatos, neones y
 // su numero. Devuelve hasta donde llega (para los puentes).
+// Lo que la ciudad necesita de una torre con locales en 3D para que se entre y se suba: la puerta del
+// vestibulo, la caseta de la azotea y sus colisiones (en los ejes de la torre: across = x, arriba = y,
+// along = z; la base hundida 2 m, como el zocalo).
+struct TowerTop {
+  bool ok = false;
+  Entrance entrance;
+  float roofH = 0.0f;        // la azotea (alto, en el marco de la torre)
+  Vector3 hutDoor;           // donde va la puerta de la caseta (en la ciudad)
+  float hutX = 0.0f;         // la caseta, en los ejes de la torre
+  float w = 0.0f, l = 0.0f;  // lo que mide la azotea
+  float crown = 0.0f;
+  std::uint64_t seed = 0;
+};
+
 float Tower(const CityConfig& c, Builder& solid, Builder& glow, Rng& r, const TowerSpot& s, bool detail, int number,
-            const std::string& sector) {
+            const std::string& sector, TowerTop* out = nullptr) {
   const Frame f = FrameAt(c, s.theta, s.z, 2.0f); // la base dos metros hundida (la tierra es curva)
   const float seg = detail ? 30.0f : 400.0f; // de cerca, tramos chicos (el mapeo afin); de lejos, enteras
   const std::string& facade = c.textures.facades[static_cast<std::size_t>(r.Pick(static_cast<int>(c.textures.facades.size())))];
@@ -215,12 +284,25 @@ float Tower(const CityConfig& c, Builder& solid, Builder& glow, Rng& r, const To
   const Vector2 off{static_cast<float>(r.Pick(4)) * 0.25f, static_cast<float>(r.Pick(4)) * 0.25f};
 
   // el zocalo
-  const std::string& base = c.textures.podiums[static_cast<std::size_t>(r.Pick(static_cast<int>(c.textures.podiums.size())))];
+  const std::size_t podiumIndex = static_cast<std::size_t>(r.Pick(static_cast<int>(c.textures.podiums.size())));
+  const std::string& base = c.textures.podiums[podiumIndex];
   const std::string& roof = c.textures.roofs[static_cast<std::size_t>(r.Pick(static_cast<int>(c.textures.roofs.size())))];
   const float podium = r.Range(24.0f, 42.0f);
-  // el zocalo: una vuelta de textura cada 28 m (cuatro o cinco locales), corrida al azar
-  solid.Box(base, roof, f.base, f.up, f.across, f.along, s.w + 6.0f, s.l + 6.0f, 0.0f, podium + 2.0f,
-            {28.0f, podium + 2.0f}, {r.Range(0.0f, 1.0f), 0.0f}, seg);
+  const float podiumOff = r.Range(0.0f, 1.0f);
+  // el zocalo: una vuelta de textura cada 28 m (cuatro o cinco locales), corrida al azar; de cerca, los
+  // locales en 3D y encima sus oficinas
+  float frontsTop = 0.0f;
+  if (s.fronts) {
+    Rng sr(Mix(r.State() ^ 0x10CA1E5ull));
+    const int entranceFace = s.off > 0.0f ? 1 : 0; // la cara que da a la avenida (o al centro de su franja)
+    frontsTop = Storefronts(c, solid, glow, sr, f, s.w + 6.0f, s.l + 6.0f, out ? entranceFace : -1,
+                            out ? &out->entrance : nullptr);
+    solid.Box(c.storefronts.tops[podiumIndex], roof, f.base, f.up, f.across, f.along, s.w + 6.0f, s.l + 6.0f, frontsTop,
+              podium + 2.0f, {20.0f, 7.5f}, {podiumOff, 0.0f}, seg);
+  } else {
+    solid.Box(base, roof, f.base, f.up, f.across, f.along, s.w + 6.0f, s.l + 6.0f, 0.0f, podium + 2.0f,
+              {28.0f, podium + 2.0f}, {podiumOff, 0.0f}, seg);
+  }
   float w = s.w, l = s.l, h = podium + 2.0f;
   const int tiers = r.Pick(4);
   for (int t = 0; t <= tiers; ++t) {
@@ -256,6 +338,26 @@ float Tower(const CityConfig& c, Builder& solid, Builder& glow, Rng& r, const To
   solid.Box(c.textures.metal, roof, f.base, f.up, f.across, f.along, w * 0.4f, l * 0.4f, h, h + crown,
             {8.0f, 8.0f}, {0, 0}, seg);
   float reach = h + crown;
+  if (out && s.fronts && out->entrance.ok) {
+    // la azotea a la que se llega: un pretil alrededor y la caseta de la escalera junto a las maquinas
+    for (const float sg : {-1.0f, 1.0f}) {
+      solid.Box(c.storefronts.pillar, c.storefronts.pillar, At(f, sg * (w * 0.5f - 0.15f), 0.0f, 0.0f), f.up, f.across,
+                f.along, 0.3f, l, h, h + 1.1f, {2.0f, 2.0f}, {0, 0}, 40.0f);
+      solid.Box(c.storefronts.pillar, c.storefronts.pillar, At(f, 0.0f, sg * (l * 0.5f - 0.15f), 0.0f), f.up, f.across,
+                f.along, w, 0.3f, h, h + 1.1f, {2.0f, 2.0f}, {0, 0}, 40.0f);
+    }
+    const float hx = w * 0.2f + 1.75f;
+    solid.Box(c.storefronts.pillar, roof, At(f, hx, 0.0f, 0.0f), f.up, f.across, f.along, 3.2f, 3.2f, h, h + 3.0f,
+              {2.0f, 2.0f}, {0, 0}, 10.0f);
+    out->ok = true;
+    out->roofH = h;
+    out->hutX = hx;
+    out->hutDoor = At(f, hx, -1.62f, h);
+    out->w = w;
+    out->l = l;
+    out->crown = crown;
+    out->seed = Mix(r.State() ^ 0xED1F1C10ull);
+  }
   if (r.Chance(0.45f)) {
     const float mast = r.Range(30.0f, 90.0f);
     solid.Box(c.textures.metal, "", f.base, f.up, f.across, f.along, 1.6f, 1.6f, reach, reach + mast, {4.0f, 16.0f}, {0, 0},
@@ -287,7 +389,9 @@ float Tower(const CityConfig& c, Builder& solid, Builder& glow, Rng& r, const To
     const float side = r.Chance(0.5f) ? -1.0f : 1.0f;
     const float half = (k % 2 == 0 ? s.w + 6.0f : s.w) * 0.5f;
     const float face = (k % 2 == 0 ? s.l + 6.0f : s.l) * 0.5f + 0.4f;
-    const float y = k % 2 == 0 ? r.Range(6.0f, podium - 6.0f) : r.Range(podium + 8.0f, podium + 120.0f);
+    float y = k % 2 == 0 ? r.Range(6.0f, podium - 6.0f) : r.Range(podium + 8.0f, podium + 120.0f);
+    if (s.fronts && k % 2 == 0)
+      y = std::max(y, frontsTop + 4.0f); // no encima de los locales
     const bool tall = r.Chance(0.5f);
     const float sw = tall ? r.Range(4.0f, 7.0f) : r.Range(10.0f, 22.0f);
     const float sh = tall ? r.Range(14.0f, 30.0f) : r.Range(4.0f, 8.0f);
@@ -300,7 +404,7 @@ float Tower(const CityConfig& c, Builder& solid, Builder& glow, Rng& r, const To
   const float ph = 2.6f;
   const Vector3 n = Vector3Scale(f.across, toward);
   const Vector3 right = Vector3Scale(f.along, -toward); // de izquierda a derecha, visto desde fuera
-  const Vector3 o = At(f, toward * ((s.w + 6.0f) * 0.5f + 0.3f), 0.0f, 9.0f);
+  const Vector3 o = At(f, toward * ((s.w + 6.0f) * 0.5f + 0.3f), 0.0f, s.fronts ? frontsTop + 0.8f : 9.0f);
   Text(glow, c, plate, Vector3Subtract(o, Vector3Scale(right, TextWidth(plate, ph) * 0.5f)), right, f.up, ph, n);
   return reach;
 }
@@ -536,11 +640,63 @@ static CylinderCity::ChunkData BuildChunk(const CityConfig& c, long long index, 
         const float arc = std::fabs(ArcBetween(c, anchor, theta));
         s.bottom = arc < c.detailArc;
         const bool near = detail && s.bottom;
+        s.fronts = near && arc < c.storefronts.arc && c.storefronts.Enabled(c.textures.podiums.size());
         ++towerNumber;
-        reach[static_cast<std::size_t>(row)] = Tower(c, solid, glow, r, s, near, towerNumber, sector);
+        TowerTop topInfo;
+        const bool enterable = s.fronts && c.interiors.Enabled();
+        reach[static_cast<std::size_t>(row)] =
+            Tower(c, solid, glow, r, s, near, towerNumber, sector, enterable ? &topInfo : nullptr);
+        if (topInfo.ok) {
+          // la torre por dentro: tipo y variante con su semilla; un piso cada 3.6 m
+          Rng tr(topInfo.seed);
+          const std::vector<std::string>* kinds[3] = {&c.interiors.offices, &c.interiors.apartments, &c.interiors.hotel};
+          const std::vector<std::string>& list = *kinds[tr.Pick(3)];
+          BuildingVisit v;
+          v.interior = list[static_cast<std::size_t>(tr.Pick(static_cast<int>(list.size())))];
+          v.floors = std::max(12, static_cast<int>(topInfo.roofH / 3.6f));
+          v.seed = topInfo.seed;
+          v.chunk = index;
+          v.theta = theta;
+          const float base = -R - 2.0f; // la base de la torre, con la torre abajo
+          const Entrance& e = topInfo.entrance;
+          v.door = {e.across, base + e.floor + 0.05f, s.z + e.along};
+          v.doorYaw = std::atan2(-e.sign, 0.0f) * RAD2DEG; // de espaldas a la puerta
+          v.roof = {topInfo.hutX, base + topInfo.roofH + 0.05f, s.z - 3.0f};
+          v.roofYaw = 0.0f; // de espaldas a la caseta (mira a -Z)
+          const BoxCollider doorBox{{-1.3f, 0.0f, -0.1f}, {1.3f, 2.8f, 0.3f}, 0.0f};
+          CylinderCity::ChunkData::Placed lobbyDoor;
+          lobbyDoor.model = c.interiors.lobbyDoor;
+          lobbyDoor.position = e.door;
+          lobbyDoor.yaw = e.yaw;
+          lobbyDoor.roll = theta;
+          lobbyDoor.box = doorBox;
+          lobbyDoor.prompt = c.interiors.enterPrompt;
+          lobbyDoor.actions.push_back(action::EnterBuilding{v, false});
+          out.placed.push_back(lobbyDoor);
+          CylinderCity::ChunkData::Placed hutDoor;
+          hutDoor.model = c.interiors.roofDoor;
+          hutDoor.position = topInfo.hutDoor;
+          hutDoor.yaw = 180.0f;
+          hutDoor.roll = theta;
+          hutDoor.box = {{-0.6f, 0.0f, -0.1f}, {0.6f, 2.2f, 0.3f}, 0.0f};
+          hutDoor.prompt = c.interiors.downPrompt;
+          hutDoor.actions.push_back(action::EnterBuilding{v, true});
+          out.placed.push_back(hutDoor);
+          // la azotea: losa, pretiles, las maquinas y la caseta (derechas en el abajo de la torre)
+          const float y0 = base + topInfo.roofH, hw = topInfo.w * 0.5f, hl = topInfo.l * 0.5f;
+          auto add = [&](Vector3 a, Vector3 b) { out.solids.push_back({{{a.x, a.y, s.z + a.z}, {b.x, b.y, s.z + b.z}}, theta, false}); };
+          add({-hw, y0 - 3.0f, -hl}, {hw, y0, hl});
+          add({-hw, y0, -hl}, {-hw + 0.3f, y0 + 1.1f, hl});
+          add({hw - 0.3f, y0, -hl}, {hw, y0 + 1.1f, hl});
+          add({-hw, y0, -hl}, {hw, y0 + 1.1f, -hl + 0.3f});
+          add({-hw, y0, hl - 0.3f}, {hw, y0 + 1.1f, hl});
+          add({-topInfo.w * 0.2f, y0, -topInfo.l * 0.2f}, {topInfo.w * 0.2f, y0 + topInfo.crown, topInfo.l * 0.2f});
+          add({topInfo.hutX - 1.6f, y0, -1.6f}, {topInfo.hutX + 1.6f, y0 + 3.0f, 1.6f});
+        }
         // colisiones de las torres a las que se llega caminando: derechas en su propio abajo
         if (near && arc - s.w * 0.5f - 3.0f < c.walk + c.detailStep) {
-          const float hw = (s.w + 6.0f) * 0.5f, hl = (s.l + 6.0f) * 0.5f;
+          const float grow = s.fronts ? 0.6f : 0.0f; // el escalon de los locales
+          const float hw = (s.w + 6.0f) * 0.5f + grow, hl = (s.l + 6.0f) * 0.5f + grow;
           out.solids.push_back({{{-hw, -R - 5.0f, s.z - hl}, {hw, -R + 60.0f, s.z + hl}}, theta, false});
         }
       }
@@ -662,29 +818,16 @@ CylinderCity::CylinderCity(CityConfig config, RetroEngine& engine) : cfg_(std::m
   }
   for (const std::string& p : cfg_.store.plaques)
     engine_.Assets().RequestModel(p);
+  if (cfg_.interiors.Enabled()) {
+    engine_.Assets().RequestModel(cfg_.interiors.lobbyDoor);
+    engine_.Assets().RequestModel(cfg_.interiors.roofDoor);
+  }
 }
 
 CylinderCity::~CylinderCity() = default;
 
 std::shared_ptr<ModelResource> CylinderCity::Upload(const ObjData& data) {
-  std::vector<std::shared_ptr<TextureResource>> textures;
-  for (const ObjData::Part& p : data.parts) {
-    auto& t = textures_[p.texture];
-    if (!t) {
-      t = engine_.Assets().GetTexture(p.texture);
-      SetTextureWrap(t->Get(), TEXTURE_WRAP_REPEAT);
-      // Con mipmaps: de cerca, pixeles (lo de siempre); de lejos, el promedio. Sin ellos, a cientos
-      // de metros cada ventana es menor que un pixel y la fachada hierve como granito.
-      const Texture2D& tx = t->Get();
-      int mips = 1;
-      rlGenTextureMipmaps(tx.id, tx.width, tx.height, tx.format, &mips);
-      rlTextureParameters(tx.id, RL_TEXTURE_MIN_FILTER, RL_TEXTURE_FILTER_NEAREST_MIP_LINEAR);
-    }
-    textures.push_back(t);
-  }
-  auto model = std::make_shared<ModelResource>(data, std::move(textures));
-  model->SetShader(engine_.Retro().Lit());
-  return model;
+  return UploadMesh(engine_, textures_, data);
 }
 
 std::shared_ptr<ModelResource> CylinderCity::Model(const std::string& path) {
@@ -792,15 +935,18 @@ void CylinderCity::Place(Scene& scene, long long index, int lod, long long ancho
     e->transform.position = {p.position.x, p.position.y, z0 + p.position.z};
     e->transform.rotation = {0.0f, p.yaw, 0.0f};
     e->emissive = p.emissive;
-    if (!p.message.empty()) {
+    if (!p.message.empty() || !p.actions.empty()) {
       Interaction it;
       it.prompt = p.prompt;
-      it.range = 4.0f;
+      it.range = p.actions.empty() ? 4.0f : 3.0f;
       it.box = p.box;
-      it.actions.push_back(action::Message{p.message, 5.0f});
+      if (p.actions.empty())
+        it.actions.push_back(action::Message{p.message, 5.0f});
+      else
+        it.actions = p.actions;
       e->interact = std::move(it);
     }
-    chunk.pieces.push_back({e->Name(), {p.position.x, p.position.y}, 0.0f});
+    chunk.pieces.push_back({e->Name(), {p.position.x, p.position.y}, p.roll});
     scene.Add(std::move(e));
   }
   // la campanita de cada puerta: un trigger al cruzarla (Turn lo pone en su sitio)

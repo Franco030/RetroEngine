@@ -5,6 +5,7 @@
 #include "graphics/Light.hpp"
 #include "physics/Collision.hpp"
 #include "world/Entity.hpp"
+#include "world/BuildingInterior.hpp"
 #include "world/CylinderCity.hpp"
 #include "world/Logic.hpp"
 #include "world/Trigger.hpp"
@@ -157,6 +158,8 @@ public:
   // "city": la ciudad sin fin dentro de un cilindro (CylinderCity, la lleva el SceneManager). Sus
   // farolas y quioscos dan luz: 'streamedLights', que la ciudad rehace al poner y quitar trozos.
   std::optional<CityConfig> city;
+  // "building": por dentro de una torre de esa ciudad (BuildingInterior, la lleva el SceneManager).
+  std::optional<BuildingConfig> building;
   // El suelo de base del jugador ("floor": un numero, o false para ninguno). Ver Player::SetBaseFloor.
   std::optional<float> floor = 0.0f;
   std::vector<PointLight> streamedLights;
@@ -185,6 +188,7 @@ public:
     photo.reset();
     panorama.reset();
     city.reset();
+    building.reset();
     streamedLights.clear();
     streamedEmitters.clear();
     streamedBoxes.clear();

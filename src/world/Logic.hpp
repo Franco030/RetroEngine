@@ -2,6 +2,7 @@
 
 #include "game/GameState.hpp"
 #include "physics/Collision.hpp"
+#include "world/BuildingVisit.hpp"
 
 #include <raylib.h>
 
@@ -166,6 +167,17 @@ struct Wait {
   float seconds = 1.0f;
 };
 
+// Entrar a una torre de la ciudad del cilindro (lo pone la ciudad en la puerta del vestibulo y en la
+// de la caseta de la azotea): a su escena de dentro, en la planta baja o, con 'fromRoof', arriba.
+struct EnterBuilding {
+  BuildingVisit visit;
+  bool fromRoof = false;
+};
+
+// Salir de la torre a la calle (la puerta del vestibulo), o a su azotea (la puerta de hasta arriba).
+struct LeaveBuilding {};
+struct ToRoof {};
+
 // Borra todas las banderas menos las de 'keep' (una vuelta nueva del ciclo: lo que se sabe se
 // olvida, el numero de vueltas no).
 struct ClearFlags {
@@ -180,7 +192,7 @@ using Action =
                  action::StartDialogue, action::LookAt, action::Scare, action::LockMovement,
                  action::TitleScreen, action::Ride, action::Shooting, action::BehindPlayer,
                  action::SetWeather, action::Lightning, action::SetFog, action::Wait, action::SetAmbient,
-                 action::ClearFlags>;
+                 action::ClearFlags, action::EnterBuilding, action::LeaveBuilding, action::ToRoof>;
 
 enum class CompareOp { Eq, Ne, Lt, Le, Gt, Ge };
 

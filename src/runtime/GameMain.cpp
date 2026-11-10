@@ -576,6 +576,7 @@ int main(int argc, char** argv) {
       d.flags = state.Flags();
       if (const retro::CylinderCity* c = scenes.City())
         d.city = retro::SaveData::CityPlace{c->Origin(), c->Phi()};
+      d.building = scenes.Visit();
       return d;
     };
 
@@ -612,6 +613,7 @@ int main(int argc, char** argv) {
         retro::SaveData data = saves.Read(slot, &backup);
         if (data.city)
           scenes.SetCityStart({data.city->origin, data.city->phi});
+        scenes.SetVisit(data.building);
         scenes.GoToPath(data.scene, data.position, data.yaw);
         pendingLoad = std::move(data);
         activeSlot = slot;
@@ -1157,10 +1159,10 @@ int main(int argc, char** argv) {
           scenes.Update(dt);
           // la ciudad sin fin recentro el mundo (en Z, o girando alrededor del eje): el jugador va con
           // el, sin perder el paso (no se nota)
-          if (const auto move = scenes.TakeOriginMove(); move.dz != 0.0f || move.turn != 0.0f) {
+          if (const auto move = scenes.TakeOriginMove(); move.dz != 0.0f || move.turn != 0.0f || move.dy != 0.0f) {
             Vector3 f = player.Feet();
             const float a = move.turn * DEG2RAD;
-            f = {f.x * std::cos(a) - f.y * std::sin(a), f.x * std::sin(a) + f.y * std::cos(a), f.z - move.dz};
+            f = {f.x * std::cos(a) - f.y * std::sin(a), f.x * std::sin(a) + f.y * std::cos(a) + move.dy, f.z - move.dz};
             player.CarryFeet(f);
           }
           state.Update(dt);
@@ -1548,6 +1550,8 @@ int main(int argc, char** argv) {
                                             ? TextFormat("%.1f, %.1f, %.1f   sector %lld   %.2f grados%s", f.x, f.y, f.z,
                                                          scenes.City()->SectorAt(f.z), scenes.City()->Phi(),
                                                          scenes.City()->Indoors() ? "   dentro" : "")
+                                            : scenes.Visit() ? TextFormat("%.1f, %.1f, %.1f   piso %d de %d", f.x, f.y, f.z,
+                                                                          scenes.Visit()->floor, scenes.Visit()->floors - 1)
                                             : TextFormat("%.1f, %.1f, %.1f", f.x, f.y, f.z);
               ui.Text(donde, 4, h - 22.0f, 8.0f, RAYWHITE);
             }

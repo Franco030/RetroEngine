@@ -161,6 +161,39 @@ void SceneManager::ApplyEnvironment(const Environment& env) {
   engine_.Retro().SetParams(p);
 }
 
+void SceneManager::EnterBuilding(const BuildingVisit& visit, bool fromRoof) {
+  BuildingVisit v = visit;
+  v.street = CurrentPath();
+  v.floor = fromRoof ? v.floors : 0; // mas alla del ultimo piso: el descanso de la azotea
+  visit_ = v;
+  try {
+    GoToPath(v.interior);
+  } catch (const std::exception& e) {
+    std::cerr << "Entrar a la torre: " << e.what() << '\n';
+    visit_.reset();
+  }
+}
+
+void SceneManager::LeaveBuilding() {
+  if (!visit_ || visit_->street.empty()) {
+    std::cerr << "Salir de la torre: no se sabe de que calle se vino\n";
+    return;
+  }
+  const BuildingVisit v = *visit_;
+  SetCityStart({v.chunk, v.theta});
+  GoToPath(v.street, v.door, v.doorYaw);
+}
+
+void SceneManager::ToRoof() {
+  if (!visit_ || visit_->street.empty()) {
+    std::cerr << "Subir a la azotea: no se sabe de que ciudad es la torre\n";
+    return;
+  }
+  const BuildingVisit v = *visit_;
+  SetCityStart({v.chunk, v.theta});
+  GoToPath(v.street, v.roof, v.roofYaw);
+}
+
 void SceneManager::PlaySceneMusic(const SceneAudio& a, float fade) {
   if (a.playlist.empty())
     engine_.Audio().PlayMusic(a.music, a.musicVolume, fade);
@@ -227,6 +260,7 @@ void SceneManager::LoadNow(std::size_t index) {
     tLoad = MsSince(start);
 
     city_.reset(); // la de la escena anterior (sus trozos se iban con ella)
+    building_.reset();
     engine_.Audio().SetIndoor(1.0f);
     cityIndoors_ = false;
     scene_ = std::move(next); // la escena anterior se destruye aqui
@@ -236,6 +270,14 @@ void SceneManager::LoadNow(std::size_t index) {
         city_->StartAt(*cityStart_);
     }
     cityStart_.reset();
+    if (scene_->building) {
+      // sin visita (la escena se abrio sola, para probar): una torre cualquiera, sin calle a la que volver
+      if (!visit_)
+        visit_ = BuildingVisit{};
+      building_ = std::make_unique<BuildingInterior>(*scene_->building, *visit_, engine_, *scene_);
+    } else {
+      visit_.reset(); // fuera de las torres ya no hay visita
+    }
     tSwap = MsSince(start);
     index_ = index;
     ++generation_;
@@ -387,7 +429,21 @@ void SceneManager::Update(float dt) {
   if (phase_ != Phase::FadingOut) // jugando o llegando (al irse, la carga ya va a ocurrir)
     StepPrefetch();
 
-  if (scene_ && city_) {
+  // El fotograma en que llega una escena, el foco todavia es el de la anterior (al jugador se le pone
+  // en su sitio despues): la ciudad y la torre esperan al siguiente, o la ciudad giraria hacia ese
+  // punto (dentro de una torre, el foco esta en el eje del cilindro) y quedaria del otro lado.
+  const bool arrived = generation_ != updatedGeneration_;
+  updatedGeneration_ = generation_;
+  if (arrived)
+    carried_ = false;
+  if (scene_ && building_ && !arrived) {
+    const bool walking = std::exchange(carried_, false);
+    if (walking)
+      originMove_.dy += building_->Update(*scene_, focus_);
+    if (visit_)
+      visit_->floor = building_->Floor();
+  }
+  if (scene_ && city_ && !arrived) {
     const CylinderCity::Recenter r = city_->Update(*scene_, focus_, dt, std::exchange(carried_, false));
     originMove_.dz += r.dz;
     originMove_.turn += r.turn;

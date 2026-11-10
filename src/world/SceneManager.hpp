@@ -101,11 +101,21 @@ public:
   struct OriginMove {
     float dz = 0.0f;
     float turn = 0.0f;
+    float dy = 0.0f; // la escalera sin fin de una torre: cuanto subir (o bajar) al jugador
   };
   OriginMove TakeOriginMove() noexcept { return std::exchange(originMove_, OriginMove{}); }
   const CylinderCity* City() const noexcept { return city_.get(); }
   // La ciudad de la proxima escena que se cargue empieza ahi (al cargar una partida).
   void SetCityStart(CylinderCity::Spot place) noexcept { cityStart_ = place; }
+
+  // Las torres de la ciudad: entrar (a su escena de dentro), salir a la calle o a la azotea. Mientras se
+  // esta dentro, 'Visit' dice cual torre y en que piso (para guardar); al cargar una partida se pone
+  // con SetVisit antes de ir a la escena.
+  void EnterBuilding(const BuildingVisit& visit, bool fromRoof);
+  void LeaveBuilding();
+  void ToRoof();
+  const std::optional<BuildingVisit>& Visit() const noexcept { return visit_; }
+  void SetVisit(std::optional<BuildingVisit> visit) { visit_ = std::move(visit); }
   // La musica de la escena (una en bucle, o su lista al azar), en 'fade' segundos.
   void PlaySceneMusic(const SceneAudio& audio, float fade);
   // Una luz que no es de la escena (el flash de la camara del jugador): se dibuja este fotograma
@@ -181,12 +191,15 @@ private:
   Environment defaults_{};
   std::unique_ptr<Scene> scene_;
   std::unique_ptr<CylinderCity> city_; // si la escena tiene "city"
+  std::unique_ptr<BuildingInterior> building_; // si tiene "building"
+  std::optional<BuildingVisit> visit_;
   OriginMove originMove_;
   std::optional<CylinderCity::Spot> cityStart_;
   bool cityIndoors_ = false; // la ultima vez: dentro de una tienda (para cambiar los pasos)
   std::size_t index_ = 0;
   std::size_t pending_ = 0;
   std::uint64_t generation_ = 0;
+  std::uint64_t updatedGeneration_ = 0; // la escena para la que ya corrio la ciudad (o la torre)
   Phase phase_ = Phase::Idle;
   float fade_ = 0.0f; // 0 = transparente, 1 = negro total
 

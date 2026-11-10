@@ -1,5 +1,7 @@
 #pragma once
 
+#include "world/BuildingVisit.hpp"
+
 #include <raylib.h>
 
 #include <filesystem>
@@ -24,6 +26,8 @@ struct SaveData {
     double phi = 0.0;
   };
   std::optional<CityPlace> city;
+  // Dentro de una torre de esa ciudad: cual y en que piso.
+  std::optional<BuildingVisit> building;
 };
 
 struct SaveInfo {

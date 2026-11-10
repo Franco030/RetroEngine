@@ -5,6 +5,7 @@
 #include "assets/Resources.hpp"
 #include "graphics/Light.hpp"
 #include "physics/Collision.hpp"
+#include "world/Logic.hpp"
 
 #include <raylib.h>
 
@@ -78,6 +79,31 @@ struct CityConfig {
     float nightSun = 0.0f;
   } cycle;
   float paveTile = 6.0f;     // lo que mide cada losa del pavimento (m)
+  // Los locales del pie de las torres de cerca, en 3D (los de lejos llevan el zocalo pintado):
+  // aparadores hundidos con su local con luz detras, cortinas de acero, locales tapiados o vacios,
+  // pilastras, cajas de luz con garabatos, toldos y el escalon. Arriba sigue el zocalo con sus oficinas
+  // ('tops': uno por cada textura de 'podiums', en el mismo orden). Sin 'shops', todo pintado.
+  struct Storefronts {
+    float arc = 260.0f; // a lo ancho, hasta donde (m desde quien anda)
+    std::vector<std::string> tops;
+    std::vector<std::string> shops;    // el fondo de los locales con luz
+    std::vector<std::string> shutters; // cortinas de acero
+    std::vector<std::string> awnings;  // lonas de toldo
+    std::vector<std::string> signs;    // cajas de luz (garabatos)
+    std::vector<std::string> lobbies;  // el vestibulo de la torre, visto por su puerta
+    std::string boards, dark, pillar, frame, floor, wall, ceiling;
+    bool Enabled(std::size_t podiums) const { return !shops.empty() && tops.size() == podiums; }
+  } storefronts;
+  // Por dentro de las torres de cerca (las que llevan locales en 3D): la escena de cada tipo, tres
+  // variantes; la puerta del vestibulo (vidrio) y la de la caseta de la azotea (lamina). Cada torre
+  // escoge tipo y variante con su semilla. Sin escenas, no se entra.
+  struct Interiors {
+    std::vector<std::string> offices, apartments, hotel;
+    std::string lobbyDoor, roofDoor;
+    std::string enterPrompt = "Entrar";
+    std::string downPrompt = "Bajar";
+    bool Enabled() const { return !offices.empty() && !apartments.empty() && !hotel.empty() && !lobbyDoor.empty(); }
+  } interiors;
   // La tienda de COMIDA de la avenida: se entra. Una cada 'everySectors' sectores, de un lado o del otro. Por
   // dentro, gondolas, refrigeradores, mostrador, carteles; su musica suena dentro y en la puerta,
   // y la campanita al cruzar la puerta.
@@ -191,6 +217,8 @@ public:
       BoxCollider box; // en los ejes del modelo
       std::string prompt;
       std::string message;
+      float roll = 0.0f;           // girado en Z (una puerta en una torre que no esta abajo)
+      std::vector<Action> actions; // lo que hace con E (si no, 'message')
     };
     std::vector<Placed> placed;
   };

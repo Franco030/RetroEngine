@@ -106,6 +106,9 @@ void ActionRunner::Run(const std::vector<Action>& actions) {
             [&](const action::Lightning& l) { weather_.Strike(l.thunderDelay); },
             [&](const action::SetFog& f) { weather_.FadeFog(f.start, f.end, f.seconds); },
             [&](const action::Wait&) {}, // no llega aqui: se trata antes
+            [&](const action::EnterBuilding& e) { scenes_.EnterBuilding(e.visit, e.fromRoof); },
+            [&](const action::LeaveBuilding&) { scenes_.LeaveBuilding(); },
+            [&](const action::ToRoof&) { scenes_.ToRoof(); },
             [&](const action::SetAmbient& a) { weather_.FadeAmbient(a.value, a.seconds); },
             [&](const action::ClearFlags& c) {
               std::unordered_map<std::string, int> kept;

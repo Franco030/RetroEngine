@@ -51,6 +51,13 @@ std::string Serialize(const SaveData& d) {
   j["flags"] = flags;
   if (d.city)
     j["city"] = {{"origin", d.city->origin}, {"phi", d.city->phi}};
+  if (d.building) {
+    const BuildingVisit& b = *d.building;
+    j["building"] = {{"interior", b.interior}, {"street", b.street}, {"floors", b.floors}, {"floor", b.floor},
+                     {"seed", b.seed}, {"chunk", b.chunk}, {"theta", b.theta},
+                     {"door", {b.door.x, b.door.y, b.door.z}}, {"doorYaw", b.doorYaw},
+                     {"roof", {b.roof.x, b.roof.y, b.roof.z}}, {"roofYaw", b.roofYaw}};
+  }
   return j.dump(2);
 }
 
@@ -87,6 +94,25 @@ SaveData Deserialize(const std::string& text) {
       !std::isfinite(d.position.z) || !std::isfinite(d.yaw) || !std::isfinite(d.pitch) ||
       !std::isfinite(d.playTime)) {
     throw std::runtime_error("el guardado contiene valores no finitos");
+  }
+
+  if (j.contains("building")) {
+    const json& jb = j.at("building");
+    BuildingVisit b;
+    b.interior = jb.at("interior").get<std::string>();
+    b.street = jb.at("street").get<std::string>();
+    b.floors = jb.at("floors").get<int>();
+    b.floor = jb.at("floor").get<int>();
+    b.seed = jb.at("seed").get<std::uint64_t>();
+    b.chunk = jb.at("chunk").get<long long>();
+    b.theta = jb.at("theta").get<double>();
+    const json& dp = jb.at("door");
+    b.door = {dp[0].get<float>(), dp[1].get<float>(), dp[2].get<float>()};
+    b.doorYaw = jb.at("doorYaw").get<float>();
+    const json& rp = jb.at("roof");
+    b.roof = {rp[0].get<float>(), rp[1].get<float>(), rp[2].get<float>()};
+    b.roofYaw = jb.at("roofYaw").get<float>();
+    d.building = b;
   }
 
   if (j.contains("city")) {

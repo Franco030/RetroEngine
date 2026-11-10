@@ -1,0 +1,190 @@
+#pragma once
+
+#include "audio/Emitter.hpp"
+#include "graphics/Light.hpp"
+#include "world/Scene.hpp"
+
+#include <raylib.h>
+
+#include <nlohmann/json_fwd.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <filesystem>
+#include <future>
+#include <utility>
+#include <memory>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <unordered_map>
+#include <vector>
+
+namespace retro {
+
+class RetroEngine;
+class RetroCamera;
+
+// Un modelo o una textura que usa una escena (para la precarga).
+struct AssetRef {
+  enum class Kind { Model, Texture, Sound };
+  Kind kind;
+  std::string path;
+};
+
+// Lo que pasa en negro entre dos escenas (goto_scene "dark" y "lines"): la escena nueva ya esta
+// cargada (suena su musica) y las frases salen una tras otra, cada una con su parte del tiempo.
+struct Interlude {
+  float seconds = 0.0f;
+  std::vector<std::string> lines;
+  // Musica del negro (la caida en Hoz del Cuervo): suena en lugar de la de la escena, que entra
+  // cuando el negro termina. Si ya sonaba (la puso un trigger antes), sigue sin cortes.
+  std::string music;
+  float musicVolume = 0.7f;
+};
+
+class SceneManager {
+public:
+  SceneManager(RetroEngine& engine, RetroCamera& camera, std::vector<std::string> scenePaths,
+               float fadeSeconds = 0.35f);
+
+  SceneManager(const SceneManager&) = delete;
+  SceneManager& operator=(const SceneManager&) = delete;
+
+  void LoadNow(std::size_t index);
+  // Empieza con la pantalla en negro y la aclara (al arrancar el juego): mientras esta oscura,
+  // la precarga de las escenas vecinas carga lo pesado sin que se note.
+  void FadeInFromBlack();
+
+  // Cambia a la escena 'relativePath' con fundido. Si no está en la lista y el
+  // archivo existe, se añade. spawnPosition/spawnYaw reemplazan el spawn del
+  // JSON de destino. Lanza std::invalid_argument si el archivo no existe.
+  void GoToPath(const std::string& relativePath,
+                std::optional<Vector3> spawnPosition = std::nullopt,
+                std::optional<float> spawnYaw = std::nullopt, Interlude interlude = {});
+
+  void GoTo(std::size_t index);
+  void Next();
+  void Previous();
+
+  void Reload();
+
+  void Update(float dt);
+  void UpdateAudio(float dt);
+  void Draw();
+  void DrawFade() const;
+
+  // La frase del negro que toca ahora y su opacidad (0..1), si hay una.
+  struct Card {
+    std::string_view text;
+    float alpha;
+  };
+  std::optional<Card> CurrentCard() const;
+
+  std::size_t Index() const noexcept { return index_; }
+  std::size_t Count() const noexcept { return paths_.size(); }
+  const std::string& CurrentPath() const noexcept { return paths_[index_]; }
+  bool Transitioning() const noexcept { return phase_ != Phase::Idle; }
+
+  const Scene* Current() const noexcept { return scene_.get(); }
+  Scene* CurrentMut() noexcept { return scene_.get(); }
+  std::uint64_t Generation() const noexcept { return generation_; }
+
+  void SetFocus(Vector3 focus) noexcept { focus_ = focus; }
+  // Lo que la ciudad sin fin ha recentrado el mundo en Z desde la ultima vez (0 si nada): quien
+  // lleva al jugador lo mueve eso mismo hacia atras.
+  float TakeOriginShift() noexcept { return std::exchange(originShift_, 0.0f); }
+  const CylinderCity* City() const noexcept { return city_.get(); }
+  // Una luz que no es de la escena (el flash de la camara del jugador): se dibuja este fotograma
+  // aunque haya otras mas cerca. nullopt la quita.
+  void SetFlashLight(std::optional<PointLight> light) noexcept { flashLight_ = light; }
+  // La luz que lleva el jugador en la mano (el farolillo, "lantern" de la escena): tambien entra
+  // siempre. nullopt la quita.
+  void SetHandLight(std::optional<PointLight> light) noexcept { handLight_ = light; }
+  // Una musica que manda sobre la de cada escena (la intro de la partida nueva: una sola pieza de
+  // principio a fin, aunque cambien las escenas). Vacia, cada escena vuelve a poner la suya.
+  void SetMusicOverride(std::string file, float volume) {
+    musicOverride_ = std::move(file);
+    musicOverrideVolume_ = volume;
+  }
+
+private:
+  enum class Phase { Idle, FadingOut, Dark, FadingIn };
+
+  struct Environment {
+    Color background;
+    float fogStart;
+    float fogEnd;
+    Vector3 lightDirection;
+    float ambient;
+    float sun;
+    float mistDensity;
+    float mistHeight;
+    Vector3 mistColor;
+  };
+
+  Vector3 focus_{0.0f, 0.0f, 0.0f};
+
+  void ApplyEnvironment(const Environment& env);
+  void ApplyAudio(const SceneAudio& audio);
+
+  // Precarga de las escenas vecinas (a las que lleva algun goto_scene de la actual). Un hilo de
+  // trabajo lee y parsea sus JSON (PlanPrefetch); cuando termina, StepPrefetch retiene lo que ya
+  // esta en memoria, pide lo que falta a los hilos y sube a la GPU poco a poco, con un
+  // presupuesto por fotograma. Los JSON parseados se guardan: al ir a una vecina no se parsea.
+  struct SceneDoc {
+    std::shared_ptr<const nlohmann::json> json;
+    std::filesystem::file_time_type stamp; // si el archivo cambia (F5), se vuelve a leer
+  };
+  struct PrefetchPlan {
+    std::vector<std::string> neighbors;
+    std::unordered_map<std::string, SceneDoc> docs;
+    std::vector<AssetRef> items;
+  };
+  void PlanPrefetch(std::shared_ptr<const nlohmann::json> current);
+  void StepPrefetch();
+  // El JSON de 'path': el guardado si sigue al dia, si no lo lee ahora.
+  std::shared_ptr<const nlohmann::json> SceneJson(const std::string& path);
+
+  RetroEngine& engine_;
+  RetroCamera& camera_;
+  std::vector<std::string> paths_;
+  float fadeSeconds_;
+
+  std::optional<Vector3> pendingSpawnPos_;
+  std::optional<float> pendingSpawnYaw_;
+  Interlude pendingInterlude_;
+  Interlude interlude_; // el negro en curso (Phase::Dark)
+  float darkTime_ = 0.0f;
+
+  std::vector<PointLight> lights_;
+  std::optional<PointLight> flashLight_; // el flash de la camara: entra siempre, delante de las otras
+  std::optional<PointLight> handLight_;  // el farolillo en la mano: igual
+  std::string musicOverride_;            // la musica que manda (la intro), si hay
+  float musicOverrideVolume_ = 0.5f;
+  std::vector<Emitter> emitters_;
+
+  Environment defaults_{};
+  std::unique_ptr<Scene> scene_;
+  std::unique_ptr<CylinderCity> city_; // si la escena tiene "city"
+  float originShift_ = 0.0f;
+  std::size_t index_ = 0;
+  std::size_t pending_ = 0;
+  std::uint64_t generation_ = 0;
+  Phase phase_ = Phase::Idle;
+  float fade_ = 0.0f; // 0 = transparente, 1 = negro total
+
+  std::future<PrefetchPlan> plan_;
+  bool purgePending_ = false;  // la purga espera al plan (para no soltar lo que usan las vecinas)
+  std::unordered_map<std::string, SceneDoc> docs_; // JSON de las vecinas, ya parseados
+  std::vector<AssetRef> prefetch_;             // pedidos a los hilos, por retener al subirse
+  std::vector<std::shared_ptr<ModelResource>> keepModels_;    // de las escenas vecinas
+  std::vector<std::shared_ptr<TextureResource>> keepTextures_;
+  std::vector<std::shared_ptr<SoundResource>> keepSounds_;
+  double prefetchMs_ = 0.0;     // tiempo de la precarga en curso (para el informe)
+  double prefetchMaxMs_ = 0.0;  // el fotograma que mas le dedico
+  int prefetchFrames_ = 0;
+  int prefetchCount_ = 0;
+};
+
+} // namespace retro

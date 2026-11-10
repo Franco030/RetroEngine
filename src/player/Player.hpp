@@ -1,0 +1,101 @@
+#pragma once
+
+#include "physics/Collision.hpp"
+
+#include <raylib.h>
+
+#include <cmath>
+#include <span>
+
+namespace retro {
+
+class RetroCamera;
+
+struct PlayerSettings {
+  float radius = 0.3f; // cilindro de colision
+  float height = 1.7f;
+  float eyeHeight = 1.55f;
+  float stepHeight = 0.35f; // desniveles que se suben sin saltar
+  float walkSpeed = 3.5f;
+  float runSpeed = 6.0f;
+  float sneakSpeed = 1.4f; // con Ctrl: despacio, sin hacer ruido
+  float jumpHeight = 0.9f;
+  float gravity = 20.0f;
+  float mouseSensitivity = 0.12f; // grados por pixel
+};
+
+// Jugador en primera persona: cilindro vertical (sin cuerpo visible) que
+// colisiona con el suelo (plano Y=0) y con las WorldBox de la escena.
+class Player {
+public:
+  explicit Player(PlayerSettings settings = {});
+  ~Player();
+
+  Player(const Player&) = delete;
+  Player& operator=(const Player&) = delete;
+
+  const PlayerSettings& Settings() const noexcept { return cfg_; }
+  void SetMouseSensitivity(float degreesPerPixel) noexcept { cfg_.mouseSensitivity = degreesPerPixel; }
+
+  void Spawn(Vector3 feet, float yawDegrees);
+  // Pone los pies en 'feet' sin cambiar hacia donde mira (y sin velocidad): para ir montado.
+  void PlaceFeet(Vector3 feet) noexcept;
+  // Solo el raton (mirar), sin moverse ni caer: montado en algo.
+  void UpdateLook();
+
+  void SetActive(bool active);
+  bool Active() const noexcept { return active_; }
+
+  void Update(float dt, std::span<const WorldBox> boxes);
+  void ApplyToCamera(RetroCamera& camera) const;
+
+  Vector3 Feet() const noexcept { return feet_; }
+  Vector3 Eye() const noexcept { return {feet_.x, feet_.y + cfg_.eyeHeight, feet_.z}; }
+
+  bool Grounded() const noexcept { return grounded_; }
+  // Un empuje de fuera (el viento), en m/s, que se suma a lo que anda: se pone cada fotograma.
+  void SetPush(Vector2 push) noexcept { push_ = push; }
+  // Lo rapido que va en horizontal (m/s): lo que oye lo que caza por el oido.
+  float HorizontalSpeed() const noexcept { return std::hypot(vel_.x, vel_.y); }
+  float Yaw() const noexcept { return yaw_; }
+
+  float Pitch() const noexcept { return pitch_; }
+  void SetPitch(float degrees) noexcept;
+
+  // Congelado (durante un dialogo o una mirada forzada): no lee el teclado ni el raton y se
+  // para en seco (lo que llevaba de velocidad no le hace deslizarse); la gravedad sigue.
+  void SetFrozen(bool frozen) noexcept;
+  // Clavado en el sitio (lock_movement): puede mirar alrededor pero no andar ni saltar. Para los
+  // momentos en que hay que darse la vuelta (algo esta detras) y andar los romperia.
+  void SetRooted(bool rooted) noexcept;
+  // El suelo de base: lo que pisa aunque no haya ninguna caja debajo (Y = 0 en casi todas las
+  // escenas). Una escena sin suelo de base (la ciudad del cilindro, a 1500 m bajo el eje) lo
+  // quita con NoBaseFloor y entonces solo cuentan las cajas.
+  void SetBaseFloor(float y) noexcept { baseFloor_ = y; }
+  void NoBaseFloor() noexcept { baseFloor_ = -1e30f; }
+  bool Rooted() const noexcept { return rooted_; }
+  // Gira la vista poco a poco hasta mirar al punto 'target' (los ojos, desde Eye()).
+  // 'rate': fraccion de lo que falta que se recorre por segundo (6 = suave, 20+ = de golpe).
+  // Devuelve los grados que aun faltan (el mayor de giro y cabeceo).
+  float TurnTowards(Vector3 target, float dt, float rate = 6.0f) noexcept;
+
+private:
+  void Look();
+  void Step(float h, std::span<const WorldBox> boxes);
+
+  PlayerSettings cfg_;
+  Vector3 feet_{0.0f, 0.0f, 0.0f};
+  Vector2 vel_{0.0f, 0.0f}; // velocidad horizontal (x, z)
+  Vector2 push_{0.0f, 0.0f}; // lo que le empuja de fuera (el viento), m/s
+  float velY_ = 0.0f;
+  float baseFloor_ = 0.0f;
+  float yaw_ = 0.0f; // grados
+  float pitch_ = 0.0f;
+  bool grounded_ = false;
+  bool active_ = false;
+  bool frozen_ = false;
+  bool rooted_ = false;
+  int skipMouseFrames_ = 0;
+};
+
+} // namespace retro

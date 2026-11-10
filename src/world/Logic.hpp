@@ -1,0 +1,248 @@
+#pragma once
+
+#include "game/GameState.hpp"
+#include "physics/Collision.hpp"
+
+#include <raylib.h>
+
+#include <optional>
+#include <string>
+#include <variant>
+#include <vector>
+
+namespace retro {
+
+namespace action {
+
+struct GotoScene {
+  std::string scene;
+  std::optional<Vector3> position;
+  std::optional<float> yaw;
+  float dark = 0.0f;              // segundos en negro con la escena nueva ya cargada
+  std::vector<std::string> lines; // frases que aparecen una tras otra en ese negro
+  std::string music;               // si no esta vacia: suena en el negro (la escena, al acabar)
+  float musicVolume = 0.7f;
+};
+
+struct Teleport {
+  Vector3 position{};
+  std::optional<float> yaw;
+};
+
+struct SetFlag {
+  std::string name;
+  int value = 1;
+};
+
+struct AddFlag {
+  std::string name;
+  int amount = 1;
+};
+
+struct Message {
+  std::string text;
+  float seconds = 3.0f;
+};
+
+struct PlaySound {
+  std::string file;
+  float volume = 1.0f;
+  std::optional<Vector3> at;
+  std::string atEntity;
+  float radius = 14.0f;
+  float minDistance = 1.0f;
+};
+
+struct PlayMusic {
+  std::string file;
+  std::string then; // si no esta vacio: 'file' suena una vez y luego 'then' en bucle
+  float volume = 0.6f;
+  float fade = 1.0f;
+};
+
+struct StopMusic {
+  float fade = 1.0f;
+};
+
+// Abre el dialogo assets/dialogues/<id>.json (ver DialogueSystem).
+struct StartDialogue {
+  std::string id;
+};
+
+// Las dos giran la vista del jugador hacia una entidad (o un punto) mientras dure el mensaje o
+// dialogo que se este leyendo; 'speed' es lo rapido que gira.
+//
+// Mirar: suave y sin acercar (un objeto, alguien que habla).
+struct LookAt {
+  std::string entity;
+  std::optional<Vector3> point;
+  float speed = 6.0f;
+};
+
+// Susto de camara: giro de golpe y acercamiento (la vista se estrecha hasta 'fov' grados).
+struct Scare {
+  std::string entity;
+  std::optional<Vector3> point;
+  float speed = 20.0f;
+  float fov = 30.0f;
+};
+
+// El jugador puede mirar pero no andar (true) o vuelve a andar (false). Se suelta solo al cambiar
+// de escena.
+struct LockMovement {
+  bool locked = true;
+};
+
+// Al llegar a la escena del goto_scene que va en la misma lista, en lugar de jugar se muestra la
+// pantalla de inicio (con "Jugar", que lleva la camara al punto de inicio de la escena).
+struct TitleScreen {};
+
+// Montarse en algo que se mueve (el tiovivo, la noria): el jugador va pegado a la entidad en el
+// punto 'seat' (coordenadas del mundo AL SUBIR: luego gira y sube con ella) y puede mirar pero
+// no andar. Baja con E, o a los 'seconds' (0 = solo con E), en 'exit' (o donde estaba); con
+// 'locked', E no baja y hay que esperar a los 'seconds'. Mientras va montado, 'flag' vale 1 (para
+// que algo solo se vea desde arriba). Al bajar puede abrir el dialogo 'after'.
+struct Ride {
+  std::string entity;
+  Vector3 seat{0.0f, 0.0f, 0.0f};
+  std::optional<Vector3> exit;
+  float seconds = 0.0f;
+  std::string flag;
+  std::string after;
+  bool locked = false;
+};
+
+// Tiro al blanco: el jugador se queda en 'position' mirando a 'yaw' y dispara (clic o E) a las
+// entidades cuyo nombre empieza por 'targets'; cada acierto la esconde un momento. A los
+// 'seconds', 'flag' guarda los aciertos y se abre el dialogo 'after' (si hay).
+struct Shooting {
+  std::string targets;
+  Vector3 position{0.0f, 0.0f, 0.0f};
+  float yaw = 0.0f;
+  float seconds = 20.0f;
+  std::string flag;
+  std::string after;
+};
+
+// Pone la entidad a la espalda del jugador, a 'distance' metros, 'side' metros a su derecha y
+// mirandole, dentro de los limites de la escena y sin meterla en nada solido (si no cabe, mas
+// cerca). Para los sustos: lo que no estaba ahi cuando miraste.
+struct BehindPlayer {
+  std::string entity;
+  float distance = 2.4f;
+  float side = 0.0f;
+};
+
+// Cambia el tiempo de la escena (su "weather"): 'rain' (0..1) en 'fade' segundos (casi 0: deja de
+// llover de golpe) y 'storm' enciende o apaga los relampagos sueltos. Lo que no se da, sigue igual.
+struct SetWeather {
+  std::optional<float> rain;
+  float fade = 1.0f;
+  std::optional<bool> storm;
+};
+
+// Un relampago ahora (aunque no haya tormenta): el destello, la bandera "relampago" y el trueno a
+// los 'thunderDelay' segundos (0: encima).
+struct Lightning {
+  float thunderDelay = 0.4f;
+};
+
+// La niebla pasa a 'start'..'end' en 'seconds' segundos (como "fog" de la escena).
+struct SetFog {
+  float start = 10.0f;
+  float end = 26.0f;
+  float seconds = 2.0f;
+};
+
+// La luz ambiente de la escena pasa a 'value' (0..1) en 'seconds': un apagon, o que vuelva la luz.
+struct SetAmbient {
+  float value = 0.35f;
+  float seconds = 0.5f;
+};
+
+// Espera 'seconds' antes de seguir con el resto de la lista (lo que viene detras se ejecuta despues).
+// Si se cambia de escena mientras tanto, lo que faltaba se olvida.
+struct Wait {
+  float seconds = 1.0f;
+};
+
+// Borra todas las banderas menos las de 'keep' (una vuelta nueva del ciclo: lo que se sabe se
+// olvida, el numero de vueltas no).
+struct ClearFlags {
+  std::vector<std::string> keep;
+};
+
+} // namespace action
+
+using Action =
+    std::variant<action::GotoScene, action::Teleport, action::SetFlag, action::AddFlag,
+                 action::Message, action::PlaySound, action::PlayMusic, action::StopMusic,
+                 action::StartDialogue, action::LookAt, action::Scare, action::LockMovement,
+                 action::TitleScreen, action::Ride, action::Shooting, action::BehindPlayer,
+                 action::SetWeather, action::Lightning, action::SetFog, action::Wait, action::SetAmbient,
+                 action::ClearFlags>;
+
+enum class CompareOp { Eq, Ne, Lt, Le, Gt, Ge };
+
+// Arbol de condiciones: una comparacion de bandera o un grupo
+struct Condition {
+  enum class Kind { Compare, All, Any, Not };
+
+  Kind kind = Kind::Compare;
+
+  // Compare
+  std::string flag;
+  CompareOp op = CompareOp::Eq;
+  int value = 1;
+
+  std::vector<Condition> children;
+};
+
+bool Evaluate(const Condition& condition, const GameState& state);
+
+// Lista vacia = se cumple. Tdoas deben cumplirse
+bool AllHold(const std::vector<Condition>& conditions, const GameState& state);
+
+// Reemplaza {nombre} por el valor de la bandera (0 si nunca se fijo).
+std::string ExpandFlags(const std::string& text, const GameState& state);
+
+// Lo que pasa cuando el jugador MIRA una entidad: esta en el centro de la vista (a menos de
+// 'angle' grados), a menos de 'range' metros y sin nada solido en medio. 'onSeen' ("do") se
+// ejecuta al verla y 'onLookAway' ("away") cuando deja de mirarla despues de haberla visto. Cada
+// uno una sola vez por visita a la escena (lo que deba durar, con banderas y "showIf").
+struct Sight {
+  float range = 15.0f;
+  float angle = 20.0f;     // para "la ves": cerca del centro de la vista
+  float awayAngle = 75.0f; // para "dejas de mirarla": fuera de pantalla (mas que el campo de vision)
+  float hold = 0.0f;       // segundos que hay que tenerla delante, seguidos, para que cuente
+  float held = 0.0f;       // los que lleva
+  std::vector<Condition> conditions; // mientras no se cumplan, mirarla no cuenta
+  std::vector<Action> onSeen;
+  std::vector<Action> onLookAway;
+  bool seen = false;    // ya la vio (se ejecuto onSeen)
+  bool away = false;    // ya aparto la vista (se ejecuto onLookAway)
+};
+
+// "near": estar cerca, mire donde mire (oirla). Tras 'after' segundos seguidos a menos de 'range' m
+// (en horizontal), la bandera 'flag' vale 1; tras 'forget' segundos lejos, vuelve a 0.
+struct Near {
+  float range = 5.0f;
+  float after = 2.0f;
+  float forget = 5.0f;
+  std::string flag;
+  float inside = 0.0f;  // segundos seguidos cerca
+  float outside = 0.0f; // segundos seguidos lejos
+  bool on = false;
+};
+
+// Lo que ocurre al pulsar E sobre una entidad
+struct Interaction {
+  std::string prompt = "Interactuar";
+  float range = 2.5f;
+  bool once = false;
+  BoxCollider box;
+  std::vector<Condition> conditions;
+  std::vector<Action> actions;
+};
+
+} // namespace retro

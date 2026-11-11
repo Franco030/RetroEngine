@@ -6,6 +6,10 @@ project(RetroEngine
     LANGUAGES C CXX
 )
 
+if(WIN32)
+    enable_language(RC) # el icono de los ejecutables (games/<id>/icon.ico)
+endif()
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -19,11 +23,18 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 option(RETRO_BUILD_EDITOR "Compilar el editor (RetroEditor)" ON)
+# Para repartir un juego: raylib y el runtime del compilador (libstdc++, libgcc, winpthread) van dentro
+# del ejecutable, sin DLL aparte. Con esto, '<exe>Dist' arma una carpeta que corre en cualquier Windows.
+option(RETRO_STATIC_RUNTIME "Ejecutables sin DLL externas (para repartir el juego)" OFF)
 
 include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
 
-set(BUILD_SHARED_LIBS ON  CACHE BOOL "" FORCE)
+if(RETRO_STATIC_RUNTIME)
+    set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+else()
+    set(BUILD_SHARED_LIBS ON  CACHE BOOL "" FORCE)
+endif()
 set(BUILD_EXAMPLES    OFF CACHE BOOL "" FORCE)
 set(BUILD_GAMES       OFF CACHE BOOL "" FORCE)
 
@@ -129,8 +140,15 @@ function(retro_add_game id)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${game_dir}/game.json ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${id}/game.json
         COMMENT "Sincronizando ${id}"
     )
+    # el icono del ejecutable (Explorador, barra de tareas): games/<id>/icon.ico, si lo trae
+    set(icon_rc "")
+    if(WIN32 AND EXISTS ${game_dir}/icon.ico)
+        set(icon_rc ${CMAKE_BINARY_DIR}/${id}_icon.rc)
+        file(WRITE ${icon_rc} "1 ICON \"${game_dir}/icon.ico\"\n")
+        set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${game_dir}/icon.ico)
+    endif()
     foreach(target ${exe} ${exe}Debug)
-        add_executable(${target} ${CMAKE_CURRENT_SOURCE_DIR}/src/runtime/GameMain.cpp)
+        add_executable(${target} ${CMAKE_CURRENT_SOURCE_DIR}/src/runtime/GameMain.cpp ${icon_rc})
         target_link_libraries(${target} PRIVATE retro_core)
         target_compile_definitions(${target} PRIVATE RETRO_GAME_DIR="${id}")
         if(MSVC)
@@ -144,6 +162,28 @@ function(retro_add_game id)
         endif()
     endforeach()
     target_compile_definitions(${exe}Debug PRIVATE RETRO_DEBUG_TOOLS)
+    if(RETRO_STATIC_RUNTIME AND MINGW)
+        target_link_options(${exe} PRIVATE -static -static-libgcc -static-libstdc++)
+        target_link_options(${exe}Debug PRIVATE -static -static-libgcc -static-libstdc++)
+    endif()
+
+    # <exe>Dist: la carpeta para repartir el juego (dist/<exe>/: el ejecutable, engine/ y <id>/) y su
+    # .zip. Sin el ejecutable de depuracion ni el editor. Con RETRO_STATIC_RUNTIME no lleva DLL; si no,
+    # copia las que el ejecutable trae al lado (raylib).
+    set(dist_dir ${CMAKE_BINARY_DIR}/dist/${exe})
+    add_custom_target(${exe}Dist
+        COMMAND ${CMAKE_COMMAND} -E rm -rf ${dist_dir}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${dist_dir}
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${exe}> ${dist_dir}/
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/engine/assets ${dist_dir}/engine
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${game_dir}/assets ${dist_dir}/${id}/assets
+        COMMAND ${CMAKE_COMMAND} -E copy ${game_dir}/game.json ${dist_dir}/${id}/game.json
+        COMMAND ${CMAKE_COMMAND} -E $<IF:$<BOOL:${RETRO_STATIC_RUNTIME}>,true,copy_if_different> $<$<NOT:$<BOOL:${RETRO_STATIC_RUNTIME}>>:$<TARGET_FILE:raylib>> $<$<NOT:$<BOOL:${RETRO_STATIC_RUNTIME}>>:${dist_dir}/>
+        COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_BINARY_DIR}/dist ${CMAKE_COMMAND} -E tar cf ${exe}.zip --format=zip ${exe}
+        DEPENDS ${exe}
+        COMMENT "Armando dist/${exe} y dist/${exe}.zip"
+        VERBATIM
+    )
     if(WIN32)
         set_target_properties(${exe} PROPERTIES WIN32_EXECUTABLE TRUE)
         if(MSVC) # con WIN32_EXECUTABLE MSVC busca WinMain; el juego entra por main

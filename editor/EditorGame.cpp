@@ -291,6 +291,9 @@ void EditorApp::DrawGame() {
   ImGui::SetItemTooltip("<exe>.exe y <exe>Debug.exe. Al cambiarlo hay que volver a configurar CMake.");
   FieldText("Carpeta de partidas", gameDoc_, nullptr, "saves");
   ImGui::SetItemTooltip("%%APPDATA%%/<carpeta>/saves. Cambiarla deja atras las partidas de antes.");
+  FieldText("Icono", gameDoc_, nullptr, "icon");
+  ImGui::SetItemTooltip("Una imagen de assets/ (PNG cuadrado, 256 x 256) para la ventana. El del .exe es\n"
+                        "games/<id>/icon.ico: lo mete CMake al compilar.");
   FieldText("Titulo", gameDoc_, nullptr, "title");
   FieldText("Subtitulo", gameDoc_, nullptr, "subtitle");
   FieldFile("Primera escena", gameDoc_, nullptr, "firstScene", sceneList_, false, false);

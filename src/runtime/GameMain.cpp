@@ -457,6 +457,17 @@ int main(int argc, char** argv) {
     config.internalHeight = game.height;
     retro::RetroEngine engine(config);
     retro::RetroCamera camera;
+    if (!game.icon.empty()) { // el icono de la ventana (el del .exe va como recurso, ver CMake)
+      const std::string iconPath = config.assetRoot + game.icon;
+      if (FileExists(iconPath.c_str())) {
+        Image icon = LoadImage(iconPath.c_str());
+        ImageFormat(&icon, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8); // lo que pide SetWindowIcon
+        SetWindowIcon(icon);
+        UnloadImage(icon);
+      } else {
+        std::cerr << "game.json: no existe el icono " << iconPath << '\n';
+      }
+    }
 
     retro::SaveManager saves(retro::SaveManager::DefaultDirectory(game.savesFolder));
     const std::filesystem::path settingsFile = saves.Directory().parent_path() / "ajustes.json";

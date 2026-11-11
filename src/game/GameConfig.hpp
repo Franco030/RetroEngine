@@ -56,6 +56,9 @@ struct GameConfig {
   std::string name = "RetroEngine";  // la ventana y la carpeta de fotos
   std::string exe = "RetroGame";     // el ejecutable (<exe>.exe y <exe>Debug.exe)
   std::string savesFolder = "RetroEngine"; // %APPDATA%/<savesFolder>/saves (y los ajustes)
+  // El icono de la ventana: una imagen de assets/ (PNG, cuadrada; 256 x 256 va bien). Vacio: el de
+  // raylib. El del ejecutable (Explorador, barra de tareas) es games/<id>/icon.ico (lo mete CMake).
+  std::string icon;
   std::string title;        // el titulo grande de la pantalla de inicio
   std::string subtitle;
   std::string firstScene;   // donde empieza una partida nueva

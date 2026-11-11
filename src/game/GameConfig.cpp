@@ -92,6 +92,7 @@ GameConfig LoadGameConfig(const std::filesystem::path& file) {
   g.name = j.value("name", g.name);
   g.exe = j.value("exe", g.exe);
   g.savesFolder = j.value("saves", g.name);
+  g.icon = j.value("icon", std::string());
   g.title = j.value("title", g.name);
   g.subtitle = j.value("subtitle", std::string());
   g.firstScene = j.at("firstScene").get<std::string>();

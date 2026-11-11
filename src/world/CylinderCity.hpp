@@ -79,20 +79,18 @@ struct CityConfig {
     float nightSun = 0.0f;
   } cycle;
   float paveTile = 6.0f;     // lo que mide cada losa del pavimento (m)
-  // Los locales del pie de las torres de cerca, en 3D (los de lejos llevan el zocalo pintado):
-  // aparadores hundidos con su local con luz detras, cortinas de acero, locales tapiados o vacios,
-  // pilastras, cajas de luz con garabatos, toldos y el escalon. Arriba sigue el zocalo con sus oficinas
-  // ('tops': uno por cada textura de 'podiums', en el mismo orden). Sin 'shops', todo pintado.
+  // El pie de las torres de cerca, en 3D (las de lejos llevan el zocalo pintado): ventanales con
+  // persianas y el vestibulo con luz detras, como la planta baja por dentro; la entrada, hundida, con su
+  // vestibulo (elevadores, recepcion, buzones). Arriba sigue el zocalo con sus oficinas ('tops': uno por
+  // cada textura de 'podiums', en el mismo orden). Todo es geometria: las texturas son materiales
+  // ('*Shade': el mismo, mas oscuro, para los lados de las cajas). Sin 'tops', todo pintado.
   struct Storefronts {
     float arc = 260.0f; // a lo ancho, hasta donde (m desde quien anda)
     std::vector<std::string> tops;
-    std::vector<std::string> shops;    // el fondo de los locales con luz
-    std::vector<std::string> shutters; // cortinas de acero
-    std::vector<std::string> awnings;  // lonas de toldo
-    std::vector<std::string> signs;    // cajas de luz (garabatos)
-    std::vector<std::string> lobbies;  // el vestibulo de la torre, visto por su puerta
-    std::string boards, dark, pillar, frame, floor, wall, ceiling;
-    bool Enabled(std::size_t podiums) const { return !shops.empty() && tops.size() == podiums; }
+    std::string goods, goodsShade; // etiquetas (atlas 8 x 8; la ultima fila, lisos): los indicadores
+    std::string metal, metalShade, wood, woodShade;
+    std::string pillar, frame, floor, ceiling, light, lobbyFloor, lobbyWall, plant, mail;
+    bool Enabled(std::size_t podiums) const { return !tops.empty() && tops.size() == podiums; }
   } storefronts;
   // Por dentro de las torres de cerca (las que llevan locales en 3D): la escena de cada tipo, tres
   // variantes; la puerta del vestibulo (vidrio) y la de la caseta de la azotea (lamina). Cada torre

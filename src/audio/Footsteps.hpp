@@ -15,6 +15,15 @@ public:
     accumulated_ = 0.0f;
   }
 
+  // El mundo se recentro y movio al jugador 'delta' sin que el anduviera (la ciudad sin fin gira bajo
+  // sus pies cada fotograma al andar a lo ancho): lo de la ultima vez se mueve igual, o ese andar no
+  // contaria como pasos.
+  void Carry(Vector3 delta) {
+    last_.x += delta.x;
+    last_.y += delta.y;
+    last_.z += delta.z;
+  }
+
   void Update(Vector3 feet, bool grounded, bool running, bool active, AudioSystem& audio) {
     const float moved = std::hypot(feet.x - last_.x, feet.z - last_.z);
     last_ = feet;

@@ -30,7 +30,7 @@ struct BuildingConfig {
   int layout = 0;
   float floorHeight = 3.6f;
   struct Textures {
-    std::string floor, corridor, lobby, wall, corridorWall, ceiling, light, concrete, metal, wood, window,
+    std::string floor, corridor, lobby, wall, corridorWall, ceiling, light, concrete, metal, wood, daylight,
         fabric, fabric2, bed, screen, counter, plant, mail, kitchen, partition, rug;
   } textures;
   gen::GlyphGrid glyphs;    // los numeros de piso y de puerta

@@ -80,15 +80,9 @@ struct TowerSpot {
   float z;   // en el trozo
   float w, l, height;
   bool bottom;
-  bool fronts = false; // el pie con locales en 3D (CityConfig::storefronts)
+  bool fronts = false; // el pie en 3D (CityConfig::storefronts)
 };
 
-// Los locales en 3D al pie de una torre de cerca (el zocalo de W x Lz m, en el marco 'f', con la base
-// hundida 2 m): por cada cara, pilastras en las esquinas y entre local y local, y cada local de 6 a 9 m
-// de ancho con su escalon, su caja de luz (o una placa de lamina si esta cerrado) y uno de cuatro:
-// aparador hundido con el local con luz detras (y a veces toldo), cortina de acero, tapiado con triplay,
-// o vacio y oscuro. La tierra es curva: cada local se apoya en lo mas alto de su tramo. Devuelve la
-// altura (en el marco de la torre) donde acaba la cornisa: de ahi para arriba, el zocalo de oficinas.
 // La puerta del vestibulo de una torre (la deja Storefronts en el local de en medio de 'entranceFace').
 struct Entrance {
   bool ok = false;
@@ -98,6 +92,18 @@ struct Entrance {
   float sign = 1.0f; // hacia que lado de 'across' mira
 };
 
+// Las celdas de color liso del atlas de etiquetas (la ultima fila).
+namespace lisa {
+constexpr int teal = 56, rojo = 57, crema = 58, negro = 59, blanco = 60, acero = 61, madera = 62, gris = 63;
+}
+
+// El pie en 3D de una torre de cerca (el zocalo de W x Lz m, en el marco 'f', con la base hundida 2 m),
+// igual que su planta baja por dentro: por cada cara, pilastras en las esquinas y entre tramo y tramo, y
+// en cada tramo un ventanal (antepecho, canceleria, persianas bajadas hasta donde las dejaron) con el
+// vestibulo con luz detras: el piso, el fondo, el plafon con sus lamparas. En la cara 'entranceFace', el
+// tramo de en medio es la entrada (hundida, con su vestibulo: elevadores, recepcion, buzones). La tierra
+// es curva: cada tramo se apoya en lo mas alto del suyo. Devuelve la altura (en el marco de la torre)
+// donde acaba la cornisa: de ahi para arriba, el zocalo de oficinas.
 float Storefronts(const CityConfig& c, Builder& solid, Builder& glow, Rng& r, const Frame& f, float W, float Lz,
                   int entranceFace = -1, Entrance* entrance = nullptr) {
   const CityConfig::Storefronts& sf = c.storefronts;
@@ -135,15 +141,42 @@ float Storefronts(const CityConfig& c, Builder& solid, Builder& glow, Rng& r, co
     auto front = [&](Builder& b, const std::string& tex, float x0, float x1, float h0, float h1, float k, Vector2 uv1) {
       b.Quad(tex, P(x0, h0, k), P(x1, h0, k), P(x1, h1, k), P(x0, h1, k), {0, 0}, {uv1.x, 0}, uv1, {0, uv1.y}, fc.n);
     };
-    // un lado de un hueco, de k0 a k1 (mira hacia 'dir': +1 a la derecha)
-    auto side = [&](const std::string& tex, float x, float h0, float h1, float k0, float k1, float dir) {
+    // un lado (de k0 a k1, mirando a 'dir': +1 a la derecha), un piso o un techo, en metros
+    auto side = [&](Builder& b, const std::string& tex, float x, float h0, float h1, float k0, float k1, float dir,
+                    float tile = 2.0f) {
       const float d = k1 - k0;
-      solid.Quad(tex, P(x, h0, k0), P(x, h0, k1), P(x, h1, k1), P(x, h1, k0), {0, 0}, {d / 2.0f, 0},
-                 {d / 2.0f, (h1 - h0) / 2.0f}, {0, (h1 - h0) / 2.0f}, Vector3Scale(fc.t, dir));
+      b.Quad(tex, P(x, h0, k0), P(x, h0, k1), P(x, h1, k1), P(x, h1, k0), {0, 0}, {d / tile, 0},
+             {d / tile, (h1 - h0) / tile}, {0, (h1 - h0) / tile}, Vector3Scale(fc.t, dir));
     };
-    auto flat = [&](const std::string& tex, float x0, float x1, float h, float k0, float k1, bool facingUp) {
-      solid.Quad(tex, P(x0, h, k0), P(x1, h, k0), P(x1, h, k1), P(x0, h, k1), {0, 0}, {(x1 - x0) / 2.0f, 0},
-                 {(x1 - x0) / 2.0f, (k1 - k0) / 2.0f}, {0, (k1 - k0) / 2.0f}, facingUp ? f.up : Vector3Negate(f.up));
+    auto flat = [&](Builder& b, const std::string& tex, float x0, float x1, float h, float k0, float k1, bool facingUp,
+                    float tile = 2.0f) {
+      b.Quad(tex, P(x0, h, k0), P(x1, h, k0), P(x1, h, k1), P(x0, h, k1), {0, 0}, {(x1 - x0) / tile, 0},
+             {(x1 - x0) / tile, (k1 - k0) / tile}, {0, (k1 - k0) / tile}, facingUp ? f.up : Vector3Negate(f.up));
+    };
+    // Una caja con cara de frente y tapa en 'lit' y los lados y el fondo en 'shade' (la luz viene de
+    // fuera: los lados, mas oscuros). Sin fondo ni base.
+    auto shaded = [&](Builder& b, const std::string& lit, const std::string& shade, float x0, float x1, float h0, float h1,
+                      float k0, float k1, float tile = 1.0f) {
+      const float w = (x1 - x0) / tile, d = (k1 - k0) / tile, hh = (h1 - h0) / tile;
+      b.Quad(lit, P(x0, h0, k0), P(x1, h0, k0), P(x1, h1, k0), P(x0, h1, k0), {0, 0}, {w, 0}, {w, hh}, {0, hh}, fc.n);
+      b.Quad(lit, P(x0, h1, k0), P(x1, h1, k0), P(x1, h1, k1), P(x0, h1, k1), {0, 0}, {w, 0}, {w, d}, {0, d}, f.up);
+      b.Quad(shade, P(x0, h0, k1), P(x0, h0, k0), P(x0, h1, k0), P(x0, h1, k1), {0, 0}, {d, 0}, {d, hh}, {0, hh},
+             Vector3Negate(fc.t));
+      b.Quad(shade, P(x1, h0, k0), P(x1, h0, k1), P(x1, h1, k1), P(x1, h1, k0), {0, 0}, {d, 0}, {d, hh}, {0, hh}, fc.t);
+    };
+    // Un producto (o cualquier cosa con etiqueta): la celda 'cell' del atlas en el frente y, mas oscura,
+    // en la tapa y los lados.
+    auto goods = [&](Builder& b, int cell, float x0, float x1, float h0, float h1, float k0, float k1) {
+      const int col = cell % 8, row = cell / 8;
+      const float u0 = (col + 0.04f) / 8.0f, u1 = (col + 0.96f) / 8.0f;
+      const float v1 = 1.0f - (row + 0.04f) / 8.0f, v0 = 1.0f - (row + 0.96f) / 8.0f;
+      b.Quad(sf.goods, P(x0, h0, k0), P(x1, h0, k0), P(x1, h1, k0), P(x0, h1, k0), {u0, v0}, {u1, v0}, {u1, v1}, {u0, v1}, fc.n);
+      b.Quad(sf.goodsShade, P(x0, h1, k0), P(x1, h1, k0), P(x1, h1, k1), P(x0, h1, k1), {u0, v0}, {u1, v0}, {u1, v1},
+             {u0, v1}, f.up);
+      b.Quad(sf.goodsShade, P(x0, h0, k1), P(x0, h0, k0), P(x0, h1, k0), P(x0, h1, k1), {u0, v0}, {u1, v0}, {u1, v1},
+             {u0, v1}, Vector3Negate(fc.t));
+      b.Quad(sf.goodsShade, P(x1, h0, k0), P(x1, h0, k1), P(x1, h1, k1), P(x1, h1, k0), {u0, v0}, {u1, v0}, {u1, v1},
+             {u0, v1}, fc.t);
     };
     auto ground = [&](float x) { return fc.across ? groundAt(fc.half) : groundAt(x); };
 
@@ -164,22 +197,43 @@ float Storefronts(const CityConfig& c, Builder& solid, Builder& glow, Rng& r, co
       // el escalon, el muro de encima del hueco y la caja de luz
       box(solid, sf.pillar, sf.pillar, xa, xb, 0.0f, fl, -0.6f, 0.3f, {2.0f, 2.0f});
       front(solid, sf.pillar, xa, xb, hO, hTop, 0.0f, {bw / 2.0f, (hTop - hO) / 2.0f});
-      if (fi == entranceFace && b == bays / 2 && entrance && !sf.lobbies.empty()) {
-        // el vestibulo: hundido 2.2 m, con luz, vidrio a los lados y la puerta (un modelo) en medio
-        const float D = 2.2f, xc = (xa + xb) * 0.5f;
-        const std::string& back = sf.lobbies[static_cast<std::size_t>(r.Pick(static_cast<int>(sf.lobbies.size())))];
-        flat(sf.floor, xa, xb, fl, 0.0f, D, true);
-        flat(sf.ceiling, xa, xb, hO, 0.0f, D, false);
-        side(sf.wall, xa, fl, hO, 0.0f, D, 1.0f);
-        side(sf.wall, xb, fl, hO, 0.0f, D, -1.0f);
-        front(glow, back, xa, xb, fl, hO, D, {1.0f, 1.0f});
-        box(solid, c.textures.metal, c.textures.metal, xa + 0.05f, xb - 0.05f, hTop - 1.5f, hTop - 0.2f, -0.3f, 0.0f,
-            {2.0f, 2.0f});
+
+      if (fi == entranceFace && b == bays / 2 && entrance) {
+        // el vestibulo: 6 m de fondo, con luz; elevadores al fondo, recepcion, buzones, una planta
+        const float D = 6.0f, xc = (xa + xb) * 0.5f;
+        // (del vidrio hacia dentro: el primer metro, el del marco, va aparte)
+        flat(glow, sf.lobbyFloor, xa, xb, fl, 1.0f, D, true, 1.2f);
+        flat(glow, sf.ceiling, xa, xb, hO, 1.0f, D, false, 1.2f);
+        side(glow, sf.lobbyWall, xa, fl, hO, 1.0f, D, 1.0f, 3.0f);
+        side(glow, sf.lobbyWall, xb, fl, hO, 1.0f, D, -1.0f, 3.0f);
+        front(glow, sf.lobbyWall, xa, xb, fl, hO, D, {bw / 3.0f, (hO - fl) / 3.0f});
+        for (const float k : {2.2f, 4.4f})
+          box(glow, sf.light, sf.light, xc - 0.9f, xc + 0.9f, hO - 0.04f, hO - 0.02f, k - 0.3f, k + 0.3f, {1.2f, 1.2f});
+        // los dos elevadores: marco, puertas (dos hojas) y el piso donde esta, arriba
+        for (const float ex : {xc - 1.3f, xc + 1.3f}) {
+          shaded(glow, sf.metal, sf.metalShade, ex - 0.75f, ex + 0.75f, fl, fl + 2.35f, D - 0.06f, D, 0.5f);
+          shaded(glow, sf.metal, sf.metalShade, ex - 0.6f, ex - 0.01f, fl, fl + 2.2f, D - 0.08f, D - 0.06f, 1.0f);
+          shaded(glow, sf.metal, sf.metalShade, ex + 0.01f, ex + 0.6f, fl, fl + 2.2f, D - 0.08f, D - 0.06f, 1.0f);
+          goods(glow, lisa::negro, ex - 0.2f, ex + 0.2f, fl + 2.45f, fl + 2.6f, D - 0.04f, D);
+        }
+        // recepcion (madera con cubierta), una banca, los buzones contra un lado y una planta
+        shaded(glow, sf.wood, sf.woodShade, xa + 0.5f, xa + 2.6f, fl, fl + 1.05f, 3.0f, 3.6f);
+        shaded(glow, sf.metal, sf.metalShade, xa + 0.45f, xa + 2.65f, fl + 1.05f, fl + 1.1f, 2.95f, 3.65f);
+        shaded(glow, sf.wood, sf.woodShade, xb - 1.9f, xb - 0.3f, fl, fl + 0.45f, 2.0f, 2.4f);
+        shaded(glow, sf.mail, sf.metalShade, xb - 0.35f, xb - 0.02f, fl + 0.6f, fl + 2.0f, 3.4f, 5.4f, 1.4f);
+        shaded(glow, sf.wood, sf.woodShade, xa + 0.2f, xa + 0.62f, fl, fl + 0.45f, 5.2f, 5.62f);
+        shaded(glow, sf.plant, sf.plant, xa + 0.1f, xa + 0.72f, fl + 0.45f, fl + 1.3f, 5.1f, 5.72f, 0.7f);
+        shaded(glow, sf.plant, sf.plant, xa + 0.22f, xa + 0.6f, fl + 1.3f, fl + 1.75f, 5.22f, 5.6f, 0.7f);
+        // la canceleria (la puerta es un modelo, en medio)
         for (const float x : {xa, xc - 1.3f, xc + 1.3f, xb})
           box(solid, sf.frame, sf.frame, x - 0.06f, x + 0.06f, fl, hO, 0.95f, 1.05f, {1.0f, 1.0f});
         box(solid, sf.frame, sf.frame, xa, xb, fl + 2.75f, fl + 2.85f, 0.95f, 1.05f, {1.0f, 1.0f});
         box(solid, sf.frame, sf.frame, xa, xc - 1.3f, fl, fl + 0.3f, 0.95f, 1.05f, {1.0f, 1.0f});
         box(solid, sf.frame, sf.frame, xc + 1.3f, xb, fl, fl + 0.3f, 0.95f, 1.05f, {1.0f, 1.0f});
+        flat(solid, sf.floor, xa, xb, fl, 0.0f, 1.0f, true);
+        flat(solid, sf.ceiling, xa, xb, hO, 0.0f, 1.0f, false);
+        side(solid, sf.pillar, xa, fl, hO, 0.0f, 1.0f, 1.0f);
+        side(solid, sf.pillar, xb, fl, hO, 0.0f, 1.0f, -1.0f);
         entrance->ok = true;
         entrance->door = P(xc, fl, 1.0f);
         entrance->sign = Vector3DotProduct(fc.n, f.across) > 0.0f ? 1.0f : -1.0f;
@@ -189,68 +243,40 @@ float Storefronts(const CityConfig& c, Builder& solid, Builder& glow, Rng& r, co
         entrance->floor = fl;
         continue;
       }
-      const float u = r.Unit();
-      const bool open = u < 0.45f;
-      box(solid, c.textures.metal, c.textures.metal, xa + 0.05f, xb - 0.05f, hTop - 1.5f, hTop - 0.2f, -0.3f, 0.0f,
-          {2.0f, 2.0f});
-      if (open || r.Chance(0.5f)) {
-        const std::string& sign = sf.signs[static_cast<std::size_t>(r.Pick(static_cast<int>(sf.signs.size())))];
-        front(glow, sign, xa + 0.25f, xb - 0.25f, hTop - 1.4f, hTop - 0.3f, -0.31f, {1.0f, 1.0f});
+      // el ventanal: antepecho, el hueco con su derrame, la canceleria, las persianas y el vestibulo detras
+      const float sill = fl + 0.9f, top = fl + 2.7f, D = 4.0f;
+      front(solid, sf.pillar, xa, xb, fl, sill, 0.0f, {bw / 2.0f, (sill - fl) / 2.0f});
+      front(solid, sf.pillar, xa, xb, top, hO, 0.0f, {bw / 2.0f, (hO - top) / 2.0f});
+      side(solid, sf.pillar, xa, sill, top, 0.0f, 0.3f, 1.0f);
+      side(solid, sf.pillar, xb, sill, top, 0.0f, 0.3f, -1.0f);
+      flat(solid, sf.pillar, xa, xb, top, 0.0f, 0.3f, false);
+      box(solid, sf.frame, sf.frame, xa - 0.02f, xb + 0.02f, sill - 0.05f, sill, -0.06f, 0.32f, {1.0f, 1.0f}); // el alfeizar
+      const int panes = std::max(2, static_cast<int>(std::lround(bw / 1.5f)));
+      for (int k = 0; k <= panes; ++k) {
+        const float x = xa + bw * k / panes;
+        box(solid, sf.frame, sf.frame, x - 0.04f, x + 0.04f, sill, top, 0.26f, 0.32f, {1.0f, 1.0f});
       }
-
-      if (u < 0.45f || u >= 0.87f) {
-        // aparador hundido (con luz) o local vacio (oscuro)
-        const bool lit = u < 0.45f;
-        const float D = lit ? 2.6f : 1.8f;
-        const std::string& back = lit ? sf.shops[static_cast<std::size_t>(r.Pick(static_cast<int>(sf.shops.size())))] : sf.dark;
-        flat(lit ? sf.floor : sf.dark, xa, xb, fl, 0.0f, D, true);
-        flat(lit ? sf.ceiling : sf.dark, xa, xb, hO, 0.0f, D, false);
-        side(lit ? sf.wall : sf.dark, xa, fl, hO, 0.0f, D, 1.0f);
-        side(lit ? sf.wall : sf.dark, xb, fl, hO, 0.0f, D, -1.0f);
-        front(lit ? glow : solid, back, xa, xb, fl, hO, D, {1.0f, 1.0f});
-        // la canceleria: zoclo, jambas, travesano y cabezal (con el hueco de la puerta)
-        const float dw = 1.9f, dx0 = r.Range(xa + 0.4f, std::max(xa + 0.4f, xb - dw - 0.4f)), dx1 = dx0 + dw;
-        box(solid, sf.frame, sf.frame, xa, dx0, fl, fl + 0.4f, 0.2f, 0.3f, {1.0f, 1.0f});
-        box(solid, sf.frame, sf.frame, dx1, xb, fl, fl + 0.4f, 0.2f, 0.3f, {1.0f, 1.0f});
-        for (const float x : {xa, dx0, dx1, xb})
-          box(solid, sf.frame, sf.frame, x - 0.05f, x + 0.05f, fl, hO, 0.2f, 0.3f, {1.0f, 1.0f});
-        if (lit) {
-          box(solid, sf.frame, sf.frame, xa, xb, fl + 2.6f, fl + 2.7f, 0.2f, 0.3f, {1.0f, 1.0f});
-          box(solid, sf.frame, sf.frame, xa, xb, hO - 0.1f, hO, 0.2f, 0.3f, {1.0f, 1.0f});
-        }
-        if (lit && r.Chance(0.4f)) {
-          // el toldo: la lona cae 0.6 m en 1.4 m hacia fuera, y su faldon
-          const std::string& lona = sf.awnings[static_cast<std::size_t>(r.Pick(static_cast<int>(sf.awnings.size())))];
-          const float top = hO + 0.05f, low = hO - 0.55f, out = -1.4f;
-          const Vector3 nUp = Vector3Normalize(Vector3Add(Vector3Scale(f.up, 1.4f), Vector3Scale(fc.n, 0.6f)));
-          const float uw = bw / 1.0f;
-          for (const float sgn : {1.0f, -1.0f})
-            solid.Quad(lona, P(xa, top, 0.0f), P(xb, top, 0.0f), P(xb, low, out), P(xa, low, out), {0, 0}, {uw, 0},
-                       {uw, 1}, {0, 1}, Vector3Scale(nUp, sgn));
-          for (const float sgn : {1.0f, -1.0f})
-            solid.Quad(lona, P(xa, low - 0.3f, out), P(xb, low - 0.3f, out), P(xb, low, out), P(xa, low, out), {0, 0},
-                       {uw, 0}, {uw, 0.25f}, {0, 0.25f}, Vector3Scale(fc.n, sgn));
-        }
-      } else if (u < 0.75f) {
-        // cortina de acero, abajo
-        const std::string& cort = sf.shutters[static_cast<std::size_t>(r.Pick(static_cast<int>(sf.shutters.size())))];
-        side(sf.pillar, xa, fl, hO, 0.0f, 0.25f, 1.0f);
-        side(sf.pillar, xb, fl, hO, 0.0f, 0.25f, -1.0f);
-        flat(sf.pillar, xa, xb, fl, 0.0f, 0.25f, true);
-        front(solid, cort, xa, xb, fl, hO - 0.45f, 0.25f, {bw / 4.0f, (hO - 0.45f - fl) / 4.0f});
-        box(solid, sf.frame, sf.frame, xa, xb, hO - 0.5f, hO, -0.05f, 0.3f, {2.0f, 1.0f});
-        for (const float x : {xa + 0.04f, xb - 0.04f})
-          box(solid, sf.frame, sf.frame, x - 0.04f, x + 0.04f, fl, hO - 0.5f, 0.18f, 0.26f, {1.0f, 1.0f});
-      } else {
-        // tapiado: triplay encima del hueco, con lo oscuro detras
-        side(sf.pillar, xa, fl, hO, 0.0f, 0.3f, 1.0f);
-        side(sf.pillar, xb, fl, hO, 0.0f, 0.3f, -1.0f);
-        front(solid, sf.dark, xa, xb, fl, hO, 0.3f, {1.0f, 1.0f});
-        for (float x = xa; x < xb - 0.05f; x += 1.22f) {
-          if (r.Chance(0.12f))
-            continue; // una que se cayo
-          const float x1 = std::min(xb, x + 1.19f);
-          box(solid, sf.boards, sf.boards, x, x1, fl, hO - r.Range(0.0f, 0.4f), -0.05f, 0.0f, {1.22f, 2.44f});
+      box(solid, sf.frame, sf.frame, xa, xb, top - 0.06f, top, 0.26f, 0.32f, {1.0f, 1.0f});
+      // las persianas: tablillas de lamina, del cabezal hasta donde quedaron (unas hasta abajo)
+      const float down = r.Chance(0.2f) ? sill + 0.05f : r.Range(sill + 0.3f, top - 0.2f);
+      for (float y = top - 0.08f; y > down; y -= 0.11f)
+        box(solid, sf.metal, sf.metal, xa + 0.02f, xb - 0.02f, y - 0.04f, y, 0.36f, 0.4f, {1.0f, 1.0f});
+      // el vestibulo, con luz: piso, plafon y sus lamparas, el fondo y los lados (de cada tramo)
+      flat(glow, sf.lobbyFloor, xa, xb, fl, 0.3f, D, true, 1.2f);
+      flat(glow, sf.ceiling, xa, xb, fl + 3.0f, 0.3f, D, false, 1.2f);
+      side(glow, sf.lobbyWall, xa, fl, fl + 3.0f, 0.3f, D, 1.0f, 3.0f);
+      side(glow, sf.lobbyWall, xb, fl, fl + 3.0f, 0.3f, D, -1.0f, 3.0f);
+      front(glow, sf.lobbyWall, xa, xb, fl, fl + 3.0f, D, {bw / 3.0f, 1.0f});
+      const float xm = (xa + xb) * 0.5f;
+      for (const float x : {xm - bw * 0.25f, xm + bw * 0.25f})
+        box(glow, sf.light, sf.light, x - 0.6f, x + 0.6f, fl + 2.96f, fl + 2.98f, D * 0.5f - 0.3f, D * 0.5f + 0.3f,
+            {1.2f, 1.2f});
+      if (r.Chance(0.35f)) { // una planta o una banca, de lo que hay dentro
+        if (r.Chance(0.5f)) {
+          shaded(glow, sf.wood, sf.woodShade, xa + 0.4f, xa + 0.82f, fl, fl + 0.45f, D - 0.6f, D - 0.18f);
+          shaded(glow, sf.plant, sf.plant, xa + 0.3f, xa + 0.92f, fl + 0.45f, fl + 1.3f, D - 0.7f, D - 0.08f, 0.7f);
+        } else {
+          shaded(glow, sf.wood, sf.woodShade, xm - 0.9f, xm + 0.9f, fl, fl + 0.45f, D - 0.6f, D - 0.2f);
         }
       }
     }

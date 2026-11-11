@@ -475,7 +475,14 @@ int main(int argc, char** argv) {
                                 : screen == Screen::Title ? title->scene
                                                           : game.firstScene;
     retro::SceneManager scenes(engine, camera, {primera});
+    // Si la pantalla de inicio trae su cancion, esa suena desde el primer instante: la de la escena (la
+    // de jugar) no debe asomarse mientras aparece el menu.
+    const bool titleSong = screen == Screen::Title && !title->music.empty();
+    if (titleSong)
+      scenes.SetMusicOverride(title->music, 0.55f);
     scenes.LoadNow(0);
+    if (titleSong)
+      scenes.SetMusicOverride("", 0.0f); // solo para esta carga: al jugar, la de cada escena
     scenes.FadeInFromBlack();
 
     retro::Player player;
@@ -1160,10 +1167,12 @@ int main(int argc, char** argv) {
           // la ciudad sin fin recentro el mundo (en Z, o girando alrededor del eje): el jugador va con
           // el, sin perder el paso (no se nota)
           if (const auto move = scenes.TakeOriginMove(); move.dz != 0.0f || move.turn != 0.0f || move.dy != 0.0f) {
-            Vector3 f = player.Feet();
+            const Vector3 before = player.Feet();
             const float a = move.turn * DEG2RAD;
-            f = {f.x * std::cos(a) - f.y * std::sin(a), f.x * std::sin(a) + f.y * std::cos(a) + move.dy, f.z - move.dz};
+            const Vector3 f{before.x * std::cos(a) - before.y * std::sin(a),
+                            before.x * std::sin(a) + before.y * std::cos(a) + move.dy, before.z - move.dz};
             player.CarryFeet(f);
+            footsteps.Carry(Vector3Subtract(f, before)); // lo andado no se pierde al recentrar
           }
           state.Update(dt);
           letterSounds.Update(state, engine.Audio());

@@ -34,6 +34,7 @@ constexpr float kMid = -4.0f;             // el muro de en medio de la escalera
 constexpr float kStairDoor = -4.0f;       // donde esta la puerta de la escalera (x)
 constexpr float kEX0 = -2.0f, kEX1 = 4.0f;
 constexpr int kRisers = 11;               // escalones por tramo
+constexpr float kCell = 1.5f;             // las caras grandes, en losas de esto (la luz va por vertice)
 
 struct Rect {
   float x0, z0, x1, z1;
@@ -61,28 +62,47 @@ public:
   enum Face { XN = 1, XP = 2, YN = 4, YP = 8, ZN = 16, ZP = 32, ALL = 63, SIDES = XN | XP | ZN | ZP, NOBOTTOM = ALL & ~YN };
 
   // Una caja derecha, con las uv en metros ('tile' m por vuelta): las caras vecinas siguen la textura.
+  // Una caja derecha, con las uv en metros ('tile' m por vuelta): las caras vecinas siguen la textura.
+  // Cada cara se parte en losas de hasta kCell m: la luz va por vertice, y en una losa de 36 m solo
+  // contarian sus cuatro esquinas (manchas, degradados raros).
   void Cube(const std::string& tex, Vector3 a, Vector3 b, float tile = 1.0f, int faces = NOBOTTOM, bool glow = false,
             bool collide = false) {
     Builder& B = glow ? glow_ : solid_;
     const float u = 1.0f / tile;
+    // una cara: la esquina 'o', sus dos lados 'e1' y 'e2' y como salen las uv de un punto
+    auto face = [&](Vector3 o, Vector3 e1, Vector3 e2, Vector3 n, int uvAxes) {
+      const int n1 = std::max(1, static_cast<int>(std::ceil(Vector3Length(e1) / kCell)));
+      const int n2 = std::max(1, static_cast<int>(std::ceil(Vector3Length(e2) / kCell)));
+      auto uv = [&](Vector3 p) {
+        switch (uvAxes) {
+        case 0: return Vector2{p.z * u, p.y * u}; // caras X
+        case 1: return Vector2{p.x * u, p.y * u}; // caras Z
+        default: return Vector2{p.x * u, p.z * u}; // caras Y
+        }
+      };
+      for (int i = 0; i < n1; ++i) {
+        for (int j = 0; j < n2; ++j) {
+          const Vector3 p0 = Vector3Add(o, Vector3Add(Vector3Scale(e1, static_cast<float>(i) / n1), Vector3Scale(e2, static_cast<float>(j) / n2)));
+          const Vector3 p1 = Vector3Add(o, Vector3Add(Vector3Scale(e1, static_cast<float>(i + 1) / n1), Vector3Scale(e2, static_cast<float>(j) / n2)));
+          const Vector3 p2 = Vector3Add(o, Vector3Add(Vector3Scale(e1, static_cast<float>(i + 1) / n1), Vector3Scale(e2, static_cast<float>(j + 1) / n2)));
+          const Vector3 p3 = Vector3Add(o, Vector3Add(Vector3Scale(e1, static_cast<float>(i) / n1), Vector3Scale(e2, static_cast<float>(j + 1) / n2)));
+          B.Quad(tex, p0, p1, p2, p3, uv(p0), uv(p1), uv(p2), uv(p3), n);
+        }
+      }
+    };
+    const Vector3 dx{b.x - a.x, 0, 0}, dy{0, b.y - a.y, 0}, dz{0, 0, b.z - a.z};
     if (faces & XN)
-      B.Quad(tex, {a.x, a.y, b.z}, {a.x, a.y, a.z}, {a.x, b.y, a.z}, {a.x, b.y, b.z}, {b.z * u, a.y * u}, {a.z * u, a.y * u},
-             {a.z * u, b.y * u}, {b.z * u, b.y * u}, {-1, 0, 0});
+      face({a.x, a.y, a.z}, dz, dy, {-1, 0, 0}, 0);
     if (faces & XP)
-      B.Quad(tex, {b.x, a.y, a.z}, {b.x, a.y, b.z}, {b.x, b.y, b.z}, {b.x, b.y, a.z}, {a.z * u, a.y * u}, {b.z * u, a.y * u},
-             {b.z * u, b.y * u}, {a.z * u, b.y * u}, {1, 0, 0});
+      face({b.x, a.y, a.z}, dz, dy, {1, 0, 0}, 0);
     if (faces & ZN)
-      B.Quad(tex, {a.x, a.y, a.z}, {b.x, a.y, a.z}, {b.x, b.y, a.z}, {a.x, b.y, a.z}, {a.x * u, a.y * u}, {b.x * u, a.y * u},
-             {b.x * u, b.y * u}, {a.x * u, b.y * u}, {0, 0, -1});
+      face({a.x, a.y, a.z}, dx, dy, {0, 0, -1}, 1);
     if (faces & ZP)
-      B.Quad(tex, {b.x, a.y, b.z}, {a.x, a.y, b.z}, {a.x, b.y, b.z}, {b.x, b.y, b.z}, {b.x * u, a.y * u}, {a.x * u, a.y * u},
-             {a.x * u, b.y * u}, {b.x * u, b.y * u}, {0, 0, 1});
+      face({a.x, a.y, b.z}, dx, dy, {0, 0, 1}, 1);
     if (faces & YP)
-      B.Quad(tex, {a.x, b.y, a.z}, {b.x, b.y, a.z}, {b.x, b.y, b.z}, {a.x, b.y, b.z}, {a.x * u, a.z * u}, {b.x * u, a.z * u},
-             {b.x * u, b.z * u}, {a.x * u, b.z * u}, {0, 1, 0});
+      face({a.x, b.y, a.z}, dx, dz, {0, 1, 0}, 2);
     if (faces & YN)
-      B.Quad(tex, {a.x, a.y, b.z}, {b.x, a.y, b.z}, {b.x, a.y, a.z}, {a.x, a.y, a.z}, {a.x * u, b.z * u}, {b.x * u, b.z * u},
-             {b.x * u, a.z * u}, {a.x * u, a.z * u}, {0, -1, 0});
+      face({a.x, a.y, a.z}, dx, dz, {0, -1, 0}, 2);
     if (collide)
       Solid(a, b);
   }
@@ -90,8 +110,10 @@ public:
   void Solid(Vector3 a, Vector3 b) { colliders_.push_back({a, b, 0.0f}); }
 
   // Un piso o un techo (rectangulo horizontal a la altura y).
+  // (2 cm de mas por lado: los pisos y techos vecinos se enciman y no queda rendija; la textura va en
+  // metros del mundo, asi que lo encimado se ve igual)
   void Flat(const std::string& tex, const Rect& r, float y, bool up, float tile, bool glow = false) {
-    Cube(tex, {r.x0, y, r.z0}, {r.x1, y, r.z1}, tile, up ? YP : YN, glow);
+    Cube(tex, {r.x0 - 0.02f, y, r.z0 - 0.02f}, {r.x1 + 0.02f, y, r.z1 + 0.02f}, tile, up ? YP : YN, glow);
   }
   // Un rectangulo vertical en el plano x = cte (mirando a +X o -X) o z = cte.
   void WallX(const std::string& tex, float x, float z0, float z1, float y0, float y1, bool facingPlus, float tile,
@@ -180,14 +202,6 @@ void BuildingInterior::Build(Scene& scene) {
   ObjData solidData, glowData;
   std::vector<BoxCollider> colliders;
   Mesher m(solidData, glowData, colliders);
-  std::vector<PointLight> lights;
-  auto light = [&](float x, float z) {
-    PointLight l;
-    l.position = {x, kCeil - 0.3f, z};
-    l.color = {0.95f, 0.97f, 1.0f};
-    l.radius = 7.5f;
-    lights.push_back(l);
-  };
   auto panel = [&](float x, float z) { // una lampara del plafon
     m.Cube(T.light, {x - 0.6f, kCeil - 0.02f, z - 0.3f}, {x + 0.6f, kCeil - 0.01f, z + 0.3f}, 1.2f, Mesher::YN, true);
   };
@@ -295,8 +309,6 @@ void BuildingInterior::Build(Scene& scene) {
     for (float s = 2.5f; s < len; s += 5.0f) {
       const float x = alongX ? c.x0 + s : (c.x0 + c.x1) * 0.5f, z = alongX ? (c.z0 + c.z1) * 0.5f : c.z0 + s;
       panel(x, z);
-      if (std::fmod(s, 10.0f) < 5.0f)
-        light(x, z);
     }
   }
   for (const Rect& o : open) {
@@ -305,8 +317,6 @@ void BuildingInterior::Build(Scene& scene) {
     for (float x = o.x0 + 2.0f; x < o.x1 - 1.0f; x += 4.0f) {
       for (float z = o.z0 + 1.5f; z < o.z1 - 0.5f; z += 3.0f) {
         panel(x, z);
-        if ((static_cast<int>(x) + static_cast<int>(z)) % 3 == 0)
-          light(x, z);
       }
     }
   }
@@ -317,7 +327,6 @@ void BuildingInterior::Build(Scene& scene) {
     m.Flat(T.ceiling, room.r, kCeil, false, 1.2f);
     const float cx = (room.r.x0 + room.r.x1) * 0.5f, cz = (room.r.z0 + room.r.z1) * 0.5f;
     panel(cx, cz);
-    light(cx, cz);
   }
   // el piso de toda la planta, para pisar (sin el cubo de la escalera)
   m.Solid({-kHX, -0.5f, -kHZ}, {kHX, 0.0f, kSZ0});
@@ -340,12 +349,22 @@ void BuildingInterior::Build(Scene& scene) {
       box(s0, s1, 2.6f, kCeil + 0.4f);
       for (float s = s0; s < s1 - 0.05f; s += 1.5f)
         box(s, std::min(s1, s + 0.1f), 0.9f, 2.6f);
-      // la vista, dentro del muro
+      // la luz de fuera, dentro del muro, y delante las persianas: tablillas de lamina, bajadas hasta
+      // donde las dejaron (cada tramo de muro, a su altura)
       const float w = at + (facingPlus ? -kExt * 0.5f : kExt * 0.5f);
       if (alongX)
-        m.WallZ(T.window, w, s0, s1, 0.9f, 2.6f, facingPlus, 6.0f, true);
+        m.WallZ(T.daylight, w, s0, s1, 0.9f, 2.6f, facingPlus, 2.0f, true);
       else
-        m.WallX(T.window, w, s0, s1, 0.9f, 2.6f, facingPlus, 6.0f, true);
+        m.WallX(T.daylight, w, s0, s1, 0.9f, 2.6f, facingPlus, 2.0f, true);
+      const float inner = at + (facingPlus ? 0.02f : -0.02f), slat = at + (facingPlus ? 0.06f : -0.06f);
+      const float down = 2.6f - r.Range(0.3f, 1.7f); // hasta donde llegan
+      for (float y = 2.55f; y > down; y -= 0.11f) {
+        const auto [p, q] = alongX ? Sorted({s0, y - 0.04f, inner}, {s1, y, slat}) : Sorted({inner, y - 0.04f, s0}, {slat, y, s1});
+        m.Cube(T.metal, p, q, 1.0f, Mesher::SIDES | Mesher::YP | Mesher::YN);
+      }
+      // el riel de arriba
+      const auto [p, q] = alongX ? Sorted({s0, 2.55f, inner}, {s1, 2.62f, slat}) : Sorted({inner, 2.55f, s0}, {slat, 2.62f, s1});
+      m.Cube(T.metal, p, q, 1.0f, Mesher::SIDES | Mesher::YN);
     };
     if (holeB > holeA) {
       pieces(a0, holeA);
@@ -631,6 +650,7 @@ void BuildingInterior::Build(Scene& scene) {
   for (const float x : {-0.5f, 2.5f})
     m.Cube(T.wood, {x - 0.45f, 0.0f, kSZ0 - 0.04f}, {x + 0.45f, kDoorH, kSZ0}, 1.0f, Mesher::SIDES | Mesher::YP);
 
+  std::vector<float> otherDoors; // las alturas de las puertas de la escalera que solo se ven
   // --------------------------------------------------------------------- el cubo de la escalera
   // Niveles relativos a este piso: k = -1 (si hay), 0 y 1; los descansos de norte de k = lo..hi (el de
   // arriba del ultimo piso es el de la azotea, con su puerta y su techo).
@@ -653,10 +673,10 @@ void BuildingInterior::Build(Scene& scene) {
     m.Cube(T.concrete, {kIX0, base, kIZ1}, {kStairDoor - kDoorW * 0.5f, base + kDoorH, kSZ1}, 2.0f, Mesher::SIDES, false, true);
     m.Cube(T.concrete, {kStairDoor + kDoorW * 0.5f, base, kIZ1}, {kIX1, base + kDoorH, kSZ1}, 2.0f, Mesher::SIDES, false, true);
     y = base + kDoorH;
-    // las puertas de los otros niveles: de lamina, cerradas (la de este piso y la de la azotea son de verdad)
+    // las puertas de los otros niveles: el mismo modelo, pero no abren (al llegar a su descanso todo baja
+    // un piso y esa pasa a ser la de este, la que si abre); la de este piso y la de la azotea, aparte
     if (!(k == 0 || (roofDoor && k == 1)))
-      m.Cube(T.metal, {kStairDoor - kDoorW * 0.5f, base, kIZ1 + 0.05f}, {kStairDoor + kDoorW * 0.5f, base + kDoorH, kSZ1 - 0.05f},
-             1.0f, Mesher::ALL, false, true);
+      otherDoors.push_back(base);
     if (!roofDoor)
       plate(std::to_string(floor + k), {kStairDoor - 1.2f, base + 1.6f, kIZ1 - 0.005f}, {0, 0, -1}, 0.22f);
   }
@@ -697,15 +717,12 @@ void BuildingInterior::Build(Scene& scene) {
            Mesher::ALL, true);
     m.Cube(T.light, {kStairDoor - 0.3f, ym + 2.9f, kIZ0 + 0.15f}, {kStairDoor + 0.3f, ym + 3.0f, kIZ0 + 0.25f}, 1.0f,
            Mesher::ALL, true);
-    PointLight l;
-    l.position = {kStairDoor, base + 2.6f, 0.0f};
-    l.color = {0.85f, 0.9f, 0.95f};
-    l.radius = 6.0f;
-    lights.push_back(l);
   }
 
   // --------------------------------------------------------------------- subir todo
-  scene.streamedLights = lights;
+  // Sin luces puntuales: el shader usa solo las 8 mas cercanas a la camara y en un piso hay decenas
+  // (se prendian y apagaban al andar). La luz es la de la escena: ambiente alto, parejo, de lamparas
+  // de techo, y un poco desde arriba para que tapas y lados no se vean iguales.
   auto add = [&](std::unique_ptr<Entity> e) {
     entities_.push_back(e->Name());
     scene.Add(std::move(e));
@@ -742,6 +759,15 @@ void BuildingInterior::Build(Scene& scene) {
        {action::Teleport{{kStairDoor, 0.0f, kSZ1 + 0.8f}, YawToward(0.0f, 1.0f)}}, small);
   door("~ed:escalera_fuera", cfg_.stairDoor, {kStairDoor, 0.0f, kSZ1 - 0.04f}, 0.0f, cfg_.openPrompt,
        {action::Teleport{{kStairDoor, 0.0f, kIZ1 - 0.5f}, YawToward(0.0f, -1.0f)}}, small);
+  for (std::size_t i = 0; i < otherDoors.size(); ++i) {
+    auto res = engine_.Assets().GetModel(cfg_.stairDoor);
+    res->SetShader(engine_.Retro().Lit());
+    auto e = std::make_unique<Entity>("~ed:escalera_" + std::to_string(i), res);
+    e->transform.position = {kStairDoor, otherDoors[i], kIZ1 + 0.04f};
+    e->transform.rotation = {0.0f, 180.0f, 0.0f};
+    e->colliders.push_back(small);
+    add(std::move(e));
+  }
   if (floor == top) // la azotea
     door("~ed:azotea", cfg_.stairDoor, {kStairDoor, H, kIZ1 + 0.04f}, 180.0f, cfg_.roofPrompt, {action::ToRoof{}}, small);
   if (lobby) // la salida a la calle

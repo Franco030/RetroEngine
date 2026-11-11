@@ -686,7 +686,7 @@ struct SoundSpec {
 // la ciudad las pide mientras se juega y ahi un archivo que falta seria un error a destiempo.
 // "building": { "kind": "oficinas" | "departamentos" | "hotel", "layout": 0..2, "floorHeight": 3.6,
 //               "textures": { floor, corridor, lobby, wall, corridorWall, ceiling, light, concrete, metal,
-//                             wood, window, fabric, fabric2, bed, screen, counter, plant, mail, kitchen,
+//                             wood, daylight, fabric, fabric2, bed, screen, counter, plant, mail, kitchen,
 //                             partition, rug },
 //               "glyphs": { "texture": ..., "order": "0123...", "cols": 8, "rows": 5 },
 //               "stairDoor": "models/...obj", "exitDoor": "models/...obj" }
@@ -717,7 +717,7 @@ BuildingConfig ReadBuilding(const json& j, const AssetManager& assets) {
   const std::pair<const char*, std::string*> roles[] = {
       {"floor", &T.floor},       {"corridor", &T.corridor}, {"lobby", &T.lobby},       {"wall", &T.wall},
       {"corridorWall", &T.corridorWall}, {"ceiling", &T.ceiling}, {"light", &T.light}, {"concrete", &T.concrete},
-      {"metal", &T.metal},       {"wood", &T.wood},         {"window", &T.window},     {"fabric", &T.fabric},
+      {"metal", &T.metal},       {"wood", &T.wood},         {"daylight", &T.daylight},     {"fabric", &T.fabric},
       {"fabric2", &T.fabric2},   {"bed", &T.bed},           {"screen", &T.screen},     {"counter", &T.counter},
       {"plant", &T.plant},       {"mail", &T.mail},         {"kitchen", &T.kitchen},   {"partition", &T.partition},
       {"rug", &T.rug}};
@@ -852,18 +852,21 @@ CityConfig ReadCity(const json& j, const AssetManager& assets) {
     sf.tops = many("tops");
     if (sf.tops.size() != c.textures.podiums.size())
       throw std::runtime_error("city.storefronts: 'tops' necesita una por cada textura de 'podiums'");
-    sf.shops = many("shops");
-    sf.shutters = many("shutters");
-    sf.awnings = many("awnings");
-    sf.signs = many("signs");
-    sf.lobbies = many("lobbies");
-    sf.boards = one("boards");
-    sf.dark = one("dark");
     sf.pillar = one("pillar");
     sf.frame = one("frame");
     sf.floor = one("floor");
-    sf.wall = one("wall");
     sf.ceiling = one("ceiling");
+    sf.light = one("light");
+    sf.goods = one("goods");
+    sf.goodsShade = one("goodsShade");
+    sf.metal = one("metal");
+    sf.metalShade = one("metalShade");
+    sf.wood = one("wood");
+    sf.woodShade = one("woodShade");
+    sf.lobbyFloor = one("lobbyFloor");
+    sf.lobbyWall = one("lobbyWall");
+    sf.plant = one("plant");
+    sf.mail = one("mail");
   }
 
   if (j.contains("store")) { // la tienda de COMIDA (se entra)

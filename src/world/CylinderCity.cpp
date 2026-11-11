@@ -325,6 +325,21 @@ float Tower(const CityConfig& c, Builder& solid, Builder& glow, Rng& r, const To
                             out ? &out->entrance : nullptr);
     solid.Box(c.storefronts.tops[podiumIndex], roof, f.base, f.up, f.across, f.along, s.w + 6.0f, s.l + 6.0f, frontsTop,
               podium + 2.0f, {20.0f, 7.5f}, {podiumOff, 0.0f}, seg);
+  } else if (c.storefronts.Enabled(c.textures.podiums.size())) {
+    // de lejos, el mismo pie sin geometria: la banda de concreto a la altura de la de cerca, su cornisa,
+    // los ventanales en una tira con luz (por fuera, apenas) y encima las mismas oficinas
+    const float W = s.w + 6.0f, Lz = s.l + 6.0f;
+    const float half = W * 0.5f;
+    const float hTop = 2.0f + half * half / (2.0f * c.radius) + 6.2f; // como en Storefronts
+    const float fl = 2.12f + half * half / (4.0f * c.radius);         // el piso, en promedio
+    const CityConfig::Storefronts& sf = c.storefronts;
+    solid.Box(sf.pillar, sf.pillar, f.base, f.up, f.across, f.along, W, Lz, 0.0f, hTop, {2.0f, 4.0f}, {0, 0}, seg);
+    solid.Box(sf.pillar, sf.pillar, f.base, f.up, f.across, f.along, W + 1.1f, Lz + 1.1f, hTop, hTop + 0.55f, {2.0f, 4.0f},
+              {0, 0}, seg);
+    glow.Box(sf.farWindows, "", f.base, f.up, f.across, f.along, W + 0.1f, Lz + 0.1f, fl + 0.9f, fl + 2.7f, {34.8f, 1.8f},
+             {podiumOff, -(fl + 0.9f) / 1.8f}, seg);
+    solid.Box(sf.tops[podiumIndex], roof, f.base, f.up, f.across, f.along, W, Lz, hTop + 0.55f, podium + 2.0f,
+              {20.0f, 7.5f}, {podiumOff, 0.0f}, seg);
   } else {
     solid.Box(base, roof, f.base, f.up, f.across, f.along, s.w + 6.0f, s.l + 6.0f, 0.0f, podium + 2.0f,
               {28.0f, podium + 2.0f}, {podiumOff, 0.0f}, seg);
@@ -918,6 +933,7 @@ void CylinderCity::Place(Scene& scene, long long index, int lod, long long ancho
     auto e = std::make_unique<Entity>(tag + part.name, Upload(*part.obj));
     e->transform.position = {0.0f, 0.0f, z0};
     e->emissive = part.emissive;
+    e->glowTint = std::string(part.name) == "windows"; // su color lo pone el ciclo (ApplyCycle)
     chunk.pieces.push_back({e->Name(), {0.0f, 0.0f}, 0.0f});
     scene.Add(std::move(e));
   }

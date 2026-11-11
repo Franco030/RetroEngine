@@ -867,6 +867,7 @@ CityConfig ReadCity(const json& j, const AssetManager& assets) {
     sf.lobbyWall = one("lobbyWall");
     sf.plant = one("plant");
     sf.mail = one("mail");
+    sf.farWindows = one("farWindows");
   }
 
   if (j.contains("store")) { // la tienda de COMIDA (se entra)

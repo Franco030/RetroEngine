@@ -47,6 +47,7 @@ RetroShader::Program RetroShader::MakeProgram(std::shared_ptr<ShaderResource> sh
   l.mistHeight = GetShaderLocation(s, "mistHeight");
   l.mistColor = GetShaderLocation(s, "mistColor");
   l.fogFixed = GetShaderLocation(s, "fogFixed");
+  l.glowTint = GetShaderLocation(s, "glowTint");
   l.clipY = GetShaderLocation(s, "clipY");
   l.useLighting = GetShaderLocation(s, "useLighting");
   l.lightCount = GetShaderLocation(s, "lightCount");
@@ -85,6 +86,8 @@ void RetroShader::Upload(const Program& p) const {
   SetUniform(s, l.mistColor, &params_.mistColor, SHADER_UNIFORM_VEC3);
   const float noPanorama = -1.0f; // solo Scene::DrawPanorama la cambia, y la devuelve
   SetUniform(s, l.fogFixed, &noPanorama, SHADER_UNIFORM_FLOAT);
+  const float white[4] = {1.0f, 1.0f, 1.0f, 1.0f}; // solo Entity::Draw la cambia (glowTint), y la devuelve
+  SetUniform(s, l.glowTint, white, SHADER_UNIFORM_VEC4);
   SetUniform(s, l.clipY, &params_.clipY, SHADER_UNIFORM_FLOAT);
 }
 

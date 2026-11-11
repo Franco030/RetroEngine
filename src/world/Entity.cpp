@@ -267,7 +267,16 @@ void Entity::Draw(const Shader& fullbright) {
     lit[static_cast<std::size_t>(m)] = model.materials[m].shader;
     model.materials[m].shader = fullbright;
   }
+  const int tintLoc = glowTint ? GetShaderLocation(fullbright, "glowTint") : -1;
+  if (tintLoc >= 0) {
+    const float c[4] = {tint.r / 255.0f, tint.g / 255.0f, tint.b / 255.0f, 1.0f};
+    SetShaderValue(fullbright, tintLoc, c, SHADER_UNIFORM_VEC4);
+  }
   DrawModel(model, {0.0f, 0.0f, 0.0f}, 1.0f, tint);
+  if (tintLoc >= 0) {
+    const float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+    SetShaderValue(fullbright, tintLoc, white, SHADER_UNIFORM_VEC4);
+  }
   for (int m = 0; m < model.materialCount; ++m)
     model.materials[m].shader = lit[static_cast<std::size_t>(m)];
   if (layer != 0)

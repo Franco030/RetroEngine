@@ -78,6 +78,9 @@ public:
   Color tint = WHITE;
   bool visible = true;
   bool emissive = false;
+  // Emisivo y teñido por 'tint' (el shader de lo emisivo no usa el color del material): lo usa la
+  // ciudad del cilindro para que sus franjas de luz sigan al dia y la noche.
+  bool glowTint = false;
   // Capa de dibujo para superficies apoyadas en otras (modelos): 1 gana siempre a lo que tiene
   // debajo, -1 pierde. Ver depthBias en retro.vs.
   int layer = 0;

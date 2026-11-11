@@ -90,6 +90,7 @@ struct CityConfig {
     std::string goods, goodsShade; // etiquetas (atlas 8 x 8; la ultima fila, lisos): los indicadores
     std::string metal, metalShade, wood, woodShade;
     std::string pillar, frame, floor, ceiling, light, lobbyFloor, lobbyWall, plant, mail;
+    std::string farWindows; // los ventanales de las torres de lejos (una tira: tramos de 8.7 m x 1.8 m)
     bool Enabled(std::size_t podiums) const { return !tops.empty() && tops.size() == podiums; }
   } storefronts;
   // Por dentro de las torres de cerca (las que llevan locales en 3D): la escena de cada tipo, tres

@@ -24,6 +24,9 @@ uniform float fogEnd;
 // Panorama (el horizonte lejano que sigue a la camara): bruma fija en vez de la niebla por
 // distancia. < 0 = no es el panorama.
 uniform float fogFixed;
+// El color de un modelo emisivo que pidio teñirse (Entity::glowTint: las franjas de luz del cilindro,
+// que siguen al dia y la noche). Blanco para todo lo demas.
+uniform vec4 glowTint;
 
 uniform float mistDensity;
 uniform float mistHeight;
@@ -53,6 +56,7 @@ void main() {
     if (fragWorldY > clipY) discard;
     vec4 texel = texture(texture0, fragTexCoord) * fragColor;
     if (texel.a < 0.5) discard;
+    texel.rgb *= glowTint.rgb;
 
     vec3 rgb = texel.rgb;
 

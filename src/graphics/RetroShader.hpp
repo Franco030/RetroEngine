@@ -59,6 +59,7 @@ private:
     int mistHeight = -1;
     int mistColor = -1;
     int fogFixed = -1;
+    int glowTint = -1;
     int clipY = -1;
     int useLighting = -1;
     int lightCount = -1;
